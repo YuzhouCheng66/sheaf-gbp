@@ -102,6 +102,26 @@ browser does not synthesize decorative communication. Drag the two wall tips,
 change the T proportions or ant count, press Random for another admitted scene,
 then press Play.
 
+### Multi-wall waypoint composition
+
+The same frozen p5 manipulation skill can be invoked sequentially along a
+hand-supplied SE(2) route:
+
+```bash
+piano-movers-waypoints \
+  --checkpoint /path/to/sheaf_gbp_route_free_all_shapes_p5.pt \
+  --device cpu \
+  --port 7862 \
+  --open
+```
+
+The default course has three offset `0.720 m` slits and four waypoints. Each
+leg exposes only its locally relevant slit to the policy, while exact collision
+is evaluated against every wall in the world. The bundled 12-agent course was
+verified zero-shot at **1/1 success**, **0 contact events**, and **0 exact
+penetrations**. This demonstrates waypoint-conditioned skill composition; it
+does not claim that the present checkpoint builds a map or discovers the route.
+
 To create p5 from its admitted p4 parent without modifying any tensor:
 
 ```bash
@@ -133,6 +153,7 @@ PYTHONPATH=src python scripts/audit_single_slit_asymmetric_openings.py \
 
 ```text
 src/piano_movers/single_slit_interactive_demo.py  streamed monochrome demo
+src/piano_movers/multi_waypoint_demo.py           multi-wall waypoint composition
 src/piano_movers/single_slit_local_planner.py     local recurrent/geometry planner
 src/piano_movers/single_slit_cspace.py            exact current-geometry C-space
 src/piano_movers/models.py                        stalk, restriction, GBP, decoder

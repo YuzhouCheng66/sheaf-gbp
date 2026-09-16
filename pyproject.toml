@@ -14,6 +14,7 @@ dev = ["pytest>=8.0", "ruff>=0.9"]
 
 [project.scripts]
 piano-movers-demo = "piano_movers.single_slit_interactive_demo:main"
+piano-movers-waypoints = "piano_movers.multi_waypoint_demo:main"
 
 [build-system]
 requires = ["hatchling"]
