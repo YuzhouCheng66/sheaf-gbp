@@ -19,6 +19,28 @@ from piano_movers.single_slit_contact_observation import (
 )
 
 
+def test_exit_tracking_margin_respects_unchanged_handoff_disk_and_body_reserve():
+    from piano_movers.single_slit_local_planner import _goal_compatible_exit_center
+
+    cfg = replace(single_slit_env_config(), wall_slab=.06, goal_x=.63, goal_y=-.15)
+    random_support = torch.linspace(-1., 1., 1000, dtype=torch.float32)
+    torch.testing.assert_close(_goal_compatible_exit_center(random_support, torch.zeros_like(random_support), cfg),
+                               .06 + .03 + .005 - random_support, atol=0., rtol=0.)
+    # Authentic L/-135-degree deadlock, expressed relative to its active wall.
+    support = torch.tensor([-.6764483274247346], dtype=torch.float64)
+    y = torch.tensor([cfg.goal_y], dtype=torch.float64)
+    old = _goal_compatible_exit_center(support, y, cfg)
+    torch.testing.assert_close(old, .06 + .03 + .005 - support, atol=0., rtol=0.)
+    assert old.item() > cfg.goal_x + .14
+    new = _goal_compatible_exit_center(support, y, replace(cfg, local_corridor_exit_goal_radius_m=.14))
+    assert .06 + .03 - support.item() < new.item() < cfg.goal_x + .14
+    # Comfortable intersections and impossible y targets remain unchanged.
+    for offset, target_y in ((support + .1, y), (support, y + .3)):
+        before = _goal_compatible_exit_center(offset, target_y, cfg)
+        after = _goal_compatible_exit_center(offset, target_y, replace(cfg, local_corridor_exit_goal_radius_m=.14))
+        torch.testing.assert_close(before, after, atol=0., rtol=0.)
+
+
 def test_b_handoff_reproduction_keeps_the_trailing_wall() -> None:
     cfg = _course_config(single_slit_env_config(), 12, DEFAULT_COURSE, "B")
     # Actual frozen-p5 B/12 state at the premature first handoff, step 208.

@@ -97,7 +97,8 @@ def main():
         row = dict(case, initial_pose_certificate=asdict(start_certificate),
                    goal_pose_certificate=asdict(end_certificate),
                    executable_feasibility="not_queried",
-                   variant=("complete_exit_swept" if options.check_support_alignment_sweep else
+                   variant=("complete_exit_consistent" if options.respect_handoff_goal_region else
+                            "complete_exit_swept" if options.check_support_alignment_sweep else
                             "complete_exit_screened" if options.validate_all_cspace_lookaheads else
                             "complete_exit_certified"),
                    options=asdict(options))

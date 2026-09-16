@@ -22,6 +22,28 @@ LOCAL_SE2_TERMINAL_WALL_RESERVE_M = 0.030
 LOCAL_SE2_COLLISION_GAP_RESERVE_M = 0.030
 
 
+def _goal_compatible_exit_center(rotated_min_x: Tensor, target_y: Tensor, cfg: EnvConfig) -> Tensor:
+    """Keep the physical reserve, but fit optional tracking slack in the goal.
+
+    At fixed heading and target y, full-body clearance imposes a lower x
+    bound, while the unchanged goal disk imposes an upper x bound. A 5 mm
+    *extra tracking margin* must not push an otherwise feasible target outside
+    their intersection. No safety reserve or supervisor tolerance is reduced.
+    Empty intersections retain the old behavior, not a false feasibility claim.
+    """
+    legacy = float(cfg.wall_slab) + LOCAL_SE2_TERMINAL_WALL_RESERVE_M + .005 - rotated_min_x
+    radius = cfg.local_corridor_exit_goal_radius_m
+    if radius <= 0:
+        return legacy
+    minimum_x = float(cfg.wall_slab) + LOCAL_SE2_TERMINAL_WALL_RESERVE_M - rotated_min_x
+    dy = target_y - cfg.goal_y
+    maximum_x = cfg.goal_x + torch.sqrt((radius * radius - dy.square()).clamp_min(0.))
+    slack = maximum_x - minimum_x
+    adjust = (dy.abs() < radius) & (slack > 1e-5) & (.5 * slack < .005)
+    # Preserve the original floating-point expression on all unchanged nodes.
+    return torch.where(adjust, minimum_x + .5 * slack, legacy)
+
+
 def _finite_wall_slice_y_bounds(
     rectangles: Tensor,
     center_x: Tensor,
@@ -768,10 +790,7 @@ def local_se2_terminal_attractor_plan(
         # recentering; otherwise the goal spring immediately pulls the tail
         # back into the just-cleared plane. Explicit C-space entry targets are
         # untouched. Final oriented parking retains the original behavior.
-        exit_center_x = (
-            float(cfg.wall_slab) + LOCAL_SE2_TERMINAL_WALL_RESERVE_M + .005
-            - world_vertex_x.amin(dim=-1)
-        )
+        exit_center_x = _goal_compatible_exit_center(world_vertex_x.amin(dim=-1), target_y, cfg)
         completion = terminal_active | (corridor_active & corridor_aligned & ~corridor_explicit)
         target_x = torch.where(completion, torch.maximum(target_x, exit_center_x), target_x)
     target_y = torch.where(

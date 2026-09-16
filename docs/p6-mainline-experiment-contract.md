@@ -57,6 +57,16 @@ Their low success rates are not evidence against the original architecture.
 No such checkpoint is authorized for public-demo replacement without matched
 closed-loop validation and parent regression.
 
+The goal-command interface experiment is distinct from those new planners:
+counterfactual audits found that the original neural MLP lacks true goal y and
+the orientation-required command, even though its analytic controller receives
+them. Its independent zero bridge adds four first-layer input columns (1,024
+weights), retaining the original MLP's width/depth, original tensors, GBP and
+decoder. Actual-state and full-rollout parity are checked before training.
+Even this minimal input change is not promoted without matched closed-loop
+regression; repairing X alone does not excuse A/Z regressions. The required
+active-goal command is not a route, future target list or teacher input.
+
 The v7 run already in progress when this direction was clarified may finish
 as a recorded control. Do not automatically continue that series at the expense
 of the original-architecture mainline. The public p5 worktree remains untouched.

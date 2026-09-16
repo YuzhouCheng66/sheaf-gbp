@@ -11,7 +11,7 @@ import torch
 
 from audit_local_skill_composition import sha256, write_json
 from piano_movers.env import radius_edges
-from piano_movers.multi_waypoint_demo import Slit, WaypointCourse, _course_config
+from piano_movers.multi_waypoint_demo import Slit, WaypointCourse, _course_config, INTERMEDIATE_POSITION_TOLERANCE_M
 from piano_movers.single_slit_0720_eval import load_single_slit_checkpoint
 from train_mainline_skill_dagger import active_anchor_config
 
@@ -53,7 +53,9 @@ def main():
         cfg = replace(cfg, complete_local_corridor_exit=options["complete_corridor_exit"],
                       local_cspace_collision_substeps=options["planning_substeps"],
                       local_cspace_validate_all_lookaheads=options.get("validate_all_cspace_lookaheads", False),
-                      local_support_check_alignment_sweep=options.get("check_support_alignment_sweep", False))
+                      local_support_check_alignment_sweep=options.get("check_support_alignment_sweep", False),
+                      local_corridor_exit_goal_radius_m=(INTERMEDIATE_POSITION_TOLERANCE_M
+                                                         if options.get("respect_handoff_goal_region", False) else 0.))
         edges = radius_edges(cfg, device="cpu")
         count = 0
         for stage in np.unique(arrays["waypoint_index"]):

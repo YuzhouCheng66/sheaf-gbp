@@ -86,6 +86,9 @@ class EnvConfig:
     local_cspace_collision_substeps: int = 4
     local_cspace_validate_all_lookaheads: bool = False
     local_support_check_alignment_sweep: bool = False
+    # Optional active position-goal radius supplied by the existing supervisor.
+    # Zero retains the historical extra exit-tracking reserve exactly.
+    local_corridor_exit_goal_radius_m: float = 0.0
     bidirectional: bool = False
     round_trip: bool = False
     round_trip_speed_tol: float = 0.30
@@ -107,6 +110,9 @@ class EnvConfig:
     def __post_init__(self) -> None:
         from .payload_shapes import TMorphology, normalize_payload_shape
 
+        if (not math.isfinite(self.local_corridor_exit_goal_radius_m)
+                or self.local_corridor_exit_goal_radius_m < 0):
+            raise ValueError("local corridor goal radius must be finite and nonnegative")
         normalize_payload_shape(self.payload_shape)
         TMorphology(
             total_width_m=self.t_total_width_m,

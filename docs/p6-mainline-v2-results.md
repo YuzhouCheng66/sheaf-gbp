@@ -190,8 +190,48 @@ The first independent fit freezes every original tensor and trains only the
 frames and 1,056,776 v2 replay frames. S/Z and odd counts remain excluded.
 10,000 GPU updates take 13.62 seconds after CPU feature preparation. Its
 checkpoint is **not promoted** on loss alone; X-state repair and matched
-regression are being tested. Recipe:
+regression were evaluated. Recipe:
 `configs/p6_mainline_goal_context_only_v1.json`.
+
+X's 14 state profiles improve **9/14 → 14/14**, and the default A–Z/N=12
+course remains **26/26**. However, the full matched 364-state panel is only
+**355/364** versus 354/364: six repairs (five X, one C) trade against five new
+failures (four A entries and larger-scale Z). All 364 paths remain continuously
+certified. **The command-only checkpoint is not promoted.** The regression
+states are genuine new-actor DAgger inputs, not justification for a hard gate
+or per-letter exception. Z stays excluded from training. Artifacts:
+`output/p6_mainline_goal_only_v1_state_81201_all/manifest.json`,
+`output/p6_mainline_goal_only_v1_X_state_81201/manifest.json`.
+
+Three completed regression collectors add 18 admitted queries from this actor
+(A/B only). Combined with the 74 earlier queries, this gives **92 admitted
+queries from three authenticated actor checkpoints**. A separate continuation
+will train the original MLP/motion head plus its four added input columns;
+the other original modules remain frozen. It does not replace the planner
+with a new network or introduce an attractor. Its closed-loop validation is
+still required, independently of optimization loss.
+
+### Handoff-region compatibility, no weight change
+
+The three rotated-L failures expose another exact interface conflict. At the
+stalled heading, the interval of x coordinates satisfying both full-body
+clearance (the unchanged 30 mm reserve) and the intermediate goal disk (the
+unchanged 140 mm radius) is only **3.55–3.58 mm wide**. The controller's extra
+5 mm tracking margin places its target outside that interval. Thus the robot
+settles where the supervisor cannot accept it. A pose-level counterfactual
+inside the interval has an independently certified path; this diagnosis does
+not by itself establish executable closed-loop success.
+
+An opt-in control now spends at most half of the available interval on that
+*optional extra tracking margin*, capped by its original 5 mm. The physical
+reserve, supervisor, final-pose criteria and all weights remain unchanged.
+It retains old behavior for empty intersections; it does not pretend to solve
+the resulting rotation-planning problem. The controlled L panel then changes
+**11/14 → 14/14**, all continuously certified. Larger matched regression is
+still a gate. With the control disabled, A/B/T/X complete traces remain bitwise
+identical. Artifacts: `output/p6_mainline_handoff_region_L/diagnostic.json`,
+`output/p6_mainline_handoff_region_L_state_81201/manifest.json`;
+recipe `configs/p6_mainline_handoff_region_control.json`.
 
 ## What changed
 

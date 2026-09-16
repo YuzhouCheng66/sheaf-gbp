@@ -19,6 +19,7 @@ from collect_mainline_skill_dagger import context_from_original_observation
 from piano_movers.env import radius_edges
 from piano_movers.multi_waypoint_demo import (
     Slit, WaypointCourse, SkillCompositionOptions, _composition_observation, _course_config,
+    INTERMEDIATE_POSITION_TOLERANCE_M,
 )
 from piano_movers.single_slit_0720_eval import load_single_slit_checkpoint
 
@@ -60,7 +61,9 @@ def main():
         cfg = replace(cfg, glyph_scale=1.)
     cfg = replace(cfg, local_cspace_collision_substeps=options.planning_substeps,
                   local_cspace_validate_all_lookaheads=options.validate_all_cspace_lookaheads,
-                  local_support_check_alignment_sweep=options.check_support_alignment_sweep)
+                  local_support_check_alignment_sweep=options.check_support_alignment_sweep,
+                  local_corridor_exit_goal_radius_m=(INTERMEDIATE_POSITION_TOLERANCE_M
+                                                     if options.respect_handoff_goal_region else 0.))
     parent.policy.bind_environment(cfg)
     edges = radius_edges(cfg, device="cpu")
     results = []

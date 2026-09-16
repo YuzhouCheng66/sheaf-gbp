@@ -25,6 +25,7 @@ from piano_movers.local_skill_teacher import LocalTeacherConfig
 from piano_movers.multi_waypoint_demo import (
     Slit, WaypointCourse, SkillCompositionOptions, _body_cleared_wall,
     _composition_observation, _course_config, _full_collision_scenario,
+    INTERMEDIATE_POSITION_TOLERANCE_M,
 )
 from piano_movers.payload_shapes import payload_rectangles_for_config
 from piano_movers.single_slit_0720_eval import load_single_slit_checkpoint
@@ -116,7 +117,9 @@ def main():
             cfg = replace(cfg, complete_local_corridor_exit=True)
         cfg = replace(cfg, local_cspace_collision_substeps=composition.planning_substeps,
                       local_cspace_validate_all_lookaheads=composition.validate_all_cspace_lookaheads,
-                      local_support_check_alignment_sweep=composition.check_support_alignment_sweep)
+                      local_support_check_alignment_sweep=composition.check_support_alignment_sweep,
+                      local_corridor_exit_goal_radius_m=(INTERMEDIATE_POSITION_TOLERANCE_M
+                                                         if composition.respect_handoff_goal_region else 0.))
         scene = _full_collision_scenario(course, cfg)
         ticks = list(np.linspace(0, len(data["state"]) - 1, args.queries_per_episode, dtype=int))
         hits = np.flatnonzero(data["hit"])
