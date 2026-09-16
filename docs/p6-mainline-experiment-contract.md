@@ -1,9 +1,10 @@
 # Original-architecture mainline
 
 Latest measured results: [original-architecture v2 report](p6-mainline-v2-results.md).
-The trained original modules now pass 26/26 on the corrected-interface
-three-wall development panel. This does not complete the fresh generalization
-and all-agent-count release gates.
+The trained original modules with the screened interface now pass 332/338 on
+the enlarged three-wall A–Z/8–20 development panel, and 338/338 on the old
+nominal single-slit regression. These do not complete the fresh generalization,
+joint count/entry-state or public-release gates.
 
 This contract supersedes any implication in earlier p6 experiment notes that
 the separate `LocalSkillPlanner` must replace p5. The user's direction is to

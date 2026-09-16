@@ -1,0 +1,25 @@
+{
+  "schema": "piano-movers.original-architecture-candidate.v1",
+  "release_status": "independent_goal_input_training_control_not_public",
+  "checkpoint": "output/p6_mainline_goal_context_full_v1/checkpoint_step20000.pt",
+  "checkpoint_sha256": "9dc549bef0cb7ee4f0f2995a72c065e79cc300554ad9b2828970b0580da41da7",
+  "parent_checkpoint_sha256": "3f4f1529378b08ef8de644564a1acc43f9de56b7d389e55e563fae7538c576a6",
+  "composition_options": {
+    "position_only_control": true,
+    "require_body_clearance": true,
+    "preserve_private_memory": false,
+    "nominal_glyph_size": false,
+    "retain_nearby_wall": false,
+    "preserve_contact_feedback": false,
+    "retain_previous_wall_only": false,
+    "complete_corridor_exit": true,
+    "planning_substeps": 32,
+    "continuous_contact_guard": true,
+    "validate_all_cspace_lookaheads": true,
+    "check_support_alignment_sweep": true
+  },
+  "architecture_replaced": false,
+  "additional_private_goal_inputs": 4,
+  "trainable_parameters": 214024,
+  "control_description": "Real DAgger on 92 queries, starting at the zero-input bridge of v2. Train the original morphology MLP and motion head plus four command input columns, with v2 function replay. Other original tensors remain frozen; no additional planner, attractor or communication coordinates."
+}

@@ -154,8 +154,18 @@ branch. This does not insert a new planner or attractor.
 
 Artifacts: `output/p6_mainline_state_development_81201_all/manifest.json`,
 `output/p6_mainline_swept_state_81201_all/manifest.json`; independent recipe
-`configs/p6_mainline_support_sweep_control.json`. Full-count regression for
-this additional interface control is a separate gate, not yet a promotion.
+`configs/p6_mainline_support_sweep_control.json`. Its full-count default-course
+regression now passes **332/338**, unchanged from the screened-v2 reference:
+all saved arrays in all **338 paired episodes are bitwise identical**, and all
+338 paths are continuously certified. Artifact:
+`output/p6_mainline_swept_v2_all_counts/manifest.json`. This does not replace
+the remaining nominal, varied-count/entry and release gates.
+
+On the harder 364-state panel, the sweep-only change reduces total control
+steps from 162,040 to 159,461 and rejected contacts from 7,570 to 1,803. Recorded
+GBP+setup payload falls from 700,344,896 to 691,522,112 bytes (**headers excluded**).
+Total path length rises from 2,504.97 to 2,537.52 m, partly because more failed
+runs now complete their courses; it is not claimed to improve every metric.
 
 The remaining failures are three rotated L entries, C/+135 degrees, five X
 entry/scale cases, and B at the larger scale. Authentic-state diagnostics
@@ -205,11 +215,23 @@ or per-letter exception. Z stays excluded from training. Artifacts:
 
 Three completed regression collectors add 18 admitted queries from this actor
 (A/B only). Combined with the 74 earlier queries, this gives **92 admitted
-queries from three authenticated actor checkpoints**. A separate continuation
-will train the original MLP/motion head plus its four added input columns;
-the other original modules remain frozen. It does not replace the planner
-with a new network or introduce an attractor. Its closed-loop validation is
-still required, independently of optimization loss.
+queries from three authenticated actor checkpoints**. A separate fit now trains
+the original MLP/motion head plus its four added input columns, **214,024
+parameters**, using 77,364 teacher agent-frames and 1,056,776 replay frames.
+All other original tensors remain frozen and are checked bitwise. Starting
+at the zero bridge, 20,000 updates take **33.84 seconds**. It does not replace
+the planner with a new network or introduce an attractor.
+
+This second fit preserves **26/26** on the default A–Z/N=12 course. Its A/X/Z
+14-state-profile panel is **41/42**, all continuously certified: the previous
+four A-entry and one larger-Z regressions disappear and all five X repairs
+remain, but **larger-scale A becomes a new failure**. It is therefore still an
+unreleased training control, not a success declaration or replacement. The
+complete 364-state matched audit is running and will retain every failure.
+Artifacts: `output/p6_mainline_goal_context_full_v1`,
+`output/p6_mainline_goal_full_v1_AXZ_state_81201`,
+`output/p6_mainline_goal_full_v1_AZ12`;
+recipe `configs/p6_mainline_goal_context_full_v1.json`.
 
 ### Handoff-region compatibility, no weight change
 
