@@ -175,5 +175,59 @@ PYTHONPATH=src python scripts/summarize_mainline_solver_controls.py \
 Inputs: `configs/p6_mainline_solver_{reference,equal,diameter,equal_diameter}.json`;
 report: `output/p6_mainline_solver_factorial_81201/report.json`.
 
-The enlarged default all-count and full 364-state diameter-budget audits are
-running next. No public replacement is authorized by this small panel alone.
+### Completed broader diameter-budget checks
+
+The unchanged-v2-weight diameter control has now completed the full **364-state
+panel at 359/364**, versus 357/364 for the identical-interface four-round
+reference. It repairs C/+135 degrees and B/large without losing a reference
+success; the five remaining failures are X/+90, +135, joint-positive, small,
+and large. All 364 trajectories pass independent continuous certification.
+Control steps decrease from 157,073 to 145,017 and collision attempts from
+1,803 to **1**. GBP payload rises from 677,733,312 to 710,627,040 bytes (4.85%);
+the identical 1,409,408-byte grasp setup cost is additional. Again, this is
+an ability/contact improvement, not a communication Pareto win.
+
+Two further complete checks pass:
+
+- The old nominal single-slit A–Z × N=8–20 grid: **338/338**, zero collision
+  attempts, 338/338 continuous certificates.
+- Locked validation seed 82202, combined layout/entry/goal perturbations,
+  S/Z × N=8–20 × five profiles (nominal, ±135-degree entry, forward velocity,
+  negative joint perturbation): **130/130**, zero collision attempts, 130/130
+  continuous certificates. Every count gives 10/10; odd counts give 60/60.
+  The final goal includes y=0.1941 m and theta=-0.6926 rad. These shapes/counts
+  are held out from p6 fine-tuning, **not** necessarily from ancestral p5
+  training. All cases share one sampled layout, so this is deterministic
+  panel coverage, not evidence from 130 independent layout draws or a
+  population lower confidence bound above 90%.
+
+Artifacts: `output/p6_mainline_diameter_state_81201_all/manifest.json`,
+`output/p6_mainline_diameter_nominal_all_counts/manifest.json`, and
+`output/p6_mainline_diameter_validation_82202_joint_counts/manifest.json`.
+The enlarged default all-count audit is still running. Reserved test seeds
+remain untouched; the public p5 demo is unchanged.
+
+### Next authentic DAgger round, same network
+
+The broad-replay v1 candidate's two X failures are genuine but distinct: one
+makes slow progress near the second wall; the large-shape case reaches an
+outer boundary and repeatedly requests rejected moves. Both are retained in
+the denominator. Ten real visited-state queries produce ten independently
+certified executable teacher continuations. They are not synthetic off-policy
+perturbations or a teacher consulted during deployment.
+
+The next fit starts from that same actor and replays its 497 certified
+successful development episodes (2,771,622 agent-frames). It combines the
+10 new queries with the previous 92, giving 102 queries / 89,856 teacher
+agent-frames. Same original 52-input/213,000-parameter trainable network,
+20,000 updates, batch 1,024, replay weight 3, continuation learning rate 5e-5;
+GPU optimization takes 32.20 s. All frozen tensors are checked at every save.
+This fit is not an isolated data-only ablation: both its initialization and
+successful-replay actor are the previous broad-replay candidate.
+
+Candidate recipe: `configs/p6_mainline_original_broad_diameter_v2.json`,
+checkpoint SHA256 `5bc41fb8ab239e1deafbf3e5d358c6f7eb3074d8bb480d85b9a584df7148fc25`.
+Dataset: `output/p6_mainline_original_broad_round2_data/manifest.json`.
+Closed-loop evaluation is pending; training loss does not establish success.
+
+Code checks for this audit: all **104 repository tests pass** on CPU.
