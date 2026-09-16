@@ -47,7 +47,11 @@ def main():
         raise ValueError("requires completed training data")
     if anchors["status"] != "complete" or anchors["split"] != "development_diagnostics":
         raise ValueError("anchors must be disclosed development data, not held-out evaluation")
-    if data["parent_checkpoint_sha256"] != parent.checkpoint_sha256 or anchors["checkpoint_sha256"] != parent.checkpoint_sha256:
+    root_parent_sha = parent.metadata.get("p6_mainline_training", {}).get(
+        "parent_checkpoint_sha256", parent.checkpoint_sha256,
+    )
+    if (data["parent_checkpoint_sha256"] != root_parent_sha
+            or anchors["checkpoint_sha256"] != parent.checkpoint_sha256):
         raise ValueError("checkpoint lineage mismatch")
     args.output.mkdir(parents=True, exist_ok=True)
     destination = args.output / "training.json"
@@ -110,7 +114,9 @@ def main():
     optimizer = torch.optim.AdamW([p for p in policy.parameters() if p.requires_grad], lr=args.learning_rate, weight_decay=1e-5)
     record = {
         "schema": "piano-movers.original-markov-dagger-training.v1", "status": "running",
-        "parent_checkpoint_sha256": parent.checkpoint_sha256,
+        "parent_checkpoint_sha256": root_parent_sha,
+        "initial_checkpoint_sha256": parent.checkpoint_sha256,
+        "initialization_from_previous_mainline": parent.checkpoint_sha256 != root_parent_sha,
         "dataset_sha256": sha256(args.dataset), "anchors_sha256": sha256(args.anchors),
         "teacher_rows": teacher_rows, "anchor_rows": anchor_rows,
         "teacher_agent_frames": len(x), "anchor_agent_frames": len(ax),
