@@ -7,6 +7,7 @@ used when drawing a course.
 """
 
 from dataclasses import replace
+import math
 import random
 
 from .multi_waypoint_demo import DEFAULT_COURSE, Slit, WaypointCourse
@@ -17,6 +18,16 @@ FAMILY_SEEDS = {
     "development_diagnostics": (81201, 81202),
     "locked_validation": (82201, 82202),
     "reserved_test": (83201, 83202, 83203, 83204),
+}
+STATE_PROFILES = (
+    "nominal", "entry_reference", "heading_neg180", "heading_neg135", "heading_neg90",
+    "heading_neg45", "heading_pos45", "heading_pos90", "heading_pos135",
+    "velocity_forward", "velocity_backward", "joint_positive", "joint_negative",
+    "shape_small", "shape_large",
+)
+ENTRY_HEADINGS_DEG = {
+    "heading_neg180": -180, "heading_neg135": -135, "heading_neg90": -90,
+    "heading_neg45": -45, "heading_pos45": 45, "heading_pos90": 90, "heading_pos135": 135,
 }
 
 
@@ -72,3 +83,43 @@ def validate_split_seeds(split: str, seeds: list[int]) -> None:
         raise ValueError("invalid split or duplicate/empty seed list")
     if not set(seeds) <= set(FAMILY_SEEDS[split]):
         raise ValueError("seeds do not belong to the predeclared split")
+
+
+def state_profile_course(seed: int, family: str, profile: str = "nominal") -> WaypointCourse:
+    """Stratified large-angle and moving-entry controls, independent of outcomes.
+
+    All non-nominal profiles use the same 1.25 m source-to-wall distance,
+    including entry_reference. This leaves room to rotate the declared glyphs
+    away from the outer boundary without outcome-based resampling. Geometry
+    scales affect body and handles, not mass, force limits or communication
+    radius. The large-scale profile scales the physical opening to avoid
+    silently comparing a larger body to a provably impossible nominal gap.
+    It remains subject to independent feasibility/trajectory checks.
+    """
+    if profile not in STATE_PROFILES:
+        raise ValueError(f"unknown state profile: {profile}")
+    course = validation_course(seed, family)
+    if profile == "nominal":
+        return course
+    source = (course.walls[0].x - 1.25, course.source[1], course.source[2])
+    course = replace(course, source=source)
+    if profile in ENTRY_HEADINGS_DEG:
+        course = replace(course, source=(*source[:2], math.radians(ENTRY_HEADINGS_DEG[profile])))
+    if profile == "velocity_forward":
+        course = replace(course, source_velocity=(.25, .10, .30))
+    if profile == "velocity_backward":
+        course = replace(course, source_velocity=(-.20, -.10, -.30))
+    if profile == "joint_positive":
+        course = replace(course, source=(*source[:2], .90), source_velocity=(.20, -.12, -.25))
+    if profile == "joint_negative":
+        course = replace(course, source=(*source[:2], -.90), source_velocity=(-.20, .12, .25))
+    if profile in ("shape_small", "shape_large"):
+        scale = .90 if profile == "shape_small" else 1.04
+        course = replace(course, morphology_scale=scale)
+        if scale > 1.:
+            course = replace(course, walls=tuple(
+                replace(w, aperture_m=max(w.aperture_m, (.720 - .060) * scale + .060))
+                for w in course.walls
+            ))
+    course.validate()
+    return course

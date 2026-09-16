@@ -81,12 +81,20 @@ def main():
         "supervised_plan_coordinates": [0, 1, 2, 3, 4, 5],
         "heldout_shapes": ["S", "Z"], "heldout_counts": [9, 11, 13, 15, 17, 19],
         "variant": args.variant, "results": [], "skipped_duplicate_queries": 0,
+        "unqueried_episodes": [],
     }
     write_json(destination, record)
     for episode in source["results"]:
         if episode["variant"] != args.variant or episode["result"]["success"]:
             continue
         if episode["shape"] in ("S", "Z") or episode["agents"] % 2:
+            continue
+        if "trace" not in episode:
+            record["unqueried_episodes"].append({
+                "case_id": episode.get("case_id"), "reason": "no_authentic_state_trace",
+                "rollout_result": episode["result"],
+            })
+            write_json(destination, record)
             continue
         path = args.rollouts.parent / episode["trace"]
         if sha256(path) != episode["trace_sha256"]:
@@ -97,6 +105,8 @@ def main():
             tuple(header["source"]), tuple(Slit(**s) for s in header["walls"]),
             tuple(tuple(g) for g in header["waypoints"]),
             header["world"]["x"], header["world"]["y"],
+            tuple(header.get("source_velocity", (0., 0., 0.))),
+            float(header.get("morphology_scale", 1.)),
         )
         composition = SkillCompositionOptions(**episode["options"])
         cfg = _course_config(parent.cfg, episode["agents"], course, episode["shape"])
@@ -149,10 +159,14 @@ def main():
             report, teacher = generate_case(
                 state, goal, scene, cfg, context, oriented, options, 512,
             )
-            case_id = f"{args.variant}_{episode['shape']}_{episode['agents']}_q{tick}"
+            case_id = (f"{args.variant}_{episode['shape']}_{episode['agents']}_"
+                       f"{episode['trace_sha256'][:12]}_q{tick}")
             row = {
                 "case_id": case_id, "shape": episode["shape"], "agents": episode["agents"],
                 "actor_trace_sha256": episode["trace_sha256"], "actor_tick": int(tick),
+                "rollout_case_id": episode.get("case_id"),
+                "rollout_family": episode.get("family"), "rollout_seed": episode.get("seed"),
+                "rollout_state_profile": episode.get("profile"),
                 "active_stage_for_audit_only": stage, "env_cfg": asdict(cfg),
                 "start_state": state[0].tolist(), "goal": goal.tolist(),
                 "teacher_report": report, "admitted_for_training": False,

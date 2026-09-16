@@ -96,8 +96,14 @@ class WaypointCourse:
     waypoints: tuple[tuple[float, float, float], ...]
     world_x: float = 3.9
     world_y: float = 1.6
+    source_velocity: tuple[float, float, float] = (0., 0., 0.)
+    morphology_scale: float = 1.0
 
     def validate(self) -> None:
+        if len(self.source) != 3 or len(self.source_velocity) != 3:
+            raise ValueError("source requires pose3 and world-frame twist3")
+        if not math.isfinite(self.morphology_scale) or self.morphology_scale <= 0:
+            raise ValueError("morphology scale must be finite and positive")
         if not self.walls or len(self.waypoints) != len(self.walls) + 1:
             raise ValueError("a course requires one post-wall waypoint per wall and one final goal")
         if not all(self.walls[index].x < self.walls[index + 1].x for index in range(len(self.walls) - 1)):
@@ -111,7 +117,9 @@ class WaypointCourse:
                 raise ValueError("every slit must retain the audited 0.720 m aperture")
         if not self.waypoints[-1][0] > self.walls[-1].x:
             raise ValueError("final goal must lie beyond the final wall")
-        numbers = (*self.source, *(value for wall in self.walls for value in (wall.x, wall.gap_y, wall.aperture_m)), *(value for waypoint in self.waypoints for value in waypoint))
+        numbers = (*self.source, *self.source_velocity, self.world_x, self.world_y,
+                   *(value for wall in self.walls for value in (wall.x, wall.gap_y, wall.aperture_m)),
+                   *(value for waypoint in self.waypoints for value in waypoint))
         if not all(math.isfinite(value) for value in numbers):
             raise ValueError("course geometry must be finite")
 
@@ -214,11 +222,11 @@ def _course_config(
             else HANDLE_LAYOUT_GLYPH_BOUNDARY_V4
         ),
         payload_shape=shape,
-        glyph_scale=_large_glyph_scale(shape),
-        t_total_width_m=0.930,
-        t_total_height_m=0.920,
-        t_stem_width_m=0.160,
-        t_cap_thickness_m=0.152,
+        glyph_scale=_large_glyph_scale(shape) * course.morphology_scale,
+        t_total_width_m=0.930 * course.morphology_scale,
+        t_total_height_m=0.920 * course.morphology_scale,
+        t_stem_width_m=0.160 * course.morphology_scale,
+        t_cap_thickness_m=0.152 * course.morphology_scale,
         source_x=course.source[0],
         # The frozen skill was trained with its locally relevant wall at
         # x=0.  Each waypoint leg is expressed in that same local frame; the
@@ -236,6 +244,7 @@ def _full_collision_scenario(course: WaypointCourse, cfg: EnvConfig) -> PianoBat
     device = torch.device(cfg.device)
     state0 = torch.zeros(1, 6, dtype=torch.float32, device=device)
     state0[0, :3] = state0.new_tensor(course.source)
+    state0[0, 3:] = state0.new_tensor(course.source_velocity)
     source = state0[:, :3].clone()
     goal = state0.new_tensor(course.waypoints[-1]).view(1, 3)
     return PianoBatch(
@@ -420,6 +429,8 @@ class MultiWaypointEngine:
             "dt": cfg.dt,
             "world": {"x": self.course.world_x, "y": self.course.world_y, "wall_half_width": cfg.wall_slab},
             "source": list(self.course.source),
+            "source_velocity": list(self.course.source_velocity),
+            "morphology_scale": self.course.morphology_scale,
             "walls": [wall.__dict__ for wall in self.course.walls],
             "waypoints": [list(value) for value in self.course.waypoints],
             "body_rects": _tensor_list(body_rects),

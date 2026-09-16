@@ -30,6 +30,25 @@ def test_b_handoff_reproduction_keeps_the_trailing_wall() -> None:
     assert _body_cleared_wall(state, rectangles, DEFAULT_COURSE.walls[0], cfg)
 
 
+def test_course_twist_and_scale_are_physical_not_extra_policy_features():
+    from piano_movers.multi_waypoint_demo import _full_collision_scenario
+
+    base_cfg = single_slit_env_config()
+    original = _course_config(base_cfg, 12, DEFAULT_COURSE, "T")
+    course = replace(DEFAULT_COURSE, source_velocity=(.2, -.1, .3), morphology_scale=.95)
+    course.validate()
+    cfg = _course_config(base_cfg, 12, course, "T")
+    scene = _full_collision_scenario(course, cfg)
+    torch.testing.assert_close(scene.state0[0, 3:], torch.tensor([.2, -.1, .3]))
+    old_geometry = payload_rectangles_for_config(original, "cpu")
+    new_geometry = payload_rectangles_for_config(cfg, "cpu")
+    torch.testing.assert_close(new_geometry, old_geometry * .95)
+    context = initial_single_slit_contact_observation_context_v1(scene.state0, cfg)
+    obs = _composition_observation(course, scene.state0, 0, cfg, context)
+    assert obs.shape == (1, 12, 27)
+    assert obs[..., 6:8].abs().max() > .01
+
+
 def test_position_only_goal_ignores_hidden_angle_but_pose_goal_rotates() -> None:
     cfg = single_slit_env_config()
     # A self-consistent local handle row at payload centre x=1, theta=0.6,

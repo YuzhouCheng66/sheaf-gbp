@@ -90,6 +90,8 @@ def main():
             arrays = np.load(path)
             header = row["header"]
             course = WaypointCourse(tuple(header["source"]), tuple(Slit(**s) for s in header["walls"]), tuple(tuple(g) for g in header["waypoints"]), header["world"]["x"], header["world"]["y"])
+            course = replace(course, source_velocity=tuple(header.get("source_velocity", (0., 0., 0.))),
+                             morphology_scale=float(header.get("morphology_scale", 1.)))
             cfg = _course_config(parent.cfg, row["agents"], course, row["shape"])
             if row["options"]["nominal_glyph_size"]:
                 cfg = replace(cfg, glyph_scale=1.)

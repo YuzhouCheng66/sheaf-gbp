@@ -3,7 +3,8 @@ from dataclasses import asdict
 import pytest
 
 from piano_movers.local_skill_validation import (
-    FAMILY_SEEDS, LAYOUT_FAMILIES, validate_split_seeds, validation_course,
+    FAMILY_SEEDS, LAYOUT_FAMILIES, STATE_PROFILES, ENTRY_HEADINGS_DEG,
+    validate_split_seeds, validation_course, state_profile_course,
 )
 from piano_movers.multi_waypoint_demo import DEFAULT_COURSE
 
@@ -44,3 +45,27 @@ def test_split_checks_prevent_accidental_seed_relabeling():
                          ("typo", [82201])):
         with pytest.raises(ValueError):
             validate_split_seeds(split, seeds)
+
+
+def test_state_profiles_span_angles_motion_and_scale_without_resampling():
+    import math
+
+    seed, family = 81201, "entry"
+    old = validation_course(seed, family)
+    assert old == state_profile_course(seed, family, "nominal")
+    reference = state_profile_course(seed, family, "entry_reference")
+    for name in STATE_PROFILES:
+        course = state_profile_course(seed, family, name)
+        course.validate()
+        assert course == state_profile_course(seed, family, name)
+        if name in ENTRY_HEADINGS_DEG:
+            assert math.degrees(course.source[2]) == pytest.approx(ENTRY_HEADINGS_DEG[name])
+            assert course.source[:2] == reference.source[:2]
+            assert course.walls == reference.walls
+            assert course.source_velocity == (0., 0., 0.)
+    moving = state_profile_course(seed, family, "velocity_forward")
+    assert moving.source == reference.source
+    assert moving.source_velocity == (.25, .1, .3)
+    larger = state_profile_course(seed, family, "shape_large")
+    assert larger.morphology_scale == 1.04
+    assert all(w.aperture_m == pytest.approx(.7464) for w in larger.walls)

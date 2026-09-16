@@ -46,6 +46,8 @@ def main():
     stage = int(arrays["waypoint_index"][tick])
     header = row["header"]
     course = WaypointCourse(tuple(header["source"]), tuple(Slit(**s) for s in header["walls"]), tuple(tuple(g) for g in header["waypoints"]), header["world"]["x"], header["world"]["y"])
+    course = replace(course, source_velocity=tuple(header.get("source_velocity", (0., 0., 0.))),
+                     morphology_scale=float(header.get("morphology_scale", 1.)))
     options = SkillCompositionOptions(**row["options"])
     state = torch.from_numpy(arrays["state"][tick:tick + 1].copy())
     hidden = torch.from_numpy(arrays["private_hidden"][tick:tick + 1].copy())
