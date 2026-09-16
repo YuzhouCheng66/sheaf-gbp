@@ -4622,6 +4622,7 @@ class SheafGBPPolicy(BasePolicy):
         active_leg: Tensor | None = None,
         topology: GBPTopology | None = None,
         local_se2_plan_override: Tensor | None = None,
+        final_local_se2_plan_override: Tensor | None = None,
         local_se2_wrench_unary_override: Tensor | None = None,
     ) -> PolicyOutput:
         batch, n_agents, _ = obs.shape
@@ -4820,6 +4821,19 @@ class SheafGBPPolicy(BasePolicy):
                         )
                     )
                     local_se2_terminal_plan = local_se2_plan_used
+                if final_local_se2_plan_override is not None:
+                    # An independently trained node-local planner must reach
+                    # the physical action layer without an analytic plan
+                    # silently replacing its supervised output. Historical
+                    # callers omit this argument and retain exact behavior.
+                    if final_local_se2_plan_override.shape != (batch, n_agents, 8):
+                        raise ValueError("final local plan override must be [B,N,8]")
+                    if not bool(torch.isfinite(final_local_se2_plan_override).all()):
+                        raise ValueError("final local plan override must be finite")
+                    local_se2_plan_used = final_local_se2_plan_override
+                    local_se2_terminal_active = torch.zeros(
+                        (batch,n_agents,1),device=obs.device,dtype=torch.bool
+                    )
                 plan_condition = torch.cat(
                     (local_se2_plan_used, torch.tanh(plan_log_precision)),
                     dim=-1,

@@ -113,3 +113,97 @@ memory, forces, learned and executed plans, contact attempts, and clearance.
 These records are inputs for future teacher queries, **not labelled DAgger
 data yet**. The JSON manifest records parent and source hashes, all requested
 cases, episode outcomes, physical-message payload counts, and artifact hashes.
+
+## Local-learning pipeline and first closed-loop results
+
+The complete corrected-interface p5 panel is 15/26 letters at N=12 on the
+enlarged three-wall course (`output/p6_composed_AZ12_20260916`). This is still a
+development course, not the historical nominal single-slit grid.
+
+An isolated candidate planner now receives 78 body-frame features per node:
+handle offset (2), own velocity (2), relative active goal (2), masked heading
+and orientation mask (3), radius-limited lidar (32), attached geometry (32),
+and causal mechanical feedback (5). It uses 78→128→96, GRU(96), 96→64→3
+normalized desired twist, converted to the physical eight-coordinate plan.
+It has 84,771 parameters. No absolute route, waypoint index/list, letter ID,
+or teacher is available at deployment. All nearby obstacles remain in sensing;
+private memory persists at goal switches. Physical GBP and grasp decode are
+the parent implementation. The final-plan interface prevents the old analytic
+planner from silently replacing the newly trained output.
+
+Training-only teacher search proposes paths in (x,theta) slices with continuous
+feasible y intervals, permits retreat, and intersects all supplied slit walls.
+A separate recursive separating-axis motion-bound checker validates continuous
+segments. It uses double precision, not interval arithmetic or a general exact
+algebraic proof. Search exhaustion is resolution/budget-relative; generic
+non-slit obstacle search is not implemented. Force execution respects 15%
+per-handle force reserve and separately certifies every executed transition.
+
+Artifacts and results, all kept out of the public demo:
+
+| Artifact | Meaning |
+| --- | --- |
+| `output/p6_local_dataset_seed20260916` | 214/214 admitted teacher continuations; 22 p5 failure-state queries + 192 procedural cases; 22,226 frames, 307,604 agent-frames |
+| `output/p6_local_train_v1` | 2,000 gradient updates on RTX 5090; not a success claim |
+| `output/p6_local_eval_v1_multiwall` | Learned candidate: 0/5 complete courses |
+| `output/p6_local_train_long_v1` | 20,000 additional updates; 0/5 complete courses in corresponding evaluation |
+| `output/p6_local_dagger_v1b` | 70 actual p6 student-state queries; 66 certified executable continuations, four unadmitted cases retained |
+| `output/p6_local_train_dagger_v2` | Warm-start plus actual-student DAgger, 20,000 additional updates |
+| `output/p6_local_eval_dagger_v2_multiwall` | Still 0/5 complete courses; L completes the first local target |
+| `output/p6_local_eval_dagger_v2_seen` | 1/12 seen-start smoke cases; L's old stalled state recovers; **not generalization evidence** |
+| `output/p6_local_train_collective_v3` | Longer recurrent windows and collective imitation surrogate; separate development candidate |
+
+The DAgger shards retain preceding actual student observations as unlabelled
+recurrent burn-in; their first teacher label is verified to match the exact
+student observation. They are not merely new trajectories from nominal starts.
+The initial `p6_local_dagger_v1` folder is an interrupted JSON serialization
+attempt and is **not a training dataset**. v1b is the complete restart.
+
+Two further audited limitations are important:
+
+1. The first teacher dataset used a 0.04 m parking gate. 90/96 oriented episodes
+   stopped more than 0.03 m from the target, outside the evaluator's stricter
+   tolerance. Its 214/214 means success under that documented teacher gate,
+   **not 214/214 strict task success**. New teacher generation uses a 0.015 m
+   search target region, a 0.020 m execution gate, tighter angle/speed gates,
+   and six stable steps. The old dataset remains unchanged for reproducibility.
+2. Four GBP sweeps do not converge on every attachment tree. In an E/20 teacher
+   replay the tree diameter is five: max next-state coordinate error drops from
+   0.0248481 (four sweeps) to 0.0000218749 (five). This mixes coordinate units
+   and is a diagnostic discrepancy, not a distance metric. p6's explicit
+   `--diameter-rounds` option uses max(parent rounds, tree diameter); actual
+   communication must include the extra sweeps. Public p5 remains unchanged.
+
+The stricter dataset run `output/p6_local_dataset_strict_seed20260917` requests
+24 training letters × seven even counts × four scenarios = 672 cases. It adds
+reverse travel, nearby terminal goals, arbitrary terminal heading, and correctly
+scales the T's physical rectangles (the old glyph-scale field did not resize T).
+S/Z and odd counts remain held out. Failed teachers stay in the manifest.
+
+The longer-window collective candidate v3 also remains 0/5 full courses; it
+does not justify a release. A second actual-student query set,
+`output/p6_local_dagger_v2_strict`, contains 30 distinct visited-state queries
+(26 admitted continuations), with repeated identical stalled states explicitly
+deduplicated. It uses the tightened terminal criteria.
+
+An additional opt-in hypothesis, `goal_residual`, adds a generic body-frame
+proportional goal field and asks the same recurrent network to predict bounded
+detours. A smooth residual envelope vanishes at the complete required goal;
+orientation error can still permit translational retreat. This is neither a
+stored route nor a collision-avoidance guarantee. The first v4 run starts from
+scratch on a recorded partial snapshot of the stricter dataset plus the second
+DAgger set. Its checkpoint explicitly records the changed output semantics;
+the loader rejects silent semantic changes when resuming training. It is an
+unvalidated candidate, not the new public model.
+
+Feature tests cover translation invariance, masked target heading, a joint
+90-degree rotation of local geometry and goals, private recurrence, agent-order
+equivariance, and the goal-residual zero equilibrium. They do not establish
+closed-loop maze success. The certificate tests include a path with safe
+endpoints but an intervening wall, which sampled endpoint checking misses.
+
+These experiments have **not** passed the p6 release gate. In particular,
+successful teachers, lower fit loss, and one recovered L case do not establish
+robust skill composition. Next gates are strict teacher completion, fresh
+model-induced recovery data, unchanged-parent regression, and held-out closed
+loops, before replacing the p5 demo.

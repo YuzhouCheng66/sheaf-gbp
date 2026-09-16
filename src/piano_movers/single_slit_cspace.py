@@ -36,12 +36,21 @@ def build_slice_field(
     theta_bins: int,
     slab_half_thickness: float,
     world_y: float,
+    x_values: np.ndarray | None = None,
+    theta_values: np.ndarray | None = None,
 ) -> SliceField:
     rectangles = np.asarray(rectangles, dtype=np.float64)
     if rectangles.ndim != 3 or rectangles.shape[1:] != (4, 2):
         raise ValueError("rectangles must have shape [R,4,2]")
-    x = np.arange(-x_limit, x_limit + 0.25 * x_step, x_step, dtype=np.float64)
-    theta = np.linspace(-math.pi, math.pi, theta_bins, endpoint=False, dtype=np.float64)
+    x = (
+        np.arange(-x_limit, x_limit + 0.25 * x_step, x_step, dtype=np.float64)
+        if x_values is None else np.asarray(x_values, dtype=np.float64)
+    )
+    theta = (
+        np.linspace(-math.pi, math.pi, theta_bins, endpoint=False, dtype=np.float64)
+        if theta_values is None else np.asarray(theta_values, dtype=np.float64)
+    )
+    theta_bins = len(theta)
     nx = len(x)
     slice_min = np.full((nx, theta_bins), np.inf, dtype=np.float32)
     slice_max = np.full((nx, theta_bins), -np.inf, dtype=np.float32)
