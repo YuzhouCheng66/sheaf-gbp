@@ -122,11 +122,14 @@ verified zero-shot at **1/1 success**, **0 contact events**, and **0 exact
 penetrations**. This demonstrates waypoint-conditioned skill composition; it
 does not claim that the present checkpoint builds a map or discovers the route.
 
-The same frozen checkpoint was also run once on every exact A–Z block glyph in
-that course. It completed **18/26 shapes (69.23%)** with **0 exact
-penetrations**: `C E F I J K L M N O P R S T V W X Y`. The unresolved set is
-`A B D G H Q U Z`; it remains selectable in the demo so failures are inspectable
-rather than hidden. The complete nominal manifest is
+Intermediate waypoints constrain position only; only the final target requires
+a stationary SE(2) pose. Non-T glyphs use a harder large-letter OOD profile:
+each is enlarged until its best heading on the online planner's 72-heading grid
+has a `0.648 m` span inside the `0.660 m` physical opening. The same frozen
+checkpoint completes **9/26 shapes (34.62%)** with **0 exact penetrations**:
+`H N R S T V W X Y`. This lower number replaces the earlier small-glyph audit;
+it exposes the next planner-training problem rather than hiding it. The complete
+nominal manifest is
 [`assets/multi_wall_a_z_12agent_audit.json`](assets/multi_wall_a_z_12agent_audit.json).
 
 To create p5 from its admitted p4 parent without modifying any tensor:

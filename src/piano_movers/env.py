@@ -326,6 +326,7 @@ def _cached_glyph_contact_points(
     payload_shape: str,
     n_agents: int,
     communication_radius_m: float,
+    glyph_scale: float,
     device_name: str,
 ) -> Tensor:
     """Cache immutable exact glyph handles on their deployment device."""
@@ -334,6 +335,7 @@ def _cached_glyph_contact_points(
         payload_shape,
         n_agents,
         communication_radius_m=communication_radius_m,
+        glyph_scale=glyph_scale,
     ).to(device=torch.device(device_name))
 
 
@@ -374,6 +376,7 @@ def contact_points(
             config.payload_shape,
             config.n_agents,
             float(config.comm_radius),
+            float(config.glyph_scale),
             str(resolved_device),
         )
     else:

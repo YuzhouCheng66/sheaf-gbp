@@ -46,6 +46,10 @@ class EnvConfig:
     t_total_height_m: float = 0.9185
     t_stem_width_m: float = 0.220
     t_cap_thickness_m: float = 0.2035
+    # Optional isotropic scale for the coherent A-Z glyph family.  One keeps
+    # every historical checkpoint and audit bit-for-bit unchanged.  The
+    # multi-wall demo uses an explicit geometry-derived OOD scale.
+    glyph_scale: float = 1.0
     dt: float = 0.08
     mass: float = 4.0
     inertia: float = 1.35
@@ -102,6 +106,8 @@ class EnvConfig:
             stem_width_m=self.t_stem_width_m,
             cap_thickness_m=self.t_cap_thickness_m,
         ).validate()
+        if not math.isfinite(self.glyph_scale) or self.glyph_scale <= 0.0:
+            raise ValueError("glyph_scale must be positive and finite")
         if self.handle_layout not in HANDLE_LAYOUTS:
             raise ValueError(
                 f"handle_layout must be one of {HANDLE_LAYOUTS}, got {self.handle_layout!r}"

@@ -64,6 +64,7 @@ class _TMorphologyConfig(Protocol):
     t_total_height_m: float
     t_stem_width_m: float
     t_cap_thickness_m: float
+    glyph_scale: float
 
 
 def t_morphology_from_config(config: _TMorphologyConfig) -> TMorphology:
@@ -143,11 +144,12 @@ def payload_rectangles_for_config(
         normalized in LETTER_PAYLOAD_SHAPES
         and getattr(config, "handle_layout", None) == "glyph-boundary-v4"
     ):
-        return torch.tensor(
+        rectangles = torch.tensor(
             _glyph_segment_rectangles(normalized),
             dtype=torch.float32,
             device=device,
         )
+        return rectangles * float(getattr(config, "glyph_scale", 1.0))
     return payload_shape_rectangles(normalized, device)
 
 
@@ -285,6 +287,7 @@ def glyph_boundary_handle_points(
     n_agents: int,
     *,
     communication_radius_m: float,
+    glyph_scale: float = 1.0,
 ) -> Tensor:
     """Generate deterministic, connected handles on the exact union boundary."""
 
@@ -295,8 +298,13 @@ def glyph_boundary_handle_points(
         raise ValueError("glyph handles support every integer N in [8,20]")
     if not math.isfinite(communication_radius_m) or communication_radius_m <= 0.0:
         raise ValueError("communication radius must be positive and finite")
+    if not math.isfinite(glyph_scale) or glyph_scale <= 0.0:
+        raise ValueError("glyph_scale must be positive and finite")
 
-    rectangles = payload_shape_rectangles(normalized, "cpu").to(torch.float64)
+    rectangles = (
+        payload_shape_rectangles(normalized, "cpu").to(torch.float64)
+        * glyph_scale
+    )
     samples_per_edge = 65
     fraction = torch.linspace(0.0, 1.0, samples_per_edge, dtype=torch.float64)
     candidates: list[Tensor] = []

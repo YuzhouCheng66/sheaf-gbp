@@ -14,7 +14,10 @@ from piano_movers.multi_waypoint_demo import (
     _active_observation_scenario,
     _course_config,
     _full_collision_scenario,
+    _intermediate_reached,
+    _large_glyph_scale,
 )
+from piano_movers.payload_shapes import payload_rectangles_for_config
 from piano_movers.single_slit_feedback import single_slit_env_config
 
 
@@ -72,6 +75,29 @@ def test_non_t_letter_uses_exact_glyph_geometry_and_boundary_handles() -> None:
     )
     assert cfg.payload_shape == "X"
     assert cfg.handle_layout == HANDLE_LAYOUT_GLYPH_BOUNDARY_V4
+    assert cfg.glyph_scale > 1.0
+
+
+def test_large_glyph_profile_has_a_tight_representable_passage_heading() -> None:
+    cfg = _course_config(
+        single_slit_env_config(), 12, DEFAULT_COURSE, payload_shape="X"
+    )
+    rectangles = payload_rectangles_for_config(cfg, "cpu").to(torch.float64)
+    vertices = rectangles.reshape(-1, 2)
+    angles = torch.arange(72, dtype=torch.float64) * (2.0 * torch.pi / 72.0)
+    projected_y = (
+        torch.sin(angles)[:, None] * vertices[None, :, 0]
+        + torch.cos(angles)[:, None] * vertices[None, :, 1]
+    )
+    minimum_span = (projected_y.amax(dim=-1) - projected_y.amin(dim=-1)).amin()
+    assert float(minimum_span) == pytest.approx(0.648, abs=1.0e-6)
+    assert cfg.glyph_scale == pytest.approx(_large_glyph_scale("X"))
+
+
+def test_intermediate_waypoint_ignores_heading() -> None:
+    waypoint = (0.63, 0.17, 0.0)
+    state = torch.tensor([[0.63, 0.17, 2.7, 0.0, 0.0, 0.0]])
+    assert _intermediate_reached(state, waypoint)
 
 
 def test_page_labels_route_as_waypoints_without_claiming_mapping() -> None:
@@ -79,5 +105,7 @@ def test_page_labels_route_as_waypoints_without_claiming_mapping() -> None:
     assert "Multi-wall waypoint" in INDEX_HTML
     assert 'id="shape"' in INDEX_HTML
     assert "shape='+encodeURIComponent(shape.value)" in INDEX_HTML
+    assert "function finalPose()" in INDEX_HTML
+    assert "ctx.setLineDash([4,6])" in INDEX_HTML
     assert "mapping" not in INDEX_HTML.lower()
     assert "global planning" not in INDEX_HTML.lower()

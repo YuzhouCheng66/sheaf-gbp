@@ -31,7 +31,11 @@ from .config import (
 from .env import PianoBatch, contact_points, radius_edges
 from .gbp import GBPMessageTrace, homogeneous_topology
 from .models import SheafGBPPolicy
-from .payload_shapes import LETTER_PAYLOAD_SHAPES, payload_rectangles_for_config
+from .payload_shapes import (
+    LETTER_PAYLOAD_SHAPES,
+    payload_rectangles_for_config,
+    payload_shape_rectangles,
+)
 from .single_slit_0720_eval import (
     STRICT_STABLE_STEPS,
     load_single_slit_checkpoint,
@@ -52,7 +56,7 @@ MIN_N_AGENTS = 8
 MAX_N_AGENTS = 20
 HORIZON = 1_100
 INTERMEDIATE_POSITION_TOLERANCE_M = 0.14
-INTERMEDIATE_ANGLE_TOLERANCE_RAD = 0.22
+LARGE_GLYPH_PASSAGE_SPAN_M = 0.648
 
 
 @dataclass(frozen=True)
@@ -120,6 +124,31 @@ def _traceable_policy(policy) -> SheafGBPPolicy:
     return target
 
 
+def _large_glyph_scale(payload_shape: str) -> float:
+    """Scale one letter to a tight orientation the online planner can represent.
+
+    The planner searches 72 passage headings.  We evaluate those same
+    headings on the exact union vertices and enlarge the glyph until its best
+    represented projection is 0.648 m.  The exact wall model leaves 0.660 m
+    of physical opening, so the witness retains 6 mm per side.
+    """
+
+    shape = payload_shape.strip().upper()
+    if shape == "T":
+        return 1.0
+    rectangles = payload_shape_rectangles(shape, "cpu").to(torch.float64)
+    vertices = rectangles.reshape(-1, 2)
+    angles = torch.arange(72, dtype=torch.float64) * (2.0 * torch.pi / 72.0)
+    sine = torch.sin(angles)
+    cosine = torch.cos(angles)
+    projected_y = (
+        sine[:, None] * vertices[None, :, 0]
+        + cosine[:, None] * vertices[None, :, 1]
+    )
+    minimum_span = (projected_y.amax(dim=-1) - projected_y.amin(dim=-1)).amin()
+    return max(1.0, LARGE_GLYPH_PASSAGE_SPAN_M / float(minimum_span))
+
+
 def _bind_geometry(policy, cfg: EnvConfig) -> None:
     target = _traceable_policy(policy)
     target.bind_environment(cfg)
@@ -134,6 +163,7 @@ def _set_active_goal_without_rebinding(policy, cfg: EnvConfig) -> None:
         "n_agents",
         "handle_layout",
         "payload_shape",
+        "glyph_scale",
         "t_total_width_m",
         "t_total_height_m",
         "t_stem_width_m",
@@ -165,6 +195,7 @@ def _course_config(
             else HANDLE_LAYOUT_GLYPH_BOUNDARY_V4
         ),
         payload_shape=shape,
+        glyph_scale=_large_glyph_scale(shape),
         t_total_width_m=0.930,
         t_total_height_m=0.920,
         t_stem_width_m=0.160,
@@ -227,14 +258,11 @@ def _active_observation_scenario(
 def _intermediate_reached(state: Tensor, waypoint: tuple[float, float, float]) -> bool:
     target = state.new_tensor(waypoint)
     position_error = torch.linalg.vector_norm(state[0, :2] - target[:2])
-    angle_error = torch.atan2(
-        torch.sin(state[0, 2] - target[2]),
-        torch.cos(state[0, 2] - target[2]),
-    ).abs()
-    return bool(
-        (position_error <= INTERMEDIATE_POSITION_TOLERANCE_M)
-        & (angle_error <= INTERMEDIATE_ANGLE_TOLERANCE_RAD)
-    )
+    # Intermediate route inputs are 2-D points, not poses.  A payload may
+    # leave a narrow slit in any safe passage heading, and the next local
+    # skill invocation replans from that observed heading.  Only the final
+    # target below is checked as a stationary SE(2) pose.
+    return bool(position_error <= INTERMEDIATE_POSITION_TOLERANCE_M)
 
 
 class MultiWaypointEngine:
@@ -293,6 +321,7 @@ class MultiWaypointEngine:
             "schema": "piano-movers.multi-wall-waypoint-demo.v1",
             "checkpoint_sha256": self.loaded.checkpoint_sha256,
             "payload_shape": shape,
+            "glyph_scale": cfg.glyph_scale,
             "n_agents": n_agents,
             "dt": cfg.dt,
             "world": {"x": self.course.world_x, "y": self.course.world_y, "wall_half_width": cfg.wall_slab},
@@ -451,11 +480,12 @@ function poly(points,state){ctx.beginPath();points.forEach((p,i)=>{const z=S(...
 function background(){const g=ctx.createLinearGradient(0,0,innerWidth,innerHeight);g.addColorStop(0,'#eeeeec');g.addColorStop(.48,'#d8d8d5');g.addColorStop(1,'#eeeeeb');ctx.fillStyle=g;ctx.fillRect(0,0,innerWidth,innerHeight);ctx.save();ctx.globalAlpha=.10;ctx.strokeStyle='#3c3c3c';ctx.lineWidth=1;for(let i=0;i<9;i++){ctx.beginPath();for(let x=0;x<=innerWidth;x+=18){let y=innerHeight*(.16+.085*i)+Math.sin(x*.006+i*.72)*20;if(!x)ctx.moveTo(x,y);else ctx.lineTo(x,y)}ctx.stroke()}ctx.restore()}
 function walls(){if(!header)return;ctx.fillStyle='#2e2e2d';for(const w of header.walls){const x0=S(w.x-header.world.wall_half_width,0)[0],x1=S(w.x+header.world.wall_half_width,0)[0],top=S(0,w.gap_y+w.aperture_m/2)[1],bottom=S(0,w.gap_y-w.aperture_m/2)[1];ctx.fillRect(x0,0,x1-x0,top);ctx.fillRect(x0,bottom,x1-x0,innerHeight-bottom)}}
 function route(){if(!header)return;const pts=[header.source,...header.waypoints];ctx.save();ctx.strokeStyle='rgba(45,45,45,.18)';ctx.setLineDash([3,8]);ctx.lineWidth=1.2;ctx.beginPath();pts.forEach((p,i)=>{const z=S(p[0],p[1]);i?ctx.lineTo(...z):ctx.moveTo(...z)});ctx.stroke();ctx.setLineDash([]);const j=frameIndex(),k=j>=0?frames[j].waypoint_index:0;header.waypoints.forEach((p,i)=>{const z=S(p[0],p[1]);ctx.beginPath();ctx.arc(z[0],z[1],i===k?7:4,0,Math.PI*2);ctx.fillStyle=i<k?'rgba(30,30,30,.20)':i===k?'rgba(25,25,25,.72)':'rgba(30,30,30,.24)';ctx.fill()});ctx.restore()}
+function finalPose(){if(!header)return;const goal=header.waypoints[header.waypoints.length-1];ctx.save();ctx.setLineDash([4,6]);ctx.lineWidth=1.25;ctx.strokeStyle='rgba(35,35,35,.42)';ctx.shadowColor='rgba(250,250,246,.60)';ctx.shadowBlur=5;for(const r of header.body_rects){poly(r,goal);ctx.stroke()}ctx.restore()}
 function body(state){if(!header)return;ctx.save();ctx.fillStyle='#555553';ctx.strokeStyle='#202020';ctx.lineWidth=1.1;ctx.shadowColor='rgba(0,0,0,.24)';ctx.shadowBlur=8;for(const r of header.body_rects){poly(r,state);ctx.fill();ctx.stroke()}ctx.restore()}
 function ant(point,state,i){const p=S(...transform(point,state)),a=state[2]+(i%2?Math.PI/2:-Math.PI/2);ctx.save();ctx.translate(...p);ctx.rotate(a);ctx.fillStyle='#1e1e1d';ctx.strokeStyle='#1e1e1d';ctx.lineWidth=1;ctx.beginPath();ctx.ellipse(-3,0,3.5,2.5,0,0,Math.PI*2);ctx.ellipse(2,0,2.5,2,0,0,Math.PI*2);ctx.fill();for(const y of[-1,1])for(const x of[-1,2]){ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-3,y*4);ctx.stroke()}ctx.restore()}
 function packet(a,b,t,str,bend){const c=[(a[0]+b[0])/2+(bend?.08:-.08)*(b[1]-a[1]),(a[1]+b[1])/2+(bend?.08:-.08)*(a[0]-b[0])],u=1-Math.pow(1-t,2),x=(1-u)*(1-u)*a[0]+2*(1-u)*u*c[0]+u*u*b[0],y=(1-u)*(1-u)*a[1]+2*(1-u)*u*c[1]+u*u*b[1];ctx.save();ctx.globalAlpha=.16+.42*str;ctx.strokeStyle='#4b4b4a';ctx.shadowColor='#f4f4ef';ctx.shadowBlur=13;ctx.lineWidth=.7+1.5*str;ctx.beginPath();ctx.moveTo(...a);ctx.quadraticCurveTo(...c,...b);ctx.stroke();ctx.translate(x,y);ctx.rotate(Math.atan2(b[1]-c[1],b[0]-c[0]));ctx.fillStyle='#292928';ctx.beginPath();ctx.moveTo(6,0);ctx.lineTo(-3,-3);ctx.lineTo(-1,0);ctx.lineTo(-3,3);ctx.closePath();ctx.fill();ctx.restore()}
 function messages(state){if(!header||!frames.length||timeline<=0)return;const i=frameIndex(),f=frames[i],phase=Math.max(0,timeline-i),s=Math.min(f.intensity.length-1,Math.floor(phase*f.intensity.length)),t=(phase*f.intensity.length)%1,vals=f.intensity[s],sorted=[...vals].sort((a,b)=>a-b),den=sorted[Math.floor(sorted.length*.86)]||1,pts=header.handles.map(p=>S(...transform(p,state)));for(let m=0;m<header.sender.length;m++)packet(pts[header.sender[m]],pts[header.receiver[m]],t,Math.max(.08,Math.min(1,Math.sqrt((vals[m]||0)/den))),m%2)}
-function draw(){background();route();walls();if(!header)return;const s=pose();body(s);header.handles.forEach((p,i)=>ant(p,s,i));messages(s)}
+function draw(){background();route();walls();if(!header)return;finalPose();const s=pose();body(s);header.handles.forEach((p,i)=>ant(p,s,i));messages(s)}
 async function prepare(){generation++;const mine=generation;if(aborter)aborter.abort();aborter=new AbortController();header=null;frames=[];done=null;timeline=0;playing=false;setIcon();statusEl.textContent='';draw();try{const res=await fetch('/api/stream?shape='+encodeURIComponent(shape.value)+'&agents='+agents.value,{signal:aborter.signal});if(!res.ok)throw Error(await res.text());const reader=res.body.getReader(),decoder=new TextDecoder();let pending='';while(true){const q=await reader.read();if(q.done)break;pending+=decoder.decode(q.value,{stream:true});let cut;while((cut=pending.indexOf('\n'))>=0){const line=pending.slice(0,cut).trim();pending=pending.slice(cut+1);if(!line)continue;const e=JSON.parse(line);if(mine!==generation)return;if(e.type==='header'){header=e;draw()}else if(e.type==='frame')frames.push(e);else if(e.type==='done')done=e}}}catch(e){if(e.name!=='AbortError')statusEl.textContent='error'}}
 function setIcon(){playIcon.innerHTML=playing?'<path d="M8 7v10M16 7v10"/>':'<path d="M9 6.5 17 12l-8 5.5Z" fill="currentColor" stroke="none"/>'}
 function toggle(){if(!frames.length)return;playing=!playing;setIcon();lastTime=performance.now();if(playing)requestAnimationFrame(tick)}
