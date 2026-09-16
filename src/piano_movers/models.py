@@ -1916,6 +1916,11 @@ class SheafGBPPolicy(BasePolicy):
                         arm_cfg.local_se2_markov_shape_hidden_dim,
                         layers=arm_cfg.local_se2_markov_shape_layers,
                     )
+                    if arm_cfg.local_se2_markov_goal_context:
+                        self.local_se2_markov_goal_projection = nn.Linear(
+                            4, arm_cfg.local_se2_markov_shape_hidden_dim, bias=False,
+                        )
+                        nn.init.zeros_(self.local_se2_markov_goal_projection.weight)
                     self.local_se2_markov_shape_mean_head = nn.Linear(
                         arm_cfg.local_se2_markov_shape_hidden_dim,
                         arm_cfg.local_se2_plan_dim,
@@ -3987,6 +3992,46 @@ class SheafGBPPolicy(BasePolicy):
             raise RuntimeError("Markov shape planner input width changed")
         return result
 
+    def local_se2_markov_goal_features(self, features: Tensor) -> Tensor:
+        """Existing active mission command, expressed in each node's own frame.
+
+        These four values are private inputs, not extra GBP coordinates. The
+        original geometry controller already receives the same goal fields.
+        No target index, next target, shape label or route is consumed.
+        """
+        if features.shape[-1] != self.local_se2_markov_shape_encoder[0].in_features:
+            raise ValueError("goal context requires the original morphology features")
+        required = float(self.env_cfg.goal_orientation_required)
+        goal_angle = features.new_tensor(self.env_cfg.goal_theta)
+        current_sine, current_cosine = features[..., 0], features[..., 1]
+        return torch.stack((
+            float(self.env_cfg.goal_y / self.env_cfg.world_y) - features[..., 3],
+            required * (goal_angle.sin() * current_cosine - goal_angle.cos() * current_sine),
+            required * (goal_angle.cos() * current_cosine + goal_angle.sin() * current_sine),
+            torch.full_like(current_sine, 2. * required - 1.),
+        ), dim=-1)
+
+    def local_se2_markov_shape_encode(self, features: Tensor, goal_context: Tensor | None = None) -> Tensor:
+        """Same original MLP, with an optional partitioned first affine input.
+
+        W*f + V*g + b is equivalent to appending four input columns. Keeping
+        W's GEMM unchanged and selecting its exact result at V*g == 0 avoids
+        bridge-time rounding drift while retaining a live gradient for V.
+        """
+        if not self.arm_cfg.local_se2_markov_goal_context:
+            return self.local_se2_markov_shape_encoder(features)
+        command = self.local_se2_markov_goal_features(features) if goal_context is None else goal_context
+        if command.shape != (*features.shape[:-1], 4):
+            raise ValueError("goal command context must contain four values per node")
+        base = self.local_se2_markov_shape_encoder[0](features)
+        delta = self.local_se2_markov_goal_projection(command)
+        proposed = base + delta
+        exact = torch.where(delta != 0., proposed, base)
+        hidden = _forward_exact_backward_proposed(exact, proposed)
+        for layer in list(self.local_se2_markov_shape_encoder)[1:]:
+            hidden = layer(hidden)
+        return hidden
+
     def local_se2_noncanonical_geometry_support(
         self, signature: Tensor
     ) -> Tensor:
@@ -4019,7 +4064,7 @@ class SheafGBPPolicy(BasePolicy):
         features = self.local_se2_markov_shape_inputs_from_planner_inputs(
             planner_inputs
         )
-        hidden = self.local_se2_markov_shape_encoder(features)
+        hidden = self.local_se2_markov_shape_encode(features)
         learned_mean = torch.tanh(self.local_se2_markov_shape_mean_head(hidden))
         # Coordinates 6:8 used to be supervised by teacher path progress.
         # A route-free planner must not reproduce that clock.  Replace them

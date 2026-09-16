@@ -286,6 +286,9 @@ def load_single_slit_checkpoint(
         local_se2_markov_shape_planner=bool(
             saved_arm.get("local_se2_markov_shape_planner", False)
         ),
+        local_se2_markov_goal_context=bool(
+            saved_arm.get("local_se2_markov_goal_context", False)
+        ),
         local_se2_markov_shape_hidden_dim=int(
             saved_arm.get("local_se2_markov_shape_hidden_dim", 256)
         ),

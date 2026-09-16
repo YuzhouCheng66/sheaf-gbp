@@ -25,9 +25,22 @@ from piano_movers.multi_waypoint_demo import Slit, WaypointCourse, _course_confi
 from piano_movers.single_slit_0720_eval import load_single_slit_checkpoint
 
 
+def active_anchor_config(base_cfg, course, stage, position_only_control):
+    """Reconstruct only the command actually active in an archived frame."""
+    if not 0 <= stage < len(course.waypoints):
+        raise ValueError("anchor waypoint index outside the archived course")
+    goal = course.waypoints[stage]
+    wall = course.walls[min(stage, len(course.walls) - 1)]
+    return replace(base_cfg, goal_x=goal[0] - wall.x, goal_y=goal[1], goal_theta=goal[2],
+                   goal_orientation_required=(stage == len(course.waypoints) - 1
+                                              or not position_only_control))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--parent", type=Path, required=True)
+    parser.add_argument("--replay-source", type=Path, default=None,
+                        help="Authenticated actor for replay; defaults to initialization checkpoint")
     parser.add_argument("--dataset", type=Path, required=True)
     parser.add_argument("--anchors", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
@@ -36,12 +49,16 @@ def main():
     parser.add_argument("--learning-rate", type=float, default=1e-4)
     parser.add_argument("--anchor-weight", type=float, default=1.)
     parser.add_argument("--seed", type=int, default=7101)
+    parser.add_argument("--trainable-scope", choices=("original_modules", "goal_context_only"),
+                        default="original_modules")
     args = parser.parse_args()
     torch.set_num_threads(1)
     torch.manual_seed(args.seed)
     torch.set_float32_matmul_precision("high")
     parent = load_single_slit_checkpoint(args.parent, device="cpu")
     policy = parent.policy
+    replay = (load_single_slit_checkpoint(args.replay_source, device="cpu")
+              if args.replay_source else parent)
     data, anchors = (json.loads(p.read_text()) for p in (args.dataset, args.anchors))
     if data["status"] != "complete" or not data["split"].startswith("train"):
         raise ValueError("requires completed training data")
@@ -51,13 +68,21 @@ def main():
         "parent_checkpoint_sha256", parent.checkpoint_sha256,
     )
     if (data["parent_checkpoint_sha256"] != root_parent_sha
-            or anchors["checkpoint_sha256"] != parent.checkpoint_sha256):
+            or anchors["checkpoint_sha256"] != replay.checkpoint_sha256):
         raise ValueError("checkpoint lineage mismatch")
+    replay_root_sha = replay.metadata.get("p6_mainline_training", {}).get(
+        "parent_checkpoint_sha256", replay.checkpoint_sha256,
+    )
+    if replay_root_sha != root_parent_sha:
+        raise ValueError("replay actor has a different root checkpoint")
+    if args.trainable_scope == "goal_context_only" and not policy.arm_cfg.local_se2_markov_goal_context:
+        raise ValueError("goal-context-only fit requires an explicitly bridged input interface")
     args.output.mkdir(parents=True, exist_ok=True)
     destination = args.output / "training.json"
     if destination.exists():
         raise FileExistsError(destination)
-    features, targets, anchor_features, anchor_targets = [], [], [], []
+    features, targets, commands = [], [], []
+    anchor_features, anchor_targets, anchor_commands = [], [], []
     teacher_rows = []
     anchor_rows = []
     with torch.no_grad():
@@ -79,6 +104,7 @@ def main():
             if not bool((support > .99999).all()):
                 raise ValueError("teacher scope requires full existing morphology-plan authority")
             features.append(feature.flatten(0, 1))
+            commands.append(policy.local_se2_markov_goal_features(feature).flatten(0, 1))
             targets.append(torch.from_numpy(arrays["target_plan"][:, None, :6]).expand(-1, row["agents"], -1).flatten(0, 1))
             teacher_rows.append(row["case_id"])
         for row in anchors["results"]:
@@ -95,20 +121,33 @@ def main():
             cfg = _course_config(parent.cfg, row["agents"], course, row["shape"])
             if row["options"]["nominal_glyph_size"]:
                 cfg = replace(cfg, glyph_scale=1.)
-            policy.bind_environment(cfg)
-            for start in range(0, len(arrays["state"]), 128):
-                obs = torch.from_numpy(arrays["observation"][start:start + 128])
-                hidden = torch.from_numpy(arrays["private_hidden"][start:start + 128])
-                private = policy.local_se2_base_planner_inputs(obs, hidden)
-                feature = policy.local_se2_markov_shape_inputs_from_planner_inputs(private)
-                mean = policy.local_se2_markov_shape_outputs_from_planner_inputs(private)[0]
-                anchor_features.append(feature.flatten(0, 1))
-                anchor_targets.append(mean[..., :6].flatten(0, 1))
+            # Do not label every replay frame with the first goal. Stage IDs
+            # select preprocessing metadata only; they never enter the model.
+            for stage in np.unique(arrays["waypoint_index"]):
+                active_cfg = active_anchor_config(cfg, course, int(stage), row["options"]["position_only_control"])
+                policy.bind_environment(active_cfg)
+                replay.policy.bind_environment(active_cfg)
+                indices = np.flatnonzero(arrays["waypoint_index"] == stage)
+                for start in range(0, len(indices), 128):
+                    selected = indices[start:start + 128]
+                    obs = torch.from_numpy(arrays["observation"][selected])
+                    hidden = torch.from_numpy(arrays["private_hidden"][selected])
+                    private = replay.policy.local_se2_base_planner_inputs(obs, hidden)
+                    feature = policy.local_se2_markov_shape_inputs_from_planner_inputs(private)
+                    mean = replay.policy.local_se2_markov_shape_outputs_from_planner_inputs(private)[0]
+                    anchor_features.append(feature.flatten(0, 1))
+                    anchor_commands.append(policy.local_se2_markov_goal_features(feature).flatten(0, 1))
+                    anchor_targets.append(mean[..., :6].flatten(0, 1))
             anchor_rows.append({"shape": row["shape"], "agents": row["agents"], "trace_sha256": row["trace_sha256"]})
     if not features or not anchor_features:
         raise ValueError("empty teacher or function-preserving anchor data")
-    x, y, ax, ay = (torch.cat(v).cuda() for v in (features, targets, anchor_features, anchor_targets))
-    names = [name for name, _ in policy.named_parameters() if name.startswith(("local_se2_markov_shape_encoder.", "local_se2_markov_shape_mean_head."))]
+    x, y, g, ax, ay, ag = (torch.cat(v).cuda() for v in (
+        features, targets, commands, anchor_features, anchor_targets, anchor_commands,
+    ))
+    prefixes = (("local_se2_markov_goal_projection.",) if args.trainable_scope == "goal_context_only"
+                else ("local_se2_markov_shape_encoder.", "local_se2_markov_shape_mean_head.",
+                      "local_se2_markov_goal_projection."))
+    names = [name for name, _ in policy.named_parameters() if name.startswith(prefixes)]
     frozen = {k: v.clone() for k, v in policy.state_dict().items() if k not in names}
     for name, p in policy.named_parameters():
         p.requires_grad_(name in names)
@@ -118,6 +157,7 @@ def main():
         "schema": "piano-movers.original-markov-dagger-training.v1", "status": "running",
         "parent_checkpoint_sha256": root_parent_sha,
         "initial_checkpoint_sha256": parent.checkpoint_sha256,
+        "replay_source_checkpoint_sha256": replay.checkpoint_sha256,
         "initialization_from_previous_mainline": parent.checkpoint_sha256 != root_parent_sha,
         "dataset_sha256": sha256(args.dataset), "anchors_sha256": sha256(args.anchors),
         "teacher_rows": teacher_rows, "anchor_rows": anchor_rows,
@@ -125,6 +165,9 @@ def main():
         "trainable_parameter_names": names,
         "trainable_parameters": sum(p.numel() for p in policy.parameters() if p.requires_grad),
         "arm_cfg_unchanged": True, "observation_dim": 27,
+        "trainable_scope": args.trainable_scope,
+        "private_goal_command_dim": 4 if policy.arm_cfg.local_se2_markov_goal_context else 0,
+        "replay_commands_reconstructed_per_active_stage": True,
         "objective": "private_plan_imitation_plus_source_function_replay",
         "downstream_analytic_overrides_unchanged": True,
         "step_requested": args.steps, "batch_size": args.batch_size,
@@ -137,14 +180,15 @@ def main():
     write_json(args.output / "dataset_snapshot.json", data)
     started = time.monotonic()
 
-    def predict(batch):
-        return torch.tanh(policy.local_se2_markov_shape_mean_head(policy.local_se2_markov_shape_encoder(batch)))[..., :6]
+    def predict(batch, command):
+        encoded = policy.local_se2_markov_shape_encode(batch, goal_context=command)
+        return torch.tanh(policy.local_se2_markov_shape_mean_head(encoded))[..., :6]
 
     for step in range(1, args.steps + 1):
         index = torch.randint(len(x), (args.batch_size,), device=x.device)
         anchor_index = torch.randint(len(ax), (args.batch_size,), device=x.device)
-        fit = F.smooth_l1_loss(predict(x[index]), y[index], beta=.05)
-        preserve = F.smooth_l1_loss(predict(ax[anchor_index]), ay[anchor_index], beta=.05)
+        fit = F.smooth_l1_loss(predict(x[index], g[index]), y[index], beta=.05)
+        preserve = F.smooth_l1_loss(predict(ax[anchor_index], ag[anchor_index]), ay[anchor_index], beta=.05)
         loss = fit + args.anchor_weight * preserve
         optimizer.zero_grad(set_to_none=True)
         loss.backward()

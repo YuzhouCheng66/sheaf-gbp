@@ -25,10 +25,10 @@
     "enlarged_three_wall_AZ_8_to_20_332_of_338": "output/p6_mainline_v2_screened_all_counts/manifest.json",
     "same_weights_T10_interface_control": "output/p6_mainline_v2_screened_T10_control/manifest.json",
     "three_wall_T_all_counts": "output/p6_mainline_v2_screened_T_allcounts/manifest.json",
-    "three_wall_AZ12": "output/p6_mainline_v2_screened_AZ12/manifest.json"
+    "three_wall_AZ12": "output/p6_mainline_v2_screened_AZ12/manifest.json",
+    "nominal_single_slit_AZ_8_to_20_338_of_338": "output/p6_mainline_v2_screened_nominal_all_counts/manifest.json"
   },
   "not_yet_validated": [
-    "screened_recipe_uniform_nominal_AZ_regression",
     "multiple_fresh_entry_heading_velocity_contact_and_goal_switch_distributions",
     "held_out_layout_and_shape_scale_combinations_crossed_with_all_agent_counts",
     "causal_history_coherence_under_unseen_goal_switches",

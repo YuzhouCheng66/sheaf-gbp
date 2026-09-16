@@ -66,7 +66,9 @@ repairs T/10 and loses none of the original 331 successes. The six D failures
 remain. Its separate recipe is `configs/p6_mainline_candidate_v2_screened.json`;
 it is not silently enabled in the old v2 recipe or public demo. Implementation:
 `72f7b97`; control name `complete_exit_screened`. The uniform nominal regression
-with this exact opt-in recipe is still a separate gate.
+with this exact opt-in recipe has now also passed **338/338**, with all 338
+continuously certified:
+`output/p6_mainline_v2_screened_nominal_all_counts/manifest.json`.
 
 ### Additional authentic-state DAgger, original modules only
 
@@ -120,6 +122,76 @@ The recorded full options/recipe hash enable rejoin screening; those manifests
 retain the runner's old `complete_exit_certified` display label. Subsequent
 runner versions name the screened variant correctly and embed the recipe
 snapshot; the original evidence has not been rewritten.
+
+### Stratified moving/rotated/scaled entry states (development, not test)
+
+An outcome-independent panel now crosses all 26 letters at N=12 with 14
+explicit state profiles: a matched near-wall entry reference; headings
+-180/-135/-90/-45/+45/+90/+135 degrees; forward/backward initial twists;
+two joint heading/twist profiles; and 0.90/1.04 morphology scales. Only the
+large-scale profile widens the 0.720 m aperture to 0.7464 m to preserve the
+known nominal physical-clearance ratio. This is not an outcome-based admission
+filter or a claim that all larger letters fit the original slit. The complete
+hashed catalog is retained, including every failed episode. The course family
+uses development seed 81201; reserved test draws remain untouched.
+
+The locked screened-v2 recipe scores **346/364 (95.05%)**. An isolated,
+default-off **support-alignment sweep** interface check raises this to
+**354/364 (97.25%)**, repairing 8 cases with **zero paired regressions**.
+All 364 trajectories in each arm pass independent continuous certification.
+Both arms use exactly the same v2 weights, neural architecture, GBP and grasp
+decoder. Current-slice containment no longer mistakenly certifies an entire
+rotation at fixed x; an unsafe alignment invokes the already-existing retreat
+branch. This does not insert a new planner or attractor.
+
+| Profile group | Screened v2 | + alignment-sweep check |
+| --- | ---: | ---: |
+| Matched entry reference | 25/26 | 26/26 |
+| Seven discrete entry headings | 174/182 | 176/182 |
+| Forward/backward initial velocity | 48/52 | 52/52 |
+| Two joint heading/velocity profiles | 50/52 | 51/52 |
+| Smaller/larger morphology | 49/52 | 49/52 |
+
+Artifacts: `output/p6_mainline_state_development_81201_all/manifest.json`,
+`output/p6_mainline_swept_state_81201_all/manifest.json`; independent recipe
+`configs/p6_mainline_support_sweep_control.json`. Full-count regression for
+this additional interface control is a separate gate, not yet a promotion.
+
+The remaining failures are three rotated L entries, C/+135 degrees, five X
+entry/scale cases, and B at the larger scale. Authentic-state diagnostics
+separate zero-neural-authority geometric deadlocks from actual neural-plan
+conflicts. For example, the stalled X/joint-positive episode has ten visible
+agents requesting +0.052 rad/s and two wall-invisible agents requesting about
+-1.042 rad/s; the resulting rotation nearly cancels. Counterfactual checks
+show that the **original private neural planner** does not receive the true
+goal y or the goal-orientation-required flag, although its downstream analytic
+controller does. This is an input-interface limitation, not evidence that
+GBP is mathematically wrong or that the whole system ignores the goal.
+
+### Independent minimal goal-command interface control
+
+The original 52-input MLP is retained, with four new private command columns
+in its first affine layer: relative goal y, masked sine/cosine of relative
+goal angle, and an orientation-required indicator. Their 4-to-256 projection
+adds **1,024 parameters**, initialized to zero. Width, depth, all original
+weights, the 8-output head, restrictions, GBP packets and grasp decoder are
+unchanged. No route, letter ID, stage index or future target is a policy input.
+Stage IDs in offline replay only reconstruct the command that was genuinely
+active at that historical frame.
+
+The zero bridge reproduces plan and force **bitwise** on 624 sampled authentic
+states; complete A/B/T/X default-course traces also match every saved array
+bitwise (326/527/858/755 steps). The bridge is thus not a concealed change of
+planner behavior. Artifact: `output/p6_mainline_goal_context_zero` and
+`output/p6_mainline_goal_context_zero_default_parity`.
+
+The first independent fit freezes every original tensor and trains only the
+1,024 command parameters, using 74 admitted real DAgger queries/64,860 agent
+frames and 1,056,776 v2 replay frames. S/Z and odd counts remain excluded.
+10,000 GPU updates take 13.62 seconds after CPU feature preparation. Its
+checkpoint is **not promoted** on loss alone; X-state repair and matched
+regression are being tested. Recipe:
+`configs/p6_mainline_goal_context_only_v1.json`.
 
 ## What changed
 

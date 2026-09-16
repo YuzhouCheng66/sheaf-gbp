@@ -1,0 +1,26 @@
+{
+  "schema": "piano-movers.original-architecture-candidate.v1",
+  "release_status": "independent_goal_input_control_not_public",
+  "checkpoint": "output/p6_mainline_goal_context_only_v1/checkpoint_step10000.pt",
+  "checkpoint_sha256": "d187478277d071f74fa0fb1929337315df451d3b30752f6c2b82c936b2849479",
+  "parent_checkpoint_sha256": "3f4f1529378b08ef8de644564a1acc43f9de56b7d389e55e563fae7538c576a6",
+  "composition_options": {
+    "position_only_control": true,
+    "require_body_clearance": true,
+    "preserve_private_memory": false,
+    "nominal_glyph_size": false,
+    "retain_nearby_wall": false,
+    "preserve_contact_feedback": false,
+    "retain_previous_wall_only": false,
+    "complete_corridor_exit": true,
+    "planning_substeps": 32,
+    "continuous_contact_guard": true,
+    "validate_all_cspace_lookaheads": true,
+    "check_support_alignment_sweep": true
+  },
+  "architecture_replaced": false,
+  "original_v2_tensors_changed": false,
+  "additional_private_goal_inputs": 4,
+  "trainable_parameters": 1024,
+  "control_description": "Same original MLP with four partitioned goal-command input columns. Only the new zero-initialized columns are trained on authentic development DAgger and v2 function replay. No new planner, attractor, GBP message coordinate or grasp decoder."
+}
