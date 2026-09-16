@@ -68,7 +68,8 @@ def main():
     record = {
         "schema": "piano-movers.mainline-layout-validation.v1", "status": "running",
         "split": args.split, "recipe": str(args.recipe.resolve()),
-        "recipe_sha256": sha256(args.recipe), "checkpoint": str(checkpoint),
+        "recipe_sha256": sha256(args.recipe), "recipe_snapshot": recipe,
+        "checkpoint": str(checkpoint),
         "checkpoint_sha256": sha256(checkpoint), "options": asdict(options),
         "catalog_sha256": sha256(catalog_path), "requested_cases": len(cases),
         "source_sha256": {str(p.relative_to(root)): sha256(p) for p in (
@@ -92,7 +93,9 @@ def main():
         end_certificate = certify_pose_path(scene.goal.repeat(2, 1), scene, cfg)
         row = dict(case, initial_pose_certificate=asdict(start_certificate),
                    goal_pose_certificate=asdict(end_certificate),
-                   executable_feasibility="not_queried", variant="complete_exit_certified",
+                   executable_feasibility="not_queried",
+                   variant=("complete_exit_screened" if options.validate_all_cspace_lookaheads
+                            else "complete_exit_certified"),
                    options=asdict(options))
         if not start_certificate.passed or not end_certificate.passed:
             row.update(result={"success": False, "steps": 0,

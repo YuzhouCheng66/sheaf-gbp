@@ -111,6 +111,16 @@ Artifacts: `output/p6_mainline_v3_screened_all_counts`,
 `output/p6_mainline_v4_AZ12`. The screened v2 recipe remains the stronger
 verified reference while additional course and nominal-regression tests run.
 
+Its next predeclared course draw, **82202, gives 104/104** across the four
+families and all A–Z at N=12, all continuously certified. The actual entry
+heading is 0.13271 rad; this still does not establish large-angle or nonzero-
+velocity robustness. Artifact:
+`output/p6_mainline_v2_screened_validation_82202_all/manifest.json`.
+The recorded full options/recipe hash enable rejoin screening; those manifests
+retain the runner's old `complete_exit_certified` display label. Subsequent
+runner versions name the screened variant correctly and embed the recipe
+snapshot; the original evidence has not been rewritten.
+
 ## What changed
 
 The original p5 encoder/private recovery machinery, physical Sheaf-GBP, and
