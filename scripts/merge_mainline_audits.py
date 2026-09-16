@@ -74,6 +74,7 @@ def main():
         record.update(catalog_sha256=None, requested_cases=len(rows))
         record["requested"].update(
             seeds=sorted({r["seed"] for r in rows}), families=sorted({r["family"] for r in rows}),
+            profiles=sorted({r.get("profile", "nominal") for r in rows}),
         )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     write_json(args.output, record)

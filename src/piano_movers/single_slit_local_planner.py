@@ -71,6 +71,41 @@ def _finite_wall_slice_y_bounds(
     return minimum, maximum, intersects
 
 
+def _alignment_sweep_is_safe(
+    rectangles, center_x, center_y, sine, cosine, wall_x, gap_y, gap_half,
+    target_y, target_theta, cfg, *, position_gain, angle_gain, max_speed, max_omega,
+):
+    """Screen the original x-held alignment from the current local pose.
+
+    Containment of the current wall slice is not permission to rotate it.
+    This is only a local candidate screen; the independent continuous-motion
+    environment guard remains authoritative after force allocation and GBP.
+    """
+    samples = cfg.local_cspace_collision_substeps
+    if samples < 1:
+        raise ValueError("alignment sample count must be positive")
+    theta = torch.atan2(sine, cosine)
+    vy = (position_gain * (target_y - center_y)).clamp(-max_speed, max_speed)
+    omega = (angle_gain * wrap_angle(target_theta - theta)).clamp(-max_omega, max_omega)
+    fractions = torch.linspace(1. / samples, 1., samples, device=center_x.device,
+                               dtype=center_x.dtype)
+    x = center_x[..., None].expand(*center_x.shape, samples)
+    y = center_y[..., None] + cfg.dt * vy[..., None] * fractions
+    angles = theta[..., None] + cfg.dt * omega[..., None] * fractions
+    lo, hi, intersects = _finite_wall_slice_y_bounds(
+        rectangles, x, y, angles.sin(), angles.cos(), wall_x[..., None], cfg.wall_slab,
+    )
+    reserve = 2e-6
+    safe = (~intersects) | (
+        (lo >= (gap_y - gap_half)[..., None] + reserve)
+        & (hi <= (gap_y + gap_half)[..., None] - reserve)
+    )
+    vertices = rectangles.reshape(-1, 2)
+    body_y = (angles.sin()[..., None] * vertices[:, 0]
+              + angles.cos()[..., None] * vertices[:, 1] + y[..., None])
+    return (safe & (body_y.abs() < cfg.world_y - reserve).all(-1)).all(-1)
+
+
 def _collision_safe_cspace_targets(
     path: Tensor,
     nearest: Tensor,
@@ -553,7 +588,15 @@ def local_se2_terminal_attractor_plan(
             # capture band after crossing begins, hold x and re-align at the
             # current contained configuration; never command a full retreat
             # merely because that instantaneous heading predicate toggled.
-            shape_rotation_safe = shape_rotation_safe | current_shape_contained
+            contained_alignment_safe = current_shape_contained
+            if cfg.local_support_check_alignment_sweep:
+                contained_alignment_safe = contained_alignment_safe & _alignment_sweep_is_safe(
+                    rectangles, center_x, center_y, sine, cosine, wall_center_x,
+                    gap_center_y, gap_half, shape_target_y, selected_theta, cfg,
+                    position_gain=max(position_gain, 4.), angle_gain=max(angle_gain, 4.),
+                    max_speed=corridor_max_speed, max_omega=max(max_omega, 1.40),
+                )
+            shape_rotation_safe = shape_rotation_safe | contained_alignment_safe
 
             corridor_active = torch.where(shape_active, shape_active, corridor_active)
             corridor_target_y = torch.where(

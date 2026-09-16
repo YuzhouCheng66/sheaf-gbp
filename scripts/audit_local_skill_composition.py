@@ -42,6 +42,10 @@ CONTROLS = {
         complete_corridor_exit=True, planning_substeps=32, continuous_contact_guard=True,
         validate_all_cspace_lookaheads=True,
     ),
+    "complete_exit_swept": SkillCompositionOptions(
+        complete_corridor_exit=True, planning_substeps=32, continuous_contact_guard=True,
+        validate_all_cspace_lookaheads=True, check_support_alignment_sweep=True,
+    ),
     "complete_exit_nearby": SkillCompositionOptions(
         complete_corridor_exit=True, retain_nearby_wall=True,
         preserve_private_memory=True, preserve_contact_feedback=True,

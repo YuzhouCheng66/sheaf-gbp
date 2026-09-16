@@ -76,6 +76,7 @@ class SkillCompositionOptions:
     planning_substeps: int = 4
     continuous_contact_guard: bool = False
     validate_all_cspace_lookaheads: bool = False
+    check_support_alignment_sweep: bool = False
 
 
 @dataclass(frozen=True)
@@ -402,6 +403,7 @@ class MultiWaypointEngine:
         cfg = replace(
             cfg, local_cspace_collision_substeps=self.options.planning_substeps,
             local_cspace_validate_all_lookaheads=self.options.validate_all_cspace_lookaheads,
+            local_support_check_alignment_sweep=self.options.check_support_alignment_sweep,
         )
         _bind_geometry(self.loaded.policy, cfg)
         full_scenario = _full_collision_scenario(self.course, cfg)

@@ -196,3 +196,41 @@ def test_clear_reference_route_does_not_certify_actual_pose_rejoin():
     assert not certify_pose_path(torch.cat((state, old[:1])), scene, cfg).passed
     assert all(certify_pose_path(torch.cat((state, q[None])), scene, cfg).passed for q in checked)
     assert torch.linalg.vector_norm(checked[0, :3] - state[0, :3]) > 1e-6
+
+
+def test_current_slice_containment_does_not_authorize_unsafe_alignment():
+    from piano_movers.local_skill_teacher import certify_pose_path
+    from piano_movers.multi_waypoint_demo import _full_collision_scenario
+
+    for shape, pose in (("C", (-.540483, .19663297, 1.55680227)),
+                        ("O", (-.54985243, .168588, 1.55029309))):
+        cfg = replace(_course_config(single_slit_env_config(), 12, DEFAULT_COURSE, shape),
+                      goal_x=.63, goal_y=.17, goal_orientation_required=False,
+                      local_cspace_collision_substeps=32, complete_local_corridor_exit=True)
+        state = torch.tensor([[*pose, 0., 0., 0.]])
+        scene = _full_collision_scenario(DEFAULT_COURSE, cfg)
+        context = initial_single_slit_contact_observation_context_v1(state, cfg)
+        obs = _composition_observation(DEFAULT_COURSE, state, 1, cfg, context)
+        predicted = []
+        for enabled in (False, True):
+            plan, active = local_se2_terminal_attractor_plan(
+                obs, torch.zeros(1, 12, 8),
+                replace(cfg, local_support_check_alignment_sweep=enabled),
+                position_gain=2., angle_gain=2., max_speed=.35, max_omega=.8,
+                feasible_corridor=True, route_free_geometry=True,
+                corridor_reserve_m=.05, corridor_max_speed=.5,
+            )
+            assert active.all()
+            velocity = .65 * plan[0, :, 3:5]
+            theta = state[0, 2]
+            q = state.repeat(12, 1)
+            q[:, 0] += cfg.dt * (theta.cos() * velocity[:, 0] - theta.sin() * velocity[:, 1])
+            q[:, 1] += cfg.dt * (theta.sin() * velocity[:, 0] + theta.cos() * velocity[:, 1])
+            q[:, 2] += cfg.dt * 1.4 * plan[0, :, 5]
+            predicted.append(q)
+        assert not certify_pose_path(torch.cat((state, predicted[0][:1])), scene, cfg).passed
+        assert all(certify_pose_path(torch.cat((state, q[None])), scene, cfg).passed
+                   for q in predicted[1])
+        # The original safe-entry maneuver backs away; this is not a silent
+        # stop or a new learned mode. Goal and neural outputs are untouched.
+        assert bool((predicted[1][:, 0] < state[0, 0] - .001).all())
