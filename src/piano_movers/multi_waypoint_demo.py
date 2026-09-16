@@ -29,7 +29,7 @@ from .config import (
     EnvConfig,
 )
 from .env import PianoBatch, body_to_world, contact_points, radius_edges
-from .gbp import GBPMessageTrace, homogeneous_topology
+from .gbp import GBPMessageTrace, homogeneous_topology, coordination_tree_diameter
 from .models import SheafGBPPolicy
 from .payload_shapes import (
     LETTER_PAYLOAD_SHAPES,
@@ -78,6 +78,8 @@ class SkillCompositionOptions:
     validate_all_cspace_lookaheads: bool = False
     check_support_alignment_sweep: bool = False
     respect_handoff_goal_region: bool = False
+    cover_coordination_tree_diameter: bool = False
+    geometry_precision_boost_override: float | None = None
 
 
 @dataclass(frozen=True)
@@ -181,6 +183,27 @@ def _large_glyph_scale(payload_shape: str) -> float:
 def _bind_geometry(policy, cfg: EnvConfig) -> None:
     target = _traceable_policy(policy)
     target.bind_environment(cfg)
+
+
+def apply_solver_controls(policy, options: SkillCompositionOptions) -> dict[str, Any]:
+    """Explicit experimental solver controls, with no checkpoint tensor edits."""
+    target = _traceable_policy(policy)
+    if options.geometry_precision_boost_override is not None:
+        value = options.geometry_precision_boost_override
+        if not math.isfinite(value) or value < 1.:
+            raise ValueError("geometry precision boost override must be finite and >=1")
+        target.arm_cfg = replace(target.arm_cfg, local_se2_geometry_evidence_precision_boost=value)
+    diameter = coordination_tree_diameter(target.local_se2_analytic_reference_edges,
+                                          target.local_se2_analytic_tree_edge_mask,
+                                          target.env_cfg.n_agents)
+    steps = target.arm_cfg.gbp_steps
+    if options.cover_coordination_tree_diameter:
+        steps = max(steps, diameter)
+    target.local_se2_analytic_gbp.num_steps = steps
+    return {"rounds": steps, "tree_diameter": diameter,
+            "geometry_precision_boost": target.arm_cfg.local_se2_geometry_evidence_precision_boost,
+            "coordinate_channels_per_message": target.arm_cfg.correction_edge_dim,
+            "wire_floats_per_directed_message": target.communication_floats_per_directed_edge_round()}
 
 
 def _set_active_goal_without_rebinding(policy, cfg: EnvConfig) -> None:
@@ -409,6 +432,7 @@ class MultiWaypointEngine:
                                                if self.options.respect_handoff_goal_region else 0.),
         )
         _bind_geometry(self.loaded.policy, cfg)
+        solver_controls = apply_solver_controls(self.loaded.policy, self.options)
         full_scenario = _full_collision_scenario(self.course, cfg)
         state = full_scenario.state0.clone()
         hidden = self.loaded.policy.init_hidden(1, self.device)
@@ -427,6 +451,7 @@ class MultiWaypointEngine:
             "type": "header",
             "schema": "piano-movers.multi-wall-waypoint-demo.v1",
             "composition_options": asdict(self.options),
+            "solver_controls": solver_controls,
             "checkpoint_sha256": self.loaded.checkpoint_sha256,
             "payload_shape": shape,
             "glyph_scale": cfg.glyph_scale,

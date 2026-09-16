@@ -159,20 +159,37 @@ class Recorder:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--checkpoint", type=Path, required=True)
+    parser.add_argument("--checkpoint", type=Path)
+    parser.add_argument("--recipe", type=Path,
+                        help="Locked checkpoint and composition options; exclusive with --variants.")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--shapes", nargs="+", default=["A", "B", "L", "T", "X"])
     parser.add_argument("--agents", type=int, nargs="+", default=[12])
-    parser.add_argument("--variants", nargs="+", choices=tuple(CONTROLS), default=list(CONTROLS))
+    parser.add_argument("--variants", nargs="+", choices=tuple(CONTROLS))
     parser.add_argument("--device", default="cpu")
     args = parser.parse_args()
-    checkpoint = args.checkpoint.resolve(strict=True)
+    root = Path(__file__).resolve().parents[1]
+    recipe = None
+    controls = CONTROLS
+    if args.recipe is not None:
+        if args.checkpoint is not None or args.variants is not None:
+            parser.error("--recipe is exclusive with --checkpoint and --variants")
+        recipe = json.loads(args.recipe.read_text())
+        checkpoint = (root / recipe["checkpoint"]).resolve(strict=True)
+        if sha256(checkpoint) != recipe["checkpoint_sha256"]:
+            raise ValueError("recipe checkpoint hash mismatch")
+        controls = {"recipe": SkillCompositionOptions(**recipe["composition_options"])}
+        args.variants = ["recipe"]
+    else:
+        if args.checkpoint is None:
+            parser.error("provide --checkpoint or --recipe")
+        checkpoint = args.checkpoint.resolve(strict=True)
+        args.variants = args.variants or list(CONTROLS)
     args.output.mkdir(parents=True, exist_ok=True)
     summary_path = args.output / "manifest.json"
     if summary_path.exists():
         raise FileExistsError(f"Use a fresh output directory: {summary_path}")
     torch.set_num_threads(1)
-    root = Path(__file__).resolve().parents[1]
     record = {
         "schema": "piano-movers.p6-composition-controls.v3",
         "status": "running",
@@ -188,9 +205,12 @@ def main() -> None:
         "requested": {"shapes": args.shapes, "agents": args.agents, "variants": args.variants},
         "results": [],
     }
+    if recipe is not None:
+        record.update(recipe=str(args.recipe.resolve()), recipe_sha256=sha256(args.recipe),
+                      recipe_snapshot=recipe)
     write_json(summary_path, record)
     for variant in args.variants:
-        engine = MultiWaypointEngine(checkpoint, args.device, options=CONTROLS[variant])
+        engine = MultiWaypointEngine(checkpoint, args.device, options=controls[variant])
         for shape in args.shapes:
             for count in args.agents:
                 started = time.monotonic()
@@ -218,7 +238,7 @@ def main() -> None:
                     replace(recorder.last_cfg, device="cpu"),
                 )
                 result = {
-                    "variant": variant, "options": asdict(CONTROLS[variant]),
+                    "variant": variant, "options": asdict(controls[variant]),
                     "shape": shape, "agents": count,
                     "header": header, "result": done, "handoffs": handoffs,
                     "first_rejection": recorder.first_hit,

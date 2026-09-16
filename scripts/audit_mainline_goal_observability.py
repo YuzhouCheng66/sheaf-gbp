@@ -20,6 +20,7 @@ from piano_movers.env import radius_edges
 from piano_movers.multi_waypoint_demo import (
     Slit, WaypointCourse, SkillCompositionOptions, _composition_observation, _course_config,
     INTERMEDIATE_POSITION_TOLERANCE_M,
+    apply_solver_controls,
 )
 from piano_movers.single_slit_0720_eval import load_single_slit_checkpoint
 
@@ -65,6 +66,7 @@ def main():
                   local_corridor_exit_goal_radius_m=(INTERMEDIATE_POSITION_TOLERANCE_M
                                                      if options.respect_handoff_goal_region else 0.))
     parent.policy.bind_environment(cfg)
+    apply_solver_controls(parent.policy, options)
     edges = radius_edges(cfg, device="cpu")
     results = []
     reference = None

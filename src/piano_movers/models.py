@@ -3074,6 +3074,8 @@ class SheafGBPPolicy(BasePolicy):
         return source_floats + 2 * self.arm_cfg.correction_edge_dim
 
     def communication_rounds(self) -> int:
+        if self.arm_cfg.local_se2_distributed_wrench_control and self.local_se2_analytic_gbp is not None:
+            return self.local_se2_analytic_gbp.num_steps
         return self.arm_cfg.gbp_steps
 
     def analytic_restrictions(self, batch: int, device: torch.device | str) -> Tensor:

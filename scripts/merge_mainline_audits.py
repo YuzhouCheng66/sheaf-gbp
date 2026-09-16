@@ -33,9 +33,14 @@ def main():
         for key in invariant:
             if source[key] != record[key]:
                 raise ValueError(f"mixed audit semantics: {key}")
+        if source.get("recipe_sha256") != record.get("recipe_sha256"):
+            raise ValueError("mixed audit recipe hashes")
         if frozen_grid and (source.get("local_cspace_validate_all_lookaheads", False)
                             != record.get("local_cspace_validate_all_lookaheads", False)):
             raise ValueError("mixed nominal rejoin-screen settings")
+        if frozen_grid and (source.get("cover_coordination_tree_diameter", False)
+                            != record.get("cover_coordination_tree_diameter", False)):
+            raise ValueError("mixed nominal solver-budget settings")
         if layout_grid:
             for key in ("recipe_sha256", "options", "initial_velocity", "outcome_based_admission"):
                 if source[key] != record[key]:

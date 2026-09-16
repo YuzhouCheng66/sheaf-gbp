@@ -1,5 +1,10 @@
 # Original-architecture p6 v2: development results
 
+For subsequent complete state-panel results, broader successful-state replay,
+physical-history checks and unchanged-weight GBP budget controls, see
+[the replay and solver audit](p6-original-mainline-replay-and-solver-audit.md).
+Those controls are not automatically promoted to the public demo.
+
 **Not a release or an OOD success claim.** The public p5 demo is unchanged.
 Use the complete candidate recipe in
 [`configs/p6_mainline_candidate_v2.json`](../configs/p6_mainline_candidate_v2.json),

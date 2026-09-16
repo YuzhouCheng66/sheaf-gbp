@@ -11,7 +11,7 @@ import torch
 
 from audit_local_skill_composition import sha256, write_json
 from piano_movers.env import radius_edges
-from piano_movers.multi_waypoint_demo import Slit, WaypointCourse, _course_config, INTERMEDIATE_POSITION_TOLERANCE_M
+from piano_movers.multi_waypoint_demo import Slit, WaypointCourse, _course_config, INTERMEDIATE_POSITION_TOLERANCE_M, SkillCompositionOptions, apply_solver_controls
 from piano_movers.single_slit_0720_eval import load_single_slit_checkpoint
 from train_mainline_skill_dagger import active_anchor_config
 
@@ -62,6 +62,7 @@ def main():
             active = active_anchor_config(cfg, course, int(stage), options["position_only_control"])
             for p in (parent.policy, child.policy):
                 p.bind_environment(active)
+                apply_solver_controls(p, SkillCompositionOptions(**options))
             indices = np.flatnonzero(arrays["waypoint_index"] == stage)
             for ix in sorted(set(np.linspace(0, len(indices) - 1, 3, dtype=int))):
                 tick = int(indices[ix])

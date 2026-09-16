@@ -36,6 +36,34 @@ def active_anchor_config(base_cfg, course, stage, position_only_control):
                                               or not position_only_control))
 
 
+def admitted_anchor_rows(paths, actor_sha):
+    """Authenticate successful development replay, preserving held-out splits."""
+    sources, rows, seen = [], [], set()
+    for path in paths:
+        manifest = json.loads(path.read_text())
+        if manifest["status"] != "complete" or manifest["split"] != "development_diagnostics":
+            raise ValueError("anchors must be complete development data, not held-out evaluation")
+        if manifest["checkpoint_sha256"] != actor_sha:
+            raise ValueError("anchor actor checkpoint mismatch")
+        provenance = {"path": str(path.resolve()), "sha256": sha256(path),
+                      "selected_episodes": 0, "excluded_heldout_or_unsuccessful": 0,
+                      "duplicate_traces_skipped": 0}
+        for row in manifest["results"]:
+            if not row["result"]["success"] or row["shape"] in ("S", "Z") or row["agents"] % 2:
+                provenance["excluded_heldout_or_unsuccessful"] += 1
+                continue
+            if not row.get("continuous_certificate", {}).get("passed", False):
+                raise ValueError("successful replay requires independent continuous certification")
+            if row["trace_sha256"] in seen:
+                provenance["duplicate_traces_skipped"] += 1
+                continue
+            seen.add(row["trace_sha256"])
+            provenance["selected_episodes"] += 1
+            rows.append((path, provenance["sha256"], row))
+        sources.append(provenance)
+    return sources, rows
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--parent", type=Path, required=True)
@@ -43,6 +71,8 @@ def main():
                         help="Authenticated actor for replay; defaults to initialization checkpoint")
     parser.add_argument("--dataset", type=Path, required=True)
     parser.add_argument("--anchors", type=Path, required=True)
+    parser.add_argument("--extra-anchors", type=Path, action="append", default=[],
+                        help="Additional completed success replay from the same source actor")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--steps", type=int, default=5000)
     parser.add_argument("--batch-size", type=int, default=512)
@@ -59,16 +89,14 @@ def main():
     policy = parent.policy
     replay = (load_single_slit_checkpoint(args.replay_source, device="cpu")
               if args.replay_source else parent)
-    data, anchors = (json.loads(p.read_text()) for p in (args.dataset, args.anchors))
+    data = json.loads(args.dataset.read_text())
     if data["status"] != "complete" or not data["split"].startswith("train"):
         raise ValueError("requires completed training data")
-    if anchors["status"] != "complete" or anchors["split"] != "development_diagnostics":
-        raise ValueError("anchors must be disclosed development data, not held-out evaluation")
+    anchor_sources, replay_rows = admitted_anchor_rows([args.anchors, *args.extra_anchors], replay.checkpoint_sha256)
     root_parent_sha = parent.metadata.get("p6_mainline_training", {}).get(
         "parent_checkpoint_sha256", parent.checkpoint_sha256,
     )
-    if (data["parent_checkpoint_sha256"] != root_parent_sha
-            or anchors["checkpoint_sha256"] != replay.checkpoint_sha256):
+    if data["parent_checkpoint_sha256"] != root_parent_sha:
         raise ValueError("checkpoint lineage mismatch")
     replay_root_sha = replay.metadata.get("p6_mainline_training", {}).get(
         "parent_checkpoint_sha256", replay.checkpoint_sha256,
@@ -107,10 +135,9 @@ def main():
             commands.append(policy.local_se2_markov_goal_features(feature).flatten(0, 1))
             targets.append(torch.from_numpy(arrays["target_plan"][:, None, :6]).expand(-1, row["agents"], -1).flatten(0, 1))
             teacher_rows.append(row["case_id"])
-        for row in anchors["results"]:
-            if not row["result"]["success"] or row["shape"] in ("S", "Z") or row["agents"] % 2:
-                continue
-            path = args.anchors.parent / row["trace"]
+        print(json.dumps({"preparation": "teachers_complete", "queries": len(teacher_rows)}), flush=True)
+        for anchor_manifest, manifest_sha, row in replay_rows:
+            path = anchor_manifest.parent / row["trace"]
             if sha256(path) != row["trace_sha256"]:
                 raise ValueError("anchor trace hash mismatch")
             arrays = np.load(path)
@@ -138,7 +165,12 @@ def main():
                     anchor_features.append(feature.flatten(0, 1))
                     anchor_commands.append(policy.local_se2_markov_goal_features(feature).flatten(0, 1))
                     anchor_targets.append(mean[..., :6].flatten(0, 1))
-            anchor_rows.append({"shape": row["shape"], "agents": row["agents"], "trace_sha256": row["trace_sha256"]})
+            anchor_rows.append({"shape": row["shape"], "agents": row["agents"],
+                                "trace_sha256": row["trace_sha256"], "manifest_sha256": manifest_sha,
+                                "case_id": row.get("case_id"), "profile": row.get("profile", "nominal")})
+            if len(anchor_rows) % 50 == 0:
+                print(json.dumps({"preparation": "replay", "episodes": len(anchor_rows),
+                                  "episodes_total": len(replay_rows)}), flush=True)
     if not features or not anchor_features:
         raise ValueError("empty teacher or function-preserving anchor data")
     x, y, g, ax, ay, ag = (torch.cat(v).cuda() for v in (
@@ -160,6 +192,7 @@ def main():
         "replay_source_checkpoint_sha256": replay.checkpoint_sha256,
         "initialization_from_previous_mainline": parent.checkpoint_sha256 != root_parent_sha,
         "dataset_sha256": sha256(args.dataset), "anchors_sha256": sha256(args.anchors),
+        "anchor_manifests": anchor_sources,
         "teacher_rows": teacher_rows, "anchor_rows": anchor_rows,
         "teacher_agent_frames": len(x), "anchor_agent_frames": len(ax),
         "trainable_parameter_names": names,

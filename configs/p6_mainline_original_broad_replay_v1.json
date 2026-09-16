@@ -1,0 +1,27 @@
+{
+  "schema": "piano-movers.original-architecture-candidate.v1",
+  "release_status": "matched_broad_success_replay_control_not_public",
+  "checkpoint": "output/p6_mainline_original_broad_replay_v1/checkpoint_step20000.pt",
+  "checkpoint_sha256": "98c60d1d612f6d8ad707394918c70518c2c62103f757a54411ce7879234ab547",
+  "parent_checkpoint_sha256": "3f4f1529378b08ef8de644564a1acc43f9de56b7d389e55e563fae7538c576a6",
+  "composition_options": {
+    "position_only_control": true,
+    "require_body_clearance": true,
+    "preserve_private_memory": false,
+    "nominal_glyph_size": false,
+    "retain_nearby_wall": false,
+    "preserve_contact_feedback": false,
+    "retain_previous_wall_only": false,
+    "complete_corridor_exit": true,
+    "planning_substeps": 32,
+    "continuous_contact_guard": true,
+    "validate_all_cspace_lookaheads": true,
+    "check_support_alignment_sweep": true,
+    "respect_handoff_goal_region": true
+  },
+  "architecture_replaced": false,
+  "weight_change_relative_to_v2": true,
+  "control_description": "Matched 92-query real DAgger and 491 successful development replay episodes; original morphology MLP trained with or without the four explicit goal-command columns. Same optimizer budget and unchanged physical GBP/decoder.",
+  "additional_private_goal_inputs": 0,
+  "trainable_parameters": 213000
+}

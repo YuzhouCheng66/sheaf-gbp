@@ -26,6 +26,7 @@ from piano_movers.multi_waypoint_demo import (
     Slit, WaypointCourse, SkillCompositionOptions, _body_cleared_wall,
     _composition_observation, _course_config, _full_collision_scenario,
     INTERMEDIATE_POSITION_TOLERANCE_M,
+    apply_solver_controls,
 )
 from piano_movers.payload_shapes import payload_rectangles_for_config
 from piano_movers.single_slit_0720_eval import load_single_slit_checkpoint
@@ -141,6 +142,7 @@ def main():
                           goal_y=float(goal[1]), goal_theta=float(goal[2]),
                           goal_orientation_required=oriented)
             parent.policy.bind_environment(cfg)
+            apply_solver_controls(parent.policy, composition)
             observation = torch.from_numpy(data["observation"][tick].copy())[None]
             hidden = torch.from_numpy(data["private_hidden"][tick].copy())[None]
             context = context_from_original_observation(observation)
@@ -172,6 +174,7 @@ def main():
                 "rollout_family": episode.get("family"), "rollout_seed": episode.get("seed"),
                 "rollout_state_profile": episode.get("profile"),
                 "active_stage_for_audit_only": stage, "env_cfg": asdict(cfg),
+                "actor_composition_options": asdict(composition),
                 "start_state": state[0].tolist(), "goal": goal.tolist(),
                 "teacher_report": report, "admitted_for_training": False,
                 "actor_learned_plan_authority_nodes": int(

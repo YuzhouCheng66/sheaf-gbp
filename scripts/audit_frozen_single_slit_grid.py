@@ -21,6 +21,7 @@ from piano_movers.env import collision_mask, radius_edges
 from piano_movers.gbp import homogeneous_topology
 from piano_movers.local_skill_teacher import certify_pose_path
 from piano_movers.local_skill_physics import certified_contact_step
+from piano_movers.multi_waypoint_demo import SkillCompositionOptions, apply_solver_controls
 from piano_movers.single_slit_0720_eval import (
     load_single_slit_checkpoint,
     strict_final_mask,
@@ -40,8 +41,11 @@ from piano_movers.single_slit_contact_observation import (
 
 
 @torch.inference_mode()
-def audit(policy, cfg, horizon, *, continuous_guard=False):
+def audit(policy, cfg, horizon, *, continuous_guard=False, cover_tree_diameter=False):
     policy.bind_environment(cfg)
+    solver_controls = apply_solver_controls(
+        policy, SkillCompositionOptions(cover_coordination_tree_diameter=cover_tree_diameter)
+    )
     state = torch.tensor([[*SOURCE_POSE, 0.0, 0.0, 0.0]])
     scene = single_slit_scenario(1, cfg, initial_state=state)
     context = initial_single_slit_contact_observation_context_v1(state, cfg)
@@ -93,6 +97,7 @@ def audit(policy, cfg, horizon, *, continuous_guard=False):
         "gbp_payload_bytes": payload,
         "grasp_setup_payload_bytes": setup,
         "wire_headers_included": False,
+        "solver_controls": solver_controls,
         "env_cfg": asdict(cfg),
     }, trajectory.numpy()
 
@@ -108,6 +113,7 @@ def main():
     parser.add_argument("--planning-substeps", type=int, default=4)
     parser.add_argument("--validate-all-cspace-lookaheads", action="store_true")
     parser.add_argument("--t-profile", choices=["benchmark", "demo"], default="benchmark")
+    parser.add_argument("--cover-coordination-tree-diameter", action="store_true")
     args = parser.parse_args()
     torch.set_num_threads(1)
     parent = load_single_slit_checkpoint(args.checkpoint, device="cpu")
@@ -124,13 +130,12 @@ def main():
         "continuous_contact_guard": args.continuous_contact_guard,
         "local_cspace_collision_substeps": args.planning_substeps,
         "local_cspace_validate_all_lookaheads": args.validate_all_cspace_lookaheads,
+        "cover_coordination_tree_diameter": args.cover_coordination_tree_diameter,
         "source_sha256": {
             str(p): sha256(p)
             for p in [
                 Path(__file__),
-                Path("src/piano_movers/models.py"),
-                Path("src/piano_movers/single_slit_local_planner.py"),
-                Path("src/piano_movers/local_skill_physics.py"),
+                *sorted(Path("src/piano_movers").glob("*.py")),
             ]
         },
         "results": [],
@@ -157,7 +162,9 @@ def main():
                     t_stem_width_m=0.160,
                     t_cap_thickness_m=0.152,
                 )
-            row, states = audit(parent.policy, cfg, args.horizon, continuous_guard=args.continuous_contact_guard)
+            row, states = audit(parent.policy, cfg, args.horizon,
+                                continuous_guard=args.continuous_contact_guard,
+                                cover_tree_diameter=args.cover_coordination_tree_diameter)
             case_id = f"{shape}_{count}"
             artifact = args.output / f"{case_id}.npz"
             np.savez_compressed(artifact, states=states)

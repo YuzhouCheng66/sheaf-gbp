@@ -1,8 +1,10 @@
 from dataclasses import replace
 from types import SimpleNamespace
 from pathlib import Path
+import json
 import runpy
 
+import pytest
 import torch
 from torch import nn
 
@@ -62,3 +64,27 @@ def test_replay_command_tracks_actual_stage_and_final_orientation(monkeypatch):
     assert not first.goal_orientation_required
     assert last.goal_x == 1. and last.goal_y == -.2
     assert last.goal_theta == -.5 and last.goal_orientation_required
+
+
+def test_replay_panels_require_correct_actor_development_and_safety(tmp_path, monkeypatch):
+    scripts = Path(__file__).resolve().parents[1] / "scripts"
+    monkeypatch.syspath_prepend(str(scripts))
+    admit = runpy.run_path(str(scripts / "train_mainline_skill_dagger.py"))["admitted_anchor_rows"]
+    row = {"shape": "A", "agents": 12, "result": {"success": True},
+           "continuous_certificate": {"passed": True}, "trace_sha256": "trace"}
+    base = {"status": "complete", "split": "development_diagnostics",
+            "checkpoint_sha256": "source", "results": [row, dict(row, shape="Z"), dict(row, agents=9)]}
+    path = tmp_path / "anchors.json"
+    path.write_text(json.dumps(base))
+    provenance, rows = admit([path, path], "source")
+    assert len(rows) == 1
+    assert provenance[0]["excluded_heldout_or_unsuccessful"] == 2
+    assert provenance[1]["duplicate_traces_skipped"] == 1
+    with pytest.raises(ValueError, match="actor"):
+        admit([path], "different")
+    path.write_text(json.dumps(dict(base, split="locked_validation")))
+    with pytest.raises(ValueError, match="development"):
+        admit([path], "source")
+    path.write_text(json.dumps(dict(base, results=[dict(row, continuous_certificate={"passed": False})])))
+    with pytest.raises(ValueError, match="certification"):
+        admit([path], "source")

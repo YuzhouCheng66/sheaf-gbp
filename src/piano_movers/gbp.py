@@ -13,6 +13,33 @@ import torch
 from torch import Tensor, nn
 
 
+def coordination_tree_diameter(edge_index: Tensor, tree_mask: Tensor, n_nodes: int) -> int:
+    """Attachment-time topology audit, never a per-tick observation reduction."""
+    if edge_index.ndim != 2 or edge_index.shape[-1] != 2 or tree_mask.shape != edge_index.shape[:1]:
+        raise ValueError("invalid coordination tree tensors")
+    pairs = edge_index[tree_mask].tolist()
+    if n_nodes < 1 or len(pairs) != n_nodes - 1:
+        raise ValueError("coordination tree must contain N-1 edges")
+    adjacency = [[] for _ in range(n_nodes)]
+    for left, right in pairs:
+        if left == right or not (0 <= left < n_nodes and 0 <= right < n_nodes):
+            raise ValueError("invalid tree endpoints")
+        adjacency[left].append(right)
+        adjacency[right].append(left)
+    diameter = 0
+    for root in range(n_nodes):
+        distances, queue = {root: 0}, [root]
+        for node in queue:
+            for peer in adjacency[node]:
+                if peer not in distances:
+                    distances[peer] = distances[node] + 1
+                    queue.append(peer)
+        if len(distances) != n_nodes:
+            raise ValueError("coordination tree is disconnected")
+        diameter = max(diameter, max(distances.values()))
+    return diameter
+
+
 @dataclass(frozen=True)
 class GBPTopology:
     # A directed incidence is the node whose cavity belief creates the

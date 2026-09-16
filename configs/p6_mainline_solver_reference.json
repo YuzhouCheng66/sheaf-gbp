@@ -1,0 +1,27 @@
+{
+  "schema": "piano-movers.original-architecture-candidate.v1",
+  "release_status": "independent_solver_semantics_control_not_public",
+  "checkpoint": "output/p6_mainline_markov_dagger_v2/checkpoint_step20000.pt",
+  "checkpoint_sha256": "44be6ea0cbd21b036b2fbcc5c18e0fb5035d79f77d92d987fca39306b742f795",
+  "parent_checkpoint_sha256": "3f4f1529378b08ef8de644564a1acc43f9de56b7d389e55e563fae7538c576a6",
+  "composition_options": {
+    "position_only_control": true,
+    "require_body_clearance": true,
+    "preserve_private_memory": false,
+    "nominal_glyph_size": false,
+    "retain_nearby_wall": false,
+    "preserve_contact_feedback": false,
+    "retain_previous_wall_only": false,
+    "complete_corridor_exit": true,
+    "planning_substeps": 32,
+    "continuous_contact_guard": true,
+    "validate_all_cspace_lookaheads": true,
+    "check_support_alignment_sweep": true,
+    "respect_handoff_goal_region": true,
+    "cover_coordination_tree_diameter": false,
+    "geometry_precision_boost_override": null
+  },
+  "architecture_replaced": false,
+  "weight_change_relative_to_v2": false,
+  "control_description": "Factorial audit of evidence precision and graph-diameter-covered existing GBP. Same v2 tensors, original planner and decoder, six wire floats per directed message; every additional inference round is counted."
+}
