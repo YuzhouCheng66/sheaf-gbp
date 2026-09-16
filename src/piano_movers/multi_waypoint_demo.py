@@ -23,11 +23,15 @@ import webbrowser
 import torch
 from torch import Tensor
 
-from .config import HANDLE_LAYOUT_PARAMETRIC_T_V3, EnvConfig
+from .config import (
+    HANDLE_LAYOUT_GLYPH_BOUNDARY_V4,
+    HANDLE_LAYOUT_PARAMETRIC_T_V3,
+    EnvConfig,
+)
 from .env import PianoBatch, contact_points, radius_edges
 from .gbp import GBPMessageTrace, homogeneous_topology
 from .models import SheafGBPPolicy
-from .payload_shapes import payload_rectangles_for_config
+from .payload_shapes import LETTER_PAYLOAD_SHAPES, payload_rectangles_for_config
 from .single_slit_0720_eval import (
     STRICT_STABLE_STEPS,
     load_single_slit_checkpoint,
@@ -141,14 +145,26 @@ def _set_active_goal_without_rebinding(policy, cfg: EnvConfig) -> None:
     target.env_cfg = cfg
 
 
-def _course_config(base: EnvConfig, n_agents: int, course: WaypointCourse) -> EnvConfig:
+def _course_config(
+    base: EnvConfig,
+    n_agents: int,
+    course: WaypointCourse,
+    payload_shape: str = "T",
+) -> EnvConfig:
+    shape = payload_shape.strip().upper()
+    if shape not in LETTER_PAYLOAD_SHAPES:
+        raise ValueError("payload_shape must be one uppercase A-Z letter")
     first = course.waypoints[0]
     first_wall = course.walls[0]
     return replace(
         base,
         n_agents=n_agents,
-        handle_layout=HANDLE_LAYOUT_PARAMETRIC_T_V3,
-        payload_shape="T",
+        handle_layout=(
+            HANDLE_LAYOUT_PARAMETRIC_T_V3
+            if shape == "T"
+            else HANDLE_LAYOUT_GLYPH_BOUNDARY_V4
+        ),
+        payload_shape=shape,
         t_total_width_m=0.930,
         t_total_height_m=0.920,
         t_stem_width_m=0.160,
@@ -228,20 +244,35 @@ class MultiWaypointEngine:
         self.loaded = load_single_slit_checkpoint(checkpoint, device=self.device)
         self.loaded.policy.eval()
         self.course = course
-        self.cache: OrderedDict[int, tuple[dict[str, Any], ...]] = OrderedDict()
+        self.cache: OrderedDict[
+            tuple[str, int], tuple[dict[str, Any], ...]
+        ] = OrderedDict()
 
     @torch.inference_mode()
-    def events(self, n_agents: int = DEFAULT_N_AGENTS) -> Iterator[dict[str, Any]]:
+    def events(
+        self,
+        n_agents: int = DEFAULT_N_AGENTS,
+        payload_shape: str = "T",
+    ) -> Iterator[dict[str, Any]]:
         if not MIN_N_AGENTS <= n_agents <= MAX_N_AGENTS:
             raise ValueError(f"n_agents must lie in [{MIN_N_AGENTS},{MAX_N_AGENTS}]")
-        cached = self.cache.get(n_agents)
+        shape = payload_shape.strip().upper()
+        if shape not in LETTER_PAYLOAD_SHAPES:
+            raise ValueError("payload_shape must be one uppercase A-Z letter")
+        cache_key = (shape, n_agents)
+        cached = self.cache.get(cache_key)
         if cached is not None:
-            self.cache.move_to_end(n_agents)
+            self.cache.move_to_end(cache_key)
             yield from cached
             return
 
         recorded: list[dict[str, Any]] = []
-        cfg = _course_config(self.loaded.cfg, n_agents, self.course)
+        cfg = _course_config(
+            self.loaded.cfg,
+            n_agents,
+            self.course,
+            payload_shape=shape,
+        )
         _bind_geometry(self.loaded.policy, cfg)
         full_scenario = _full_collision_scenario(self.course, cfg)
         state = full_scenario.state0.clone()
@@ -261,6 +292,7 @@ class MultiWaypointEngine:
             "type": "header",
             "schema": "piano-movers.multi-wall-waypoint-demo.v1",
             "checkpoint_sha256": self.loaded.checkpoint_sha256,
+            "payload_shape": shape,
             "n_agents": n_agents,
             "dt": cfg.dt,
             "world": {"x": self.course.world_x, "y": self.course.world_y, "wall_half_width": cfg.wall_slab},
@@ -374,8 +406,8 @@ class MultiWaypointEngine:
             "exact_penetration": False,
         }
         recorded.append(done)
-        self.cache[n_agents] = tuple(recorded)
-        self.cache.move_to_end(n_agents)
+        self.cache[cache_key] = tuple(recorded)
+        self.cache.move_to_end(cache_key)
         while len(self.cache) > 4:
             self.cache.popitem(last=False)
         yield done
@@ -395,18 +427,19 @@ INDEX_HTML = r"""<!doctype html>
     button{border:0;background:none;color:#252525;width:32px;height:32px;padding:6px;display:grid;place-items:center;border-radius:50%;cursor:pointer}button:hover{background:rgba(32,32,32,.08)}button svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7}
     #play{width:38px;height:38px;color:#f4f4f4;background:#1b1b1b}.divider{width:1px;height:22px;background:rgba(28,28,28,.13)}
     label{display:flex;align-items:center;gap:6px;color:#252525;font:600 12px/1 ui-monospace,SFMono-Regular,Consolas,monospace}input[type=range]{width:78px;accent-color:#222}output{width:18px;text-align:right}
+    select{appearance:none;border:0;background:transparent;color:#252525;padding:6px 14px 6px 7px;font:600 13px/1 ui-monospace,SFMono-Regular,Consolas,monospace;cursor:pointer}
     #status{position:absolute;z-index:2;top:20px;right:22px;color:rgba(30,30,30,.56);font:600 12px/1 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.04em}
   </style>
 </head>
 <body>
 <main><canvas id="canvas" aria-label="Multi-wall waypoint Sheaf-GBP transport"></canvas><div id="status" aria-live="polite"></div>
-  <div id="dock"><span>T</span><div class="divider"></div><label>ants <input id="agents" type="range" min="8" max="20" step="1" value="12"><output id="agentsOut">12</output></label><div class="divider"></div>
+  <div id="dock"><select id="shape" aria-label="Payload shape"><option selected>T</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option><option>K</option><option>L</option><option>M</option><option>N</option><option>O</option><option>P</option><option>Q</option><option>R</option><option>S</option><option>U</option><option>V</option><option>W</option><option>X</option><option>Y</option><option>Z</option></select><div class="divider"></div><label>ants <input id="agents" type="range" min="8" max="20" step="1" value="12"><output id="agentsOut">12</output></label><div class="divider"></div>
     <button id="play" aria-label="Run"><svg id="playIcon" viewBox="0 0 24 24"><path d="M9 6.5 17 12l-8 5.5Z" fill="currentColor" stroke="none"/></svg></button>
     <button id="reset" aria-label="Reset"><svg viewBox="0 0 24 24"><path d="M5 8a8 8 0 1 1-1 5M5 8V3M5 8h5"/></svg></button>
   </div>
 </main>
 <script>
-const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d'),play=document.getElementById('play'),playIcon=document.getElementById('playIcon'),statusEl=document.getElementById('status'),agents=document.getElementById('agents'),agentsOut=document.getElementById('agentsOut');
+const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d'),play=document.getElementById('play'),playIcon=document.getElementById('playIcon'),statusEl=document.getElementById('status'),shape=document.getElementById('shape'),agents=document.getElementById('agents'),agentsOut=document.getElementById('agentsOut');
 let header=null,frames=[],done=null,timeline=0,playing=false,lastTime=0,generation=0,aborter=null;const STEP_MS=25;
 function resize(){const d=devicePixelRatio||1;canvas.width=innerWidth*d;canvas.height=innerHeight*d;ctx.setTransform(d,0,0,d,0,0);draw()}addEventListener('resize',resize);
 function scale(){if(!header)return 1;return Math.min(innerWidth/(2*header.world.x+.45),innerHeight/(2*header.world.y+.3))}
@@ -423,12 +456,12 @@ function ant(point,state,i){const p=S(...transform(point,state)),a=state[2]+(i%2
 function packet(a,b,t,str,bend){const c=[(a[0]+b[0])/2+(bend?.08:-.08)*(b[1]-a[1]),(a[1]+b[1])/2+(bend?.08:-.08)*(a[0]-b[0])],u=1-Math.pow(1-t,2),x=(1-u)*(1-u)*a[0]+2*(1-u)*u*c[0]+u*u*b[0],y=(1-u)*(1-u)*a[1]+2*(1-u)*u*c[1]+u*u*b[1];ctx.save();ctx.globalAlpha=.16+.42*str;ctx.strokeStyle='#4b4b4a';ctx.shadowColor='#f4f4ef';ctx.shadowBlur=13;ctx.lineWidth=.7+1.5*str;ctx.beginPath();ctx.moveTo(...a);ctx.quadraticCurveTo(...c,...b);ctx.stroke();ctx.translate(x,y);ctx.rotate(Math.atan2(b[1]-c[1],b[0]-c[0]));ctx.fillStyle='#292928';ctx.beginPath();ctx.moveTo(6,0);ctx.lineTo(-3,-3);ctx.lineTo(-1,0);ctx.lineTo(-3,3);ctx.closePath();ctx.fill();ctx.restore()}
 function messages(state){if(!header||!frames.length||timeline<=0)return;const i=frameIndex(),f=frames[i],phase=Math.max(0,timeline-i),s=Math.min(f.intensity.length-1,Math.floor(phase*f.intensity.length)),t=(phase*f.intensity.length)%1,vals=f.intensity[s],sorted=[...vals].sort((a,b)=>a-b),den=sorted[Math.floor(sorted.length*.86)]||1,pts=header.handles.map(p=>S(...transform(p,state)));for(let m=0;m<header.sender.length;m++)packet(pts[header.sender[m]],pts[header.receiver[m]],t,Math.max(.08,Math.min(1,Math.sqrt((vals[m]||0)/den))),m%2)}
 function draw(){background();route();walls();if(!header)return;const s=pose();body(s);header.handles.forEach((p,i)=>ant(p,s,i));messages(s)}
-async function prepare(){generation++;const mine=generation;if(aborter)aborter.abort();aborter=new AbortController();header=null;frames=[];done=null;timeline=0;playing=false;setIcon();statusEl.textContent='';draw();try{const res=await fetch('/api/stream?agents='+agents.value,{signal:aborter.signal});if(!res.ok)throw Error(await res.text());const reader=res.body.getReader(),decoder=new TextDecoder();let pending='';while(true){const q=await reader.read();if(q.done)break;pending+=decoder.decode(q.value,{stream:true});let cut;while((cut=pending.indexOf('\n'))>=0){const line=pending.slice(0,cut).trim();pending=pending.slice(cut+1);if(!line)continue;const e=JSON.parse(line);if(mine!==generation)return;if(e.type==='header'){header=e;draw()}else if(e.type==='frame')frames.push(e);else if(e.type==='done')done=e}}}catch(e){if(e.name!=='AbortError')statusEl.textContent='error'}}
+async function prepare(){generation++;const mine=generation;if(aborter)aborter.abort();aborter=new AbortController();header=null;frames=[];done=null;timeline=0;playing=false;setIcon();statusEl.textContent='';draw();try{const res=await fetch('/api/stream?shape='+encodeURIComponent(shape.value)+'&agents='+agents.value,{signal:aborter.signal});if(!res.ok)throw Error(await res.text());const reader=res.body.getReader(),decoder=new TextDecoder();let pending='';while(true){const q=await reader.read();if(q.done)break;pending+=decoder.decode(q.value,{stream:true});let cut;while((cut=pending.indexOf('\n'))>=0){const line=pending.slice(0,cut).trim();pending=pending.slice(cut+1);if(!line)continue;const e=JSON.parse(line);if(mine!==generation)return;if(e.type==='header'){header=e;draw()}else if(e.type==='frame')frames.push(e);else if(e.type==='done')done=e}}}catch(e){if(e.name!=='AbortError')statusEl.textContent='error'}}
 function setIcon(){playIcon.innerHTML=playing?'<path d="M8 7v10M16 7v10"/>':'<path d="M9 6.5 17 12l-8 5.5Z" fill="currentColor" stroke="none"/>'}
 function toggle(){if(!frames.length)return;playing=!playing;setIcon();lastTime=performance.now();if(playing)requestAnimationFrame(tick)}
 function tick(now){if(!playing)return;const dt=Math.max(0,Math.min(50,now-lastTime));lastTime=now;const max=done?Math.max(0,frames.length-1):Math.max(0,frames.length-3);timeline=Math.min(max,timeline+dt/STEP_MS);const i=frameIndex(),f=i>=0?frames[i]:null;statusEl.textContent=f?`${Math.min(f.waypoint_index+1,header.waypoints.length)} / ${header.waypoints.length}`:'';draw();if(done&&timeline>=frames.length-1){playing=false;setIcon();statusEl.textContent=done.success?'complete':statusEl.textContent;return}requestAnimationFrame(tick)}
 function reset(){playing=false;timeline=0;setIcon();statusEl.textContent='';draw()}
-play.addEventListener('click',toggle);document.getElementById('reset').addEventListener('click',reset);agents.addEventListener('input',()=>agentsOut.value=agents.value);agents.addEventListener('change',prepare);resize();prepare();
+play.addEventListener('click',toggle);document.getElementById('reset').addEventListener('click',reset);shape.addEventListener('change',prepare);agents.addEventListener('input',()=>agentsOut.value=agents.value);agents.addEventListener('change',prepare);resize();prepare();
 </script></body></html>"""
 
 
@@ -459,13 +492,14 @@ class MultiWaypointHandler(BaseHTTPRequestHandler):
 
             query = parse_qs(urlparse(self.path).query)
             n_agents = int(query.get("agents", [str(DEFAULT_N_AGENTS)])[0])
+            payload_shape = query.get("shape", ["T"])[0]
             self.send_response(HTTPStatus.OK)
             self.send_header("Content-Type", "application/x-ndjson")
             self.send_header("Cache-Control", "no-store")
             self.send_header("X-Accel-Buffering", "no")
             self.end_headers()
             with ROLLOUT_LOCK:
-                for event in self.engine.events(n_agents):
+                for event in self.engine.events(n_agents, payload_shape):
                     self.wfile.write(json.dumps(event, separators=(",", ":"), allow_nan=False).encode("utf-8") + b"\n")
                     self.wfile.flush()
         except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):

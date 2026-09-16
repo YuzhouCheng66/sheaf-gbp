@@ -23,6 +23,7 @@ tmp/
 *.zip
 *.mp4
 assets/*.json
+!assets/multi_wall_a_z_12agent_audit.json
 
 # Local exploration notes and machine-specific launchers
 EXPERIMENT_LOG.md

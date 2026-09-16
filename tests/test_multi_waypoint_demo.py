@@ -5,6 +5,7 @@ from dataclasses import replace
 import pytest
 import torch
 
+from piano_movers.config import HANDLE_LAYOUT_GLYPH_BOUNDARY_V4
 from piano_movers.multi_waypoint_demo import (
     DEFAULT_COURSE,
     DUMMY_WALL_X_M,
@@ -65,8 +66,18 @@ def test_each_waypoint_leg_is_expressed_in_the_frozen_skill_wall_frame() -> None
     assert state[0, 0].item() == pytest.approx(0.61)
 
 
+def test_non_t_letter_uses_exact_glyph_geometry_and_boundary_handles() -> None:
+    cfg = _course_config(
+        single_slit_env_config(), 12, DEFAULT_COURSE, payload_shape="X"
+    )
+    assert cfg.payload_shape == "X"
+    assert cfg.handle_layout == HANDLE_LAYOUT_GLYPH_BOUNDARY_V4
+
+
 def test_page_labels_route_as_waypoints_without_claiming_mapping() -> None:
     assert "header.waypoints" in INDEX_HTML
     assert "Multi-wall waypoint" in INDEX_HTML
+    assert 'id="shape"' in INDEX_HTML
+    assert "shape='+encodeURIComponent(shape.value)" in INDEX_HTML
     assert "mapping" not in INDEX_HTML.lower()
     assert "global planning" not in INDEX_HTML.lower()

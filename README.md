@@ -122,6 +122,13 @@ verified zero-shot at **1/1 success**, **0 contact events**, and **0 exact
 penetrations**. This demonstrates waypoint-conditioned skill composition; it
 does not claim that the present checkpoint builds a map or discovers the route.
 
+The same frozen checkpoint was also run once on every exact A–Z block glyph in
+that course. It completed **18/26 shapes (69.23%)** with **0 exact
+penetrations**: `C E F I J K L M N O P R S T V W X Y`. The unresolved set is
+`A B D G H Q U Z`; it remains selectable in the demo so failures are inspectable
+rather than hidden. The complete nominal manifest is
+[`assets/multi_wall_a_z_12agent_audit.json`](assets/multi_wall_a_z_12agent_audit.json).
+
 To create p5 from its admitted p4 parent without modifying any tensor:
 
 ```bash
