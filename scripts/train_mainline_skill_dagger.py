@@ -202,6 +202,7 @@ def main():
         "private_goal_command_dim": 4 if policy.arm_cfg.local_se2_markov_goal_context else 0,
         "replay_commands_reconstructed_per_active_stage": True,
         "objective": "private_plan_imitation_plus_source_function_replay",
+        "goal_relative_y_input": policy.arm_cfg.local_se2_markov_goal_relative_y,
         "downstream_analytic_overrides_unchanged": True,
         "step_requested": args.steps, "batch_size": args.batch_size,
         "learning_rate": args.learning_rate, "anchor_weight": args.anchor_weight,

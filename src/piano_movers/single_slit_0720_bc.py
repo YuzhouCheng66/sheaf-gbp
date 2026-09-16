@@ -670,6 +670,7 @@ def build_policy(
     local_se2_shape_signature_dim: int = 8,
     local_se2_markov_shape_planner: bool = False,
     local_se2_markov_goal_context: bool = False,
+    local_se2_markov_goal_relative_y: bool = False,
     local_se2_markov_shape_hidden_dim: int = 256,
     local_se2_markov_shape_layers: int = 3,
     local_se2_geometry_refinement_adapter: bool = False,
@@ -820,6 +821,7 @@ def build_policy(
         local_se2_shape_signature_dim=local_se2_shape_signature_dim,
         local_se2_markov_shape_planner=local_se2_markov_shape_planner,
         local_se2_markov_goal_context=local_se2_markov_goal_context,
+        local_se2_markov_goal_relative_y=local_se2_markov_goal_relative_y,
         local_se2_markov_shape_hidden_dim=local_se2_markov_shape_hidden_dim,
         local_se2_markov_shape_layers=local_se2_markov_shape_layers,
         local_se2_geometry_refinement_adapter=(

@@ -339,6 +339,10 @@ class ArmConfig:
     # true relative goal-y, masked relative goal heading, and orientation mask.
     # A separate zero-initialized first-layer projection preserves source math.
     local_se2_markov_goal_context: bool = False
+    # Independent input-semantics control: replace absolute centre-y with
+    # centre-minus-active-goal-y in the SAME 52-column original MLP input.
+    # No new layer, parameter, obstacle information, or message coordinate.
+    local_se2_markov_goal_relative_y: bool = False
     # Final, private geometry-conditioned plan capacity for non-canonical
     # payloads. Its continuous geometry support is exactly zero on canonical
     # T, giving a structural source-preservation contract without a confidence
@@ -813,6 +817,8 @@ class ArmConfig:
             raise ValueError("Markov shape planning forbids path memory")
         if self.local_se2_markov_goal_context and not self.local_se2_markov_shape_planner:
             raise ValueError("goal command context requires the original Markov shape planner")
+        if self.local_se2_markov_goal_relative_y and not self.local_se2_markov_shape_planner:
+            raise ValueError("goal-relative y requires the original Markov shape planner")
         if self.local_se2_markov_shape_hidden_dim <= 0:
             raise ValueError("Markov shape planner hidden width must be positive")
         if self.local_se2_markov_shape_layers <= 0:

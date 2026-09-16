@@ -3988,6 +3988,12 @@ class SheafGBPPolicy(BasePolicy):
             ..., -self.arm_cfg.local_se2_shape_signature_dim :
         ]
         canonical = local_se2_recovery_canonical_features(obs, self.env_cfg)
+        if self.arm_cfg.local_se2_markov_goal_relative_y and self.env_cfg.goal_y != 0.:
+            canonical = torch.cat((
+                canonical[..., :3],
+                canonical[..., 3:4] - float(self.env_cfg.goal_y / self.env_cfg.world_y),
+                canonical[..., 4:],
+            ), dim=-1)
         result = torch.cat((canonical, recovery, signature), dim=-1)
         expected_markov = self.local_se2_markov_shape_encoder[0].in_features
         if result.shape != (*planner_inputs.shape[:2], expected_markov):
@@ -4006,8 +4012,10 @@ class SheafGBPPolicy(BasePolicy):
         required = float(self.env_cfg.goal_orientation_required)
         goal_angle = features.new_tensor(self.env_cfg.goal_theta)
         current_sine, current_cosine = features[..., 0], features[..., 1]
+        goal_delta_y = (-features[..., 3] if self.arm_cfg.local_se2_markov_goal_relative_y
+                        else float(self.env_cfg.goal_y / self.env_cfg.world_y) - features[..., 3])
         return torch.stack((
-            float(self.env_cfg.goal_y / self.env_cfg.world_y) - features[..., 3],
+            goal_delta_y,
             required * (goal_angle.sin() * current_cosine - goal_angle.cos() * current_sine),
             required * (goal_angle.cos() * current_cosine + goal_angle.sin() * current_sine),
             torch.full_like(current_sine, 2. * required - 1.),

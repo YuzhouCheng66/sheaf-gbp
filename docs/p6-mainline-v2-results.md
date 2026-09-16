@@ -4,6 +4,9 @@ For subsequent complete state-panel results, broader successful-state replay,
 physical-history checks and unchanged-weight GBP budget controls, see
 [the replay and solver audit](p6-original-mainline-replay-and-solver-audit.md).
 Those controls are not automatically promoted to the public demo.
+For the subsequently completed all-count gates, coordinate-interface controls
+and verified action-level training path, see
+[the coordinate and action audit](p6-mainline-coordinate-and-action-audit.md).
 
 **Not a release or an OOD success claim.** The public p5 demo is unchanged.
 Use the complete candidate recipe in

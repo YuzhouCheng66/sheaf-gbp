@@ -16,7 +16,8 @@ from piano_movers.multi_waypoint_demo import Slit, WaypointCourse
 def small_goal_interface():
     model = SheafGBPPolicy.__new__(SheafGBPPolicy)
     nn.Module.__init__(model)
-    model.arm_cfg = SimpleNamespace(local_se2_markov_goal_context=True)
+    model.arm_cfg = SimpleNamespace(local_se2_markov_goal_context=True,
+                                    local_se2_markov_goal_relative_y=False)
     model.env_cfg = single_slit_env_config()
     model.local_se2_markov_shape_encoder = mlp(52, 16, 16, layers=2)
     model.local_se2_markov_goal_projection = nn.Linear(4, 16, bias=False)
@@ -49,6 +50,45 @@ def test_goal_context_sees_actual_y_and_masks_unrequested_orientation():
     model.env_cfg = replace(model.env_cfg, goal_theta=0., goal_orientation_required=True)
     fixed = model.local_se2_markov_goal_features(features)
     torch.testing.assert_close(fixed[..., 1:], torch.tensor([-1., 0., 1.]).expand(1, 12, 3))
+
+
+def test_goal_context_does_not_subtract_goal_twice_with_relative_position():
+    model = small_goal_interface()
+    model.arm_cfg.local_se2_markov_goal_relative_y = True
+    features = torch.zeros(1, 12, 52)
+    features[..., 1] = 1.
+    features[..., 3] = -.3
+    model.env_cfg = replace(model.env_cfg, goal_y=.7)
+    command = model.local_se2_markov_goal_features(features)
+    torch.testing.assert_close(command[..., 0], torch.full((1, 12), .3))
+
+
+def test_same_width_relative_y_changes_only_one_column_and_is_translation_invariant():
+    model = small_goal_interface()
+    model.arm_cfg = SimpleNamespace(local_se2_markov_shape_planner=True,
+                                    local_se2_markov_goal_relative_y=False,
+                                    obs_dim=27, hidden_dim=96, persistent_recovery_dim=8,
+                                    local_se2_shape_signature_dim=32)
+    model.local_se2_planner_encoder = nn.Sequential(nn.Linear(163, 8))
+    private = torch.zeros(1, 12, 163)
+    private[..., 1] = 1.
+    private[..., 5] = .2 / model.env_cfg.world_y
+    model.env_cfg = replace(model.env_cfg, goal_y=.4)
+    legacy = model.local_se2_markov_shape_inputs_from_planner_inputs(private)
+    model.arm_cfg.local_se2_markov_goal_relative_y = True
+    relative = model.local_se2_markov_shape_inputs_from_planner_inputs(private)
+    assert relative.shape == legacy.shape == (1, 12, 52)
+    torch.testing.assert_close(relative[..., :3], legacy[..., :3], atol=0., rtol=0.)
+    torch.testing.assert_close(relative[..., 4:], legacy[..., 4:], atol=0., rtol=0.)
+    torch.testing.assert_close(relative[..., 3], legacy[..., 3] - .4 / model.env_cfg.world_y)
+    shifted = private.clone()
+    shifted[..., 5] += .6 / model.env_cfg.world_y
+    model.env_cfg = replace(model.env_cfg, goal_y=1.)
+    torch.testing.assert_close(relative, model.local_se2_markov_shape_inputs_from_planner_inputs(shifted), atol=1e-7, rtol=0.)
+    model.env_cfg = replace(model.env_cfg, goal_y=0.)
+    rel_zero = model.local_se2_markov_shape_inputs_from_planner_inputs(private)
+    model.arm_cfg.local_se2_markov_goal_relative_y = False
+    torch.testing.assert_close(rel_zero, model.local_se2_markov_shape_inputs_from_planner_inputs(private), atol=0., rtol=0.)
 
 
 def test_replay_command_tracks_actual_stage_and_final_orientation(monkeypatch):

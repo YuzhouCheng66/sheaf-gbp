@@ -1,0 +1,29 @@
+{
+  "schema": "piano-movers.original-architecture-candidate.v1",
+  "release_status": "same_width_goal_relative_y_interface_control_not_public",
+  "checkpoint": "output/p6_mainline_relative_y_replay_v1/checkpoint_step20000.pt",
+  "checkpoint_sha256": "adf1114f3adfc3de1ceea5fc45ea41be0fdd14b683b895e33d88d3e58db199af",
+  "parent_checkpoint_sha256": "3f4f1529378b08ef8de644564a1acc43f9de56b7d389e55e563fae7538c576a6",
+  "composition_options": {
+    "position_only_control": true,
+    "require_body_clearance": true,
+    "preserve_private_memory": false,
+    "nominal_glyph_size": false,
+    "retain_nearby_wall": false,
+    "preserve_contact_feedback": false,
+    "retain_previous_wall_only": false,
+    "complete_corridor_exit": true,
+    "planning_substeps": 32,
+    "continuous_contact_guard": true,
+    "validate_all_cspace_lookaheads": true,
+    "check_support_alignment_sweep": true,
+    "respect_handoff_goal_region": true,
+    "cover_coordination_tree_diameter": true,
+    "geometry_precision_boost_override": null
+  },
+  "architecture_replaced": false,
+  "additional_parameters": 0,
+  "private_input_dim": 52,
+  "trainable_parameters": 213000,
+  "control_description": "Same original MLP and parameter count; input column 3 now uses centre-minus-active-goal-y instead of absolute centre-y. Matched 102-query DAgger and 502 source-success replay episodes. This is an independently evaluated interface control; not promoted based on translation invariance alone."
+}
