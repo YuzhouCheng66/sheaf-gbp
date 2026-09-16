@@ -42,7 +42,15 @@ def test_course_twist_and_scale_are_physical_not_extra_policy_features():
     torch.testing.assert_close(scene.state0[0, 3:], torch.tensor([.2, -.1, .3]))
     old_geometry = payload_rectangles_for_config(original, "cpu")
     new_geometry = payload_rectangles_for_config(cfg, "cpu")
-    torch.testing.assert_close(new_geometry, old_geometry * .95)
+    # Parametric T retains its historical body-frame vertical centre. Its
+    # dimensions scale around that point, not the coordinate origin.
+    from piano_movers.payload_shapes import CANONICAL_T_BODY_CENTER_Y_M
+
+    centre = torch.tensor([0., CANONICAL_T_BODY_CENTER_Y_M])
+    torch.testing.assert_close(new_geometry, (old_geometry - centre) * .95 + centre)
+    old_extent = old_geometry.reshape(-1, 2).amax(0) - old_geometry.reshape(-1, 2).amin(0)
+    new_extent = new_geometry.reshape(-1, 2).amax(0) - new_geometry.reshape(-1, 2).amin(0)
+    torch.testing.assert_close(new_extent, old_extent * .95)
     context = initial_single_slit_contact_observation_context_v1(scene.state0, cfg)
     obs = _composition_observation(course, scene.state0, 0, cfg, context)
     assert obs.shape == (1, 12, 27)
