@@ -34,6 +34,14 @@ CONTROLS = {
     "nearby_walls": SkillCompositionOptions(retain_nearby_wall=True),
     "contact_history": SkillCompositionOptions(preserve_contact_feedback=True),
     "previous_wall": SkillCompositionOptions(retain_previous_wall_only=True),
+    "complete_exit": SkillCompositionOptions(complete_corridor_exit=True),
+    "complete_exit_certified": SkillCompositionOptions(
+        complete_corridor_exit=True, planning_substeps=32, continuous_contact_guard=True,
+    ),
+    "complete_exit_nearby": SkillCompositionOptions(
+        complete_corridor_exit=True, retain_nearby_wall=True,
+        preserve_private_memory=True, preserve_contact_feedback=True,
+    ),
     "visible_position_handoff": SkillCompositionOptions(
         require_body_clearance=False, preserve_private_memory=True,
         retain_nearby_wall=True, preserve_contact_feedback=True,

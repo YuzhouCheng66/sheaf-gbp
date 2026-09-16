@@ -9,6 +9,7 @@ from piano_movers.local_skill_teacher import (
     certify_pose_path,
     executable_teacher_step,
     plan_local_target,
+    terminal_halfspace_margin,
 )
 from piano_movers.single_slit_feedback import single_slit_env_config
 
@@ -67,3 +68,29 @@ def test_teacher_force_step_replays_exactly_and_respects_force_reserve():
     )
     torch.testing.assert_close(following, step_dynamics(state, force, cfg), rtol=0, atol=0)
     assert certify_pose_path(torch.cat((state, following)), geometry, cfg, options).passed
+
+
+def test_teacher_terminal_region_includes_whole_body_handoff_constraint():
+    cfg = single_slit_env_config()
+    state = torch.tensor([[-0.9, 0., 0., 0., 0., 0.]])
+    goal = torch.tensor([0.70, 0., 0.])
+    geometry = scene(state, goal, 3.)
+    plane = (1., 0., .30)
+    options = LocalTeacherConfig(
+        x_step=.025, theta_bins=36, position_tolerance_m=.13,
+        execution_position_tolerance_m=.14, terminal_halfspace=plane,
+    )
+    assert terminal_halfspace_margin(goal[None], cfg, plane)[0] < 0
+    path = plan_local_target(state, goal, geometry, cfg, orientation_required=True, options=options)
+    assert path.status == "certified"
+    terminal = torch.from_numpy(path.poses[-1:])
+    assert terminal_halfspace_margin(terminal, cfg, plane)[0] > 0
+    assert torch.linalg.vector_norm(terminal[0, :2] - goal[:2]) <= .13
+    rotated = terminal.clone()
+    rotated[:, 0], rotated[:, 1] = -terminal[:, 1], terminal[:, 0]
+    rotated[:, 2] += torch.pi / 2
+    torch.testing.assert_close(
+        terminal_halfspace_margin(terminal, cfg, plane),
+        terminal_halfspace_margin(rotated, cfg, (0., 1., .30)),
+        atol=1e-7, rtol=1e-7,
+    )

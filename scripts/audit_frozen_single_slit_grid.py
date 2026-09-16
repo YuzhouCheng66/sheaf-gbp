@@ -20,6 +20,7 @@ from piano_movers.config import HANDLE_LAYOUT_GLYPH_BOUNDARY_V4, HANDLE_LAYOUT_P
 from piano_movers.env import collision_mask, radius_edges
 from piano_movers.gbp import homogeneous_topology
 from piano_movers.local_skill_teacher import certify_pose_path
+from piano_movers.local_skill_physics import certified_contact_step
 from piano_movers.single_slit_0720_eval import (
     load_single_slit_checkpoint,
     strict_final_mask,
@@ -39,7 +40,7 @@ from piano_movers.single_slit_contact_observation import (
 
 
 @torch.inference_mode()
-def audit(policy, cfg, horizon):
+def audit(policy, cfg, horizon, *, continuous_guard=False):
     policy.bind_environment(cfg)
     state = torch.tensor([[*SOURCE_POSE, 0.0, 0.0, 0.0]])
     scene = single_slit_scenario(1, cfg, initial_state=state)
@@ -49,11 +50,16 @@ def audit(policy, cfg, horizon):
     topology = homogeneous_topology(edges, 1, cfg.n_agents, device="cpu")
     legacy_dwell = strict_dwell = contacts = penetrations = payload = setup = 0
     legacy_finish = None
+    continuous_rejections = 0
     trajectory = [state[0].clone()]
     for tick in range(horizon):
         observation = single_slit_contact_observations_v1(state, scene, cfg, context)
         out = policy(observation, edges, hidden, topology=topology, trace_messages=True)
-        transition = single_slit_contact_feedback_step_v1(state, out.forces, scene, cfg)
+        if continuous_guard:
+            transition, certificate = certified_contact_step(state, out.forces, scene, cfg)
+            continuous_rejections += int(certificate is not None and not certificate.passed)
+        else:
+            transition = single_slit_contact_feedback_step_v1(state, out.forces, scene, cfg)
         state = transition.resolved_state
         hidden = out.hidden
         context = single_slit_contact_observation_context_from_result_v1(
@@ -81,6 +87,7 @@ def audit(policy, cfg, horizon):
         "strict_success": strict_dwell >= STRICT_STABLE_STEPS,
         "steps": tick + 1,
         "contacts": contacts,
+        "continuous_guard_rejections": continuous_rejections,
         "resolved_pose_collisions": penetrations,
         "continuous_certificate": asdict(certificate),
         "gbp_payload_bytes": payload,
@@ -97,6 +104,8 @@ def main():
     parser.add_argument("--shapes", nargs="+", default=list("ABCDEFGHIJKLMNOPQRSTUVWXYZ"))
     parser.add_argument("--agents", nargs="+", type=int, default=list(range(8, 21)))
     parser.add_argument("--horizon", type=int, default=384)
+    parser.add_argument("--continuous-contact-guard", action="store_true")
+    parser.add_argument("--planning-substeps", type=int, default=4)
     parser.add_argument("--t-profile", choices=["benchmark", "demo"], default="benchmark")
     args = parser.parse_args()
     torch.set_num_threads(1)
@@ -111,12 +120,15 @@ def main():
         "checkpoint_sha256": parent.checkpoint_sha256,
         "t_profile": args.t_profile,
         "horizon": args.horizon,
+        "continuous_contact_guard": args.continuous_contact_guard,
+        "local_cspace_collision_substeps": args.planning_substeps,
         "source_sha256": {
             str(p): sha256(p)
             for p in [
                 Path(__file__),
                 Path("src/piano_movers/models.py"),
                 Path("src/piano_movers/single_slit_local_planner.py"),
+                Path("src/piano_movers/local_skill_physics.py"),
             ]
         },
         "results": [],
@@ -129,6 +141,7 @@ def main():
                 n_agents=count,
                 payload_shape=shape,
                 comm_radius=0.40,
+                local_cspace_collision_substeps=args.planning_substeps,
                 handle_layout=HANDLE_LAYOUT_PARAMETRIC_T_V3
                 if shape == "T"
                 else HANDLE_LAYOUT_GLYPH_BOUNDARY_V4,
@@ -141,7 +154,7 @@ def main():
                     t_stem_width_m=0.160,
                     t_cap_thickness_m=0.152,
                 )
-            row, states = audit(parent.policy, cfg, args.horizon)
+            row, states = audit(parent.policy, cfg, args.horizon, continuous_guard=args.continuous_contact_guard)
             case_id = f"{shape}_{count}"
             artifact = args.output / f"{case_id}.npz"
             np.savez_compressed(artifact, states=states)

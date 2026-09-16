@@ -121,8 +121,11 @@ def _collision_safe_cspace_targets(
     predicted_y = relative_y.unsqueeze(-1) + float(cfg.dt) * desired_velocity[..., 1]
     predicted_theta = current_theta.unsqueeze(-1) + float(cfg.dt) * desired_omega
 
+    samples = cfg.local_cspace_collision_substeps
+    if samples < 1:
+        raise ValueError("local C-space collision samples must be positive")
     fractions = torch.linspace(
-        0.25, 1.0, 4, dtype=path.dtype, device=path.device
+        1. / samples, 1.0, samples, dtype=path.dtype, device=path.device
     ).view(1, 1, -1)
     sample_x = relative_x[:, None, None] + fractions * (
         predicted_x - relative_x.unsqueeze(-1)
@@ -702,6 +705,21 @@ def local_se2_terminal_attractor_plan(
             torch.where(corridor_rotation_safe, center_x, corridor_safe_center_x),
         ),
     )
+    if (cfg.complete_local_corridor_exit and not cfg.goal_orientation_required
+            and cfg.goal_x > cfg.wall_slab):
+        # A position-only handoff can lie before the centre required to clear
+        # a large rotated body's trailing support. Do not stop its crossing
+        # drive at that x while the supervisor still requires a cleared body.
+        # Keep the same local corridor and hold this x lower bound during
+        # recentering; otherwise the goal spring immediately pulls the tail
+        # back into the just-cleared plane. Explicit C-space entry targets are
+        # untouched. Final oriented parking retains the original behavior.
+        exit_center_x = (
+            float(cfg.wall_slab) + LOCAL_SE2_TERMINAL_WALL_RESERVE_M + .005
+            - world_vertex_x.amin(dim=-1)
+        )
+        completion = terminal_active | (corridor_active & corridor_aligned & ~corridor_explicit)
+        target_x = torch.where(completion, torch.maximum(target_x, exit_center_x), target_x)
     target_y = torch.where(
         corridor_active & ~corridor_rotation_safe,
         center_y,

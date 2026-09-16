@@ -102,3 +102,33 @@ def test_previous_wall_retention_is_bitwise_unchanged_before_first_handoff() -> 
         DEFAULT_COURSE, state, 1, cfg, context, retain_previous_wall_only=True,
     )
     assert bool(post[..., 17].any())
+
+
+def test_opt_in_corridor_completion_keeps_driving_a_trailing_body():
+    cfg = replace(_course_config(single_slit_env_config(), 12, DEFAULT_COURSE, "L"),
+                  goal_orientation_required=False)
+    state = torch.tensor([[-1.1690975, .1495785, .9574202, 0., 0., 0.]])
+    context = initial_single_slit_contact_observation_context_v1(state, cfg)
+    observation = _composition_observation(DEFAULT_COURSE, state, 0, cfg, context)
+    learned = torch.zeros(1, 12, 8)
+    kwargs = dict(position_gain=2., angle_gain=2., max_speed=.35, max_omega=.8,
+                  feasible_corridor=True, route_free_geometry=True,
+                  corridor_reserve_m=.05, corridor_max_speed=.5)
+    old, active = local_se2_terminal_attractor_plan(observation, learned, cfg, **kwargs)
+    new, new_active = local_se2_terminal_attractor_plan(
+        observation, learned, replace(cfg, complete_local_corridor_exit=True), **kwargs,
+    )
+    torch.testing.assert_close(active, new_active, rtol=0, atol=0)
+    rows = active[0, :, 0]
+    assert rows.any()
+    c, s = state[0, 2].cos(), state[0, 2].sin()
+    old_x = .65 * (c * old[0, :, 3] - s * old[0, :, 4])
+    new_x = .65 * (c * new[0, :, 3] - s * new[0, :, 4])
+    assert old_x[rows].abs().max() < .01
+    assert new_x[rows].min() > .02
+    final_cfg = replace(cfg, goal_orientation_required=True)
+    final_old, _ = local_se2_terminal_attractor_plan(observation, learned, final_cfg, **kwargs)
+    final_new, _ = local_se2_terminal_attractor_plan(
+        observation, learned, replace(final_cfg, complete_local_corridor_exit=True), **kwargs,
+    )
+    torch.testing.assert_close(final_old, final_new, rtol=0, atol=0)

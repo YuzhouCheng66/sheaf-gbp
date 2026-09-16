@@ -81,6 +81,9 @@ class EnvConfig:
     # False supplies a position target with no preferred terminal heading.
     # Historical checkpoints omit this field and keep their SE(2) semantics.
     goal_orientation_required: bool = True
+    # Opt-in local-skill interface control; does not change the neural graph.
+    complete_local_corridor_exit: bool = False
+    local_cspace_collision_substeps: int = 4
     bidirectional: bool = False
     round_trip: bool = False
     round_trip_speed_tol: float = 0.30

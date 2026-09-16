@@ -42,6 +42,7 @@ from .single_slit_0720_eval import (
     strict_final_mask,
 )
 from .single_slit_contact_feedback import single_slit_contact_feedback_step_v1
+from .local_skill_physics import certified_contact_step
 from .single_slit_contact_observation import (
     initial_single_slit_contact_observation_context_v1,
     single_slit_contact_observation_context_from_result_v1,
@@ -71,6 +72,9 @@ class SkillCompositionOptions:
     retain_nearby_wall: bool = False
     preserve_contact_feedback: bool = False
     retain_previous_wall_only: bool = False
+    complete_corridor_exit: bool = False
+    planning_substeps: int = 4
+    continuous_contact_guard: bool = False
 
 
 @dataclass(frozen=True)
@@ -383,6 +387,9 @@ class MultiWaypointEngine:
         )
         if self.options.nominal_glyph_size:
             cfg = replace(cfg, glyph_scale=1.0)
+        if self.options.complete_corridor_exit:
+            cfg = replace(cfg, complete_local_corridor_exit=True)
+        cfg = replace(cfg, local_cspace_collision_substeps=self.options.planning_substeps)
         _bind_geometry(self.loaded.policy, cfg)
         full_scenario = _full_collision_scenario(self.course, cfg)
         state = full_scenario.state0.clone()
@@ -422,6 +429,7 @@ class MultiWaypointEngine:
         waypoint_index = 0
         dwell = 0
         contacts = 0
+        continuous_rejections = 0
         for tick in range(HORIZON):
             active_goal = self.course.waypoints[waypoint_index]
             active_wall = self.course.walls[min(waypoint_index, len(self.course.walls) - 1)]
@@ -449,9 +457,13 @@ class MultiWaypointEngine:
                 topology=topology,
                 trace_messages=True,
             )
-            transition = single_slit_contact_feedback_step_v1(
-                state, output.forces, full_scenario, cfg
-            )
+            if self.options.continuous_contact_guard:
+                transition, certificate = certified_contact_step(state, output.forces, full_scenario, cfg)
+                continuous_rejections += int(certificate is not None and not certificate.passed)
+            else:
+                transition = single_slit_contact_feedback_step_v1(
+                    state, output.forces, full_scenario, cfg
+                )
             if self.audit_callback is not None:
                 self.audit_callback(
                     tick=tick, waypoint_index=waypoint_index, cfg=cfg,
@@ -530,6 +542,7 @@ class MultiWaypointEngine:
             "waypoints_completed": waypoint_index + int(dwell >= STRICT_STABLE_STEPS),
             "waypoint_count": len(self.course.waypoints),
             "contact_events": contacts,
+            "continuous_guard_rejections": continuous_rejections,
             "exact_penetration": False,
         }
         recorded.append(done)

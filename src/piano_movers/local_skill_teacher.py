@@ -33,7 +33,11 @@ class LocalTeacherConfig:
     certificate_margin_m: float = 1.0e-6
     certificate_depth: int = 18
     position_tolerance_m: float = 0.015
+    execution_position_tolerance_m: float = 0.020
     angle_tolerance_rad: float = 0.020
+    # Training-only terminal predicate: the whole body must satisfy
+    # nx*x + ny*y > offset. No plane or route index is a policy feature.
+    terminal_halfspace: tuple[float, float, float] | None = None
     search_padding_m: float = 0.85
     max_expansions: int = 500_000
     max_lazy_replans: int = 12
@@ -165,6 +169,22 @@ def _angle(x):
     return np.arctan2(np.sin(x), np.cos(x))
 
 
+def terminal_halfspace_margin(state: Tensor, cfg: EnvConfig, plane) -> Tensor:
+    """Minimum signed body support relative to a training terminal plane."""
+    if plane is None:
+        return state.new_full((len(state),), torch.inf)
+    normal = state.new_tensor(plane[:2])
+    length = torch.linalg.vector_norm(normal)
+    if not bool(torch.isfinite(state.new_tensor(plane)).all()) or float(length) <= 0:
+        raise ValueError("terminal plane needs finite coefficients and a nonzero normal")
+    normal = normal / length
+    vertices = payload_rectangles_for_config(cfg, state.device).to(state).reshape(-1, 2)
+    c, s = state[:, 2:3].cos(), state[:, 2:3].sin()
+    x = state[:, 0:1] + c * vertices[:, 0] - s * vertices[:, 1]
+    y = state[:, 1:2] + s * vertices[:, 0] + c * vertices[:, 1]
+    return (normal[0] * x + normal[1] * y).amin(-1) - plane[2] / length
+
+
 def plan_local_target(
     state: Tensor,
     goal: Tensor,
@@ -250,8 +270,26 @@ def plan_local_target(
     y_radius = np.sqrt(np.maximum(0.0, options.position_tolerance_m**2 - dx**2))
     goal_lower = np.maximum(lower, (target[1] - y_radius)[:, None])
     goal_upper = np.minimum(upper, (target[1] + y_radius)[:, None])
+    terminal_valid = np.ones_like(valid)
+    if options.terminal_halfspace is not None:
+        a, b, offset = options.terminal_halfspace
+        length = math.hypot(a, b)
+        if not np.isfinite([a, b, offset]).all() or length <= 0:
+            raise ValueError("invalid terminal halfspace")
+        a, b, offset = a / length, b / length, offset / length
+        vy = (np.sin(theta[:, None]) * vertices[None, :, 0]
+              + np.cos(theta[:, None]) * vertices[None, :, 1])
+        support = (a * vx + b * vy).min(axis=1)
+        required_y = offset + options.planning_margin_m - a * x[:, None] - support[None]
+        if abs(b) <= 1e-12:
+            terminal_valid &= required_y < 0.
+        elif b > 0:
+            goal_lower = np.maximum(goal_lower, required_y / b)
+        else:
+            goal_upper = np.minimum(goal_upper, required_y / b)
     goal_mask = (
-        valid & (abs(dx)[:, None] <= options.position_tolerance_m) & (goal_lower <= goal_upper)
+        valid & terminal_valid & (abs(dx)[:, None] <= options.position_tolerance_m)
+        & (goal_lower <= goal_upper)
     )
     if orientation_required:
         goal_mask &= abs(_angle(theta - target[2]))[None, :] <= options.angle_tolerance_rad

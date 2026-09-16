@@ -77,7 +77,8 @@ def generate_case(
     report = {
         "planning_attempts": planning_attempts,
         "success": False,
-        "terminal_position_tolerance_m": 0.020,
+        "terminal_position_tolerance_m": options.execution_position_tolerance_m,
+        "terminal_halfspace": options.terminal_halfspace,
         "terminal_angle_tolerance_rad": 0.030,
         "terminal_speed_tolerance_mps": 0.020,
         "terminal_omega_tolerance_radps": 0.030,
@@ -93,9 +94,13 @@ def generate_case(
     dwell = stagnant = 0
     for _ in range(horizon):
         xy = torch.linalg.vector_norm(state[0, :2] - goal[:2])
-        close = bool(xy < 0.020) and (
+        close = bool(xy < options.execution_position_tolerance_m) and (
             not orientation or bool(wrap_angle(state[0, 2] - goal[2]).abs() < 0.030)
         )
+        if options.terminal_halfspace is not None:
+            from piano_movers.local_skill_teacher import terminal_halfspace_margin
+
+            close = close and bool(terminal_halfspace_margin(state, cfg, options.terminal_halfspace)[0] > 0.)
         rest = bool(torch.linalg.vector_norm(state[0, 3:5]) < 0.02) and bool(
             state[0, 5].abs() < 0.03
         )

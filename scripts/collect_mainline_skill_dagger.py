@@ -34,6 +34,7 @@ from piano_movers.single_slit_contact_observation import (
     single_slit_contact_observation_context_from_result_v1,
 )
 from piano_movers.single_slit_local_planner import local_se2_plan_target
+from piano_movers.single_slit_local_planner import LOCAL_SE2_TERMINAL_WALL_RESERVE_M
 
 
 def context_from_original_observation(obs):
@@ -65,7 +66,10 @@ def main():
     record = {
         "schema": "piano-movers.original-architecture-dagger.v1",
         "status": "running", "split": "train_development_dagger",
-        "parent_checkpoint_sha256": parent.checkpoint_sha256,
+        "parent_checkpoint_sha256": parent.metadata.get("p6_mainline_training", {}).get(
+            "parent_checkpoint_sha256", parent.checkpoint_sha256,
+        ),
+        "actor_checkpoint_sha256": parent.checkpoint_sha256,
         "rollout_manifest_sha256": sha256(args.rollouts),
         "source_sha256": {str(p): sha256(p) for p in (
             Path(__file__), Path("scripts/build_local_skill_dataset.py"),
@@ -98,6 +102,9 @@ def main():
         cfg = _course_config(parent.cfg, episode["agents"], course, episode["shape"])
         if composition.nominal_glyph_size:
             cfg = replace(cfg, glyph_scale=1.)
+        if composition.complete_corridor_exit:
+            cfg = replace(cfg, complete_local_corridor_exit=True)
+        cfg = replace(cfg, local_cspace_collision_substeps=composition.planning_substeps)
         scene = _full_collision_scenario(course, cfg)
         ticks = list(np.linspace(0, len(data["state"]) - 1, args.queries_per_episode, dtype=int))
         hits = np.flatnonzero(data["hit"])
@@ -131,8 +138,15 @@ def main():
                 )
 
             torch.testing.assert_close(sense(state, context), observation, atol=2e-6, rtol=2e-6)
+            options = LocalTeacherConfig(x_step=.0125)
+            if stage < len(course.waypoints) - 1:
+                options = replace(options, position_tolerance_m=.125, execution_position_tolerance_m=.14)
+                if composition.require_body_clearance:
+                    options = replace(options, terminal_halfspace=(
+                        1., 0., active_wall.x + cfg.wall_slab + LOCAL_SE2_TERMINAL_WALL_RESERVE_M,
+                    ))
             report, teacher = generate_case(
-                state, goal, scene, cfg, context, oriented, LocalTeacherConfig(x_step=.0125), 512,
+                state, goal, scene, cfg, context, oriented, options, 512,
             )
             case_id = f"{args.variant}_{episode['shape']}_{episode['agents']}_q{tick}"
             row = {
@@ -152,11 +166,12 @@ def main():
                            or _body_cleared_wall(end, payload_rectangles_for_config(cfg, "cpu"), active_wall, cfg))
                 row["teacher_satisfies_handoff"] = bool(handoff)
                 row["admitted_for_training"] = bool(handoff)
-                observations, inputs, targets = [], [], []
+                observations, inputs, targets, private = [], [], [], []
                 for index, force in enumerate(teacher["forces"]):
                     q = torch.from_numpy(teacher["states"][index:index + 1])
                     nxt = torch.from_numpy(teacher["states"][index + 1:index + 2])
                     obs = sense(q, context)
+                    private.append(hidden[0].clone().numpy())
                     planner_input, hidden = parent.policy.local_se2_base_planner_inputs_and_next_private_hidden(obs, hidden)
                     observations.append(obs[0].numpy())
                     inputs.append(planner_input[0].numpy())
@@ -170,6 +185,7 @@ def main():
                 artifact = args.output / f"{case_id}.npz"
                 np.savez_compressed(
                     artifact, observation=np.stack(observations), planner_inputs=np.stack(inputs),
+                    private_hidden=np.stack(private),
                     target_plan=np.stack(targets), target_force=teacher["forces"], states=teacher["states"],
                     actor_private_hidden=data["private_hidden"][tick],
                     actor_observation=observation[0].numpy(),

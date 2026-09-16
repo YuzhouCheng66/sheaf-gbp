@@ -34,7 +34,10 @@ def certified_contact_step(state, forces, scene, cfg):
         attempted_hit=torch.ones_like(result.attempted_hit),
         attempted_clearance_m=torch.minimum(
             result.attempted_clearance_m,
-            state.new_tensor([certificate.minimum_sampled_clearance_m]),
+            # The V1 container requires a nonpositive rejection marker. A
+            # depth-limit rejection is uncertainty, not a measured overlap;
+            # its marker must not be reported as a penetration measurement.
+            state.new_tensor([min(0., certificate.minimum_sampled_clearance_m)]),
         ),
         resolved_clearance_m=collision_clearance_margin(stopped, scene, cfg),
     )
