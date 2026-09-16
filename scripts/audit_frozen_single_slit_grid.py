@@ -106,6 +106,7 @@ def main():
     parser.add_argument("--horizon", type=int, default=384)
     parser.add_argument("--continuous-contact-guard", action="store_true")
     parser.add_argument("--planning-substeps", type=int, default=4)
+    parser.add_argument("--validate-all-cspace-lookaheads", action="store_true")
     parser.add_argument("--t-profile", choices=["benchmark", "demo"], default="benchmark")
     args = parser.parse_args()
     torch.set_num_threads(1)
@@ -122,6 +123,7 @@ def main():
         "horizon": args.horizon,
         "continuous_contact_guard": args.continuous_contact_guard,
         "local_cspace_collision_substeps": args.planning_substeps,
+        "local_cspace_validate_all_lookaheads": args.validate_all_cspace_lookaheads,
         "source_sha256": {
             str(p): sha256(p)
             for p in [
@@ -142,6 +144,7 @@ def main():
                 payload_shape=shape,
                 comm_radius=0.40,
                 local_cspace_collision_substeps=args.planning_substeps,
+                local_cspace_validate_all_lookaheads=args.validate_all_cspace_lookaheads,
                 handle_layout=HANDLE_LAYOUT_PARAMETRIC_T_V3
                 if shape == "T"
                 else HANDLE_LAYOUT_GLYPH_BOUNDARY_V4,

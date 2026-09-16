@@ -33,6 +33,9 @@ def main():
         for key in invariant:
             if source[key] != record[key]:
                 raise ValueError(f"mixed audit semantics: {key}")
+        if frozen_grid and (source.get("local_cspace_validate_all_lookaheads", False)
+                            != record.get("local_cspace_validate_all_lookaheads", False)):
+            raise ValueError("mixed nominal rejoin-screen settings")
         if layout_grid:
             for key in ("recipe_sha256", "options", "initial_velocity", "outcome_based_admission"):
                 if source[key] != record[key]:

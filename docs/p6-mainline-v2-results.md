@@ -60,9 +60,13 @@ original gain and 16-point lookahead. Neural weights, restrictions, GBP and
 grasp decoding are unchanged. Same-source replay gives T/10:
 failure/1,100 steps/922 contacts → success/932 steps/9 contacts, with independent
 continuous certification in both cases. The control also passes T/8–20
-(13/13) and the enlarged A–Z/N=12 panel (26/26). Its complete all-count paired
-comparison is separate; it is not silently enabled in the v2 recipe or public
-demo. Implementation: `72f7b97`; control name `complete_exit_screened`.
+(13/13) and the enlarged A–Z/N=12 panel (26/26). The complete all-count paired
+comparison is now **332/338**, with all 338 independently certified: it
+repairs T/10 and loses none of the original 331 successes. The six D failures
+remain. Its separate recipe is `configs/p6_mainline_candidate_v2_screened.json`;
+it is not silently enabled in the old v2 recipe or public demo. Implementation:
+`72f7b97`; control name `complete_exit_screened`. The uniform nominal regression
+with this exact opt-in recipe is still a separate gate.
 
 ### Additional authentic-state DAgger, original modules only
 
@@ -82,6 +86,30 @@ parameters, 20,000 updates and replay objective; GPU optimization takes
 the full matched all-count audit is required, including any new regressions.
 The v2 recipe remains the locked reference, not an automatically replaced
 checkpoint.
+
+The completed matched all-count comparison rejects v3 as a replacement:
+both v2+screen and v3+screen score **332/338**, but v3 exchanges D/9,16,17
+repairs for J/9,10 and O/9 regressions. Its control steps rise from 152,884 to
+164,272, rejected contacts from 797 to 2,673, and recorded GBP+setup payload
+from 1,024,887,360 to 1,080,702,528 bytes. All trajectories remain certified.
+This is a measured training tradeoff, not an architectural failure.
+
+A second, warm-start continuation v4 begins at v2 and replays **1,047,456
+agent-frames from 164 successful even-count development episodes**, with S/Z
+and odd counts still excluded. It trains the same modules for 10,000 steps,
+learning rate 5e-5 and replay weight 3; optimization takes 16.56 seconds after
+preparation. It still preserves 26/26 at N=12, but its targeted D/J/O full-count
+panel is 32/39, versus 33/39 for v2+screen: D/16 is repaired, J/9 and O/15
+regress. **It is not promoted or sent to the public demo.** Merely reducing
+imitation/replay loss is not accepted as improved closed-loop control. The
+next iteration must diagnose decision authority and execution-level errors
+on genuine development states, not blindly extend these fits or train on the
+inspected held-out C episode.
+
+Artifacts: `output/p6_mainline_v3_screened_all_counts`,
+`output/p6_mainline_markov_dagger_v4_warm`, `output/p6_mainline_v4_DJO_allcounts`,
+`output/p6_mainline_v4_AZ12`. The screened v2 recipe remains the stronger
+verified reference while additional course and nominal-regression tests run.
 
 ## What changed
 
