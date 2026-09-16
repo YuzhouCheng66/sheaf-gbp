@@ -31,10 +31,10 @@
     "three_wall_development_26_letters_12_agents": "output/p6_trained_certified32_AZ12/manifest.json",
     "matched_frozen_parent": "output/p6_parent_certified32_AZ12/manifest.json",
     "canonical_T_8_to_20_continuous_guard": "output/p6_mainline_markov_v2_canonical_guard32/manifest.json",
-    "nominal_AZ_8_to_20_uniform_continuous_guard32": "output/p6_mainline_markov_v2_nominal_guard32_AZ_all_counts/manifest.json"
+    "nominal_AZ_8_to_20_uniform_continuous_guard32": "output/p6_mainline_markov_v2_nominal_guard32_AZ_all_counts/manifest.json",
+    "enlarged_three_wall_AZ_8_to_20_331_of_338": "output/p6_mainline_v2_composed_all_counts/manifest.json"
   },
   "not_yet_validated": [
-    "enlarged_three_wall_A_to_Z_for_every_8_to_20_agent_count",
     "fresh_entry_heading_velocity_contact_and_goal_switch_distributions",
     "held_out_layout_and_shape_scale_combinations",
     "causal_history_coherence_under_unseen_goal_switches",

@@ -6,6 +6,83 @@ Use the complete candidate recipe in
 not just its checkpoint: target handoff and collision settings are part of the
 validated system.
 
+## Extended count and first held-out-course audit
+
+The original v2 recipe has now completed the **enlarged three-wall A–Z ×
+N=8–20 grid: 331/338 (97.93%)**, with all 338 trajectories independently
+continuously certified. This is the harder composed course, unlike the
+338/338 nominal single-slit regression below.
+
+| Agent counts | Successes per count |
+| --- | ---: |
+| 8, 11, 12, 13, 14, 15, 20 | 26/26 |
+| 9, 16, 17, 18, 19 | 25/26 |
+| 10 | 24/26 |
+
+The seven failures are D/9,10,16,17,18,19 and T/10. Every count exceeds 90%
+as a point estimate on this grid; this is not a lower-confidence-bound or
+arbitrary-layout guarantee. D's failures include slow transit and late final
+arrival, not seven identical wall deadlocks. T/10 is a genuine repeated-contact
+deadlock (922 rejected moves, zero motion over its last 100 steps).
+
+Predeclared course-family validation at seed 82201, A–Z/N=12 gives **103/104**:
+layout-only 26/26, entry-pose-only 25/26, goal-only 26/26, combined 26/26.
+All 104 trajectories pass continuous certification. No teacher-admission or
+outcome-based filtering is applied, and the case catalog is hashed before any
+rollout. These 104 cases share only **one draw per family**, not 104 independently
+sampled layouts. The actual entry heading is only 0.01784 rad, despite the
+generator's wider declared range. Thus this is useful first held-out-course
+evidence, not broad orientation, contact-entry, or velocity generalization.
+Source velocity is zero; reserved test seeds have not been evaluated.
+
+The validation failure is C at the second wall. A frozen-state replay finds
+nearly identical local plans and a ~1.4 micrometre interior collision while
+aligning; the previous wall is not the obstructing wall. The continuous guard
+correctly rejects it. This validation case is not added to training data.
+
+Artifacts:
+`output/p6_mainline_v2_composed_all_counts/manifest.json` and
+`output/p6_mainline_v2_validation_82201_all/manifest.json`.
+
+### Isolated rejoin-screen control, unchanged v2 weights
+
+The T/10 failure identifies an independent geometric-interface defect: the
+original fast C-space branch uses a reference route with 10 mm planning
+reserve as if it also certified rejoining that route from the actual tracked
+pose. At the deadlock, each agent's predicted motion matches the realized
+force-driven proposal, but its midpoint penetrates by ~0.259 mm even though
+its endpoint has positive clearance. This is not evidence of failed GBP
+consensus, nor does fitting an overwritten neural plan repair that action.
+
+An **opt-in, default-off** control screens these previously unchecked actual-
+pose lookaheads with the existing local candidate checker, keeping their
+original gain and 16-point lookahead. Neural weights, restrictions, GBP and
+grasp decoding are unchanged. Same-source replay gives T/10:
+failure/1,100 steps/922 contacts → success/932 steps/9 contacts, with independent
+continuous certification in both cases. The control also passes T/8–20
+(13/13) and the enlarged A–Z/N=12 panel (26/26). Its complete all-count paired
+comparison is separate; it is not silently enabled in the v2 recipe or public
+demo. Implementation: `72f7b97`; control name `complete_exit_screened`.
+
+### Additional authentic-state DAgger, original modules only
+
+The 18 new D queries come exclusively from the actual v2 development failures
+at **even** N=10,16,18. All have admitted executable teacher continuations.
+Odd-count failures and held-out-course C are not used as training examples.
+Four certified T/10 queries are archived separately: the deadlock has zero
+neural-plan authority, and those labels are not casually mixed into an
+ineffective neural-only objective.
+
+Combining the original 51 queries with the 18 D queries produces 69 admitted
+queries/57,582 agent-frames. Actor/root-parent and source trace hashes remain
+distinct. A fresh original-module v3 fit uses the same 213,000 trainable
+parameters, 20,000 updates and replay objective; GPU optimization takes
+29.60 seconds. It preserves 26/26 at N=12 and changes D/N=8–20 from 7/13 to
+10/13, retaining failures D/10,18,19. This is not sufficient for promotion:
+the full matched all-count audit is required, including any new regressions.
+The v2 recipe remains the locked reference, not an automatically replaced
+checkpoint.
+
 ## What changed
 
 The original p5 encoder/private recovery machinery, physical Sheaf-GBP, and
@@ -102,8 +179,9 @@ nonpositive rejection marker.
 
 ## Remaining gates
 
-- Fresh layouts, lateral offsets, initial headings/velocities, contacts, goal
-  changes and geometry scales; all N=8–20 on the enlarged multi-wall task.
+- Multiple fresh layouts, substantial initial headings/velocities, contacts,
+  goal changes and geometry scales, crossed with all N=8–20. The default
+  enlarged multi-wall count grid above is now measured, not a remaining run.
 - Explicit parent-lineage accounting for what is held out. S/Z exclusion from
   this fine-tune does not establish unseen-shape status for the original p5.
 - Goal-switch history coherence on fresh episodes. The selected development
