@@ -86,6 +86,7 @@ def _collision_safe_cspace_targets(
     angle_gain: float,
     max_speed: float,
     max_omega: float,
+    lookahead_offsets: tuple[int, ...] = (32, 16, 8, 4, 2, 1, -1, -2, -4),
 ) -> Tensor:
     """Choose the furthest one-step-safe path target from current geometry.
 
@@ -97,7 +98,7 @@ def _collision_safe_cspace_targets(
     """
 
     offsets = torch.tensor(
-        (32, 16, 8, 4, 2, 1, -1, -2, -4),
+        lookahead_offsets,
         dtype=torch.long,
         device=path.device,
     )
@@ -643,7 +644,8 @@ def local_se2_terminal_attractor_plan(
                 # let exact collision feedback reject any remaining numerical
                 # overshoot.  This decision is based on certified clearance,
                 # never on a shape/letter identity.
-                if cspace_planning_safety >= 0.005:
+                if (cspace_planning_safety >= 0.005
+                        and not cfg.local_cspace_validate_all_lookaheads):
                     target_index = (nearest + 16).clamp_max(path.shape[0] - 1)
                     target = path.index_select(0, target_index)
                 else:
@@ -657,10 +659,19 @@ def local_se2_terminal_attractor_plan(
                         gap_center_y[batch_index, rows],
                         gap_half[batch_index, rows],
                         cfg,
-                        position_gain=8.0,
-                        angle_gain=8.0,
+                        position_gain=(8.0 if cspace_planning_safety < 0.005 else
+                                       float(corridor_tracking_gain[batch_index, reference_agent])),
+                        angle_gain=(8.0 if cspace_planning_safety < 0.005 else
+                                    float(corridor_tracking_angle_gain[batch_index, reference_agent])),
                         max_speed=corridor_max_speed,
                         max_omega=max(max_omega, 1.40),
+                        # A clear reference path does not certify the rejoin
+                        # from the actual tracked pose. Preserve its original
+                        # gain/16-step lookahead, screening shorter and reverse
+                        # alternatives with the same local geometry checker.
+                        lookahead_offsets=((32, 16, 8, 4, 2, 1, -1, -2, -4)
+                                           if cspace_planning_safety < 0.005 else
+                                           (16, 8, 4, 2, 1, -1, -2, -4)),
                     )
                 cspace_active[batch_index, rows] = True
                 cspace_target_x[batch_index, rows] = wall_x_rows + target[:, 0]

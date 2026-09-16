@@ -75,6 +75,7 @@ class SkillCompositionOptions:
     complete_corridor_exit: bool = False
     planning_substeps: int = 4
     continuous_contact_guard: bool = False
+    validate_all_cspace_lookaheads: bool = False
 
 
 @dataclass(frozen=True)
@@ -389,7 +390,10 @@ class MultiWaypointEngine:
             cfg = replace(cfg, glyph_scale=1.0)
         if self.options.complete_corridor_exit:
             cfg = replace(cfg, complete_local_corridor_exit=True)
-        cfg = replace(cfg, local_cspace_collision_substeps=self.options.planning_substeps)
+        cfg = replace(
+            cfg, local_cspace_collision_substeps=self.options.planning_substeps,
+            local_cspace_validate_all_lookaheads=self.options.validate_all_cspace_lookaheads,
+        )
         _bind_geometry(self.loaded.policy, cfg)
         full_scenario = _full_collision_scenario(self.course, cfg)
         state = full_scenario.state0.clone()

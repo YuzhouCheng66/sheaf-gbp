@@ -84,6 +84,7 @@ class EnvConfig:
     # Opt-in local-skill interface control; does not change the neural graph.
     complete_local_corridor_exit: bool = False
     local_cspace_collision_substeps: int = 4
+    local_cspace_validate_all_lookaheads: bool = False
     bidirectional: bool = False
     round_trip: bool = False
     round_trip_speed_tol: float = 0.30

@@ -132,3 +132,40 @@ def test_opt_in_corridor_completion_keeps_driving_a_trailing_body():
         observation, learned, replace(final_cfg, complete_local_corridor_exit=True), **kwargs,
     )
     torch.testing.assert_close(final_old, final_new, rtol=0, atol=0)
+
+
+def test_clear_reference_route_does_not_certify_actual_pose_rejoin():
+    from piano_movers.local_skill_teacher import certify_pose_path
+    from piano_movers.multi_waypoint_demo import _full_collision_scenario
+
+    cfg = replace(_course_config(single_slit_env_config(), 10, DEFAULT_COURSE, "T"),
+                  goal_orientation_required=False, complete_local_corridor_exit=True,
+                  local_cspace_collision_substeps=32)
+    # Actual v2 T/10 deadlock; endpoint-only clearance is positive while the
+    # unchecked current-to-lookahead move penetrates during interpolation.
+    state = torch.tensor([[-1.80108607, -.33845416, 1.19884074, 0., 0., 0.]])
+    scene = _full_collision_scenario(DEFAULT_COURSE, cfg)
+    context = initial_single_slit_contact_observation_context_v1(state, cfg)
+    obs = _composition_observation(DEFAULT_COURSE, state, 0, cfg, context)
+    kwargs = dict(position_gain=2., angle_gain=2., max_speed=.35, max_omega=.8,
+                  feasible_corridor=True, route_free_geometry=True,
+                  corridor_reserve_m=.05, corridor_max_speed=.5)
+
+    def next_pose(checked):
+        plan, active = local_se2_terminal_attractor_plan(
+            obs, torch.zeros(1, 10, 8),
+            replace(cfg, local_cspace_validate_all_lookaheads=checked), **kwargs,
+        )
+        assert active.all()
+        v = plan[0, :, 3:5] * .65
+        theta = state[0, 2]
+        predicted = state.repeat(10, 1)
+        predicted[:, 0] += cfg.dt * (theta.cos() * v[:, 0] - theta.sin() * v[:, 1])
+        predicted[:, 1] += cfg.dt * (theta.sin() * v[:, 0] + theta.cos() * v[:, 1])
+        predicted[:, 2] += cfg.dt * plan[0, :, 5] * 1.4
+        return predicted
+
+    old, checked = next_pose(False), next_pose(True)
+    assert not certify_pose_path(torch.cat((state, old[:1])), scene, cfg).passed
+    assert all(certify_pose_path(torch.cat((state, q[None])), scene, cfg).passed for q in checked)
+    assert torch.linalg.vector_norm(checked[0, :3] - state[0, :3]) > 1e-6

@@ -104,7 +104,8 @@ def main():
             cfg = replace(cfg, glyph_scale=1.)
         if composition.complete_corridor_exit:
             cfg = replace(cfg, complete_local_corridor_exit=True)
-        cfg = replace(cfg, local_cspace_collision_substeps=composition.planning_substeps)
+        cfg = replace(cfg, local_cspace_collision_substeps=composition.planning_substeps,
+                      local_cspace_validate_all_lookaheads=composition.validate_all_cspace_lookaheads)
         scene = _full_collision_scenario(course, cfg)
         ticks = list(np.linspace(0, len(data["state"]) - 1, args.queries_per_episode, dtype=int))
         hits = np.flatnonzero(data["hit"])
