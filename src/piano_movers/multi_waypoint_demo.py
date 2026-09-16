@@ -28,7 +28,7 @@ from .config import (
     HANDLE_LAYOUT_PARAMETRIC_T_V3,
     EnvConfig,
 )
-from .env import PianoBatch, contact_points, radius_edges
+from .env import PianoBatch, body_to_world, contact_points, radius_edges
 from .gbp import GBPMessageTrace, homogeneous_topology
 from .models import SheafGBPPolicy
 from .payload_shapes import (
@@ -68,6 +68,9 @@ class SkillCompositionOptions:
     require_body_clearance: bool = True
     preserve_private_memory: bool = False
     nominal_glyph_size: bool = False
+    retain_nearby_wall: bool = False
+    preserve_contact_feedback: bool = False
+    retain_previous_wall_only: bool = False
 
 
 @dataclass(frozen=True)
@@ -276,6 +279,46 @@ def _intermediate_reached(state: Tensor, waypoint: tuple[float, float, float]) -
     return bool(position_error <= INTERMEDIATE_POSITION_TOLERANCE_M)
 
 
+def _composition_observation(
+    course, state, waypoint_index, cfg, context, *, retain_nearby_wall=False,
+    retain_previous_wall_only=False,
+):
+    """Keep the original 27-D interface; optionally fill its unused wall slot.
+
+    Wall zero retains the active-wall chart expected by the frozen policy.
+    Each handle chooses its nearest other wall using the existing horizontal
+    visibility contract. The normal sensor then masks out-of-range records.
+    This is not an all-obstacle sensor: if both non-active walls are visible,
+    the two-slot architecture can expose only the nearer secondary wall.
+    No future waypoint is supplied to the policy.
+    """
+    local_state, scene = _active_observation_scenario(course, state, waypoint_index)
+    if not (retain_nearby_wall or retain_previous_wall_only) or len(course.walls) == 1:
+        return single_slit_contact_observations_v1(local_state, scene, cfg, context)
+    active_index = min(waypoint_index, len(course.walls) - 1)
+    active = course.walls[active_index]
+    others = [
+        wall for index, wall in enumerate(course.walls)
+        if index != active_index and (not retain_previous_wall_only or index < active_index)
+    ]
+    if not others:
+        return single_slit_contact_observations_v1(local_state, scene, cfg, context)
+    candidates = []
+    for wall in others:
+        alternative = replace(
+            scene,
+            wall_x=state.new_tensor([[0., wall.x - active.x]]),
+            gap_y=state.new_tensor([[active.gap_y, wall.gap_y]]),
+            gap_half=state.new_tensor([[active.gap_half, wall.gap_half]]),
+        )
+        candidates.append(single_slit_contact_observations_v1(local_state, alternative, cfg, context))
+    handles = body_to_world(contact_points(cfg, state.device).to(state), state)
+    distance = (handles[..., 0, None] - state.new_tensor([wall.x for wall in others])).abs()
+    nearest = distance.argmin(-1)
+    rows = torch.stack(candidates, -2)
+    return rows.gather(-2, nearest[..., None, None].expand(*nearest.shape, 1, rows.shape[-1])).squeeze(-2)
+
+
 def _body_cleared_wall(state: Tensor, rectangles: Tensor, wall: Slit, cfg: EnvConfig) -> bool:
     """A centre crossing alone must not discard a still-intersecting wall.
 
@@ -393,11 +436,10 @@ class MultiWaypointEngine:
                 ),
             )
             _set_active_goal_without_rebinding(self.loaded.policy, cfg)
-            local_state, observation_scenario = _active_observation_scenario(
-                self.course, state, waypoint_index
-            )
-            observation = single_slit_contact_observations_v1(
-                local_state, observation_scenario, cfg, context
+            observation = _composition_observation(
+                self.course, state, waypoint_index, cfg, context,
+                retain_nearby_wall=self.options.retain_nearby_wall,
+                retain_previous_wall_only=self.options.retain_previous_wall_only,
             )
             target = _traceable_policy(self.loaded.policy)
             output = target(
@@ -474,9 +516,10 @@ class MultiWaypointEngine:
                 next_local_state, _ = _active_observation_scenario(
                     self.course, state, waypoint_index
                 )
-                context = initial_single_slit_contact_observation_context_v1(
-                    next_local_state, cfg
-                )
+                if not self.options.preserve_contact_feedback:
+                    context = initial_single_slit_contact_observation_context_v1(
+                        next_local_state, cfg
+                    )
             if success:
                 break
 

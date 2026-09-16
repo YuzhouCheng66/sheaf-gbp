@@ -8,6 +8,7 @@ from piano_movers.local_skill_policy import (
     local_skill_features,
     twist_to_plan,
     tree_diameter,
+    local_boundary_segments,
 )
 from piano_movers.single_slit_0720_bc import build_policy
 from piano_movers.single_slit_contact_observation import (
@@ -67,7 +68,9 @@ def test_local_features_are_quarter_turn_equivariant_for_generic_walls():
         obstacle_rects=boxes,
     )
     context = initial_single_slit_contact_observation_context_v1(state, cfg)
-    first = local_skill_features(state, scene, cfg, context, goal=goal, orientation_required=True)
+    first = local_skill_features(
+        state, scene, cfg, context, goal=goal, orientation_required=True, geometry_segments=True
+    )
     moved = state.clone()
     moved[:, 0], moved[:, 1] = -state[:, 1], state[:, 0]
     moved[:, 2] += torch.pi / 2
@@ -80,7 +83,13 @@ def test_local_features_are_quarter_turn_equivariant_for_generic_walls():
         scene, state0=moved, source=moved[:, :3], goal=target, obstacle_rects=rotated
     )
     second = local_skill_features(
-        moved, geometry, cfg, context, goal=target, orientation_required=True
+        moved,
+        geometry,
+        cfg,
+        context,
+        goal=target,
+        orientation_required=True,
+        geometry_segments=True,
     )
     torch.testing.assert_close(first, second, atol=3e-6, rtol=3e-6)
 
@@ -104,6 +113,40 @@ def test_goal_residual_vanishes_at_goal_but_can_retreat_for_required_rotation():
     features[..., 6:9] = features.new_tensor([0, 0, 0])
     prediction, _ = model(features)
     torch.testing.assert_close(prediction, torch.zeros_like(prediction), rtol=0, atol=0)
+
+
+def test_boundary_sensor_is_radius_clipped_and_ignores_obstacle_order():
+    from piano_movers.env import body_to_world, contact_points
+
+    cfg = replace(single_slit_env_config(), world_x=10.0, world_y=10.0)
+    state = torch.tensor([[-0.7, 0.13, 0.21, 0.0, 0.0, 0.0]])
+    boxes = torch.tensor(
+        [[[-0.06, 0.06, 0.40, 3.0], [-0.06, 0.06, -3.0, -0.40], [5.0, 6.0, 5.0, 6.0]]]
+    )
+    empty = torch.empty(1, 0)
+    scene = PianoBatch(
+        state0=state,
+        source=state[:, :3],
+        goal=state[:, :3],
+        wall_x=empty,
+        gap_y=empty,
+        gap_half=empty,
+        obstacle_rects=boxes,
+    )
+    handles = body_to_world(contact_points(cfg, "cpu"), state)
+    first = local_boundary_segments(state, handles, scene, cfg)
+    rearranged = replace(scene, obstacle_rects=boxes.flip(1))
+    second = local_boundary_segments(state, handles, rearranged, cfg)
+    torch.testing.assert_close(first, second, rtol=0, atol=0)
+    samples = first.view(1, cfg.n_agents, 12, 7)
+    assert float(torch.linalg.vector_norm(samples[..., :2], dim=-1).max()) <= 1.000002
+    assert float(torch.linalg.vector_norm(samples[..., 2:4], dim=-1).max()) <= 1.000002
+    remote_change = boxes.clone()
+    remote_change[:, 2] += 1.0
+    changed = local_boundary_segments(
+        state, handles, replace(scene, obstacle_rects=remote_change), cfg
+    )
+    torch.testing.assert_close(first, changed, rtol=0, atol=0)
 
 
 def test_final_local_plan_reaches_actions_without_analytic_override():

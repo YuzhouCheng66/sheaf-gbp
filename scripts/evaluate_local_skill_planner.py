@@ -17,6 +17,7 @@ from piano_movers.config import EnvConfig
 from piano_movers.env import PianoBatch, collision_mask, wrap_angle
 from piano_movers.local_skill_policy import LocalSkillPlanner, LocalSkillController
 from piano_movers.local_skill_teacher import certify_pose_path
+from piano_movers.local_skill_physics import certified_contact_step
 from piano_movers.multi_waypoint_demo import (
     DEFAULT_COURSE,
     _course_config,
@@ -35,19 +36,26 @@ from piano_movers.single_slit_contact_observation import (
 
 
 @torch.inference_mode()
-def run(controller, cfg, state, scene, goals, orientation_flags, horizon):
+def run(controller, cfg, state, scene, goals, orientation_flags, horizon, *, continuous_guard=True):
     controller.reset(cfg)
     context = initial_single_slit_contact_observation_context_v1(state, cfg)
     stage = dwell = hits = payload = setup = pose_collisions = 0
     states = [state[0].clone()]
     features, plans, forces, stages, hit_flags = [], [], [], [], []
     done = False
+    continuous_rejections = 0
     for tick in range(horizon):
         goal = state.new_tensor(goals[stage])
         out, observation, plan = controller.step(
             state, scene, goal, orientation_flags[stage], context
         )
-        transition = single_slit_contact_feedback_step_v1(state, out.forces, scene, cfg)
+        if continuous_guard:
+            transition, step_certificate = certified_contact_step(state, out.forces, scene, cfg)
+            continuous_rejections += int(
+                step_certificate is not None and not step_certificate.passed
+            )
+        else:
+            transition = single_slit_contact_feedback_step_v1(state, out.forces, scene, cfg)
         next_state = transition.resolved_state
         features.append(observation[0].cpu().numpy())
         plans.append(plan[0].cpu().numpy())
@@ -93,6 +101,7 @@ def run(controller, cfg, state, scene, goals, orientation_flags, horizon):
         "steps": tick + 1,
         "goals_completed": stage + int(done),
         "contacts": hits,
+        "continuous_guard_rejections": continuous_rejections,
         "resolved_pose_collisions": pose_collisions,
         "continuous_certificate_passed": certificate.passed,
         "continuous_certificate_reason": certificate.reason,
@@ -124,6 +133,8 @@ def main():
     parser.add_argument("--agents", type=int, nargs="+", default=[12])
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--diameter-rounds", action="store_true")
+    parser.add_argument("--reset-private-each-step", action="store_true")
+    parser.add_argument("--sampled-contact-legacy", action="store_true")
     parser.add_argument("--horizon", type=int, default=1100)
     parser.add_argument("--case-limit", type=int, default=12)
     args = parser.parse_args()
@@ -133,10 +144,18 @@ def main():
     if saved["parent_checkpoint_sha256"] != parent.checkpoint_sha256:
         raise ValueError("planner/action-parent lineage mismatch")
     planner = LocalSkillPlanner(
-        saved["hidden_dim"], goal_residual=saved.get("goal_residual", False)
+        saved["hidden_dim"],
+        goal_residual=saved.get("goal_residual", False),
+        feature_dim=saved["feature_dim"],
+        goal_residual_scale=saved.get("goal_residual_scale", 1.0),
     ).to(args.device)
     planner.load_state_dict(saved["policy_state_dict"], strict=True)
-    controller = LocalSkillController(parent.policy, planner, diameter_rounds=args.diameter_rounds)
+    controller = LocalSkillController(
+        parent.policy,
+        planner,
+        diameter_rounds=args.diameter_rounds,
+        reset_private_each_step=args.reset_private_each_step,
+    )
     args.output.mkdir(parents=True, exist_ok=True)
     destination = args.output / "manifest.json"
     if destination.exists():
@@ -148,6 +167,7 @@ def main():
         "parent_sha256": parent.checkpoint_sha256,
         "planner_sha256": sha256(args.planner),
         "planner_step": saved["step"],
+        "feature_dim": saved["feature_dim"],
         "goal_residual": saved.get("goal_residual", False),
         "source_sha256": {
             str(p): sha256(p)
@@ -159,6 +179,8 @@ def main():
         },
         "device": args.device,
         "diameter_rounds": args.diameter_rounds,
+        "reset_private_each_step": args.reset_private_each_step,
+        "continuous_contact_guard": not args.sampled_contact_legacy,
         "results": [],
     }
     write_json(destination, record)
@@ -204,7 +226,16 @@ def main():
                 )
     for case_id, cfg, state, scene, goals, orientation in tasks:
         started = time.monotonic()
-        result, data = run(controller, cfg, state, scene, goals, orientation, args.horizon)
+        result, data = run(
+            controller,
+            cfg,
+            state,
+            scene,
+            goals,
+            orientation,
+            args.horizon,
+            continuous_guard=not args.sampled_contact_legacy,
+        )
         artifact = args.output / f"{case_id}.npz"
         np.savez_compressed(artifact, **data)
         row = {

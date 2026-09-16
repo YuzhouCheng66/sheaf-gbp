@@ -26,6 +26,8 @@ from .single_slit_contact_observation import (
 
 LOCAL_SKILL_RAYS = 32
 LOCAL_SKILL_FEATURE_DIM = 78
+LOCAL_SKILL_SEGMENTS = 12
+LOCAL_SKILL_GEOMETRY_FEATURE_DIM = 78 + 7 * LOCAL_SKILL_SEGMENTS
 
 
 def _body_frame(vector: Tensor, sine: Tensor, cosine: Tensor) -> Tensor:
@@ -102,6 +104,57 @@ def local_lidar(state: Tensor, handles: Tensor, scene: PianoBatch, cfg: EnvConfi
     return ranges.clamp_max(cfg.wall_sensor_range) / cfg.wall_sensor_range
 
 
+def local_boundary_segments(
+    state: Tensor, handles: Tensor, scene: PianoBatch, cfg: EnvConfig
+) -> Tensor:
+    """Nearest solid-boundary segments clipped to each handle's sensing disk.
+
+    Each segment is two body-frame endpoints, an inward normal, and validity.
+    A corner outside the sensing radius is never exposed. This is idealized
+    local geometric sensing, not a globally supplied wall or passage identity.
+    """
+    boxes = obstacle_boxes(scene, cfg, state)
+    valid_box = (boxes[..., 0] < boxes[..., 1]) & (boxes[..., 2] < boxes[..., 3])
+    corners = torch.stack(
+        (boxes[..., (0, 2)], boxes[..., (1, 2)], boxes[..., (1, 3)], boxes[..., (0, 3)]), -2
+    )
+    a = corners.flatten(1, 2)[:, None] - handles[:, :, None]
+    b = corners.roll(-1, -2).flatten(1, 2)[:, None] - handles[:, :, None]
+    delta = b - a
+    length2 = delta.square().sum(-1).clamp_min(1e-12)
+    center = -(a * delta).sum(-1) / length2
+    line_distance2 = (a + center[..., None] * delta).square().sum(-1)
+    half = ((cfg.wall_sensor_range**2 - line_distance2).clamp_min(0.0) / length2).sqrt()
+    lower = (center - half).clamp_min(0.0)
+    upper = (center + half).clamp_max(1.0)
+    valid = (line_distance2 < cfg.wall_sensor_range**2) & (upper > lower)
+    valid &= valid_box.repeat_interleave(4, 1)[:, None]
+    left, right = a + lower[..., None] * delta, a + upper[..., None] * delta
+    normal = torch.stack((-delta[..., 1], delta[..., 0]), -1) / length2.sqrt()[..., None]
+    sine, cosine = state[:, 2:3, None].sin(), state[:, 2:3, None].cos()
+    left = _body_frame(left, sine, cosine) / cfg.wall_sensor_range
+    right = _body_frame(right, sine, cosine) / cfg.wall_sensor_range
+    normal = _body_frame(normal, sine, cosine)
+    distance2 = (a + center.clamp(0.0, 1.0)[..., None] * delta).square().sum(-1)
+    key = distance2.masked_fill(~valid, torch.inf)
+    count = min(LOCAL_SKILL_SEGMENTS, key.shape[-1])
+    values = torch.cat((left, right, normal, valid[..., None].to(state.dtype)), -1)
+    values = torch.where(valid[..., None], values, torch.zeros_like(values))
+    # Canonical local ordering must not leak the world-AABB corner numbering.
+    # Incident edges have equal nearest distance; break these ties using only
+    # body-frame coordinates. Quantization stabilizes float32 roundoff at ties.
+    selected = torch.arange(key.shape[-1], device=key.device).expand_as(key)
+    ranking = [key.round(decimals=5)] + [values[..., i].round(decimals=5) for i in range(6)]
+    for rank in reversed(ranking):
+        order = rank.gather(-1, selected).argsort(dim=-1, stable=True)
+        selected = selected.gather(-1, order)
+    selected = selected[..., :count]
+    chosen = values.gather(-2, selected[..., None].expand(*selected.shape, 7))
+    if count < LOCAL_SKILL_SEGMENTS:
+        chosen = torch.nn.functional.pad(chosen, (0, 0, 0, LOCAL_SKILL_SEGMENTS - count))
+    return chosen.flatten(-2)
+
+
 def local_skill_features(
     state: Tensor,
     scene: PianoBatch,
@@ -110,6 +163,7 @@ def local_skill_features(
     *,
     goal: Tensor,
     orientation_required: bool,
+    geometry_segments: bool = False,
 ) -> Tensor:
     """Return [B,N,78] from own sensing, known attachment geometry, and goal.
 
@@ -165,20 +219,33 @@ def local_skill_features(
     )
     if result.shape[-1] != LOCAL_SKILL_FEATURE_DIM or not bool(torch.isfinite(result).all()):
         raise RuntimeError("invalid local-skill features")
+    if geometry_segments:
+        result = torch.cat((result, local_boundary_segments(state, world, scene, cfg)), -1)
     return result
 
 
 class LocalSkillPlanner(nn.Module):
     """Node-local recurrent planner; three independent body-twist outputs."""
 
-    def __init__(self, hidden_dim: int = 96, *, goal_residual: bool = False):
+    def __init__(
+        self,
+        hidden_dim: int = 96,
+        *,
+        goal_residual: bool = False,
+        feature_dim: int = LOCAL_SKILL_FEATURE_DIM,
+        goal_residual_scale: float = 1.0,
+    ):
         super().__init__()
         self.hidden_dim = hidden_dim
         self.goal_residual = goal_residual
+        self.goal_residual_scale = float(goal_residual_scale)
+        if feature_dim not in (LOCAL_SKILL_FEATURE_DIM, LOCAL_SKILL_GEOMETRY_FEATURE_DIM):
+            raise ValueError("unsupported local sensor interface")
+        self.feature_dim = feature_dim
         self.encoder = nn.Sequential(
-            nn.Linear(LOCAL_SKILL_FEATURE_DIM, 128),
+            nn.Linear(feature_dim, max(128, hidden_dim)),
             nn.SiLU(),
-            nn.Linear(128, hidden_dim),
+            nn.Linear(max(128, hidden_dim), hidden_dim),
             nn.SiLU(),
         )
         self.gru = nn.GRU(hidden_dim, hidden_dim, batch_first=True)
@@ -186,7 +253,7 @@ class LocalSkillPlanner(nn.Module):
 
     def forward(self, features: Tensor, hidden: Tensor | None = None) -> tuple[Tensor, Tensor]:
         prefix = features.shape[:-1]
-        x = features.reshape(-1, 1, LOCAL_SKILL_FEATURE_DIM)
+        x = features.reshape(-1, 1, self.feature_dim)
         initial = None if hidden is None else hidden.reshape(1, -1, self.hidden_dim)
         twist, h = self.forward_sequence(x, initial)
         return twist.reshape(*prefix, 3), h.reshape(*prefix, self.hidden_dim)
@@ -212,7 +279,7 @@ class LocalSkillPlanner(nn.Module):
             proposal = proposal / torch.linalg.vector_norm(
                 proposal, dim=-1, keepdim=True
             ).clamp_min(1.0)
-            proposal = (nominal + envelope * proposal).clamp(-1.0, 1.0)
+            proposal = (nominal + self.goal_residual_scale * envelope * proposal).clamp(-1.0, 1.0)
         return proposal, h
 
 
@@ -259,12 +326,18 @@ class LocalSkillController:
     """
 
     def __init__(
-        self, parent: SheafGBPPolicy, planner: LocalSkillPlanner, *, diameter_rounds=False
+        self,
+        parent: SheafGBPPolicy,
+        planner: LocalSkillPlanner,
+        *,
+        diameter_rounds=False,
+        reset_private_each_step=False,
     ):
         self.parent = parent.eval()
         self.planner = planner.eval()
         self.private_hidden = None
         self.diameter_rounds = diameter_rounds
+        self.reset_private_each_step = reset_private_each_step
 
     def reset(self, cfg: EnvConfig) -> None:
         self.cfg = cfg
@@ -284,6 +357,8 @@ class LocalSkillController:
         self.parent.local_se2_analytic_gbp.num_steps = self.rounds
 
     def step(self, state, scene, goal, orientation_required, context):
+        if self.reset_private_each_step:
+            self.private_hidden = None
         features = local_skill_features(
             state,
             scene,
@@ -291,6 +366,7 @@ class LocalSkillController:
             context,
             goal=goal,
             orientation_required=orientation_required,
+            geometry_segments=self.planner.feature_dim == LOCAL_SKILL_GEOMETRY_FEATURE_DIM,
         )
         twist, self.private_hidden = self.planner(features, self.private_hidden)
         plan = twist_to_plan(twist, self.cfg)

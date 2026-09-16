@@ -44,7 +44,9 @@ from piano_movers.single_slit_contact_observation import (
 TRAIN_SHAPES = tuple(chr(k) for k in range(ord("A"), ord("Z") + 1) if chr(k) not in ("S", "Z"))
 
 
-def generate_case(state, goal, scene, cfg, context, orientation, options, horizon):
+def generate_case(
+    state, goal, scene, cfg, context, orientation, options, horizon, *, geometry_segments=False
+):
     path = None
     planning_attempts = []
     for resolution in (options.theta_bins, options.theta_bins * 2):
@@ -111,7 +113,13 @@ def generate_case(state, goal, scene, cfg, context, orientation, options, horizo
             raise RuntimeError("independent pose SAT found a teacher collision")
         features.append(
             local_skill_features(
-                state, scene, cfg, context, goal=goal, orientation_required=orientation
+                state,
+                scene,
+                cfg,
+                context,
+                goal=goal,
+                orientation_required=orientation,
+                geometry_segments=geometry_segments,
             )[0]
         )
         s, c = state[0, 2].sin(), state[0, 2].cos()
@@ -177,6 +185,7 @@ def main():
     parser.add_argument("--horizon", type=int, default=512)
     parser.add_argument("--x-step", type=float, default=0.0125)
     parser.add_argument("--theta-bins", type=int, default=360)
+    parser.add_argument("--factorial-entry", action="store_true")
     args = parser.parse_args()
     if set(args.shapes) - set(TRAIN_SHAPES) or any(n % 2 or n < 8 or n > 20 for n in args.counts):
         raise ValueError("warm-start training preserves S/Z and odd-agent holdouts")
@@ -207,6 +216,7 @@ def main():
         "training_counts": args.counts,
         "split": "train",
         "fresh_test_episodes_consumed": False,
+        "factorial_entry": args.factorial_entry,
         "results": [],
     }
     write_json(manifest_path, manifest)
@@ -348,7 +358,18 @@ def main():
                     ]
                 )
                 orientation = bool(sample % 3 == 0)
-                if sample % 4 == 3:
+                if args.factorial_entry:
+                    # Cross entry heading, goal semantics and travel direction
+                    # independently. The initial four-case pilot accidentally
+                    # omitted zero-heading, left-to-right, position-only starts.
+                    state[0, 2] = (
+                        0.0 if (sample // 4) % 2 == 0 else float(rng.uniform(-math.pi, math.pi))
+                    )
+                    orientation = bool((sample // 2) % 2)
+                    if sample % 2:
+                        state[0, 0] *= -1
+                        goal[0] *= -1
+                elif sample % 4 == 3:
                     # Local terminal maneuver, not a fixed wall-crossing
                     # script: random nearby target and independent heading.
                     state[0, 0] = float(rng.uniform(1.10, 1.35))

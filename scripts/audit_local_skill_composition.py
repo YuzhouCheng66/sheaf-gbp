@@ -21,6 +21,7 @@ import torch
 
 from piano_movers.env import collision_mask, transition_clearance_margin
 from piano_movers.multi_waypoint_demo import MultiWaypointEngine, SkillCompositionOptions
+from piano_movers.local_skill_teacher import certify_pose_path
 
 
 CONTROLS = {
@@ -30,6 +31,16 @@ CONTROLS = {
     "composed": SkillCompositionOptions(True, True),
     "preserve_memory": SkillCompositionOptions(True, True, True),
     "nominal_size": SkillCompositionOptions(False, False, False, True),
+    "nearby_walls": SkillCompositionOptions(retain_nearby_wall=True),
+    "contact_history": SkillCompositionOptions(preserve_contact_feedback=True),
+    "previous_wall": SkillCompositionOptions(retain_previous_wall_only=True),
+    "visible_position_handoff": SkillCompositionOptions(
+        require_body_clearance=False, preserve_private_memory=True,
+        retain_nearby_wall=True, preserve_contact_feedback=True,
+    ),
+    "coherent_handoff": SkillCompositionOptions(
+        preserve_private_memory=True, retain_nearby_wall=True, preserve_contact_feedback=True,
+    ),
 }
 
 
@@ -62,6 +73,7 @@ class Recorder:
     def __call__(self, **values) -> None:
         output, transition = values["output"], values["transition"]
         state, scenario, cfg = values["state"], values["scenario"], values["cfg"]
+        self.last_scenario, self.last_cfg = scenario, cfg
         arrays = {
             "state": state[0],
             "next_state": transition.resolved_state[0],
@@ -141,7 +153,7 @@ def main() -> None:
     torch.set_num_threads(1)
     root = Path(__file__).resolve().parents[1]
     record = {
-        "schema": "piano-movers.p6-composition-controls.v2",
+        "schema": "piano-movers.p6-composition-controls.v3",
         "status": "running",
         "checkpoint": str(checkpoint),
         "checkpoint_sha256": sha256(checkpoint),
@@ -176,6 +188,14 @@ def main() -> None:
                         done = event
                 trace_path = args.output / f"{variant}_{shape}_n{count}.npz"
                 recorder.save(trace_path)
+                trajectory = np.concatenate((
+                    np.stack(recorder.arrays["state"]),
+                    np.asarray(recorder.arrays["next_state"][-1])[None],
+                ))
+                certificate = certify_pose_path(
+                    torch.from_numpy(trajectory), recorder.last_scenario,
+                    replace(recorder.last_cfg, device="cpu"),
+                )
                 result = {
                     "variant": variant, "options": asdict(CONTROLS[variant]),
                     "shape": shape, "agents": count,
@@ -187,6 +207,7 @@ def main() -> None:
                     "gbp_float_payload_bytes": recorder.payload_bytes,
                     "grasp_setup_payload_bytes": recorder.setup_bytes,
                     "wire_headers_included": False,
+                    "continuous_certificate": asdict(certificate),
                     "analytic_plan_agent_step_fraction": recorder.analytic_active / recorder.agent_steps,
                     "elapsed_seconds": time.monotonic() - started,
                     "trace": trace_path.name, "trace_sha256": sha256(trace_path),

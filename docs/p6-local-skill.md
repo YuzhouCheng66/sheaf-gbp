@@ -3,6 +3,12 @@
 Status: active. Parent: p5, SHA-256
 `3f4f1529378b08ef8de644564a1acc43f9de56b7d389e55e563fae7538c576a6`.
 
+**Mainline clarification:** retain the original architecture. Follow
+[the current experiment contract](p6-mainline-experiment-contract.md). The
+separate recurrent planner and goal-residual runs below are independent
+controls, not a decision to replace p5; composition failure does not prove
+route memorization or failure of the original architecture.
+
 The learned skill consumes local physical observations, attached-body geometry,
 a relative target with an orientation mask, and causal feedback memory. It must
 work when called repeatedly from different poses and contact states. Mapping,
@@ -207,3 +213,49 @@ successful teachers, lower fit loss, and one recovered L case do not establish
 robust skill composition. Next gates are strict teacher completion, fresh
 model-induced recovery data, unchanged-parent regression, and held-out closed
 loops, before replacing the p5 demo.
+
+## Archived alternative-planner controls and stronger audit
+
+These runs are controls under the mainline contract, not replacements for p5.
+The strict dataset completed with 668/672 admitted teachers. Adding a
+radius-clipped boundary-segment sensor produces 162 features; the 256-hidden
+GRU variant has 518,915 parameters. The local segment ordering is canonical
+in the body frame and tested for obstacle order, 90-degree joint rotation,
+and remote-obstacle irrelevance. It is idealized geometric proximity sensing,
+not an occlusion-aware camera model.
+
+Matched 78/96, 78/256 and 162/256 controls all failed the five complete
+three-wall development courses. The 162/256 control passed 8/20 seen-start
+smoke episodes. Adding independently stopped-state teacher queries, 19 actual
+student-state continuations and an expanded residual range gave 10/20 seen
+starts but still 0/5 complete courses. Resetting recurrence did not resolve
+those courses. These results do not diagnose the original architecture.
+
+An accidental four-scenario data correlation omitted zero-heading,
+left-to-right, position-only initial cases. An additional crossed dataset
+requests 24 letters × seven even counts × eight combinations = 1,344 teachers;
+1,340 are admitted. Four failures remain in the manifests. Its four canonical
+162-feature shards are `output/p6_factorial_{A_F,G_L,M_R,T_Y}_boundary_v2`.
+The already-running v7 control finished 30,000 updates on 2,695 trajectory or
+independent-query groups, 213,813 frames, in 249.35 optimization seconds. Its
+training fit loss is not a closed-loop success result. No automatic continuation
+of that alternative architecture is scheduled.
+
+The original p4 file was recovered read-only from the Windows experiment
+archive; SHA-256 `d946da7219691774f068f56bace14852de470cc6e776e218aa8b237c14837c58`
+matches p5's parent metadata. Under the **current audited code and benchmark-T
+profile**, both frozen p4 and p5 reach the terminal gate on 338/338 nominal
+single-slit cases. This does not reproduce the historical p4 336/338 under its
+original source/runtime. Independently certified continuous trajectories are
+335/338 for p4 and 337/338 for p5, respectively. Safe sampled poses alone are
+not a continuous zero-penetration certificate.
+
+p5's T/8 segment 60 has safe endpoints but a recursive-check witness of
+−0.0572 mm. A subsequent dense 1,001-point probe finds a −0.1126 mm witness at
+interpolation fraction 0.062; this is not a proven global minimum. Coordinates
+and provenance are in
+`output/p6_frozen_p5_single_slit_grid/T_8_continuous_witness.json`.
+The alternative p6 evaluator now has an explicitly declared continuous-contact
+rejection option, with a tunnelling regression test. The frozen-mainline
+controls retain original sampled physics and certify trajectories afterward,
+so interface comparisons do not silently change physics. Public p5 is unchanged.

@@ -22,7 +22,11 @@ from audit_local_skill_composition import sha256, write_json
 from build_local_skill_dataset import generate_case
 from piano_movers.config import EnvConfig
 from piano_movers.env import PianoBatch
-from piano_movers.local_skill_policy import local_skill_features
+from piano_movers.local_skill_policy import (
+    local_skill_features,
+    LOCAL_SKILL_FEATURE_DIM,
+    LOCAL_SKILL_GEOMETRY_FEATURE_DIM,
+)
 from piano_movers.local_skill_teacher import LocalTeacherConfig
 from piano_movers.multi_waypoint_demo import (
     DEFAULT_COURSE,
@@ -70,6 +74,7 @@ def main():
         "parent_checkpoint_sha256": parent.checkpoint_sha256,
         "actor_planner_sha256": source["planner_sha256"],
         "actor_rollout_manifest_sha256": sha256(args.rollouts),
+        "feature_dim": source.get("feature_dim", LOCAL_SKILL_FEATURE_DIM),
         "heldout_shapes": ["S", "Z"],
         "heldout_counts": [9, 11, 13, 15, 17, 19],
         "split": "train_development_dagger",
@@ -138,14 +143,29 @@ def main():
                 gap_half=state.new_tensor([walls["gap_half"]]),
             )
             feature = torch.from_numpy(data["features"][tick].copy()).unsqueeze(0)
+            geometry_segments = feature.shape[-1] == LOCAL_SKILL_GEOMETRY_FEATURE_DIM
             context = context_from_features(feature, state)
             reconstructed = local_skill_features(
-                state, scene, cfg, context, goal=goal, orientation_required=orientation[stage]
+                state,
+                scene,
+                cfg,
+                context,
+                goal=goal,
+                orientation_required=orientation[stage],
+                geometry_segments=geometry_segments,
             )
             torch.testing.assert_close(reconstructed, feature, atol=2e-6, rtol=2e-6)
             started = time.monotonic()
             report, teacher = generate_case(
-                state, goal, scene, cfg, context, orientation[stage], options, args.horizon
+                state,
+                goal,
+                scene,
+                cfg,
+                context,
+                orientation[stage],
+                options,
+                args.horizon,
+                geometry_segments=geometry_segments,
             )
             case_id = f"{episode['case_id']}_query{tick}"
             row = {
@@ -171,8 +191,10 @@ def main():
                     torch.from_numpy(teacher["features"][0]), feature[0], atol=2e-6, rtol=2e-6
                 )
                 prefix = data["features"][max(0, tick - 31) : tick]
+                state_prefix = data["states"][max(0, tick - 31) : tick]
                 supervised = len(teacher["features"])
                 teacher["features"] = np.concatenate((prefix, teacher["features"]))
+                teacher["states"] = np.concatenate((state_prefix, teacher["states"]))
                 teacher["target_twist"] = np.concatenate(
                     (np.zeros((len(prefix), 3), np.float32), teacher["target_twist"])
                 )

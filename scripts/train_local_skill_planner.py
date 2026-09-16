@@ -35,7 +35,11 @@ def main():
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--collective-loss", action="store_true")
     parser.add_argument("--goal-residual", action="store_true")
+    parser.add_argument("--hidden-dim", type=int, default=96)
+    parser.add_argument("--goal-residual-scale", type=float, default=1.0)
+    parser.add_argument("--allow-output-reparameterization", action="store_true")
     parser.add_argument("--private-loss-weight", type=float, default=0.1)
+    parser.add_argument("--model-state-weight", type=float, default=1.0)
     parser.add_argument("--allow-partial", action="store_true")
     args = parser.parse_args()
     dataset = json.loads(args.dataset.read_text())
@@ -51,9 +55,14 @@ def main():
         if extra["parent_checkpoint_sha256"] != dataset["parent_checkpoint_sha256"]:
             raise ValueError("dataset parent lineage mismatch")
         datasets.append((path, extra))
+    if any(not data.get("split", "").startswith("train") for _, data in datasets):
+        raise ValueError("validation or test data must not enter gradient training")
     entries = [
         (path.parent, row) for path, data in datasets for row in data["results"] if row["success"]
     ]
+    feature_dim = dataset.get("feature_dim", LOCAL_SKILL_FEATURE_DIM)
+    if any(d.get("feature_dim", LOCAL_SKILL_FEATURE_DIM) != feature_dim for _, d in datasets):
+        raise ValueError("mixed local sensor interfaces need explicit conversion")
     if not entries:
         raise ValueError("no admitted executable teachers")
     args.output.mkdir(parents=True, exist_ok=True)
@@ -77,11 +86,11 @@ def main():
             raise ValueError("held-out data entered training")
         data = np.load(path)
         x, y = data["features"], data["target_twist"]
-        if x.shape[-1] != LOCAL_SKILL_FEATURE_DIM or y.shape != (len(x), 3):
+        if x.shape[-1] != feature_dim or y.shape != (len(x), 3):
             raise ValueError("malformed local dataset shard")
         if np.max(np.abs(y)) > 1.001:
             raise ValueError("target twist outside model output range")
-        padded = np.zeros((len(x), 20, LOCAL_SKILL_FEATURE_DIM), np.float32)
+        padded = np.zeros((len(x), 20, feature_dim), np.float32)
         padded[:, : x.shape[1]] = x
         starts.append(offset)
         lengths.append(len(x))
@@ -102,13 +111,35 @@ def main():
     starts = torch.tensor(starts, device=dev)
     lengths = torch.tensor(lengths, device=dev)
     counts = torch.tensor(counts, device=dev)
-    model = LocalSkillPlanner(goal_residual=args.goal_residual).to(dev)
+    independent = torch.tensor(
+        [row.get("independent_frames", False) for _, row in entries], device=dev
+    )
+    sample_weight = torch.tensor(
+        [
+            args.model_state_weight
+            if row.get("origin", {}).get("kind") == "p6_model_induced_dagger"
+            else 1.0
+            for _, row in entries
+        ],
+        device=dev,
+    )
+    model = LocalSkillPlanner(
+        args.hidden_dim,
+        goal_residual=args.goal_residual,
+        feature_dim=feature_dim,
+        goal_residual_scale=args.goal_residual_scale,
+    ).to(dev)
     if args.resume:
         saved = torch.load(args.resume, map_location=dev, weights_only=False)
         if saved["parent_checkpoint_sha256"] != dataset["parent_checkpoint_sha256"]:
             raise ValueError("resume parent lineage mismatch")
         if saved.get("goal_residual", False) != args.goal_residual:
             raise ValueError("resume would silently change planner output semantics")
+        if (
+            saved.get("goal_residual_scale", 1.0) != args.goal_residual_scale
+            and not args.allow_output_reparameterization
+        ):
+            raise ValueError("residual scale changed without explicit reparameterization")
         model.load_state_dict(saved["policy_state_dict"], strict=True)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate, weight_decay=1.0e-4)
     offsets = torch.arange(args.sequence_length, device=dev)[None, :]
@@ -138,7 +169,11 @@ def main():
         "learning_rate": args.learning_rate,
         "collective_loss": args.collective_loss,
         "goal_residual": args.goal_residual,
+        "goal_residual_scale": args.goal_residual_scale,
+        "output_reparameterization_allowed": args.allow_output_reparameterization,
         "private_loss_weight": args.private_loss_weight,
+        "loss_reduction": "equal_sampled_episode_mean",
+        "model_state_sampling_weight": args.model_state_weight,
         "history": [],
         "closed_loop_success": None,
         "checkpoint": None,
@@ -147,18 +182,22 @@ def main():
     started = time.monotonic()
     losses = []
     for step in range(1, args.steps + 1):
-        episode = torch.randint(len(entries), (args.batch_size,), device=dev)
+        episode = torch.multinomial(sample_weight, args.batch_size, replacement=True)
         node = (torch.rand(args.batch_size, device=dev) * counts[episode]).long()
         choice = (torch.rand(args.batch_size, device=dev) * label_count[episode]).long()
         anchor = label_index[episode, choice]
         begin = (
             anchor - torch.randint(4, args.sequence_length, (args.batch_size,), device=dev)
         ).clamp_min(0)
+        is_independent = independent[episode]
+        begin = torch.where(is_independent, anchor, begin)
         local = begin[:, None] + offsets
+        local = torch.where(is_independent[:, None], anchor[:, None].expand_as(local), local)
         valid = local < lengths[episode, None]
         idx = starts[episode, None] + torch.minimum(local, lengths[episode, None] - 1)
         target = y[idx]
         mask = valid & target_mask[idx] & ((offsets >= 4) | (begin[:, None] == 0))
+        mask = torch.where(is_independent[:, None], offsets == 0, mask)
         # Sample complete episode/handle sequences, then ignore burn-in loss;
         # memory cannot cross into another trajectory or a held-out episode.
         if args.collective_loss:
@@ -184,7 +223,9 @@ def main():
         else:
             prediction, _ = model.forward_sequence(x[idx, node[:, None]])
             per_step = F.smooth_l1_loss(prediction, target, reduction="none", beta=0.05).mean(-1)
-        loss = (per_step * mask).sum() / mask.sum().clamp_min(1)
+        # An independent stopped-state query must not receive 1/128th the
+        # weight of a long trajectory merely because it has one real target.
+        loss = ((per_step * mask).sum(1) / mask.sum(1).clamp_min(1)).mean()
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
@@ -203,9 +244,10 @@ def main():
             payload = {
                 "schema": record["schema"],
                 "parent_checkpoint_sha256": record["parent_checkpoint_sha256"],
-                "feature_dim": LOCAL_SKILL_FEATURE_DIM,
+                "feature_dim": feature_dim,
                 "hidden_dim": model.hidden_dim,
                 "goal_residual": model.goal_residual,
+                "goal_residual_scale": model.goal_residual_scale,
                 "policy_state_dict": model.state_dict(),
                 "training": record,
                 "step": step,
