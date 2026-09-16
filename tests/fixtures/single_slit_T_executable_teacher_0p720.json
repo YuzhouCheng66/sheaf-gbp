@@ -1,0 +1,161 @@
+{
+  "array_schema": {
+    "allocator_scales": [
+      "H"
+    ],
+    "forces": [
+      "H",
+      12,
+      2
+    ],
+    "realized_wrenches": [
+      "H",
+      3
+    ],
+    "reference_poses": [
+      "H+1",
+      3
+    ],
+    "states": [
+      "H+1",
+      6
+    ],
+    "swept_clearances": [
+      "H"
+    ],
+    "waypoints": [
+      "W",
+      3
+    ]
+  },
+  "case": {
+    "gap_half": [
+      0.36,
+      0.36
+    ],
+    "gap_y": [
+      0.0,
+      0.0
+    ],
+    "goal": [
+      1.05,
+      0.0,
+      0.0
+    ],
+    "obstacle_rects": [],
+    "payload_shape": "T",
+    "source": [
+      -1.05,
+      0.0,
+      0.0
+    ],
+    "wall_slab": 0.06,
+    "wall_x": [
+      0.0,
+      8.0
+    ],
+    "world_x": 3.9,
+    "world_y": 1.6
+  },
+  "env_config": {
+    "angular_damping": 0.16,
+    "bidirectional": false,
+    "collision_substeps": 4,
+    "comm_radius": 1.18,
+    "device": "cpu",
+    "dt": 0.08,
+    "gap_half_base": 0.83,
+    "gap_half_difficulty_scale": 0.05,
+    "gap_half_jitter": 0.08,
+    "gap_y_range": 0.58,
+    "generic_obstacle_slots": 0,
+    "goal_x": 1.05,
+    "handle_layout": "boundary-attached-v2",
+    "inertia": 1.35,
+    "linear_damping": 0.18,
+    "local_observation": false,
+    "mass": 4.0,
+    "max_force": 4.0,
+    "max_steps": 90,
+    "n_agents": 12,
+    "payload_shape": "T",
+    "round_trip": false,
+    "round_trip_dwell_steps": 3,
+    "round_trip_omega_tol": 0.3,
+    "round_trip_speed_tol": 0.3,
+    "scenario_difficulty": 1.0,
+    "source_x": -1.05,
+    "strict_local_observation": false,
+    "strict_observation_schema": "strict-local-final-goal-v1",
+    "success_angle_tol": 0.35,
+    "success_pos_tol": 0.22,
+    "wall_sensor_range": 1.05,
+    "wall_slab": 0.06,
+    "wall_x_abs": 0.82,
+    "world_x": 3.9,
+    "world_y": 1.6
+  },
+  "input_path": "artifacts/aperture/single_slit_T_minimax_0p720_safety1mm_20260828.path.npz",
+  "rollout": {
+    "duration_seconds": 8.56,
+    "horizon": 107,
+    "maximum_handle_force_n": 3.0344810485839844,
+    "minimum_allocator_scale": 1.0,
+    "minimum_swept_clearance_m": 0.0008182823657989502,
+    "official_continuous_audit": {
+      "certified_leaf_segments": 5689,
+      "clearance_queries": 11271,
+      "deepest_subdivision": 12,
+      "failure_reason": null,
+      "first_failed_segment": null,
+      "goal_angle_error_rad": 7.580840843957048e-08,
+      "goal_position_error_m": 2.3498534229560164e-09,
+      "maximum_retreat_excursion_m": 0.0,
+      "minimum_sampled_clearance_m": 0.000818207859992981,
+      "passed": true,
+      "retreat_edge_count": 0,
+      "segment_count": 107,
+      "start_angle_error_rad": 0.0,
+      "start_position_error_m": 0.0,
+      "state_count": 108,
+      "total_negative_route_variation_m": 0.0
+    },
+    "terminal_angle_error_rad": 7.58084084395705e-08,
+    "terminal_omega_rad_per_s": 9.708882089398685e-07,
+    "terminal_position_error_m": 2.3498534229560164e-09,
+    "terminal_speed_m_per_s": 2.0769967079559137e-07
+  },
+  "rollout_artifact": "artifacts/aperture/single_slit_T_executable_teacher_0p720_20260828.rollout.npz",
+  "schema_version": "piano-movers-single-slit-executable-teacher-v1",
+  "shortcut": {
+    "custom_certificate_clearance_queries": 13155,
+    "input_waypoints": 1401,
+    "official_continuous_audit": {
+      "certified_leaf_segments": 5585,
+      "clearance_queries": 11163,
+      "deepest_subdivision": 16,
+      "failure_reason": null,
+      "first_failed_segment": null,
+      "goal_angle_error_rad": 0.0,
+      "goal_position_error_m": 0.0,
+      "maximum_retreat_excursion_m": 0.0,
+      "minimum_sampled_clearance_m": 0.0008182302117347717,
+      "passed": true,
+      "retreat_edge_count": 0,
+      "segment_count": 7,
+      "start_angle_error_rad": 0.0,
+      "start_position_error_m": 0.0,
+      "state_count": 8,
+      "total_negative_route_variation_m": 0.0
+    },
+    "output_waypoints": 8,
+    "required_clearance_m": 0.0008
+  },
+  "time_parameterization": {
+    "dt_seconds": 0.08,
+    "explicit_terminal_braking_transitions": 1,
+    "maximum_angle_per_tick_rad": 0.048,
+    "maximum_translation_per_tick_m": 0.024,
+    "reference_pose_count_before_brake": 107
+  }
+}

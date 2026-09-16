@@ -15,10 +15,77 @@ from torch import Tensor, nn
 
 @dataclass(frozen=True)
 class GBPTopology:
+    # A directed incidence is the node whose cavity belief creates the
+    # outgoing message in that slot.  For edge ``[u, v]``, flattened
+    # incidence slots are ``[u, v]``: slot ``2e`` is ``u -> v`` and slot
+    # ``2e + 1`` is ``v -> u``.
     incidence_vertex: Tensor
     reverse_incidence: Tensor
     flat_incidence_index: Tensor
     valid_incidence: Tensor
+
+    @property
+    def directed_sender(self) -> Tensor:
+        """Sender node for every directed GBP message slot, shape ``[2E]``."""
+
+        return self.incidence_vertex
+
+    @property
+    def directed_receiver(self) -> Tensor:
+        """Receiver node for every directed GBP message slot, shape ``[2E]``."""
+
+        return self.incidence_vertex.index_select(0, self.reverse_incidence)
+
+
+@dataclass(frozen=True)
+class GBPMessageTrace:
+    """Exact per-sweep Gaussian messages sent over the communication graph.
+
+    ``natural`` and ``precision`` have shape ``[B, S, 2E, D]``.  The directed
+    slot contract is explicit in ``sender`` and ``receiver``; it does not rely
+    on a renderer reconstructing ordering conventions.  ``natural`` is always
+    a wire payload.  ``precision`` is also a wire payload in ordinary
+    diagonal-message GBP; in mean-only mode it is the exact deterministic
+    precision reconstructed locally and ``transmits_precision`` is false.
+
+    ``intensity`` is a dimensionless RMS Mahalanobis signal,
+
+    ``sqrt(mean_d(natural[d]^2 / precision[d]))``.
+
+    Equivalently it is ``sqrt(mean_d(precision[d] * mean[d]^2))``: the
+    strength with which the Gaussian packet supports a non-zero edge-section
+    belief, measured in its own standard deviations.  It is derived solely
+    from the real payload and is invariant to a rescaling of edge coordinates.
+    """
+
+    sender: Tensor
+    receiver: Tensor
+    natural: Tensor
+    precision: Tensor
+    mean: Tensor
+    intensity: Tensor
+    transmits_precision: bool
+
+    @property
+    def wire_precision(self) -> Tensor | None:
+        """Return transmitted precision, or ``None`` when it is implicit."""
+
+        return self.precision if self.transmits_precision else None
+
+    @property
+    def wire_floats_per_message(self) -> int:
+        """Number of floats physically sent by one directed message."""
+
+        edge_dim = int(self.natural.shape[-1])
+        return edge_dim * (2 if self.transmits_precision else 1)
+
+    @property
+    def wire_float_count(self) -> int:
+        """Total physical payload floats represented by this trace."""
+
+        return int(self.natural.numel()) + (
+            int(self.precision.numel()) if self.transmits_precision else 0
+        )
 
 
 @dataclass
@@ -27,6 +94,19 @@ class GBPResult:
     precision: Tensor
     omega: Tensor
     xi: Tensor
+    message_trace: GBPMessageTrace | None = None
+
+    @property
+    def omega_trace(self) -> Tensor | None:
+        """Compatibility alias for the traced effective diagonal precision."""
+
+        return None if self.message_trace is None else self.message_trace.precision
+
+    @property
+    def xi_trace(self) -> Tensor | None:
+        """Compatibility alias for the traced natural-parameter payload."""
+
+        return None if self.message_trace is None else self.message_trace.natural
 
 
 def homogeneous_topology(
@@ -192,6 +272,8 @@ class DiagSheafGBP(nn.Module):
         topology: GBPTopology,
         initial_omega: Tensor | None = None,
         initial_xi: Tensor | None = None,
+        *,
+        trace_messages: bool = False,
     ) -> GBPResult:
         r2 = r.square()
         batch, directed, edge_dim, _ = r.shape
@@ -202,7 +284,41 @@ class DiagSheafGBP(nn.Module):
         else:
             omega = q.new_zeros((batch, directed, edge_dim))
         xi = q.new_zeros((batch, directed, edge_dim)) if initial_xi is None else initial_xi
+        omega_steps: list[Tensor] = []
+        xi_steps: list[Tensor] = []
         for _ in range(self.num_steps):
             omega, xi = self.sweep(q, h, r, r2, sigma2, topology, omega, xi)
+            if trace_messages:
+                # Each directed incidence is one real sender-to-receiver GBP
+                # transmission.  Keep the per-sweep payload only for rollout
+                # instrumentation; training leaves tracing disabled so this
+                # does not retain additional autograd state.
+                omega_steps.append(omega.detach())
+                xi_steps.append(xi.detach())
         mean, precision = self.beliefs(q, h, r, r2, topology, omega, xi)
-        return GBPResult(mean=mean, precision=precision, omega=omega, xi=xi)
+        message_trace: GBPMessageTrace | None = None
+        if omega_steps:
+            # Build instrumentation only after the ordinary GBP result has
+            # been computed.  This branch neither feeds inference nor changes
+            # the wire protocol; it merely preserves the exact post-damping
+            # tensors that were sent at each synchronous sweep.
+            precision_trace = torch.stack(omega_steps, dim=1)
+            natural_trace = torch.stack(xi_steps, dim=1)
+            message_mean = natural_trace / precision_trace.clamp_min(self.eps)
+            standardized_energy = natural_trace.square() / precision_trace.clamp_min(self.eps)
+            message_trace = GBPMessageTrace(
+                sender=topology.directed_sender.detach(),
+                receiver=topology.directed_receiver.detach(),
+                natural=natural_trace,
+                precision=precision_trace,
+                mean=message_mean,
+                intensity=standardized_energy.mean(dim=-1).sqrt(),
+                transmits_precision=not self.mean_only_messages,
+            )
+        return GBPResult(
+            mean=mean,
+            precision=precision,
+            omega=omega,
+            xi=xi,
+            message_trace=message_trace,
+        )

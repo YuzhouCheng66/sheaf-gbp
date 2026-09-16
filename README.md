@@ -1,202 +1,154 @@
 # Sheaf-GBP
 
-Communication-efficient learned sheaf coordination for the
-**PianoMovers-Force** benchmark.
+Distributed manipulation through a narrow passage with local feedback and
+communication-efficient Gaussian belief propagation.
 
 <p align="center">
-  <img src="assets/demo.gif" width="920" alt="Animated exact-collision comparison: Sheaf-GBP succeeds while raw-full collides">
+  <img src="assets/demo.gif" width="920" alt="PianoMovers-Force exact-collision demonstration">
 </p>
 
-<p align="center">
-  <strong>Exact-collision demo</strong>
-  · same map and initial state · Sheaf-GBP succeeds · raw-full collides
-</p>
+## Task
 
-## The task
+Eight to twenty agents are rigidly attached to force handles on a non-convex
+payload. Each agent receives a local observation of the payload, nearby wall,
+mission goal, its handle geometry, and causal contact history. Agents may send
+messages only along the radius graph. Their joint planar forces must translate
+and rotate the payload through a `0.720 m` slit without penetration, then bring
+it to rest at the goal.
 
-Several agents are fixed to force handles on a rigid T-shaped payload. Each
-agent observes only local geometry and may communicate with handles inside a
-radius-limited graph. Together they must translate and rotate the payload
-through two narrow slits without collision.
+The current public checkpoint solves the short-horizon **PianoMovers-Force**
+skill. It deliberately excludes navigation, map construction, free-moving
+robots, grasp acquisition, and contact switching.
 
-The payload state is
-
-```text
-q = [x, y, theta, vx, vy, omega] ∈ R^6,
-```
-
-and each agent outputs a local planar force `[fx, fy]`. The agents should agree
-on the payload motion and net wrench, but not on identical local forces. This
-partial-consensus structure is the reason to use a sheaf rather than ordinary
-feature averaging.
-
-This repository deliberately isolates force coordination. It does **not** yet
-include an LLM, free-moving robots, grasp attachment, or contact switching.
-
-## Model
-
-The claim-bearing configuration uses the following path at every agent:
+## Current policy
 
 ```text
-18-d local observation
-  → MLP + GRU (128)
-  → diagonal Gaussian stalk (mean 32, precision 32)
-  → geometry-grounded learned restriction R_i : R^32 → R^12
-  → one diagonal Gaussian-BP sweep on the radius graph
-  → local posterior stalk (32) and section (12)
-  → analytic wrench allocation + learned decoder
-  → local force (2)
+per-agent local observation (27)
+  -> local recurrent planner features (96)
+  -> next-SE(2) plan (8)
+  -> local inverse-dynamics wrench proposal
+  -> correction stalk (16)
+  -> analytic restriction [I3  0] : R16 -> R3
+  -> four rounds of diagonal Gaussian BP on radius edges
+  -> posterior net wrench (3)
+  -> analytic distributed grasp decoder
+  -> local planar force (2)
 ```
 
-The first eight section coordinates are supervised physical variables:
+The eight planner coordinates are
+`[dx, dy, dtheta, vx, vy, omega, z1, z2]`. Planning is recomputed from current
+geometry and feedback; deployment has no letter ID, stored route, teacher query,
+or carried path index. A one-step exact collision check selects a safe local
+target near the wall.
 
-```text
-[desired load twist (3), desired net wrench (3), passage offset (1), progress (1)]
-```
+GBP sends a 3-D diagonal Gaussian as mean plus precision: **6 float32 values per
+directed edge per round**, for four rounds. The restriction is analytic rather
+than a learned bottleneck: the first three coordinates of the 16-D local stalk
+are the normalized wrench proposal, and `[I3  0]` exposes exactly those public
+coordinates to the edge sheaf.
 
-The remaining four are learned coordination channels. Each restriction is an
-analytic contact-geometry map plus a rank-4 learned residual. A four-step local
-temporal memory contributes unary evidence without wireless communication.
+For a fixed attachment, agents perform one tree all-reduce of four sufficient
+statistics `[N, sum(bx), sum(by), sum(||b||^2)]`. Afterwards each agent builds
+the same `3 x 3` grasp Gram matrix locally and independently maps the posterior
+wrench to its own 2-D force. No grasp-map data is transmitted per control step.
 
-One Sheaf-GBP round transmits a 12-d natural vector and 12-d diagonal precision
-per directed edge. The principal baselines are:
+## Verified results
 
-- `raw_full`: recurrent MPNN, 32 floats per directed edge and round;
-- `comm_matched`: recurrent MPNN, 24 floats—the same payload as Sheaf-GBP;
-- `no_comm`: recurrent local policy with no messages.
+The route-free p5 checkpoint has SHA-256
+`3f4f1529378b08ef8de644564a1acc43f9de56b7d389e55e563fae7538c576a6`.
+Checkpoints and bulk rollouts are intentionally excluded from Git.
 
-All arms share the procedural maps, exact compound-body collision test, expert
-data, model-induced DAgger states, rollout losses, seeds, training steps, and
-evaluation protocol. Sheaf-GBP additionally uses its physically supervised
-section head as part of its inductive bias.
+| Evaluation | Result | Exact penetrations |
+|---|---:|---:|
+| canonical T, 8–20 agents, four fixed micro-perturbations each | **52/52 (100%)** | **0** |
+| previous p4, A–Z nominal agent-count grid | **336/338 (99.41%)** | **0** |
+| previous p4, non-T letters only | **325/325 (100%)** | **0** |
 
-## Results
+The A–Z rows are reported separately because the complete p5 A–Z rerun is not
+yet finished. They are not presented as p5 evidence.
 
-These are paired evaluations on 4,096 held-out procedural maps with exact
-rectangle-vs-wall collision. The table reports a fixed 110-step float32 payload
-budget; headers, serialization, and transport overhead are not included.
-
-### 12 agents, map-medium
-
-| Method | Success ↑ | Collision ↓ | Floats / directed edge / round | Bytes / episode ↓ |
-|---|---:|---:|---:|---:|
-| **Sheaf-GBP** | **0.9683** | **0.0317** | 24 | **295,680** |
-| raw-full | 0.2715 | 0.7285 | 32 | 394,240 |
-| comm-matched | 0.3252 | 0.6748 | 24 | 295,680 |
-
-Paired success difference versus raw-full: `+0.6968`, bootstrap 95% CI
-`[0.6816, 0.7117]`. Sheaf-GBP uses 25% fewer payload bytes than raw-full and
-substantially outperforms the equal-communication baseline.
-
-### 8 agents, transferred from 12 agents
-
-| Method | Success ↑ | Collision ↓ | Bytes / episode ↓ |
-|---|---:|---:|---:|
-| **Sheaf-GBP** | **0.9470** | **0.0530** | **274,560** |
-| raw-full | 0.4058 | 0.5942 | 366,080 |
-| comm-matched | 0.2173 | 0.7827 | 274,560 |
-
-Paired success difference versus raw-full: `+0.5413`, bootstrap 95% CI
-`[0.5249, 0.5576]`.
-
-Only these aggregate, collision-audited results and the illustrative demo are
-kept in Git. Checkpoints, per-step logs, and bulk evaluation JSON are excluded.
+For the earlier two-wall matched benchmark, the archived 12-agent Sheaf-GBP
+arm achieved `96.83%` success versus `27.15%` for raw-full while sending 25%
+fewer float payload bytes. That result concerns the earlier task and architecture,
+not the p5 single-slit audit above.
 
 ## Install
 
-Python 3.10+ and PyTorch 2.1+ are required. Install the PyTorch build appropriate
-for your CPU or CUDA system first, then install the project:
+Python 3.10+ and PyTorch 2.1+ are required.
 
 ```bash
-git clone https://github.com/YuzhouCheng66/sheaf-gbp.git
-cd sheaf-gbp
-python -m pip install -e ".[dev,video]"
+git clone https://github.com/YuzhouCheng66/Sheaf-GBP.git
+cd Sheaf-GBP
+python -m pip install -e ".[dev]"
 pytest -q
 ```
 
-The core environment and tests need only PyTorch and NumPy. Video rendering also
-requires `ffmpeg` on `PATH`.
+## Run the interactive demo
 
-## Train matched 12-agent arms
-
-Run each arm with the same script and seed. `DEVICE` may be `cpu`, `cuda`, or a
-specific CUDA device.
+Supply the p5 checkpoint explicitly:
 
 ```bash
-DEVICE=cuda scripts/train_map_medium_12.sh sheaf_gbp
-DEVICE=cuda scripts/train_map_medium_12.sh raw_full
-DEVICE=cuda scripts/train_map_medium_12.sh comm_matched
+piano-movers-demo \
+  --checkpoint /path/to/sheaf_gbp_route_free_all_shapes_p5.pt \
+  --device cuda \
+  --host 127.0.0.1 \
+  --port 7861 \
+  --open
 ```
 
-Outputs are written below `runs/map_medium_12/`. Training is intentionally
-best-checkpointed because success can be mode-unstable even after the smooth
-loss continues to improve.
+The page streams policy computation while the animation is running. Every
+displayed packet is a real directed GBP message on a physical radius edge; the
+browser does not synthesize decorative communication. Drag the two wall tips,
+change the T proportions or ant count, press Random for another admitted scene,
+then press Play.
 
-Evaluate all three checkpoints on paired maps:
+To create p5 from its admitted p4 parent without modifying any tensor:
 
 ```bash
-DEVICE=cuda EPISODES=4096 scripts/evaluate_map_medium.sh 12
+PYTHONPATH=src python scripts/bridge_single_slit_route_free_geometry.py \
+  --parent-checkpoint /path/to/p4.pt \
+  --output /path/to/p5.pt
 ```
 
-The resulting JSON is written under `artifacts/`, which is ignored by Git.
+The bridge verifies identical state-dict keys, bitwise-identical parameter
+tensors, and an unchanged wire protocol before writing the child checkpoint.
 
-## Transfer to 8 agents
-
-After all three 12-agent runs exist, transfer shape-compatible weights and train
-each arm under the 8-agent geometry:
+## Reproduce the public checks
 
 ```bash
-DEVICE=cuda scripts/train_map_medium_8_transfer.sh sheaf_gbp
-DEVICE=cuda scripts/train_map_medium_8_transfer.sh raw_full
-DEVICE=cuda scripts/train_map_medium_8_transfer.sh comm_matched
-DEVICE=cuda EPISODES=4096 scripts/evaluate_map_medium.sh 8
+PYTHONPATH=src pytest -q \
+  tests/test_single_slit_cspace.py \
+  tests/test_single_slit_local_planner.py \
+  tests/test_shape_agnostic_distributed_wrench.py \
+  tests/test_single_slit_interactive_demo.py
+
+PYTHONPATH=src python scripts/audit_single_slit_asymmetric_openings.py \
+  --checkpoint /path/to/p5.pt \
+  --n-agents 8 12 20 \
+  --device cuda \
+  --output asymmetric_openings.json
 ```
 
-## Interactive demo and video
-
-Once the 12-agent Sheaf-GBP and raw-full checkpoints have been trained:
-
-```bash
-piano-movers-demo --host 127.0.0.1 --port 7860
-```
-
-Open <http://127.0.0.1:7860>. The browser renders seeded maps, exact payload
-geometry, ant-shaped handles, the radius graph, trajectories, and communication
-totals. The 8-agent selector becomes usable after running the transfer scripts.
-
-To render a new paired MP4 directly:
-
-```bash
-piano-movers-video \
-  --checkpoint runs/map_medium_12/sheaf_gbp/sheaf_gbp_best.pt \
-  --raw-checkpoint runs/map_medium_12/raw_full/raw_full_best.pt \
-  --comparison --require-raw-fail \
-  --device cpu \
-  --out artifacts/sheaf_vs_raw.mp4
-```
-
-## Repository layout
+## Repository map
 
 ```text
-src/piano_movers/env.py          procedural task, expert, dynamics, collision
-src/piano_movers/gbp.py          diagonal-message Sheaf Gaussian BP
-src/piano_movers/models.py       Sheaf-GBP and matched policy arms
-src/piano_movers/train.py        imitation, DAgger, rollout and margin training
-src/piano_movers/compare.py      paired evaluation and bootstrap intervals
-src/piano_movers/video.py        exact-geometry MP4 renderer
-src/piano_movers/demo_server.py  dependency-light browser demo
-tests/test_smoke.py              CPU smoke and communication-budget tests
-scripts/                         claim-bearing training/evaluation recipes
+src/piano_movers/single_slit_interactive_demo.py  streamed monochrome demo
+src/piano_movers/single_slit_local_planner.py     local recurrent/geometry planner
+src/piano_movers/single_slit_cspace.py            exact current-geometry C-space
+src/piano_movers/models.py                        stalk, restriction, GBP, decoder
+src/piano_movers/gbp.py                           diagonal Gaussian BP
+src/piano_movers/env.py                           dynamics and exact collision
+scripts/bridge_single_slit_route_free_geometry.py tensor-preserving p4 -> p5 bridge
+scripts/audit_single_slit_asymmetric_openings.py  asymmetric/open-wall audit
+tests/                                            CPU architecture and semantics tests
 ```
 
-## Scope and caveats
+## Scope
 
-- Handles are fixed to the payload; agents do not walk, attach, or change roles.
-- The simulator is a compact vectorized research benchmark, not a full contact
-  physics engine.
-- Because handle locations are rigid in the body frame, the radius graph is
-  sparse but static for a fixed agent layout.
-- Communication numbers measure float32 payloads over a fixed horizon, not
-  end-to-end network traffic.
-- The included movie is explanatory; statistical claims come from paired
-  evaluation, not a selected trajectory.
+- Agents are fixed force handles, not walking ants.
+- Collision uses the exact compound-rectangle body and wall slabs used by the
+  evaluator.
+- The once-per-attachment statistic exchange and per-step GBP messages are
+  counted separately.
+- The demo is explanatory; quantitative claims come from fixed evaluation
+  panels.

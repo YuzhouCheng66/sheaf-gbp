@@ -1,7 +1,7 @@
 [project]
 name = "sheaf-gbp"
-version = "0.1.0"
-description = "Communication-efficient Sheaf-GBP for the PianoMovers-Force benchmark."
+version = "0.2.0"
+description = "Route-free local planning and communication-efficient Sheaf-GBP control."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -11,13 +11,9 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "ruff>=0.9"]
-video = ["matplotlib>=3.7"]
 
 [project.scripts]
-piano-movers-train = "piano_movers.train:main"
-piano-movers-eval = "piano_movers.compare:main"
-piano-movers-video = "piano_movers.video:main"
-piano-movers-demo = "piano_movers.demo_server:main"
+piano-movers-demo = "piano_movers.single_slit_interactive_demo:main"
 
 [build-system]
 requires = ["hatchling"]

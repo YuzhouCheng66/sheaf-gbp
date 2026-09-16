@@ -13,12 +13,15 @@ runs/
 artifacts/
 reports/
 checkpoints/
+output/
+tmp/
 *.pt
 *.pth
 *.ckpt
 *.jsonl
 *.log
 *.zip
+*.mp4
 assets/*.json
 
 # Local exploration notes and machine-specific launchers
