@@ -17,6 +17,7 @@ def merge_datasets(paths, legacy_rollouts=()):
     record, rows, seen = None, [], set()
     sources = []
     actors = set()
+    unqueried = []
     actor_proofs = {sha256(p): json.loads(p.read_text()) for p in legacy_rollouts}
     for path in paths:
         source = json.loads(path.read_text())
@@ -39,6 +40,7 @@ def merge_datasets(paths, legacy_rollouts=()):
             if actor != source["parent_checkpoint_sha256"]:
                 raise ValueError("legacy collector required actor equal to root parent")
         actors.add(actor)
+        unqueried.extend(dict(e, actor_checkpoint_sha256=actor) for e in source.get("unqueried_episodes", []))
         sources.append({"manifest": str(path.resolve()), "sha256": sha256(path),
                         "actor_checkpoint_sha256": actor,
                         "rollout_manifest_sha256": source["rollout_manifest_sha256"]})
@@ -68,6 +70,7 @@ def merge_datasets(paths, legacy_rollouts=()):
                   rollout_manifest_sha256=None, variant="explicit_multi_round_aggregation",
                   source_sha256={str(Path(__file__)): sha256(Path(__file__))},
                   skipped_duplicate_queries=None)
+    record["unqueried_episodes"] = unqueried
     return record
 
 
