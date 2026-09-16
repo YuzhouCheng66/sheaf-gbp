@@ -78,6 +78,9 @@ class EnvConfig:
     # endpoint exactly.
     goal_y: float = 0.0
     goal_theta: float = 0.0
+    # False supplies a position target with no preferred terminal heading.
+    # Historical checkpoints omit this field and keep their SE(2) semantics.
+    goal_orientation_required: bool = True
     bidirectional: bool = False
     round_trip: bool = False
     round_trip_speed_tol: float = 0.30

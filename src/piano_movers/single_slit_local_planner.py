@@ -379,7 +379,11 @@ def local_se2_terminal_attractor_plan(
             # First maximize vertical clearance, then prefer the smallest
             # rotation from the final mission heading.  The tiny final term only
             # breaks the +/- pi/2 symmetry consistently with travel direction.
-            mission_goal_theta = torch.full_like(center_y, float(cfg.goal_theta))
+            mission_goal_theta = (
+                torch.full_like(center_y, float(cfg.goal_theta))
+                if cfg.goal_orientation_required
+                else torch.atan2(sine, cosine)
+            )
             candidate_goal_angle = wrap_angle(
                 candidate_theta.view(1, 1, -1)
                 - mission_goal_theta.unsqueeze(-1)
@@ -705,7 +709,11 @@ def local_se2_terminal_attractor_plan(
     )
     target_theta = torch.where(
         terminal_active,
-        torch.full_like(center_y, float(cfg.goal_theta)),
+        (
+            torch.full_like(center_y, float(cfg.goal_theta))
+            if cfg.goal_orientation_required
+            else torch.atan2(sine, cosine)
+        ),
         torch.where(
             corridor_rotation_safe,
             corridor_target_theta,

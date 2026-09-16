@@ -10,14 +10,14 @@ from __future__ import annotations
 
 import argparse
 from collections import OrderedDict
-from dataclasses import dataclass, replace
+from dataclasses import asdict, dataclass, replace
 import json
 import math
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Lock
-from typing import Any, Iterator
+from typing import Any, Callable, Iterator
 import webbrowser
 
 import torch
@@ -47,6 +47,7 @@ from .single_slit_contact_observation import (
     single_slit_contact_observation_context_from_result_v1,
     single_slit_contact_observations_v1,
 )
+from .single_slit_local_planner import LOCAL_SE2_TERMINAL_WALL_RESERVE_M
 
 
 ROLLOUT_LOCK = Lock()
@@ -57,6 +58,16 @@ MAX_N_AGENTS = 20
 HORIZON = 1_100
 INTERMEDIATE_POSITION_TOLERANCE_M = 0.14
 LARGE_GLYPH_PASSAGE_SPAN_M = 0.648
+
+
+@dataclass(frozen=True)
+class SkillCompositionOptions:
+    """Independent development controls; none are learned-policy inputs."""
+
+    position_only_control: bool = True
+    require_body_clearance: bool = True
+    preserve_private_memory: bool = False
+    nominal_glyph_size: bool = False
 
 
 @dataclass(frozen=True)
@@ -265,13 +276,39 @@ def _intermediate_reached(state: Tensor, waypoint: tuple[float, float, float]) -
     return bool(position_error <= INTERMEDIATE_POSITION_TOLERANCE_M)
 
 
+def _body_cleared_wall(state: Tensor, rectangles: Tensor, wall: Slit, cfg: EnvConfig) -> bool:
+    """A centre crossing alone must not discard a still-intersecting wall.
+
+    This is a supervisor handoff check, not an observation or policy feature.
+    The default course travels rightward. Its exact compound-body support must
+    clear the right face by the same reserve used by the local terminal skill.
+    """
+
+    vertices = rectangles.reshape(-1, 2)
+    theta = state[0, 2]
+    leftmost = state[0, 0] + (
+        theta.cos() * vertices[:, 0] - theta.sin() * vertices[:, 1]
+    ).amin()
+    return bool(leftmost > wall.x + cfg.wall_slab + LOCAL_SE2_TERMINAL_WALL_RESERVE_M)
+
+
 class MultiWaypointEngine:
-    def __init__(self, checkpoint: Path, device: str, course: WaypointCourse = DEFAULT_COURSE) -> None:
+    def __init__(
+        self,
+        checkpoint: Path,
+        device: str,
+        course: WaypointCourse = DEFAULT_COURSE,
+        *,
+        options: SkillCompositionOptions = SkillCompositionOptions(),
+        audit_callback: Callable[..., None] | None = None,
+    ) -> None:
         course.validate()
         self.device = torch.device(device)
         self.loaded = load_single_slit_checkpoint(checkpoint, device=self.device)
         self.loaded.policy.eval()
         self.course = course
+        self.options = options
+        self.audit_callback = audit_callback
         self.cache: OrderedDict[
             tuple[str, int], tuple[dict[str, Any], ...]
         ] = OrderedDict()
@@ -301,6 +338,8 @@ class MultiWaypointEngine:
             self.course,
             payload_shape=shape,
         )
+        if self.options.nominal_glyph_size:
+            cfg = replace(cfg, glyph_scale=1.0)
         _bind_geometry(self.loaded.policy, cfg)
         full_scenario = _full_collision_scenario(self.course, cfg)
         state = full_scenario.state0.clone()
@@ -319,6 +358,7 @@ class MultiWaypointEngine:
         header = {
             "type": "header",
             "schema": "piano-movers.multi-wall-waypoint-demo.v1",
+            "composition_options": asdict(self.options),
             "checkpoint_sha256": self.loaded.checkpoint_sha256,
             "payload_shape": shape,
             "glyph_scale": cfg.glyph_scale,
@@ -347,6 +387,10 @@ class MultiWaypointEngine:
                 goal_x=active_goal[0] - active_wall.x,
                 goal_y=active_goal[1],
                 goal_theta=active_goal[2],
+                goal_orientation_required=(
+                    waypoint_index == len(self.course.waypoints) - 1
+                    or not self.options.position_only_control
+                ),
             )
             _set_active_goal_without_rebinding(self.loaded.policy, cfg)
             local_state, observation_scenario = _active_observation_scenario(
@@ -366,6 +410,12 @@ class MultiWaypointEngine:
             transition = single_slit_contact_feedback_step_v1(
                 state, output.forces, full_scenario, cfg
             )
+            if self.audit_callback is not None:
+                self.audit_callback(
+                    tick=tick, waypoint_index=waypoint_index, cfg=cfg,
+                    state=state, observation=observation, hidden=hidden,
+                    output=output, transition=transition, scenario=full_scenario,
+                )
             trace = output.aux.get("gbp_message_trace")
             if not isinstance(trace, GBPMessageTrace):
                 raise RuntimeError("policy omitted the physical GBP trace")
@@ -380,6 +430,10 @@ class MultiWaypointEngine:
             reached = False
             if waypoint_index < len(self.course.waypoints) - 1:
                 reached = _intermediate_reached(next_state, active_goal)
+                if self.options.require_body_clearance:
+                    reached = reached and _body_cleared_wall(
+                        next_state, body_rects, active_wall, cfg
+                    )
                 if reached:
                     waypoint_index += 1
                     dwell = 0
@@ -415,7 +469,8 @@ class MultiWaypointEngine:
                 # local manipulation skill.  Reset only private temporal
                 # memory; learned weights, graph, grasp statistics, and all
                 # physical communication semantics remain unchanged.
-                hidden = self.loaded.policy.init_hidden(1, self.device)
+                if not self.options.preserve_private_memory:
+                    hidden = self.loaded.policy.init_hidden(1, self.device)
                 next_local_state, _ = _active_observation_scenario(
                     self.course, state, waypoint_index
                 )
