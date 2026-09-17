@@ -44,6 +44,61 @@ def _goal_compatible_exit_center(rotated_min_x: Tensor, target_y: Tensor, cfg: E
     return torch.where(adjust, minimum_x + .5 * slack, legacy)
 
 
+def _sinusoid_arc_extrema(a: Tensor, b: Tensor, start: Tensor, end: Tensor) -> tuple[Tensor, Tensor]:
+    """Exact extrema of a*cos(theta)+b*sin(theta) on the closed unwrapped arc."""
+    lo, hi = torch.minimum(start, end), torch.maximum(start, end)
+    first, last = a * start.cos() + b * start.sin(), a * end.cos() + b * end.sin()
+    phase = torch.atan2(b, a)
+    period = 2. * torch.pi
+    maximum_inside = torch.ceil((lo - phase) / period) <= torch.floor((hi - phase) / period)
+    minimum_phase = phase + torch.pi
+    minimum_inside = torch.ceil((lo - minimum_phase) / period) <= torch.floor((hi - minimum_phase) / period)
+    amplitude = torch.sqrt(a.square() + b.square())
+    lower = torch.where(minimum_inside, -amplitude, torch.minimum(first, last))
+    upper = torch.where(maximum_inside, amplitude, torch.maximum(first, last))
+    return lower, upper
+
+
+def _position_goal_heading_control(
+    vertices: Tensor, center_x: Tensor, center_y: Tensor, theta: Tensor, cfg: EnvConfig,
+) -> tuple[Tensor, Tensor]:
+    """Independent local interface control, not a trained planner replacement.
+
+    If the unchanged goal disk and full-body exit halfspace have no intersection
+    at the current heading, search a short in-place rotation. Every vertex's
+    entire angular arc must stay beyond the same reserved wall plane and within
+    arena y bounds. A feasible heading must then admit a translation into the
+    goal disk at goal-y, retaining the body reserve. No future target is used.
+    This is sufficient, not complete: no safe candidate leaves legacy behavior.
+    """
+    reserve_x = float(cfg.wall_slab) + LOCAL_SE2_TERMINAL_WALL_RESERVE_M
+    radius = cfg.local_corridor_exit_goal_radius_m
+    min_x = (theta.cos()[..., None] * vertices[:, 0]
+             - theta.sin()[..., None] * vertices[:, 1]).amin(-1)
+    needs_rotation = (center_x + min_x > reserve_x) & (cfg.goal_x + radius - (reserve_x - min_x) <= 1e-5)
+    if radius <= 0 or not bool(needs_rotation.any()):
+        return theta, torch.zeros_like(needs_rotation)
+    offsets = torch.arange(-36, 37, device=theta.device, dtype=theta.dtype) * (torch.pi / 36.)
+    candidate = theta[..., None] + offsets
+    start, end = theta[..., None, None], candidate[..., None]
+    vx, vy = vertices[:, 0], vertices[:, 1]
+    arc_min_x, _ = _sinusoid_arc_extrema(vx, -vy, start, end)
+    arc_min_y, arc_max_y = _sinusoid_arc_extrema(vy, vx, start, end)
+    safe = (center_x[..., None] + arc_min_x.amin(-1) >= reserve_x + 2e-6)
+    safe &= center_y[..., None] + arc_min_y.amin(-1) >= -cfg.world_y + 2e-6
+    safe &= center_y[..., None] + arc_max_y.amax(-1) <= cfg.world_y - 2e-6
+    end_x = candidate.cos()[..., None] * vx - candidate.sin()[..., None] * vy
+    end_y = candidate.sin()[..., None] * vx + candidate.cos()[..., None] * vy
+    # Reserve 2 mm inside the unchanged goal disk for subsequent tracking.
+    safe &= reserve_x - end_x.amin(-1) <= cfg.goal_x + radius - .002
+    safe &= cfg.goal_y + end_y.amin(-1) >= -cfg.world_y + 2e-6
+    safe &= cfg.goal_y + end_y.amax(-1) <= cfg.world_y - 2e-6
+    score = offsets.abs().expand_as(candidate).masked_fill(~safe, torch.inf)
+    selected = candidate.gather(-1, score.argmin(-1, keepdim=True)).squeeze(-1)
+    active = needs_rotation & safe.any(-1)
+    return torch.where(active, selected, theta), active
+
+
 def _finite_wall_slice_y_bounds(
     rectangles: Tensor,
     center_x: Tensor,
@@ -811,6 +866,16 @@ def local_se2_terminal_attractor_plan(
             torch.atan2(sine, cosine),
         ),
     )
+
+    if (cfg.local_corridor_goal_heading_search and cfg.complete_local_corridor_exit
+            and not cfg.goal_orientation_required):
+        recovery_theta, rotate_in_place = _position_goal_heading_control(
+            vertices, center_x, center_y, torch.atan2(sine, cosine), cfg,
+        )
+        # Position-only means no preferred heading, not a prohibition on rotation.
+        target_x = torch.where(rotate_in_place, center_x, target_x)
+        target_y = torch.where(rotate_in_place, center_y, target_y)
+        target_theta = torch.where(rotate_in_place, recovery_theta, target_theta)
 
     position_error_world = torch.stack(
         (target_x - center_x, target_y - center_y),

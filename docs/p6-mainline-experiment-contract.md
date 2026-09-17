@@ -1,10 +1,18 @@
 # Original-architecture mainline
 
-Latest measured results: [original-architecture v2 report](p6-mainline-v2-results.md).
-The trained original modules with the screened interface now pass 332/338 on
-the enlarged three-wall A–Z/8–20 development panel, and 338/338 on the old
-nominal single-slit regression. These do not complete the fresh generalization,
-joint count/entry-state or public-release gates.
+Latest measured results: [original-architecture composition and action audit](p6-mainline-coordinate-and-action-audit.md).
+Original modules with broader successful replay, corrected interfaces and
+diameter-covered GBP pass 338/338 on the enlarged three-wall A–Z/8–20 grid,
+338/338 on the old nominal single-slit regression, 362/364 on the broader
+development state panel, and 1454/1456 on the four-layout reserved S/Z panel.
+These do not establish arbitrary maze/SE(2) generalization or complete the
+sequence-length and public-release gates. The report preserves the failures,
+extra real message cost and the limited number of independent layout draws.
+
+A later independent [action-loss / position-only heading control](p6-action-loss-and-position-only-handoff.md)
+passes 364/364 development states, 338/338 enlarged-letter count cases,
+338/338 old nominal cases and 120/120 sequence validation cases. The input
+and physical-composition gates remain incomplete; it has not replaced public p5.
 
 This contract supersedes any implication in earlier p6 experiment notes that
 the separate `LocalSkillPlanner` must replace p5. The user's direction is to

@@ -20,6 +20,7 @@ from audit_local_skill_composition import Recorder, sha256, write_json
 from piano_movers.local_skill_teacher import certify_pose_path
 from piano_movers.local_skill_validation import (
     FAMILY_SEEDS, LAYOUT_FAMILIES, STATE_PROFILES, validate_split_seeds, state_profile_course,
+    sequence_length_course,
 )
 from piano_movers.multi_waypoint_demo import (
     MultiWaypointEngine, SkillCompositionOptions, _course_config, _full_collision_scenario,
@@ -37,8 +38,13 @@ def main():
     parser.add_argument("--shapes", nargs="+", default=list("ABILOSTZ"))
     parser.add_argument("--agents", nargs="+", type=int, default=[12])
     parser.add_argument("--device", default="cpu")
+    parser.add_argument("--sequence-wall-counts", nargs="+", type=int, choices=(1, 2, 3, 5),
+                        help="Independent fixed-arena sequence-length panel, not the historical three-wall draw")
     args = parser.parse_args()
     validate_split_seeds(args.split, args.seeds)
+    if args.sequence_wall_counts and (len(set(args.sequence_wall_counts)) != len(args.sequence_wall_counts)
+                                     or args.families != ["combined"]):
+        raise ValueError("sequence mode requires unique lengths and --families combined")
     for values in (args.shapes, args.agents, args.families, args.profiles):
         if not values or len(set(values)) != len(values):
             raise ValueError("empty or duplicated case dimensions")
@@ -66,6 +72,15 @@ def main():
         for family in args.families for seed in args.seeds
         for profile in args.profiles for shape in args.shapes for n in args.agents
     ]
+    if args.sequence_wall_counts:
+        cases = [
+            {"case_id": f"sequence{count}_{profile}_s{seed}_{shape}_n{n}",
+             "family": "sequence_length", "seed": seed, "shape": shape, "agents": n,
+             "profile": profile, "wall_count": count,
+             "course": asdict(sequence_length_course(seed, profile, count))}
+            for seed in args.seeds for count in args.sequence_wall_counts
+            for profile in args.profiles for shape in args.shapes for n in args.agents
+        ]
     # Freeze the exact denominator and provenance before the first simulation.
     write_json(catalog_path, {"split": args.split, "cases": cases})
     record = {
@@ -82,12 +97,17 @@ def main():
         "device": args.device, "initial_velocity": "per_case_source_velocity",
         "outcome_based_admission": False, "teacher_labels_present": False,
         "parent_unseen_shape_claim": False, "results": [],
+        "sequence_wall_counts": args.sequence_wall_counts,
+        "sequence_horizon_rule": "ceil(1100*wall_count/3)" if args.sequence_wall_counts else None,
     }
     write_json(destination, record)
     for case in cases:
         started = time.monotonic()
-        course = state_profile_course(case["seed"], case["family"], case["profile"])
-        engine = MultiWaypointEngine(checkpoint, args.device, course, options=options)
+        course = (sequence_length_course(case["seed"], case["profile"], case["wall_count"])
+                  if args.sequence_wall_counts else
+                  state_profile_course(case["seed"], case["family"], case["profile"]))
+        horizon = (1100 * len(course.walls) + 2) // 3 if args.sequence_wall_counts else 1100
+        engine = MultiWaypointEngine(checkpoint, args.device, course, options=options, horizon=horizon)
         cfg = _course_config(engine.loaded.cfg, case["agents"], course, case["shape"])
         if options.nominal_glyph_size:
             cfg = replace(cfg, glyph_scale=1.)
@@ -102,6 +122,7 @@ def main():
                             "complete_exit_screened" if options.validate_all_cspace_lookaheads else
                             "complete_exit_certified"),
                    options=asdict(options))
+        row["horizon"] = horizon
         if not start_certificate.passed or not end_certificate.passed:
             row.update(result={"success": False, "steps": 0,
                                "reason": "invalid_initial_or_final_pose"})

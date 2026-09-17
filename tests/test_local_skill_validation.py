@@ -5,6 +5,7 @@ import pytest
 from piano_movers.local_skill_validation import (
     FAMILY_SEEDS, LAYOUT_FAMILIES, STATE_PROFILES, ENTRY_HEADINGS_DEG,
     validate_split_seeds, validation_course, state_profile_course,
+    sequence_length_course,
 )
 from piano_movers.multi_waypoint_demo import DEFAULT_COURSE
 
@@ -69,3 +70,17 @@ def test_state_profiles_span_angles_motion_and_scale_without_resampling():
     larger = state_profile_course(seed, family, "shape_large")
     assert larger.morphology_scale == 1.04
     assert all(w.aperture_m == pytest.approx(.7464) for w in larger.walls)
+
+
+def test_new_sequence_lengths_share_prefix_and_fixed_normalization():
+    courses = [sequence_length_course(81201, "entry_reference", n) for n in (1, 2, 3, 5)]
+    for course in courses:
+        assert course.world_x == 7. and course.world_y == 1.6
+        assert course.source == courses[-1].source
+        count = len(course.walls)
+        assert course.walls == courses[-1].walls[:count]
+        assert course.waypoints[:-1] == courses[-1].waypoints[:count]
+        assert len(course.waypoints) == count + 1
+        course.validate()
+    with pytest.raises(ValueError):
+        sequence_length_course(81201, "entry_reference", 4)

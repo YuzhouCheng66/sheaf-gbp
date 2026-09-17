@@ -123,3 +123,38 @@ def state_profile_course(seed: int, family: str, profile: str = "nominal") -> Wa
             ))
     course.validate()
     return course
+
+
+def sequence_length_course(seed: int, profile: str, wall_count: int) -> WaypointCourse:
+    """New matched 1/2/3/5-wall panel; fixed arena/normalization across lengths.
+
+    Independent random substreams generate each wall and command, so a longer
+    course extends an identical local prefix. N/shape/outcomes never enter the
+    generator. The 7 m half-arena is an explicit normalization shift vs old
+    three-wall tests; the three-wall member isolates that nuisance change.
+    The policy still receives only its current local wall and current command.
+    """
+    if wall_count not in (1, 2, 3, 5):
+        raise ValueError("sequence audit supports the predeclared 1/2/3/5-wall lengths")
+    reference = state_profile_course(seed, "combined", profile)
+    layout_rng = random.Random(seed * 17 + 810)
+    target_rng = random.Random(seed * 17 + 811)
+    x = -3.5
+    walls, waypoints = [], []
+    for index in range(wall_count):
+        if index:
+            x += layout_rng.uniform(1.65, 1.95)
+        aperture = layout_rng.choice((.720, .800, 1.000))
+        if reference.morphology_scale > 1.:
+            aperture = max(aperture, .660 * reference.morphology_scale + .060)
+        wall = Slit(x, layout_rng.uniform(-.22, .22), aperture)
+        walls.append(wall)
+        waypoints.append((x + .63 + target_rng.uniform(-.04, .10),
+                          wall.gap_y + target_rng.uniform(-.10, .10), 0.))
+    source_distance = reference.walls[0].x - reference.source[0]
+    course = replace(reference, source=(walls[0].x - source_distance, *reference.source[1:]),
+                     walls=tuple(walls), waypoints=(*waypoints, (walls[-1].x + 1.44,
+                                                               *reference.waypoints[-1][1:])),
+                     world_x=7., world_y=1.6)
+    course.validate()
+    return course

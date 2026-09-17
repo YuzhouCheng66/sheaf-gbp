@@ -80,6 +80,7 @@ class SkillCompositionOptions:
     respect_handoff_goal_region: bool = False
     cover_coordination_tree_diameter: bool = False
     geometry_precision_boost_override: float | None = None
+    resolve_position_goal_heading: bool = False
 
 
 @dataclass(frozen=True)
@@ -383,14 +384,18 @@ class MultiWaypointEngine:
         *,
         options: SkillCompositionOptions = SkillCompositionOptions(),
         audit_callback: Callable[..., None] | None = None,
+        horizon: int = HORIZON,
     ) -> None:
         course.validate()
+        if isinstance(horizon, bool) or not isinstance(horizon, int) or horizon <= 0:
+            raise ValueError("control-step horizon must be a positive integer")
         self.device = torch.device(device)
         self.loaded = load_single_slit_checkpoint(checkpoint, device=self.device)
         self.loaded.policy.eval()
         self.course = course
         self.options = options
         self.audit_callback = audit_callback
+        self.horizon = horizon
         self.cache: OrderedDict[
             tuple[str, int], tuple[dict[str, Any], ...]
         ] = OrderedDict()
@@ -426,6 +431,8 @@ class MultiWaypointEngine:
             cfg = replace(cfg, complete_local_corridor_exit=True)
         cfg = replace(
             cfg, local_cspace_collision_substeps=self.options.planning_substeps,
+            max_steps=self.horizon,
+            local_corridor_goal_heading_search=self.options.resolve_position_goal_heading,
             local_cspace_validate_all_lookaheads=self.options.validate_all_cspace_lookaheads,
             local_support_check_alignment_sweep=self.options.check_support_alignment_sweep,
             local_corridor_exit_goal_radius_m=(INTERMEDIATE_POSITION_TOLERANCE_M
@@ -475,7 +482,7 @@ class MultiWaypointEngine:
         dwell = 0
         contacts = 0
         continuous_rejections = 0
-        for tick in range(HORIZON):
+        for tick in range(self.horizon):
             active_goal = self.course.waypoints[waypoint_index]
             active_wall = self.course.walls[min(waypoint_index, len(self.course.walls) - 1)]
             cfg = replace(

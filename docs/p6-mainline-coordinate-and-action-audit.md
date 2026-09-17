@@ -1,5 +1,7 @@
 # Mainline composition gates, coordinates and action-level training
 
+Follow-up: [completed loss controls, position-only handoff diagnosis and sequence tests](p6-action-loss-and-position-only-handoff.md).
+
 2026-09-16. Original architecture remains the mainline; the public p5 demo is
 unchanged. No result below proves route memorization or the need for a new
 planner. Independent controls are not promoted merely because one property
@@ -169,9 +171,9 @@ until closed-loop results justify a promotion.
 Audit: `output/p6_mainline_actuation_training_audit/report.json`.
 Code validation: **107 repository tests pass** on CPU; changed-script lint passes.
 
-## Reserved evaluation remains independent
+## Completed independent reserved evaluation
 
-The frozen broad-replay-v1/diameter recipe is being evaluated on predeclared
+The frozen broad-replay-v1/diameter recipe has completed the predeclared
 reserved seeds 83201–83204: combined layouts/goals, S/Z, all N=8–20 and all 14
 non-nominal entry/motion/scale profiles (**1,456 requested episodes**). The
 catalog denominator is frozen before execution; failures remain visible.
@@ -181,8 +183,28 @@ must not be reported as 1,456 independent layout samples. No reserved-test
 state or outcome is admitted to training or used to select these already
 specified input/objective controls.
 
-Pending broader goal requirements include full completed reserved reports
-with cluster-aware uncertainty, full translation/rotation composition and
+Results: **1,454/1,456 (99.86%)** strict successes; odd-count × held-out-shape
+joint panel **671/672 (99.85%)**. Each count has 112 cases: N=11 and N=12
+achieve 111/112, all others 112/112. The two failures are Z/N=11/heading−180°
+and Z/N=12/heading+135°, both on layout seed 83202. All 1,456 trajectories
+pass continuous collision certification with zero resolved penetration.
+There are 1,863 collision attempts, 316,765 control steps, 9,606.86 m of
+accumulated path, 2,181,230,448 GBP float-payload bytes and 8,526,336 setup
+payload bytes. Transport headers remain excluded.
+
+The four layout-level success fractions are [1, 362/364, 1, 1]. An exhaustive
+four-cluster percentile bootstrap gives [99.588%, 100%], but **four clusters
+are too few to treat this as a strong population guarantee**. A conservative
+95% Hoeffding interval over independent bounded layout draws is [31.96%,
+100%]. The observed panel exceeds the target; it does not establish a ≥90%
+lower confidence bound over arbitrary layouts. Neither analysis treats 1,456
+correlated cases as independent layout draws.
+
+Artifacts: `output/p6_mainline_original_broad_diameter_reserved_all/{manifest,report}.json`.
+Manifest SHA256: `d54d8d1ffe85271b741a011789432906eb08a3e05a13b63d5b1a93cd1ad3e24a`.
+Report generator: `scripts/report_mainline_reserved_panel.py`.
+
+Pending broader goal requirements include full translation/rotation composition and
 causal-memory transport tests, genuinely changed waypoint-sequence/layout
 lengths, and a validated p6 demo. High nominal counts alone do not complete
 the goal or establish maze mapping/global planning.

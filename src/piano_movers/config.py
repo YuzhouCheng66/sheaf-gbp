@@ -89,6 +89,8 @@ class EnvConfig:
     # Optional active position-goal radius supplied by the existing supervisor.
     # Zero retains the historical extra exit-tracking reserve exactly.
     local_corridor_exit_goal_radius_m: float = 0.0
+    # Independent, default-off control: position-only does not mean fixed yaw.
+    local_corridor_goal_heading_search: bool = False
     bidirectional: bool = False
     round_trip: bool = False
     round_trip_speed_tol: float = 0.30
