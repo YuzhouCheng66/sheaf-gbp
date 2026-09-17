@@ -81,9 +81,10 @@ Full A–Z × 14 entry/velocity/scale profiles at N12 (the previous 364-case
 development catalog) has completed **364/364**, with zero contact and zero
 penetration; all continuous certificates pass. The manifest is
 `output/p6_crossing_hold_all_states_81201/manifest.json`.
-Broader
-agent-count, held-out layout and sequence regression is still required before
-any public promotion. The overall p6 goal is not complete.
+The full agent-count and reused held-out panels have also completed, as
+recorded below. The final input-locality/goal-expression audit, updated
+sequence-composition validation and validated development demo remain pending;
+the overall p6 goal is not complete and there is no public promotion.
 
 ## Artifacts
 
@@ -126,7 +127,7 @@ Larger regressions:
 - `output/p6_crossing_hold_all_states_81201/manifest.json`: the complete
   previous A–Z × 14 state-profile × N12 catalog, **364/364 complete**.
 - `output/p6_crossing_hold_counts_all/manifest.json`: A–Z × every integer
-  N8–20 on the previous default three-wall course, 338 cases, still running.
+  N8–20 on the previous default three-wall course, **338/338 complete**.
 
 The paired comparator `scripts/compare_mainline_trace_controls.py` now rejects
 duplicate, missing, or extra cases and can require that exactly one named
@@ -157,7 +158,7 @@ Detailed paired metrics: `output/p6_crossing_interface_comparison/all_states.jso
 
 ### Remaining evaluation, no new teacher labels
 
-Four single-thread CPU shards are evaluating the complete predeclared S/Z ×
+Four single-thread CPU shards have completed the predeclared S/Z ×
 N8–20 × 14 state profiles × seeds 83201–83204 panel (1,456 cells). Their
 manifests are `output/p6_crossing_hold_reserved_<seed>/manifest.json`.
 These generator seeds were examined with earlier candidates: this is a reused
@@ -172,8 +173,58 @@ option. Without it, rerunning that benchmark would only test the default-off
 source, not the new interface. The current audit uses the same source weights,
 384-step horizon, benchmark T profile, exact-contact guard, 32 planning samples,
 and diameter-covering GBP budget as the previous 338/338 source grid, changing
-only this option. It is running at
+only this option. It has completed **338/338** at
 `output/p6_crossing_hold_single_slit_all/manifest.json`. All 13 canonical T
 counts have completed successfully; their entire state trajectories and GBP
-payload counts are bitwise/exactly unchanged. The remaining glyph grid is not
-yet complete. The shard merger now rejects mixed values of this new option.
+payload counts are bitwise/exactly unchanged. The shard merger rejects mixed
+values of this new option.
+
+## Complete count, legacy and reused-OOD panels
+
+| Panel | Strict success | Continuous certificates | Contacts / penetration |
+| --- | ---: | ---: | --- |
+| Default three-wall A–Z × N8–20 | 338/338 | 338/338 | zero / zero |
+| Old single-slit A–Z × N8–20 | 338/338 | 338/338 | zero / zero |
+| S/Z × N8–20 × 14 profiles × 4 reused layouts | 1,456/1,456 | 1,456/1,456 | zero / zero |
+| Odd-N subset of the preceding panel | 672/672 | 672/672 | zero / zero |
+
+Every count in 8–20 scores 26/26 on each nominal grid and 112/112 on the reused
+S/Z panel. These are empirical panel results, not proof of a >=90% population
+success probability on arbitrary scenes. The source weights still have not
+changed during this crossing-interface experiment.
+
+The complete three-wall comparison has 262/338 bitwise-identical traces and no
+success regressions; all 13 T traces are identical. Total steps change from
+134,525 to 134,438 and GBP payload from 1,030,303,056 to 1,029,599,328 bytes.
+Some individual F cases take up to five additional steps, so this is not a
+per-case efficiency dominance claim. The legacy single-slit comparison has
+337/338 identical state trajectories. Only J/17 changes, with unchanged 86
+steps, zero contacts and unchanged 1,213,632 GBP payload bytes. State equality
+does not independently establish equality of every individual ant force.
+
+The S/Z aggregate uses exactly four original layout draws. Its descriptive
+layout-cluster bootstrap interval is [1,1], a degenerate result from four
+all-success clusters, **not certainty**. The independent-bounded-layout
+Hoeffding interval is approximately [0.321,1]. Neither interval corrects for
+candidate selection or earlier inspection of the same panel. The report
+explicitly marks panel reuse and makes no blind-test claim. It cannot certify
+>=90% true success or unseen maze layouts. S/Z and odd counts are held out of
+the current DAgger branch, not necessarily ancestral p5 exposure.
+
+All requested cases, including any invalid-endpoint or uncertified cases,
+must remain in the report denominator. Reporting now handles a missing trace
+for an invalid endpoint without crashing or dropping that failure; unit tests
+cover this and equal layout-cluster denominators. **145 tests pass.**
+
+Key artifacts (bulk traces remain on Linux):
+
+- Three-wall manifest: `output/p6_crossing_hold_counts_all/manifest.json`,
+  SHA256 `d596248ca7240a07c083f183c37cabbbac27ba647a36f323ca2529528e0c6f05`.
+- Legacy manifest: `output/p6_crossing_hold_single_slit_all/manifest.json`,
+  SHA256 `688bc2c468b40ac0f80c7f1fa0da32c84da0dbb891c707dac01068489ec73e80`.
+- Merged reused panel: `output/p6_crossing_hold_reserved_all/manifest.json`,
+  SHA256 `696be567d463eb763e924b746b887cc8af3e656817c93e14465f88a59fa8160e`.
+- Cluster/per-agent report: `output/p6_crossing_hold_reserved_all/report.json`,
+  SHA256 `f7d9c111fae3851e7212d4895b64f75d6ca063cd980b6e05553d03596e7d6052`.
+- Detailed comparisons: `output/p6_crossing_interface_comparison/counts_all.json`
+  and `single_slit.json`.

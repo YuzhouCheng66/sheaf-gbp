@@ -20,6 +20,12 @@ def strict_success(row):
             and row.get("independent_resolved_pose_collisions", 0) == 0)
 
 
+def failure_record(row):
+    # Invalid start/goal poses legitimately have no rollout artifact. They
+    # remain failures in the denominator, not reporting errors or omissions.
+    return {k: row.get(k) for k in ("case_id", "shape", "agents", "seed", "profile", "result", "trace_sha256")}
+
+
 def summarize(rows):
     if not rows:
         raise ValueError("cannot summarize an empty panel")
@@ -54,6 +60,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--reused-panel", action="store_true",
+                        help="Disclose prior inspection of these seeds with earlier candidates")
     args = parser.parse_args()
     if args.output.exists():
         raise FileExistsError(args.output)
@@ -75,14 +83,17 @@ def main():
         raise ValueError("reserved panel is not the predeclared complete Cartesian product")
     report = {
         "status": "complete", "manifest_sha256": sha256(args.manifest),
+        "report_source_sha256": sha256(Path(__file__)),
         "checkpoint_sha256": manifest["checkpoint_sha256"],
         "recipe_sha256": manifest["recipe_sha256"],
         "overall": summarize(rows),
         "per_agent_count": {str(n): summarize([r for r in rows if r["agents"] == n]) for n in range(8, 21)},
         "per_shape": {shape: summarize([r for r in rows if r["shape"] == shape]) for shape in ("S", "Z")},
         "odd_agent_joint_ood": summarize([r for r in rows if r["agents"] % 2]),
-        "failures": [{k: r[k] for k in ("case_id", "shape", "agents", "seed", "profile", "result", "trace_sha256")}
-                     for r in rows if not strict_success(r)],
+        "failures": [failure_record(r) for r in rows if not strict_success(r)],
+        "panel_reused": args.reused_panel,
+        "blind_test_claim": False,
+        "intervals_selection_adjusted": False,
         "wire_headers_included": False,
         "ancestral_p5_unseen_shape_claim": False,
         "uncertainty_scope": "four independent generator layout/goal draws with correlated shape/count/profile cases per draw",
