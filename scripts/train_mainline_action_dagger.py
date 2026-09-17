@@ -35,6 +35,31 @@ BUFFERS = ("local_se2_analytic_reference_edges", "local_se2_analytic_tree_edge_m
            "local_se2_distributed_grasp_body_sufficient_cache")
 
 
+def configure_goal_input_control(policy, *, relative_y=False, goal_context=False):
+    """Independent input control, leaving original tensors and RNG unchanged.
+
+    The optional four-column affine term uses the existing partitioned-input
+    forward path. Relative-y is NOT a behavior-preserving conversion. Preparing
+    source targets must happen before this function is called.
+    """
+    if policy.arm_cfg.local_se2_markov_goal_context or policy.arm_cfg.local_se2_markov_goal_relative_y:
+        raise ValueError("input control requires the original source representation")
+    additional = 0
+    if goal_context:
+        first = policy.local_se2_markov_shape_encoder[0]
+        if first.weight.device.type != "cpu":
+            raise ValueError("construct the audited input bridge on CPU before training")
+        with torch.random.fork_rng(devices=[]):
+            projection = torch.nn.Linear(4, first.out_features, bias=False,
+                                         device=first.weight.device, dtype=first.weight.dtype)
+            torch.nn.init.zeros_(projection.weight)
+        policy.local_se2_markov_goal_projection = projection
+        additional = projection.weight.numel()
+    policy.arm_cfg = replace(policy.arm_cfg, local_se2_markov_goal_context=goal_context,
+                             local_se2_markov_goal_relative_y=relative_y)
+    return additional
+
+
 def composition_cfg(cfg, options):
     return replace(cfg, complete_local_corridor_exit=options.complete_corridor_exit,
                    local_corridor_goal_heading_search=options.resolve_position_goal_heading,
@@ -204,6 +229,8 @@ def main():
     parser.add_argument("--objective", choices=("force", "plan"), default="force")
     parser.add_argument("--input-column3", choices=("absolute_y", "goal_relative_y"), default="absolute_y",
                         help="Independent same-width semantic control; no change to cached source action targets")
+    parser.add_argument("--goal-context", action="store_true",
+                        help="Independent +4 goal input columns; original depth, GBP and decoder retained")
     parser.add_argument("--steps", type=int, default=3000)
     parser.add_argument("--batch-size", type=int, default=64, help="whole multi-agent states per source")
     parser.add_argument("--learning-rate", type=float, default=2e-5)
@@ -247,14 +274,15 @@ def main():
     destination = args.output / "training.json"
     if destination.exists():
         raise FileExistsError(destination)
+    additional_parameters = configure_goal_input_control(
+        policy, relative_y=args.input_column3 == "goal_relative_y", goal_context=args.goal_context)
     names = [name for name, _ in policy.named_parameters()
-             if name.startswith(("local_se2_markov_shape_encoder.", "local_se2_markov_shape_mean_head."))]
+             if name.startswith(("local_se2_markov_shape_encoder.", "local_se2_markov_shape_mean_head.",
+                                 "local_se2_markov_goal_projection."))]
     frozen = {k: v.clone() for k, v in policy.state_dict().items() if k not in names}
     for name, p in policy.named_parameters():
         p.requires_grad_(name in names)
     policy.cuda().eval()  # eval enables the existing attachment-only grasp cache; gradients remain on.
-    if args.input_column3 == "goal_relative_y":
-        policy.arm_cfg = replace(policy.arm_cfg, local_se2_markov_goal_relative_y=True)
     optimizer = torch.optim.AdamW([p for p in policy.parameters() if p.requires_grad],
                                   lr=args.learning_rate, weight_decay=1e-5)
     rng = np.random.default_rng(args.seed)
@@ -276,8 +304,10 @@ def main():
               "steps_requested": args.steps, "batch_size_whole_states_per_source": args.batch_size,
               "learning_rate": args.learning_rate, "anchor_weight": args.anchor_weight, "seed": args.seed,
               "trainable_parameters": sum(p.numel() for p in policy.parameters() if p.requires_grad),
-              "arm_cfg_unchanged": args.input_column3 == "absolute_y",
-              "input_column3": args.input_column3, "additional_parameters": 0,
+              "arm_cfg_unchanged": args.input_column3 == "absolute_y" and not args.goal_context,
+              "input_column3": args.input_column3, "additional_parameters": additional_parameters,
+              "goal_context": args.goal_context, "goal_projection_zero_initialized": args.goal_context,
+              "input_bridge_preserves_rng": True,
               "source_targets_unchanged": True, "downstream_geometry_authority_unchanged": True,
               "gpu": torch.cuda.get_device_name(), "history": [], "closed_loop_success": None}
     write_json(destination, record)

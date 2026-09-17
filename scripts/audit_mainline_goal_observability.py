@@ -103,6 +103,7 @@ def main():
             "private_feature_width": features.shape[-1],
             "private_features_bitwise_equal": torch.equal(features, reference_features),
             "private_feature_max_absolute_delta": float((features - reference_features).abs().max()),
+            "private_twist3_max_absolute_delta": float((tensors[1][..., 3:6] - reference[1][..., 3:6]).abs().max()),
             "max_absolute_delta_from_reference": dict(zip(
                 ("observation27", "private_plan8", "executed_plan8", "force"),
                 [float((a - b).abs().max()) for a, b in zip(tensors, reference)],
