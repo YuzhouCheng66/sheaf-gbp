@@ -82,9 +82,11 @@ development catalog) has completed **364/364**, with zero contact and zero
 penetration; all continuous certificates pass. The manifest is
 `output/p6_crossing_hold_all_states_81201/manifest.json`.
 The full agent-count and reused held-out panels have also completed, as
-recorded below. The final input-locality/goal-expression audit, updated
-sequence-composition validation and validated development demo remain pending;
-the overall p6 goal is not complete and there is no public promotion.
+recorded below. The [goal-input audit and updated sequence validation](p6-mainline-goal-and-sequence-contract.md)
+are now complete: the sequence panel passes 120/120, while the input audit
+explicitly identifies remaining goal/locality contract gaps. Addressing those
+gaps and the validated development demo remain pending; the overall p6 goal
+is not complete and there is no public promotion.
 
 ## Artifacts
 
