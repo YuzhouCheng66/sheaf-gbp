@@ -110,6 +110,9 @@ class Recorder:
         }
         for name, tensor in arrays.items():
             self.arrays.setdefault(name, []).append(tensor.detach().cpu().numpy().copy())
+        if "local_se2_contact_twist_residual" in output.aux:
+            self.arrays.setdefault("contact_twist_residual", []).append(
+                output.aux["local_se2_contact_twist_residual"][0].detach().cpu().numpy().copy())
         for key in ("tick", "waypoint_index"):
             self.arrays.setdefault(key, []).append(np.asarray(values[key], dtype=np.int32))
         self.minimum_clearance = min(

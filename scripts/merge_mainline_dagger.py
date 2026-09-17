@@ -17,6 +17,7 @@ def merge_datasets(paths, legacy_rollouts=()):
     record, rows, seen = None, [], set()
     sources = []
     actors = set()
+    actor_identities = {}
     unqueried = []
     actor_proofs = {sha256(p): json.loads(p.read_text()) for p in legacy_rollouts}
     for path in paths:
@@ -40,18 +41,23 @@ def merge_datasets(paths, legacy_rollouts=()):
             if actor != source["parent_checkpoint_sha256"]:
                 raise ValueError("legacy collector required actor equal to root parent")
         actors.add(actor)
+        extension = source.get("actor_contact_residual")
+        identity = actor + ("+contact:" + extension["sha256"] if extension is not None else "")
+        actor_identities[identity] = {"base_checkpoint_sha256": actor, "contact_residual": extension}
         unqueried.extend(dict(e, actor_checkpoint_sha256=actor) for e in source.get("unqueried_episodes", []))
         sources.append({"manifest": str(path.resolve()), "sha256": sha256(path),
                         "actor_checkpoint_sha256": actor,
+                        "actor_contact_residual": extension,
                         "rollout_manifest_sha256": source["rollout_manifest_sha256"]})
         for row in source["results"]:
-            key = (actor, row["actor_trace_sha256"], row["actor_tick"])
+            key = (identity, row["actor_trace_sha256"], row["actor_tick"])
             if key in seen:
                 raise ValueError("duplicate actor-state query")
             seen.add(key)
             if row["shape"] in source["heldout_shapes"] or row["agents"] in source["heldout_counts"]:
                 raise ValueError("held-out shape/count in training manifest")
             merged = dict(row, actor_checkpoint_sha256=actor,
+                          actor_contact_residual=extension,
                           source_manifest_sha256=sources[-1]["sha256"],
                           source_case_id=row["case_id"],
                           case_id=actor[:12] + "_" + row["case_id"])
@@ -67,6 +73,7 @@ def merge_datasets(paths, legacy_rollouts=()):
         raise ValueError("empty DAgger aggregation")
     record.update(results=rows, source_manifests=sources,
                   actor_checkpoint_sha256=None, actor_checkpoint_sha256s=sorted(actors),
+                  actor_contact_residual=None, actor_identities=actor_identities,
                   rollout_manifest_sha256=None, variant="explicit_multi_round_aggregation",
                   source_sha256={str(Path(__file__)): sha256(Path(__file__))},
                   skipped_duplicate_queries=None)

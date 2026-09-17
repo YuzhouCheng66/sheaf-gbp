@@ -55,3 +55,19 @@ def test_offline_actuation_matches_original_force_messages_and_authority_gradien
         numerical.append((output.forces * weights).sum())
     torch.testing.assert_close((numerical[1] - numerical[0]) / (2 * epsilon),
                                gradient.flatten()[index], atol=1e-3, rtol=2e-2)
+
+    # Independent contact-authority control must preserve both mask and GBP
+    # precision. It is NOT the old final-plan override (which clears the mask).
+    delta = torch.tensor([.02, -.01, .04]).expand(1, cfg.n_agents, 3).clone().requires_grad_()
+    actual = policy(obs, radius_edges(cfg, device="cpu"), policy.init_hidden(1, "cpu"),
+                    trace_messages=True, local_se2_twist_residual=delta)
+    replay_delta = replay_physical_actuation(policy, obs, private.detach(),
+        source.aux["local_se2_plan_used"], active, trace_messages=True, twist_residual=delta)
+    torch.testing.assert_close(actual.forces, replay_delta.forces, atol=2e-5, rtol=2e-5)
+    assert torch.equal(actual.aux["local_se2_terminal_attractor_active"], active)
+    assert actual.aux["gbp_message_trace"].wire_float_count == replay_delta.message_trace.wire_float_count
+    residual_grad = torch.autograd.grad((replay_delta.forces * weights).sum(), delta)[0]
+    assert torch.where(active, residual_grad, 0.).abs().max() > 1e-6
+    zero = policy(obs, radius_edges(cfg, device="cpu"), policy.init_hidden(1, "cpu"),
+                  local_se2_twist_residual=torch.zeros_like(delta))
+    assert torch.equal(zero.forces, source.forces)

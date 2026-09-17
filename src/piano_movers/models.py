@@ -4678,6 +4678,7 @@ class SheafGBPPolicy(BasePolicy):
         topology: GBPTopology | None = None,
         local_se2_plan_override: Tensor | None = None,
         final_local_se2_plan_override: Tensor | None = None,
+        local_se2_twist_residual: Tensor | None = None,
         local_se2_wrench_unary_override: Tensor | None = None,
     ) -> PolicyOutput:
         batch, n_agents, _ = obs.shape
@@ -4889,6 +4890,18 @@ class SheafGBPPolicy(BasePolicy):
                     local_se2_terminal_active = torch.zeros(
                         (batch,n_agents,1),device=obs.device,dtype=torch.bool
                     )
+                if local_se2_twist_residual is not None:
+                    if final_local_se2_plan_override is not None:
+                        raise ValueError("do not combine independent plan and residual controls")
+                    if local_se2_twist_residual.shape != (batch, n_agents, 3):
+                        raise ValueError("local twist residual must be [B,N,3]")
+                    if not bool(torch.isfinite(local_se2_twist_residual).all()):
+                        raise ValueError("local twist residual must be finite")
+                    # Independent learned-contact authority control. Preserve
+                    # the original geometry mask/precision and physical GBP.
+                    local_se2_plan_used = torch.cat((local_se2_plan_used[..., :3],
+                        local_se2_plan_used[..., 3:6] + local_se2_twist_residual,
+                        local_se2_plan_used[..., 6:]), dim=-1)
                 plan_condition = torch.cat(
                     (local_se2_plan_used, torch.tanh(plan_log_precision)),
                     dim=-1,
@@ -5981,6 +5994,8 @@ class SheafGBPPolicy(BasePolicy):
                 device=obs.device,
             )
             aux["correction_bundled_same_round"] = torch.tensor(True, device=obs.device)
+        if local_se2_twist_residual is not None:
+            aux["local_se2_contact_twist_residual"] = local_se2_twist_residual
         return PolicyOutput(
             forces=forces,
             hidden=next_hidden,

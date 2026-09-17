@@ -61,6 +61,13 @@ def main():
     parent = load_single_slit_checkpoint(args.parent, device="cpu")
     if source["checkpoint_sha256"] != parent.checkpoint_sha256:
         raise ValueError("student checkpoint lineage mismatch")
+    extension = source.get("contact_residual")
+    if extension is not None:
+        from piano_movers.contact_residual_control import load_contact_residual
+        extension_path = Path(extension["path"])
+        if sha256(extension_path) != extension["sha256"]:
+            raise ValueError("actor contact-residual checkpoint changed")
+        load_contact_residual(extension_path, parent.checkpoint_sha256)
     args.output.mkdir(parents=True, exist_ok=True)
     destination = args.output / "manifest.json"
     if destination.exists():
@@ -72,6 +79,7 @@ def main():
             "parent_checkpoint_sha256", parent.checkpoint_sha256,
         ),
         "actor_checkpoint_sha256": parent.checkpoint_sha256,
+        "actor_contact_residual": extension,
         "rollout_manifest_sha256": sha256(args.rollouts),
         "source_sha256": {str(p): sha256(p) for p in (
             Path(__file__), Path("scripts/build_local_skill_dataset.py"),
@@ -181,6 +189,7 @@ def main():
                 "actor_learned_plan_authority_nodes": int(
                     (~data["analytic_active"][tick].astype(bool)).sum()
                 ),
+                "actor_contact_residual_present": extension is not None,
             }
             if teacher is not None:
                 end = torch.from_numpy(teacher["states"][-1:])

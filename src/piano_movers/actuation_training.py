@@ -28,6 +28,7 @@ class ActuationReplay:
 def replay_physical_actuation(
     policy: SheafGBPPolicy, obs: Tensor, private_plan: Tensor,
     geometry_plan: Tensor, geometry_active: Tensor, *, trace_messages: bool = False,
+    twist_residual: Tensor | None = None,
 ) -> ActuationReplay:
     """Retain original geometry authority and backpropagate through real forces.
 
@@ -49,6 +50,10 @@ The caller must authenticate cached tensors against real forward passes.
     if geometry_active.shape != (*obs.shape[:2], 1) or geometry_active.dtype != torch.bool:
         raise ValueError("geometry authority must be [batch,node,1] boolean")
     executed = torch.where(geometry_active, geometry_plan, private_plan)
+    if twist_residual is not None:
+        if twist_residual.shape != (*obs.shape[:2], 3) or not bool(torch.isfinite(twist_residual).all()):
+            raise ValueError("finite [batch,node,3] twist residual required")
+        executed = torch.cat((executed[..., :3], executed[..., 3:6] + twist_residual, executed[..., 6:]), -1)
     proposal = local_se2_inverse_dynamics_wrench_proposals(obs, executed, cfg)
     # Public precision is overwritten by this fixed physical confidence in
     # the full policy. Private precisions cannot affect the public I3 section.

@@ -43,3 +43,11 @@ def test_dagger_aggregation_authenticates_legacy_actor_and_rejects_leakage(tmp_p
     odd = save("odd.json", dict(base, results=[dict(base["results"][0], agents=9)]))
     with pytest.raises(ValueError, match="held-out"):
         merge([odd], [proof])
+
+    # A frozen base plus a separately learned sidecar is a distinct actor;
+    # preserve that identity rather than collapsing it into the base hash.
+    controlled = save("controlled.json", dict(base, actor_checkpoint_sha256="parent",
+        actor_contact_residual={"path": "control.pt", "sha256": "contact-control"}))
+    union = merge([legacy, controlled], [proof])
+    assert len(union["actor_identities"]) == 2
+    assert union["results"][1]["actor_contact_residual"]["sha256"] == "contact-control"

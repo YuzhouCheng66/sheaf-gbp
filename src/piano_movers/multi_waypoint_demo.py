@@ -406,6 +406,10 @@ class MultiWaypointEngine:
             return certified_contact_step(state, forces, scenario, cfg)
         return single_slit_contact_feedback_step_v1(state, forces, scenario, cfg), None
 
+    def _policy_step(self, target, observation, edges, hidden, topology):
+        """Unchanged mainline call; independent controls may override this seam."""
+        return target(observation, edges, hidden, topology=topology, trace_messages=True)
+
     @torch.inference_mode()
     def events(
         self,
@@ -508,13 +512,7 @@ class MultiWaypointEngine:
                 retain_previous_wall_only=self.options.retain_previous_wall_only,
             )
             target = _traceable_policy(self.loaded.policy)
-            output = target(
-                observation,
-                edges,
-                hidden,
-                topology=topology,
-                trace_messages=True,
-            )
+            output = self._policy_step(target, observation, edges, hidden, topology)
             transition, certificate = self._contact_step(state, output.forces, full_scenario, cfg)
             continuous_rejections += int(certificate is not None and not certificate.passed)
             if self.audit_callback is not None:
