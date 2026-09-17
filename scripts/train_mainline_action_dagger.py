@@ -53,6 +53,15 @@ def private_from_prediction(prediction, source_plan, source_morph, support):
     return torch.cat((updated, source_plan[..., 6:]), -1)
 
 
+def source_correct_plan_target(target, source, geometry, active, preserve):
+    """Training-only alternative labels; do not mutate the teacher witness."""
+    if preserve.dtype != torch.bool or preserve.shape != target.shape[:1]:
+        raise ValueError("preservation mask must be one boolean per whole-agent frame")
+    if source.shape != target.shape or geometry.shape != target.shape:
+        raise ValueError("source and teacher plans must have identical shapes")
+    return torch.where(preserve[:, None, None], torch.where(active, geometry, source), target)
+
+
 def add_bucket(buckets, cfg, arrays):
     key = json.dumps(asdict(cfg), sort_keys=True)
     if key not in buckets:
@@ -114,10 +123,17 @@ def prepare(args, loaded, options):
                         torch.testing.assert_close(fast.forces, full.forces, atol=2e-5, rtol=2e-5)
                         force_errors.append(float((fast.forces - full.forces).abs().max()))
                     target_plan = torch.from_numpy(data["target_plan"][sl].copy())[:, None].expand(-1, cfg.n_agents, -1)
+                    force_field = "target_force"
+                    if "preserve_source_mask" in data.files:
+                        if manifest.get("training_label_schema") != "piano-movers.source-correct-contact-labels.v1":
+                            raise ValueError("source-correct labels require explicit audited schema")
+                        preserve = torch.from_numpy(data["preserve_source_mask"][sl].copy()).bool()
+                        target_plan = source_correct_plan_target(target_plan, morph, geom, active, preserve)
+                        force_field = "training_target_force"
                     add_bucket(groups["teacher"], cfg, dict(
                         features=feature, source_plan=morph, source_morph=morph, support=support,
                         obs=obs, geometry=geom, active=active,
-                        target_force=torch.from_numpy(data["target_force"][sl].copy()), target_plan=target_plan))
+                        target_force=torch.from_numpy(data[force_field][sl].copy()), target_plan=target_plan))
             teacher_rows.append(row["case_id"])
             if len(teacher_rows) % 10 == 0:
                 print(json.dumps({"prepare": "teachers", "queries": len(teacher_rows)}), flush=True)
