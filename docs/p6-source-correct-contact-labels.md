@@ -107,3 +107,69 @@ Key artifact SHA256 values:
 Small reports and the final sidecar are mirrored to Windows; bulk traces and
 caches stay on Linux. The full test suite passes: **134 tests**. No public
 checkpoint, baseline, GPU job belonging to another user, or demo was replaced.
+
+## Follow-up: balanced supervision and the crossing interface
+
+The next control kept the same frozen model, 768-parameter head, linear-v2
+initialization, seed, 3,000 steps, batch size 64, learning rate and successful
+contact replay. It changed only the teacher-frame sampler: within each
+environment bucket, half the batch comes from recovery frames and half from
+source-preservation frames. The respective recovery/preservation counts are
+21/203 (8 agents), 22/202 (12 agents), and 8/123 (20 agents). Default sampling
+remains unchanged. No training-only class indicator is supplied at deployment.
+
+Training took 24.49 seconds on the RTX 5090. Closed-loop success was still
+**0/3**, with contact counts **990 / 1 / 7**. All paths passed the continuous
+validator with zero penetration. This control is also not promoted; minority
+sampling alone did not solve recovery.
+
+The more informative next audit separates the original local plan from its
+actual GBP/grasp execution, on the same 579 authenticated frames:
+
+| Source continuation class | Frames | Ideal proposed step not certified | Actual step rejected | Maximum twist tracking error |
+| --- | ---: | ---: | ---: | ---: |
+| Does not finish within 512 steps | 51 | 17 | 17 | 0.0000414 |
+| Finishes current local goal | 528 | 0 | 0 | 0.10997 |
+
+The scalar error is the maximum absolute component across linear m/s and
+angular rad/s, not a dimensionally homogeneous norm. In the failing group,
+maximum node disagreement is only 8.2e-8 and no forces saturate. In the
+successful group, nodes can disagree substantially and six frames have
+saturated forces; the unweighted mean twist is not a consensus guarantee
+there. Do not generalize the small failing-group tracking error to all states.
+
+Read-only instrumentation of the original geometry branch shows that **all 17
+rejected commands** have `shape_aligned=true`, `shape_rotation_safe=true`,
+`cspace_active=false`, and `terminal_active=false`. They command forward motion
+while simultaneously adjusting lateral position and heading. The static
+whole-body-fit predicate and in-place alignment check do not certify that
+combined advancing/rotating movement. The physical layer closely tracks that
+unsafe command; this is not evidence of a GBP coordination failure.
+
+For each of these 17 states, a purely geometric counterfactual keeps the
+original proposed forward velocity but holds current lateral position and
+heading. **17/17 one-step paths are certified.** This does not prove a complete
+crossing, force feasibility, eventual goal success, or generalization. The
+other 34 unsuccessful-continuation states already have a safe first step and
+need later-trajectory analysis. No deployment behavior was changed by this
+diagnostic. The next justified experiment is an independently flagged repair
+of the existing crossing/alignment command interface, with frozen weights and
+matched closed-loop regression, not another replacement planner.
+
+The instrumented audit reproduced every original diagnostic field exactly
+before adding the new counterfactual. New sampler tests cover whole-frame
+selection, deterministic seeding, single-class buckets, and unchanged labels;
+the complete suite now passes **138 tests**.
+
+Artifacts:
+
+- `output/p6_contact_source_balanced_v1/control_step3000.pt`:
+  `58e8c2ae2a92c4dea006a812704383a78b95e74fae194fb6c11996b53d599227`
+- `output/p6_contact_source_balanced_v1_early_A/manifest.json`:
+  `bc55094983c2abb78473f0994838b4f6e6cccd3198fdbe2ede98d83cdb2f15fe`
+- `output/p6_crossing_twist_counterfactual/report.json`:
+  `653ce3428bcb215b048d9aa7ab2f65e20a5a9bf2971d86fc5099833b6466117e`
+- Reproduce the plan/execution audit with
+  `scripts/audit_contact_plan_execution.py --trace-local-decisions` and the
+  authenticated two-round teacher dataset, original actor rollout manifests,
+  and source-continuation audit listed above.

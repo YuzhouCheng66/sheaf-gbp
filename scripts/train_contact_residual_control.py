@@ -25,6 +25,26 @@ from piano_movers.multi_waypoint_demo import SkillCompositionOptions, apply_solv
 from piano_movers.single_slit_0720_eval import load_single_slit_checkpoint
 
 
+def contact_target_classes(data):
+    """Only audited source-correct targets have an exact zero correction class."""
+    source = torch.where(data["active"], data["geometry"], data["source_plan"])
+    return (data["target_plan"][..., 3:6] - source[..., 3:6]).abs().amax((-1, -2)) > 1e-6
+
+
+def balanced_contact_indices(needs_correction, batch_size):
+    """Sample whole-agent frames; equal class counts where both classes exist."""
+    if needs_correction.dtype != torch.bool or needs_correction.ndim != 1 or not needs_correction.numel():
+        raise ValueError("expected a nonempty boolean frame mask")
+    if batch_size < 2:
+        raise ValueError("balanced sampling requires at least two frames")
+    rescue, preserve = torch.where(needs_correction)[0], torch.where(~needs_correction)[0]
+    if not rescue.numel() or not preserve.numel():
+        return torch.randint(len(needs_correction), (batch_size,), device=needs_correction.device)
+    n_rescue = batch_size // 2
+    return torch.cat((rescue[torch.randint(len(rescue), (n_rescue,), device=rescue.device)],
+                      preserve[torch.randint(len(preserve), (batch_size - n_rescue,), device=preserve.device)]))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--recipe", type=Path, default=Path("configs/p6_force_position_heading_control.json"))
@@ -40,7 +60,13 @@ def main():
     parser.add_argument("--seed", type=int, default=7113)
     parser.add_argument("--initial-control", type=Path, help="Continue the independent readout; preserve its feature scale")
     parser.add_argument("--hidden-width", type=int, choices=(0, 64), default=0)
+    parser.add_argument("--balance-contact-targets", action="store_true",
+                        help="Training-only equal recovery/preservation frame sampling within each environment bucket")
     args = parser.parse_args()
+    if args.balance_contact_targets and (
+            args.batch_size < 2 or json.loads(args.dataset.read_text()).get("training_label_schema") !=
+            "piano-movers.source-correct-contact-labels.v1"):
+        raise ValueError("balanced targets require audited source-correct labels and batch size >= 2")
     torch.set_num_threads(1)
     torch.manual_seed(args.seed)
     args.output.mkdir(parents=True, exist_ok=True)
@@ -125,6 +151,13 @@ def main():
                 groups[kind].append({"cfg": b["cfg"], "arrays": {k: v[active].cuda() for k, v in b["arrays"].items()}})
         if not groups[kind]:
             raise ValueError(f"no real contact memory in {kind}")
+    target_classes = []
+    if args.balance_contact_targets:
+        for b in groups["teacher"]:
+            b["needs_correction"] = contact_target_classes(b["arrays"])
+            target_classes.append({"agents": b["cfg"]["n_agents"],
+                "recovery_frames": int(b["needs_correction"].sum()),
+                "preservation_frames": int((~b["needs_correction"]).sum())})
     differences = torch.cat([b["arrays"]["contact_difference"].reshape(-1, 256) for b in groups["teacher"]])
     if args.initial_control is None:
         control.feature_scale.copy_(differences.std(0).clamp_min(1e-3))
@@ -142,6 +175,7 @@ def main():
         "base_policy_frozen": True, "zero_contact_correction": "identically_zero",
         "physical_GBP_and_precision_unchanged": True, "steps": args.steps, "batch_size": args.batch_size,
         "learning_rate": args.learning_rate, "anchor_weight": args.anchor_weight, "seed": args.seed,
+        "balance_contact_targets": args.balance_contact_targets, "contact_target_classes": target_classes,
         "gpu": torch.cuda.get_device_name(), "source_sha256": {str(p): sha256(p) for p in (
             Path(__file__), Path("src/piano_movers/models.py"), Path("src/piano_movers/actuation_training.py"),
             Path("src/piano_movers/contact_residual_control.py"))}, "history": [], "checkpoints": []}
@@ -160,7 +194,9 @@ def main():
             policy.bind_environment(cfg)
             b["rounds"] = apply_solver_controls(policy, options)["rounds"]
         data = b["arrays"]
-        ix = torch.randint(len(data["features"]), (args.batch_size,), device="cuda")
+        ix = (balanced_contact_indices(b["needs_correction"], args.batch_size)
+              if kind == "teacher" and args.balance_contact_targets else
+              torch.randint(len(data["features"]), (args.batch_size,), device="cuda"))
         batch = {k: v[ix] for k, v in data.items()}
         delta = control(batch["contact_difference"])
         action = replay_physical_actuation(policy, batch["obs"], batch["source_plan"],
