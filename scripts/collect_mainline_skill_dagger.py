@@ -128,6 +128,7 @@ def main():
                       local_corridor_goal_heading_search=composition.resolve_position_goal_heading,
                       local_cspace_validate_all_lookaheads=composition.validate_all_cspace_lookaheads,
                       local_support_check_alignment_sweep=composition.check_support_alignment_sweep,
+                      local_support_hold_feasible_crossing=composition.hold_feasible_crossing,
                       local_corridor_exit_goal_radius_m=(INTERMEDIATE_POSITION_TOLERANCE_M
                                                          if composition.respect_handoff_goal_region else 0.))
         scene = _full_collision_scenario(course, cfg)

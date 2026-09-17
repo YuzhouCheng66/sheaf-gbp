@@ -41,6 +41,7 @@ def composition_cfg(cfg, options):
                    local_cspace_collision_substeps=options.planning_substeps,
                    local_cspace_validate_all_lookaheads=options.validate_all_cspace_lookaheads,
                    local_support_check_alignment_sweep=options.check_support_alignment_sweep,
+                   local_support_hold_feasible_crossing=options.hold_feasible_crossing,
                    local_corridor_exit_goal_radius_m=(INTERMEDIATE_POSITION_TOLERANCE_M
                                                       if options.respect_handoff_goal_region else 0.))
 

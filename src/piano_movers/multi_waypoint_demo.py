@@ -77,6 +77,7 @@ class SkillCompositionOptions:
     continuous_contact_guard: bool = False
     validate_all_cspace_lookaheads: bool = False
     check_support_alignment_sweep: bool = False
+    hold_feasible_crossing: bool = False
     respect_handoff_goal_region: bool = False
     cover_coordination_tree_diameter: bool = False
     geometry_precision_boost_override: float | None = None
@@ -445,6 +446,7 @@ class MultiWaypointEngine:
             local_corridor_goal_heading_search=self.options.resolve_position_goal_heading,
             local_cspace_validate_all_lookaheads=self.options.validate_all_cspace_lookaheads,
             local_support_check_alignment_sweep=self.options.check_support_alignment_sweep,
+            local_support_hold_feasible_crossing=self.options.hold_feasible_crossing,
             local_corridor_exit_goal_radius_m=(INTERMEDIATE_POSITION_TOLERANCE_M
                                                if self.options.respect_handoff_goal_region else 0.),
         )

@@ -86,6 +86,8 @@ class EnvConfig:
     local_cspace_collision_substeps: int = 4
     local_cspace_validate_all_lookaheads: bool = False
     local_support_check_alignment_sweep: bool = False
+    # Independent crossing/alignment interface control; historical parity off.
+    local_support_hold_feasible_crossing: bool = False
     # Optional active position-goal radius supplied by the existing supervisor.
     # Zero retains the historical extra exit-tracking reserve exactly.
     local_corridor_exit_goal_radius_m: float = 0.0

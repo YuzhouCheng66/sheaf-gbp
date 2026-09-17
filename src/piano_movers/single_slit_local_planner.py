@@ -99,6 +99,28 @@ def _position_goal_heading_control(
     return torch.where(active, selected, theta), active
 
 
+def _crossing_hold_mask(vertices, center_y, theta, vy, omega, gap_y, gap_half, cfg):
+    """Sufficient continuous whole-body containment, not a collision oracle.
+
+    If the current orientation and height fit the slit, pure longitudinal
+    translation preserves that fit. Bound the proposed angular arc exactly
+    and lateral translation conservatively; an uncertified combined command
+    may instead retain the current height and heading. Only local geometry is
+    used. The caller restricts this to already-aligned crossing, not parking.
+    """
+    start = theta[..., None]
+    end = start + cfg.dt * omega[..., None]
+    low, high = _sinusoid_arc_extrema(vertices[:, 1], vertices[:, 0], start, end)
+    delta_y = cfg.dt * vy
+    low = low.amin(-1) + center_y + delta_y.clamp_max(0.)
+    high = high.amax(-1) + center_y + delta_y.clamp_min(0.)
+    lower = torch.maximum(gap_y - gap_half, torch.full_like(gap_y, -cfg.world_y)) + 2e-6
+    upper = torch.minimum(gap_y + gap_half, torch.full_like(gap_y, cfg.world_y)) - 2e-6
+    current_y = center_y[..., None] + start.sin() * vertices[:, 0] + start.cos() * vertices[:, 1]
+    current_fits = (current_y.amin(-1) >= lower) & (current_y.amax(-1) <= upper)
+    return current_fits & ~((low >= lower) & (high <= upper))
+
+
 def _finite_wall_slice_y_bounds(
     rectangles: Tensor,
     center_x: Tensor,
@@ -921,6 +943,19 @@ def local_se2_terminal_attractor_plan(
     desired_omega = (effective_angle_gain * heading_error).clamp(
         -effective_max_omega, effective_max_omega
     )
+    if cfg.local_support_hold_feasible_crossing and feasible_corridor and shape_corridor_mode:
+        eligible = shape_active & shape_aligned & ~terminal_active & ~corridor_explicit
+        if bool(eligible.any()):
+            hold = eligible & _crossing_hold_mask(
+                vertices, center_y, torch.atan2(sine, cosine), desired_velocity_world[..., 1],
+                desired_omega, gap_center_y, gap_half, cfg,
+            )
+            # Keep the original longitudinal component and all GBP precision.
+            # Unchanged rows retain the original floating-point expression.
+            longitudinal_body = torch.stack((cosine * desired_velocity_world[..., 0],
+                                              -sine * desired_velocity_world[..., 0]), -1)
+            desired_velocity_body = torch.where(hold[..., None], longitudinal_body, desired_velocity_body)
+            desired_omega = torch.where(hold, torch.zeros_like(desired_omega), desired_omega)
     terminal_six = torch.cat(
         (
             (
