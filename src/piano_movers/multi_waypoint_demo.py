@@ -400,6 +400,12 @@ class MultiWaypointEngine:
             tuple[str, int], tuple[dict[str, Any], ...]
         ] = OrderedDict()
 
+    def _contact_step(self, state, forces, scenario, cfg):
+        """Physics seam for independent frame audits; defaults are unchanged."""
+        if self.options.continuous_contact_guard:
+            return certified_contact_step(state, forces, scenario, cfg)
+        return single_slit_contact_feedback_step_v1(state, forces, scenario, cfg), None
+
     @torch.inference_mode()
     def events(
         self,
@@ -509,13 +515,8 @@ class MultiWaypointEngine:
                 topology=topology,
                 trace_messages=True,
             )
-            if self.options.continuous_contact_guard:
-                transition, certificate = certified_contact_step(state, output.forces, full_scenario, cfg)
-                continuous_rejections += int(certificate is not None and not certificate.passed)
-            else:
-                transition = single_slit_contact_feedback_step_v1(
-                    state, output.forces, full_scenario, cfg
-                )
+            transition, certificate = self._contact_step(state, output.forces, full_scenario, cfg)
+            continuous_rejections += int(certificate is not None and not certificate.passed)
             if self.audit_callback is not None:
                 self.audit_callback(
                     tick=tick, waypoint_index=waypoint_index, cfg=cfg,

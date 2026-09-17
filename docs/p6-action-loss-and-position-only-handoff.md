@@ -181,6 +181,11 @@ Recipe: `configs/p6_relative_y_force_loss_v1.json`.
 
 ## Remaining gates
 
+Follow-up: [fixed-frame physics/interface audit](p6-rigid-world-frame-audit.md)
+passes 468/468 replay geometry checks and 36/36 actual closed-loop frame
+controls with the same weights. This tests a supplied fixed chart, not
+mixed-normal walls or learned rotation equivariance.
+
 The force-fit/heading-control candidate now passes the declared development
 and nominal/count/sequence-validation gates. It remains a distinctly versioned
 candidate, not an unannounced replacement of public p5. Remaining work includes
