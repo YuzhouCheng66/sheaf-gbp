@@ -78,9 +78,10 @@ Existing model/interface limitations outside this repair remain unchanged.
   `a493af24bdf6de88d478b5c28a1b6f7f69a82aca008dfec054abb1e62e8f9f4f`.
 
 Full A–Z × 14 entry/velocity/scale profiles at N12 (the previous 364-case
-development catalog) is running in
+development catalog) has completed **364/364**, with zero contact and zero
+penetration; all continuous certificates pass. The manifest is
 `output/p6_crossing_hold_all_states_81201/manifest.json`.
-Its partial results must not be reported as the full 364-case result. Broader
+Broader
 agent-count, held-out layout and sequence regression is still required before
 any public promotion. The overall p6 goal is not complete.
 
@@ -120,12 +121,12 @@ mixed-wall-normal maze test.
 Report: `output/p6_crossing_hold_framed_81201/manifest.json`, SHA256
 `52ccbbe05f9663e97f7d2af08a495304de68a5bdbe9517080a4c4aff8ed4e7e8`.
 
-Two larger regressions are in progress, not yet complete:
+Larger regressions:
 
 - `output/p6_crossing_hold_all_states_81201/manifest.json`: the complete
-  previous A–Z × 14 state-profile × N12 catalog, 364 cases.
+  previous A–Z × 14 state-profile × N12 catalog, **364/364 complete**.
 - `output/p6_crossing_hold_counts_all/manifest.json`: A–Z × every integer
-  N8–20 on the previous default three-wall course, 338 cases.
+  N8–20 on the previous default three-wall course, 338 cases, still running.
 
 The paired comparator `scripts/compare_mainline_trace_controls.py` now rejects
 duplicate, missing, or extra cases and can require that exactly one named
@@ -137,3 +138,42 @@ and |angular speed| <0.01 rad/s, so in-place rotation is not mislabeled as
 stationary. This metric alone does not determine whether the model is stuck.
 Test coverage has increased to **143 passing tests**. No public promotion has
 been made while the complete regressions remain pending.
+
+### Complete 364-case paired result
+
+The comparator authenticated the whole case set and verified that only
+`hold_feasible_crossing` changes. Source and candidate both pass 364/364;
+334 complete traces are bitwise identical. Every T case in this panel is
+bitwise unchanged. Total control steps change from 100,513 to 100,483;
+GBP float payload changes from 489,920,592 to 489,790,224 bytes. These small
+aggregate differences are not evidence of a universal efficiency improvement:
+one A/-135-degree case takes 229 instead of 224 steps, and 16 cases have a
+slightly longer path (maximum increase about 0.0258 m). No success or collision
+regression occurs. Both panels have zero collision attempts.
+
+Manifest SHA256:
+`9554c6433b4d590fbc11203da95416ac6b5052816ab9f2e8aa658b2b75a077b3`.
+Detailed paired metrics: `output/p6_crossing_interface_comparison/all_states.json`.
+
+### Remaining evaluation, no new teacher labels
+
+Four single-thread CPU shards are evaluating the complete predeclared S/Z ×
+N8–20 × 14 state profiles × seeds 83201–83204 panel (1,456 cells). Their
+manifests are `output/p6_crossing_hold_reserved_<seed>/manifest.json`.
+These generator seeds were examined with earlier candidates: this is a reused
+regression/OOD panel, **not a newly sealed blind test**. S/Z and odd counts remain
+excluded from this DAgger training branch; that is not a claim that ancestral
+p5 never encountered those glyphs. No labels are generated from these runs.
+The existing layout-cluster report retains the four-draw uncertainty caveat;
+individual shape/count/profile cells must not be counted as independent layouts.
+
+The old single-slit runner now has an explicit `--hold-feasible-crossing`
+option. Without it, rerunning that benchmark would only test the default-off
+source, not the new interface. The current audit uses the same source weights,
+384-step horizon, benchmark T profile, exact-contact guard, 32 planning samples,
+and diameter-covering GBP budget as the previous 338/338 source grid, changing
+only this option. It is running at
+`output/p6_crossing_hold_single_slit_all/manifest.json`. All 13 canonical T
+counts have completed successfully; their entire state trajectories and GBP
+payload counts are bitwise/exactly unchanged. The remaining glyph grid is not
+yet complete. The shard merger now rejects mixed values of this new option.

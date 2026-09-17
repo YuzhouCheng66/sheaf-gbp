@@ -114,6 +114,8 @@ def main():
     parser.add_argument("--validate-all-cspace-lookaheads", action="store_true")
     parser.add_argument("--t-profile", choices=["benchmark", "demo"], default="benchmark")
     parser.add_argument("--cover-coordination-tree-diameter", action="store_true")
+    parser.add_argument("--hold-feasible-crossing", action="store_true",
+                        help="Explicitly test the default-off crossing interface on the old single-slit benchmark")
     args = parser.parse_args()
     torch.set_num_threads(1)
     parent = load_single_slit_checkpoint(args.checkpoint, device="cpu")
@@ -131,6 +133,7 @@ def main():
         "local_cspace_collision_substeps": args.planning_substeps,
         "local_cspace_validate_all_lookaheads": args.validate_all_cspace_lookaheads,
         "cover_coordination_tree_diameter": args.cover_coordination_tree_diameter,
+        "local_support_hold_feasible_crossing": args.hold_feasible_crossing,
         "source_sha256": {
             str(p): sha256(p)
             for p in [
@@ -150,6 +153,7 @@ def main():
                 comm_radius=0.40,
                 local_cspace_collision_substeps=args.planning_substeps,
                 local_cspace_validate_all_lookaheads=args.validate_all_cspace_lookaheads,
+                local_support_hold_feasible_crossing=args.hold_feasible_crossing,
                 handle_layout=HANDLE_LAYOUT_PARAMETRIC_T_V3
                 if shape == "T"
                 else HANDLE_LAYOUT_GLYPH_BOUNDARY_V4,

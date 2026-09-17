@@ -41,6 +41,9 @@ def main():
         if frozen_grid and (source.get("cover_coordination_tree_diameter", False)
                             != record.get("cover_coordination_tree_diameter", False)):
             raise ValueError("mixed nominal solver-budget settings")
+        if frozen_grid and (source.get("local_support_hold_feasible_crossing", False)
+                            != record.get("local_support_hold_feasible_crossing", False)):
+            raise ValueError("mixed nominal crossing-interface settings")
         if layout_grid:
             for key in ("recipe_sha256", "options", "initial_velocity", "outcome_based_admission"):
                 if source[key] != record[key]:
