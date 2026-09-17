@@ -104,3 +104,36 @@ Manifest SHA256:
 
 Only small reports are mirrored to Windows. Bulk trajectories stay on Linux.
 This cycle used CPU audits and no GPU training; no other user's GPU job was touched.
+
+## Follow-up regression work
+
+The fixed-chart closed-loop regression has completed for A/B/L/T/X/Z, N12,
+and six rigid copies of the seed-81201 parallel-wall scene:
+**36/36 successful**, all independent world-frame continuous certificates pass,
+zero contact and zero penetration. All 30 nonidentity copies match their
+corresponding identity-world case in success, control steps and actual GBP
+payload bytes. Physics runs in float64 in the transformed world; the policy
+is rerun each step through the existing supplied chart adapter. This is not
+force replay, learned rotation equivariance, changing local frames, or a
+mixed-wall-normal maze test.
+
+Report: `output/p6_crossing_hold_framed_81201/manifest.json`, SHA256
+`52ccbbe05f9663e97f7d2af08a495304de68a5bdbe9517080a4c4aff8ed4e7e8`.
+
+Two larger regressions are in progress, not yet complete:
+
+- `output/p6_crossing_hold_all_states_81201/manifest.json`: the complete
+  previous A–Z × 14 state-profile × N12 catalog, 364 cases.
+- `output/p6_crossing_hold_counts_all/manifest.json`: A–Z × every integer
+  N8–20 on the previous default three-wall course, 338 cases.
+
+The paired comparator `scripts/compare_mainline_trace_controls.py` now rejects
+duplicate, missing, or extra cases and can require that exactly one named
+composition option changes (`--only-option hold_feasible_crossing`). It checks
+course and checkpoint identity, authenticates all saved trace hashes, and
+reports success, contacts, steps, path length, attachment setup and GBP payload,
+plus bitwise trace parity. Low-motion fraction requires both speed <0.01 m/s
+and |angular speed| <0.01 rad/s, so in-place rotation is not mislabeled as
+stationary. This metric alone does not determine whether the model is stuck.
+Test coverage has increased to **143 passing tests**. No public promotion has
+been made while the complete regressions remain pending.
