@@ -1,7 +1,7 @@
 """Multi-wall, hand-specified waypoint demo for the frozen Sheaf-GBP skill.
 
 This module does not claim mapping or global planning.  A supervisor supplies
-an ordered SE(2) route.  The frozen p5 policy receives only the current target
+an ordered waypoint route.  The selected policy receives only the current target
 and the current locally relevant slit, while exact collision feedback is
 evaluated against every wall in the course.
 """
@@ -9,6 +9,7 @@ evaluated against every wall in the course.
 from __future__ import annotations
 
 import argparse
+import hashlib
 from collections import OrderedDict
 from dataclasses import asdict, dataclass, replace
 import json
@@ -650,7 +651,7 @@ function ant(point,state,i){const p=S(...transform(point,state)),a=state[2]+(i%2
 function packet(a,b,t,str,bend){const c=[(a[0]+b[0])/2+(bend?.08:-.08)*(b[1]-a[1]),(a[1]+b[1])/2+(bend?.08:-.08)*(a[0]-b[0])],u=1-Math.pow(1-t,2),x=(1-u)*(1-u)*a[0]+2*(1-u)*u*c[0]+u*u*b[0],y=(1-u)*(1-u)*a[1]+2*(1-u)*u*c[1]+u*u*b[1];ctx.save();ctx.globalAlpha=.16+.42*str;ctx.strokeStyle='#4b4b4a';ctx.shadowColor='#f4f4ef';ctx.shadowBlur=13;ctx.lineWidth=.7+1.5*str;ctx.beginPath();ctx.moveTo(...a);ctx.quadraticCurveTo(...c,...b);ctx.stroke();ctx.translate(x,y);ctx.rotate(Math.atan2(b[1]-c[1],b[0]-c[0]));ctx.fillStyle='#292928';ctx.beginPath();ctx.moveTo(6,0);ctx.lineTo(-3,-3);ctx.lineTo(-1,0);ctx.lineTo(-3,3);ctx.closePath();ctx.fill();ctx.restore()}
 function messages(state){if(!header||!frames.length||timeline<=0)return;const i=frameIndex(),f=frames[i],phase=Math.max(0,timeline-i),s=Math.min(f.intensity.length-1,Math.floor(phase*f.intensity.length)),t=(phase*f.intensity.length)%1,vals=f.intensity[s],sorted=[...vals].sort((a,b)=>a-b),den=sorted[Math.floor(sorted.length*.86)]||1,pts=header.handles.map(p=>S(...transform(p,state)));for(let m=0;m<header.sender.length;m++)packet(pts[header.sender[m]],pts[header.receiver[m]],t,Math.max(.08,Math.min(1,Math.sqrt((vals[m]||0)/den))),m%2)}
 function draw(){background();route();walls();if(!header)return;finalPose();const s=pose();body(s);header.handles.forEach((p,i)=>ant(p,s,i));messages(s)}
-async function prepare(){generation++;const mine=generation;if(aborter)aborter.abort();aborter=new AbortController();header=null;frames=[];done=null;timeline=0;playing=false;setIcon();statusEl.textContent='';draw();try{const res=await fetch('/api/stream?shape='+encodeURIComponent(shape.value)+'&agents='+agents.value,{signal:aborter.signal});if(!res.ok)throw Error(await res.text());const reader=res.body.getReader(),decoder=new TextDecoder();let pending='';while(true){const q=await reader.read();if(q.done)break;pending+=decoder.decode(q.value,{stream:true});let cut;while((cut=pending.indexOf('\n'))>=0){const line=pending.slice(0,cut).trim();pending=pending.slice(cut+1);if(!line)continue;const e=JSON.parse(line);if(mine!==generation)return;if(e.type==='header'){header=e;draw()}else if(e.type==='frame')frames.push(e);else if(e.type==='done')done=e}}}catch(e){if(e.name!=='AbortError')statusEl.textContent='error'}}
+async function prepare(){generation++;const mine=generation;if(aborter)aborter.abort();aborter=new AbortController();header=null;frames=[];done=null;timeline=0;playing=false;setIcon();statusEl.textContent='';draw();try{const res=await fetch('/api/stream?shape='+encodeURIComponent(shape.value)+'&agents='+agents.value,{signal:aborter.signal});if(!res.ok)throw Error(await res.text());const reader=res.body.getReader(),decoder=new TextDecoder();let pending='';while(true){const q=await reader.read();if(q.done)break;pending+=decoder.decode(q.value,{stream:true});let cut;while((cut=pending.indexOf('\n'))>=0){const line=pending.slice(0,cut).trim();pending=pending.slice(cut+1);if(!line)continue;const e=JSON.parse(line);if(mine!==generation)return;if(e.type==='header'){header=e;document.title='Sheaf-GBP · '+e.checkpoint_sha256.slice(0,8);document.getElementById('dock').title='Checkpoint '+e.checkpoint_sha256;draw()}else if(e.type==='frame')frames.push(e);else if(e.type==='done')done=e;else if(e.type==='error')throw Error(e.message)}}}catch(e){if(e.name!=='AbortError')statusEl.textContent='error'}}
 function setIcon(){playIcon.innerHTML=playing?'<path d="M8 7v10M16 7v10"/>':'<path d="M9 6.5 17 12l-8 5.5Z" fill="currentColor" stroke="none"/>'}
 function toggle(){if(!frames.length)return;playing=!playing;setIcon();lastTime=performance.now();if(playing)requestAnimationFrame(tick)}
 function tick(now){if(!playing)return;const dt=Math.max(0,Math.min(50,now-lastTime));lastTime=now;const max=done?Math.max(0,frames.length-1):Math.max(0,frames.length-3);timeline=Math.min(max,timeline+dt/STEP_MS);const i=frameIndex(),f=i>=0?frames[i]:null;statusEl.textContent=f?`${Math.min(f.waypoint_index+1,header.waypoints.length)} / ${header.waypoints.length}`:'';draw();if(done&&timeline>=frames.length-1){playing=false;setIcon();statusEl.textContent=done.success?'complete':statusEl.textContent;return}requestAnimationFrame(tick)}
@@ -661,6 +662,7 @@ play.addEventListener('click',toggle);document.getElementById('reset').addEventL
 
 class MultiWaypointHandler(BaseHTTPRequestHandler):
     engine: MultiWaypointEngine
+    deployment_info: dict[str, Any] = {}
 
     def log_message(self, format: str, *args: object) -> None:
         return
@@ -677,6 +679,12 @@ class MultiWaypointHandler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
         if self.path == "/":
             self._send_text(HTTPStatus.OK, INDEX_HTML, "text/html; charset=utf-8")
+            return
+        if self.path == "/api/model":
+            metadata = dict(self.deployment_info,
+                            checkpoint_sha256=self.engine.loaded.checkpoint_sha256,
+                            composition_options=asdict(self.engine.options))
+            self._send_text(HTTPStatus.OK, json.dumps(metadata), "application/json")
             return
         if not self.path.startswith("/api/stream"):
             self._send_text(HTTPStatus.NOT_FOUND, "not found", "text/plain")
@@ -706,16 +714,43 @@ class MultiWaypointHandler(BaseHTTPRequestHandler):
                 pass
 
 
+def load_demo_recipe(path: Path, workspace_root: Path | None = None):
+    """Fail closed if the tested checkpoint or a composition option is missing."""
+    raw = path.read_bytes()
+    recipe = json.loads(raw)
+    declared = recipe["composition_options"]
+    if set(declared) != set(SkillCompositionOptions.__dataclass_fields__):
+        raise ValueError("demo recipe must explicitly declare every composition option")
+    root = workspace_root or Path(__file__).resolve().parents[2]
+    checkpoint = (root / recipe["checkpoint"]).resolve(strict=True)
+    if hashlib.sha256(checkpoint.read_bytes()).hexdigest() != recipe["checkpoint_sha256"]:
+        raise ValueError("demo recipe checkpoint hash mismatch")
+    options = SkillCompositionOptions(**declared)
+    info = {"recipe_name": path.name, "recipe_sha256": hashlib.sha256(raw).hexdigest(),
+            "checkpoint_sha256": recipe["checkpoint_sha256"],
+            "mode": "authenticated_recipe", "composition_options": asdict(options)}
+    return checkpoint, options, info
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--checkpoint", type=Path, required=True)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--checkpoint", type=Path, help="Legacy default-options mode")
+    source.add_argument("--recipe", type=Path, help="Authenticated checkpoint plus complete tested options")
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=7862)
     parser.add_argument("--open", action="store_true")
     args = parser.parse_args()
+    torch.set_num_threads(1)
+    if args.recipe:
+        checkpoint, options, info = load_demo_recipe(args.recipe)
+    else:
+        checkpoint, options, info = args.checkpoint.resolve(strict=True), SkillCompositionOptions(), {
+            "mode": "checkpoint_with_default_options"}
+    MultiWaypointHandler.deployment_info = info
     MultiWaypointHandler.engine = MultiWaypointEngine(
-        args.checkpoint.resolve(strict=True), args.device
+        checkpoint, args.device, options=options,
     )
     server = ThreadingHTTPServer((args.host, args.port), MultiWaypointHandler)
     url = f"http://{args.host}:{args.port}/"

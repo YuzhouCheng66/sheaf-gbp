@@ -104,6 +104,20 @@ then press Play.
 
 ### Multi-wall waypoint composition
 
+The validated **p6 development demo** must load the complete recipe, not just
+the weights (the handoff, continuous-collision and GBP settings are required):
+
+```bash
+PYTHONPATH=src python -m piano_movers.multi_waypoint_demo \
+  --recipe configs/p6_force_crossing_hold_control.json --device cpu --port 7862
+```
+
+The recipe verifies the checkpoint checksum and requires every control option.
+`/api/model` exposes the served identity/configuration; the tab title shows the
+checkpoint prefix. The three-wall A–Z × N8–20 reference is 338/338, all
+continuously certified. See the development reports for scope and limitations.
+The frozen-p5 command and results below are **historical**, not this p6 deployment.
+
 The same frozen p5 manipulation skill can be invoked sequentially along a
 hand-supplied SE(2) route:
 
