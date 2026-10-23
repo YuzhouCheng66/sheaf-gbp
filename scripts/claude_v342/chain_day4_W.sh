@@ -12,8 +12,8 @@
 #   otherwise                            => ambiguous (keep narrow). Protection: FPR <= +0.3 pp. Reported: K0, fresh, 8+-room stratum,
 #   and the cycle-2 comparison (WIDE2 vs v383) as a secondary, non-decisive reading.
 # Scheduling: the wide decoder needs the GPU alone (batch T: 0.1435 s/update shared vs 0.0828 solo). Four runs, strictly sequential,
-# each under its own inclusive 7,200 s lease (lease_c2_s<seed>.json, lease_c3_s<seed>.json); a run that misses its deadline makes the
-# chain stop (no further cycle on an incomplete run) and the batch INCONCLUSIVE for that seed. This chain WAITS for batch U
+# each under its own inclusive 7,200 s lease (lease_c2_s<seed>.json, lease_c3_s<seed>.json); a run that misses its deadline stops that
+# SEED (no further cycle on an incomplete run; the other seed still runs) and makes the batch INCONCLUSIVE for that seed. This chain WAITS for batch U
 # (chain_day4_U.sh / train_v388.py) to finish and never co-runs with it. Writes only under /mnt/datasets (runs/v391-wide-cycles).
 cd /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021 || exit 1
 P=/home/yuzhou/anaconda3/envs/jax-gpu/bin/python; S=/home/yuzhou/Desktop/sheaf-gbp/v299-multiscale-v310-5090/source
@@ -65,8 +65,8 @@ for cyc, ctrl in ((2, "runs/v383-cont/cont-s{s}"), (3, "runs/v384-cycle3/c3-s{s}
         try:
             a = json.load(open(f"runs/v391-wide-cycles/c{cyc}-s{s}/final.json")); c = json.load(open(ctrl.format(s=s) + "/final.json"))
             if a.get("updates") != 57600: ok = False; continue
-            g.append(round(100 * (a["val"]["8"]["all"]["wall_f1"] - c["val"]["8"]["all"]["wall_f1"]), 2))
-            fpr.append(round(100 * (a["val"]["8"]["all"]["unknown_known_fpr"] - c["val"]["8"]["all"]["unknown_known_fpr"]), 2))
+            g.append(100 * (a["val"]["8"]["all"]["wall_f1"] - c["val"]["8"]["all"]["wall_f1"]))
+            fpr.append(100 * (a["val"]["8"]["all"]["unknown_known_fpr"] - c["val"]["8"]["all"]["unknown_known_fpr"]))
         except Exception as e:
             ok = False
     if ok and len(g) == 2:
@@ -74,7 +74,7 @@ for cyc, ctrl in ((2, "runs/v383-cont/cont-s{s}"), (3, "runs/v384-cycle3/c3-s{s}
         if max(fpr) > 0.3: v += " BUT FPR protection violated"
     else:
         v = "INCONCLUSIVE"
-    out[f"cycle{cyc}"] = dict(verdict=v, gains_pp=g, fpr_delta_pp=fpr)
+    out[f"cycle{cyc}"] = dict(verdict=v, gains_pp=[round(x, 3) for x in g], fpr_delta_pp=[round(x, 3) for x in fpr])
 json.dump(out, open("runs/v391-wide-cycles/analysis.json", "w"), indent=1)
 print(out["cycle3"], "| cycle2 (secondary):", out["cycle2"])
 PY
