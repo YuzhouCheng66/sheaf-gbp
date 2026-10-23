@@ -112,7 +112,7 @@ mem_e = [torch.zeros(64, dtype=torch.float64, device=device) for _ in range(n)]
 V = -np.ones((n, n), dtype=int); last_sent = {}
 bytes_total = 0; packets = 0; events = 0
 own_pred = np.zeros((T, n, size, size), np.int8); fused_pred = np.zeros_like(own_pred)
-f1_own = np.full((T, n), np.nan); f1_fused = np.full((T, n), np.nan); links = {}; status = []
+f1_own = np.full((T, n), np.nan); f1_fused = np.full((T, n), np.nan); links = {}; status = []; known_src = np.zeros((T, n), int)
 t0 = time.time()
 with torch.no_grad():
     for t in range(T):
@@ -143,6 +143,7 @@ with torch.no_grad():
                         V[j] = np.maximum(V[j], out[k][2])
             events += 1
             links[t] = [(i, j) for (i, j) in directed if i < j]
+        known_src[t] = (V >= 0).sum(1)
         own_pred[t] = decode(feats_of(p_own, e_own))
         fused_pred[t] = decode(feats_of(torch.stack(mem_p), torch.stack(mem_e)))
         target = np.full_like(maps[t], -1)
@@ -213,7 +214,8 @@ def render(t):
         frame_axes(axb)
         axc = fig.add_axes([x0 + i * pitch, yc, w, h])
         axc.imshow(fused_pred[t, i] + 1, cmap=CMAP_T, vmin=0, vmax=2, origin='lower', interpolation='nearest')
-        axc.text(.0, -.07, f'wall F1 {f1_fused[t, i]:.2f}' if np.isfinite(f1_fused[t, i]) else 'wall F1 n/a', transform=axc.transAxes, fontsize=8, color='#444444', va='top')
+        axc.text(.0, -.07, f'F1 {f1_fused[t, i]:.2f}' if np.isfinite(f1_fused[t, i]) else 'F1 n/a', transform=axc.transAxes, fontsize=8, color='#444444', va='top')
+        axc.text(1., -.07, f'{known_src[t, i]}/{n} sources', transform=axc.transAxes, fontsize=8, color='#444444', va='top', ha='right')
         frame_axes(axc)
     st = status[t]
     fig.text(x0, .285, f't = {t:2d}    communication events {st["events"]}    packets {st["packets"]}    payload {st["bytes"] / 1024:.1f} kB    '
@@ -221,7 +223,7 @@ def render(t):
     for k, (lab, col) in enumerate((('unknown', '#e6e6e6'), ('free', '#ffffff'), ('wall', '#262626'))):
         fig.patches.append(Rectangle((x0 + k * .055, .232), .010, .022, transform=fig.transFigure, fc=col, ec='#c8c8c8', lw=.5))
         fig.text(x0 + k * .055 + .014, .243, lab, fontsize=8, color='#555555', va='center')
-    fig.text(x0, .200, 'F1 in c is measured against the union of observations each agent has received so far.', fontsize=8, color='#888888')
+    fig.text(x0, .200, 'F1 in c is measured against the union of observations each agent has received so far; k/n sources = agents whose code has reached it (directly or relayed).', fontsize=8, color='#888888')
     # ---- d: time courses
     fig.text(x0 - .005, .150, 'd', fontsize=12, fontweight='bold'); fig.text(x0 + .015, .150, 'Mean wall F1 and cumulative payload', fontsize=10)
     ts = np.arange(T); fo = np.array([s_['f1_own'] for s_ in status]); ff = np.array([s_['f1_fused'] for s_ in status]); kb = np.array([s_['bytes'] for s_ in status]) / 1024.

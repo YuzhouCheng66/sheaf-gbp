@@ -19,9 +19,9 @@ What moved HouseExpo from R8 .64 to .90, one variable at a time: fit the chart t
 
 ## Demo
 
-![Eight agents random-walk in their own rooms and corridor segments, exchange sheaf vectors with radio neighbours every six steps, and decode the fused posterior](claude_handoff/figures/demo_v385/walk_r12n8_i0.gif)
+![Eight agents random-walk in their own rooms and corridor segments, exchange sheaf vectors with radio neighbours every six steps, and decode the fused posterior](claude_handoff/figures/demo_v385/walk_r12n8_i0_radio5.gif)
 
-Eight agents random-walk inside their own rooms or corridor segments of a synthetic v293 world. Every six steps, agents within 8 m exchange their 64-dimensional sheaf vectors (one gossip round, diff-coded packets). Panel a shows the ground truth, trajectories and active radio links; b each agent's own cumulative observation; c the map each agent decodes from its fused posterior; d mean wall F1 and cumulative payload. Rendered by `scripts/claude_v342/demo_v385_walk.py` with the trained `ldynft-s342202` model; the MP4 is in the same folder.
+Eight agents random-walk inside their own rooms or corridor segments of a synthetic v293 world. Every six steps, agents within 5 m exchange their 64-dimensional sheaf vectors (one gossip round, diff-coded packets), so codes from distant agents arrive over several hops and several communication events. Panel a shows the ground truth, trajectories and active radio links; b each agent's own cumulative observation; c the map each agent decodes from its fused posterior, with the number of agents whose code has reached it; d mean wall F1 and cumulative payload. Rendered by `scripts/claude_v342/demo_v385_walk.py` with the trained `ldynft-s342202` model; MP4s for 5 m and 8 m radio are in the same folder.
 
 ## Layout
 
