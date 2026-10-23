@@ -17,6 +17,12 @@ Compression on v293: rate-term training (lambda 0.01) plus real arithmetic codin
 
 What moved HouseExpo from R8 .64 to .88, one variable at a time: fit the chart to the house (+10 pp), more training houses (+5 to +10 pp), longer training (+2.4 pp per extra cycle so far). More bits per coordinate and rectangular charts did not help.
 
+## Demo
+
+![Eight agents random-walk in their own rooms and corridor segments, exchange sheaf vectors with radio neighbours every six steps, and decode the fused posterior](claude_handoff/figures/demo_v385/walk_r12n8_i0.gif)
+
+Eight agents random-walk inside their own rooms or corridor segments of a synthetic v293 world. Every six steps, agents within 8 m exchange their 64-dimensional sheaf vectors (one gossip round, diff-coded packets). Panel a shows the ground truth, trajectories and active radio links; b each agent's own cumulative observation; c the map each agent decodes from its fused posterior; d mean wall F1 and cumulative payload. Rendered by `scripts/claude_v342/demo_v385_walk.py` with the trained `ldynft-s342202` model; the MP4 is in the same folder.
+
 ## Layout
 
 | Path | Contents |
