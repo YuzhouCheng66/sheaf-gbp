@@ -1,0 +1,280 @@
+<title>Sheaf-GBP Mapping Demo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600&display=swap">
+<style>
+  /* Layout: a journal figure. Panel a (ground truth) on the left; rows b and c of eight agent tiles on the right; status, legend and the
+     two time-course charts (d) underneath. Controls sit in a quiet bar between the title and the figure. */
+  :root {
+    --bg: #ffffff; --fg: #1f1f1f; --muted: #6b6b6b; --faint: #9a9a9a; --rule: #cfcfcf; --panel: #ffffff;
+    --accent: #3B6FB6; --accent-ink: #ffffff; --control-bg: #f4f4f2; --control-border: #d6d6d2;
+    --map-unknown: #e6e6e6; --map-free: #ffffff; --map-wall: #262626; --gt-occ: #d2d2d2; --link: #9a9a9a; --curve-own: #9a9a9a;
+    --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --sans: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg: #15171a; --fg: #ececec; --muted: #a3a8ae; --faint: #7c8187; --rule: #3b4046; --panel: #15171a;
+    --accent: #7FA6E0; --accent-ink: #0f1115; --control-bg: #1f2227; --control-border: #3b4046; --link: #7c8187; --curve-own: #7c8187; color-scheme: dark } }
+  :root[data-theme="dark"] {
+    --bg: #15171a; --fg: #ececec; --muted: #a3a8ae; --faint: #7c8187; --rule: #3b4046; --panel: #15171a;
+    --accent: #7FA6E0; --accent-ink: #0f1115; --control-bg: #1f2227; --control-border: #3b4046; --link: #7c8187; --curve-own: #7c8187; color-scheme: dark }
+  body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 13px; line-height: 1.45;
+         padding-block: 20px 32px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .wrap { max-width: 1480px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: 24px; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+  .sub { color: var(--muted); max-width: 70ch; margin: 0; }
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 10px 12px; border: 1px solid var(--control-border); background: var(--control-bg); border-radius: 4px; }
+  .controls label { display: flex; align-items: center; gap: 6px; color: var(--muted); }
+  .controls select, .controls button { font: inherit; font-size: 13px; color: var(--fg); background: var(--panel); border: 1px solid var(--control-border); border-radius: 3px; padding: 5px 9px; }
+  .controls button { cursor: pointer; }
+  .controls button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); min-width: 72px; }
+  .controls button:focus-visible, .controls select:focus-visible, .controls input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .controls .step { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; min-width: 0; }
+  .controls input[type=range] { flex: 1; min-width: 120px; accent-color: var(--accent); }
+  .readout { font-variant-numeric: tabular-nums; color: var(--fg); min-width: 7ch; }
+  .note { color: var(--muted); font-size: 12px; }
+  .figure { display: grid; grid-template-columns: minmax(280px, 520px) minmax(0, 1fr); gap: 18px 28px; align-items: start; }
+  .panel-label { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+  .panel-label b { font-size: 15px; }
+  .panel-label span { font-size: 13px; }
+  canvas { display: block; max-width: 100%; }
+  #gt { width: 100%; aspect-ratio: 1; border: 1px solid var(--rule); background: var(--map-free); }
+  .tiles { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 8px; }
+  .tile { min-width: 0; }
+  .tile .name { font-weight: 700; font-size: 12px; margin-bottom: 3px; }
+  .tile canvas { width: 100%; aspect-ratio: 1; border: 1px solid var(--rule); background: var(--map-unknown); }
+  .tile .under { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 4px; font-size: 11px; color: var(--muted); margin-top: 3px; font-variant-numeric: tabular-nums; line-height: 1.3; }
+  .right { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .status { font-variant-numeric: tabular-nums; color: var(--fg); display: flex; flex-wrap: wrap; gap: 4px 18px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; color: var(--muted); font-size: 12px; }
+  .legend i { display: inline-block; width: 14px; height: 11px; border: 1px solid var(--rule); vertical-align: -1px; margin-right: 5px; }
+  .charts { display: grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap: 24px; }
+  .charts canvas { width: 100%; height: 130px; }
+  .charts .cap { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .foot { color: var(--faint); font-size: 12px; max-width: 90ch; }
+  .msg { color: var(--muted); }
+  @media (max-width: 900px) {
+    .figure { grid-template-columns: 1fr; }
+    .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .charts { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <div>
+    <h1>Sheaf-GBP multi-agent mapping</h1>
+    <p class="sub" id="sub">Eight agents, each limited to 64 Gaussian variables and 64 precisions. Agents random-walk inside their own rooms or corridor segments; neighbours within 5 m exchange their sheaf vectors every 6 steps; the decoder reads only the fused posterior.</p>
+  </div>
+
+  <div class="controls" role="group" aria-label="Run controls">
+    <label>World
+      <select id="world"></select>
+    </label>
+    <label>Walk seed
+      <select id="seed"></select>
+    </label>
+    <button id="random" type="button">Random</button>
+    <button id="run" type="button" class="primary">Run</button>
+    <button id="restart" type="button">Restart</button>
+    <label>Speed
+      <select id="fps">
+        <option value="2">2 steps/s</option>
+        <option value="5" selected>5 steps/s</option>
+        <option value="10">10 steps/s</option>
+      </select>
+    </label>
+    <div class="step">
+      <input type="range" id="step" min="0" max="89" value="0" aria-label="Step">
+      <span class="readout" id="readout">t = 0</span>
+    </div>
+    <span class="msg" id="msg"></span>
+  </div>
+
+  <div class="figure">
+    <div>
+      <div class="panel-label"><b>a</b><span>Ground truth (grey = occupied), trajectories and radio links</span></div>
+      <canvas id="gt" width="1040" height="1040"></canvas>
+    </div>
+    <div class="right">
+      <div>
+        <div class="panel-label"><b>b</b><span>Local observation (own sensor only)</span></div>
+        <div class="tiles" id="rowb"></div>
+      </div>
+      <div>
+        <div class="panel-label"><b>c</b><span>Map decoded from the fused Sheaf-GBP posterior</span></div>
+        <div class="tiles" id="rowc"></div>
+      </div>
+      <div class="status" id="status"></div>
+      <div class="legend">
+        <span><i style="background: var(--map-unknown)"></i>unknown</span>
+        <span><i style="background: var(--map-free)"></i>free</span>
+        <span><i style="background: var(--map-wall)"></i>wall</span>
+        <span>F1 in c is measured against the union of observations each agent has received so far; k/8 sources = agents whose code has reached it, directly or relayed.</span>
+      </div>
+      <div>
+        <div class="panel-label"><b>d</b><span>Mean wall F1 and cumulative payload</span></div>
+        <div class="charts">
+          <div><canvas id="chartF1" width="600" height="260"></canvas><div class="cap">wall F1 of the own code (grey) and of the fused posterior (black)</div></div>
+          <div><canvas id="chartKB" width="600" height="260"></canvas><div class="cap">bytes actually sent, diff-coded packets (8 B header + 8 B change mask + 2 B per changed coordinate + 8 version bytes)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="foot" id="foot">Each run is a real simulation of the sealed v293 world family with the trained ldynft-s342202 model (H128): v293 first-hit sensor (256 beams, 5 m), hard-8 codes, profile-4 wire, max-precision join with per-agent CRDT memory. Runs were precomputed on the GPU host and exported as RLE maps; this page only plays them back.</p>
+</div>
+
+<script>
+(() => {
+  const WORLDS = [[6, 0], [6, 1], [12, 0], [12, 1], [20, 0], [20, 1]];
+  const SEEDS = [0, 1, 2, 3];
+  const COLORS = ['#3B6FB6', '#D1495B', '#2A9D8F', '#E9A23B', '#8E6BB8', '#5CB5E1', '#C76A2F', '#6AA84F'];
+  const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const rgb = (hex) => [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)];
+  const $ = (id) => document.getElementById(id);
+  const worldSel = $('world'), seedSel = $('seed'), fpsSel = $('fps'), stepIn = $('step'), readout = $('readout'), msg = $('msg');
+  const runBtn = $('run'), randomBtn = $('random'), restartBtn = $('restart');
+  WORLDS.forEach(([r, i], k) => { const o = document.createElement('option'); o.value = k; o.textContent = `${r} rooms, plan ${i + 1}`; worldSel.appendChild(o); });
+  SEEDS.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = `seed ${s}`; seedSel.appendChild(o); });
+  try { const saved = JSON.parse(localStorage.getItem('sheafgbp-demo') || '{}'); if (saved.world != null) worldSel.value = saved.world; if (saved.seed != null) seedSel.value = saved.seed; if (saved.fps) fpsSel.value = saved.fps; } catch (e) {}
+
+  // ---- tiles
+  const rowb = $('rowb'), rowc = $('rowc'); const tilesB = [], tilesC = [];
+  for (let i = 0; i < 8; i++) {
+    for (const [row, arr, under] of [[rowb, tilesB, false], [rowc, tilesC, true]]) {
+      const d = document.createElement('div'); d.className = 'tile';
+      d.innerHTML = `<div class="name" style="color:${COLORS[i]}">A${i + 1}</div><canvas width="128" height="128" aria-label="agent ${i + 1} map"></canvas>` + (under ? `<div class="under"><span class="f1"></span><span class="src"></span></div>` : '');
+      row.appendChild(d); arr.push({ canvas: d.querySelector('canvas'), f1: d.querySelector('.f1'), src: d.querySelector('.src') });
+    }
+  }
+
+  // ---- data
+  const cache = new Map(); let run = null, t = 0, timer = null, walls = null, gtImage = null;
+  const key = () => { const [r, i] = WORLDS[+worldSel.value]; return `run_r${r}_i${i}_s${seedSel.value}`; };
+  async function gunzip(b64) {
+    const raw = atob(b64); const bytes = new Uint8Array(raw.length); for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+    if (typeof DecompressionStream === 'undefined') throw new Error('this browser cannot decompress gzip streams');
+    const ds = new DecompressionStream('gzip'); const buf = await new Response(new Blob([bytes]).stream().pipeThrough(ds)).arrayBuffer();
+    return new Uint8Array(buf);
+  }
+  async function load(name) {
+    if (cache.has(name)) return cache.get(name);
+    msg.textContent = 'Loading run…';
+    const meta = await fetch(`data/${name}.json`).then(r => { if (!r.ok) throw new Error(`missing ${name}.json`); return r.json(); });
+    const bin = await gunzip(meta.bin_gz_b64); delete meta.bin_gz_b64;
+    if (bin.length !== meta.bin_bytes) throw new Error('map data is corrupted');
+    const r = { meta, bin }; cache.set(name, r); msg.textContent = ''; return r;
+  }
+  function rleTo(bin, off, len, out, palette) {               // palette: [c0, c1, c2] rgb triples for stored values 0,1,2
+    let p = 0, e = off + len;
+    for (let k = off; k < e; k += 2) {
+      const [cr, cg, cb] = palette[bin[k]]; const n = bin[k + 1];
+      for (let j = 0; j < n; j++) { out[p++] = cr; out[p++] = cg; out[p++] = cb; out[p++] = 255; }
+    }
+  }
+  const mapPalette = () => [rgb(css('--map-unknown')), rgb(css('--map-free')), rgb(css('--map-wall'))];
+  const gtPalette = () => [rgb(css('--map-free')), rgb(css('--map-free')), rgb(css('--gt-occ'))];
+  const scratch = document.createElement('canvas'); scratch.width = 128; scratch.height = 128; const sctx = scratch.getContext('2d');
+  const img = sctx.createImageData(128, 128);
+  function drawMap(canvas, keyName, palette, pose, color) {
+    const [off, len] = run.meta.offsets[keyName]; rleTo(run.bin, off, len, img.data, palette); sctx.putImageData(img, 0, 0);
+    const ctx = canvas.getContext('2d'); ctx.imageSmoothingEnabled = false;
+    ctx.save(); ctx.scale(1, -1); ctx.drawImage(scratch, 0, -128); ctx.restore();   // raster row 0 is y = 0 (bottom), like the figure
+    if (pose) { const cell = run.meta.extent_m / 128; ctx.fillStyle = color; ctx.strokeStyle = '#fff'; ctx.lineWidth = .8; ctx.beginPath(); ctx.arc(pose[0] / cell, 128 - pose[1] / cell, 2.6, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
+  }
+
+  // ---- panel a
+  const gt = $('gt'); const G = gt.getContext('2d');
+  function buildGt() {
+    const [off, len] = run.meta.offsets.walls; const c = document.createElement('canvas'); c.width = 128; c.height = 128; const cx = c.getContext('2d');
+    const d = cx.createImageData(128, 128); rleTo(run.bin, off, len, d.data, gtPalette()); cx.putImageData(d, 0, 0); gtImage = c;
+  }
+  function drawGt() {
+    const m = run.meta, S = gt.width, px = S / m.extent_m, X = (x) => x * px, Y = (y) => S - y * px;
+    G.setTransform(1, 0, 0, 1, 0, 0); G.imageSmoothingEnabled = false; G.clearRect(0, 0, S, S);
+    G.save(); G.scale(1, -1); G.drawImage(gtImage, 0, -S, S, S); G.restore();
+    const n = m.agents, paths = m.paths_m;
+    // sensor outlines
+    for (let i = 0; i < n; i++) { G.strokeStyle = COLORS[i]; G.globalAlpha = .22; G.lineWidth = 1; G.beginPath(); G.arc(X(paths[t][i][0]), Y(paths[t][i][1]), m.sensor_range_m * px, 0, Math.PI * 2); G.stroke(); }
+    G.globalAlpha = 1;
+    // links active at the last communication event (shown for the event frame and the next one)
+    for (const ev of Object.keys(m.links)) { const s = +ev; if (s >= t - 1 && s <= t) { G.strokeStyle = css('--link'); G.lineWidth = 1.6; for (const [i, j] of m.links[ev]) { G.beginPath(); G.moveTo(X(paths[s][i][0]), Y(paths[s][i][1])); G.lineTo(X(paths[s][j][0]), Y(paths[s][j][1])); G.stroke(); } } }
+    // trails and agents
+    for (let i = 0; i < n; i++) {
+      G.strokeStyle = COLORS[i]; G.lineWidth = 2; G.lineJoin = 'round'; G.lineCap = 'round'; G.globalAlpha = .85; G.beginPath();
+      for (let s = 0; s <= t; s++) { const [x, y] = paths[s][i]; if (s === 0) G.moveTo(X(x), Y(y)); else G.lineTo(X(x), Y(y)); }
+      G.stroke(); G.globalAlpha = 1;
+      const [x, y] = paths[t][i]; G.fillStyle = COLORS[i]; G.strokeStyle = '#fff'; G.lineWidth = 1.6; G.beginPath(); G.arc(X(x), Y(y), 7, 0, Math.PI * 2); G.fill(); G.stroke();
+      G.fillStyle = COLORS[i]; G.font = `bold ${Math.round(S / 58)}px ${css('--sans')}`; G.fillText(`A${i + 1}`, X(x) + 9, Y(y) - 8);
+    }
+    // scale bar (5 m) in the occupied margin at the bottom right
+    G.strokeStyle = '#333'; G.lineWidth = 2.5; G.beginPath(); G.moveTo(X(14.2), Y(.32)); G.lineTo(X(19.2), Y(.32)); G.stroke();
+    G.fillStyle = '#333'; G.font = `${Math.round(S / 52)}px ${css('--sans')}`; G.textAlign = 'right'; G.fillText('5 m', X(13.8), Y(.32) + S / 150); G.textAlign = 'left';
+  }
+
+  // ---- charts
+  function chart(canvas, series, yLo, yHi, yLabel, fmt) {
+    const c = canvas.getContext('2d'), W = canvas.width, H = canvas.height, L = 62, R = 14, T0 = 14, B = 44;
+    c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, W, H);
+    const m = run.meta, xMax = Math.max(t, 12), X = (s) => L + (W - L - R) * s / xMax, Y = (v) => T0 + (H - T0 - B) * (1 - (v - yLo) / (yHi - yLo));
+    c.strokeStyle = css('--rule'); c.lineWidth = 1; c.beginPath(); c.moveTo(L, T0); c.lineTo(L, H - B); c.lineTo(W - R, H - B); c.stroke();
+    c.fillStyle = css('--muted'); c.font = `15px ${css('--sans')}`; c.textAlign = 'center';
+    const xt = xMax <= 20 ? 5 : xMax <= 50 ? 10 : 20;
+    for (let s = 0; s <= xMax; s += xt) { c.fillText(String(s), X(s), H - B + 20); c.beginPath(); c.moveTo(X(s), H - B); c.lineTo(X(s), H - B + 4); c.stroke(); }
+    c.fillText('step', (L + W - R) / 2, H - 8);
+    c.textAlign = 'right'; const yt = (yHi - yLo) / 2;
+    for (let k = 0; k <= 2; k++) { const v = yLo + k * yt; c.fillText(fmt(v), L - 8, Y(v) + 5); c.beginPath(); c.moveTo(L - 4, Y(v)); c.lineTo(L, Y(v)); c.stroke(); }
+    c.save(); c.translate(16, (T0 + H - B) / 2); c.rotate(-Math.PI / 2); c.textAlign = 'center'; c.fillText(yLabel, 0, 0); c.restore();
+    // communication events as ticks on the baseline
+    c.strokeStyle = css('--faint'); for (const ev of Object.keys(m.links)) { const s = +ev; if (s <= t) { c.beginPath(); c.moveTo(X(s), H - B - 1); c.lineTo(X(s), H - B - 7); c.stroke(); } }
+    for (const { values, color, width } of series) {
+      c.strokeStyle = color; c.lineWidth = width; c.lineJoin = 'round'; c.beginPath();
+      for (let s = 0; s <= t; s++) { const v = values[s]; if (s === 0) c.moveTo(X(s), Y(v)); else c.lineTo(X(s), Y(v)); }
+      c.stroke(); c.fillStyle = color; c.beginPath(); c.arc(X(t), Y(values[t]), 3.5, 0, Math.PI * 2); c.fill();
+    }
+  }
+
+  // ---- frame
+  function frame() {
+    if (!run) return;
+    const m = run.meta, pal = mapPalette();
+    drawGt();
+    for (let i = 0; i < m.agents; i++) {
+      drawMap(tilesB[i].canvas, `own/${t}/${i}`, pal, m.paths_m[t][i], COLORS[i]);
+      drawMap(tilesC[i].canvas, `fused/${t}/${i}`, pal, null, null);
+      const f = m.f1_fused[t][i]; tilesC[i].f1.textContent = f >= 0 ? `F1 ${f.toFixed(2)}` : 'F1 n/a'; tilesC[i].src.textContent = `${m.known_src[t][i]}/${m.agents} sources`;
+    }
+    const st = m.status[t];
+    $('status').innerHTML = `<span>t = ${t}</span><span>communication events ${st.events}</span><span>packets ${st.packets}</span><span>payload ${(st.bytes / 1024).toFixed(1)} kB</span><span>mean wall F1: own ${st.f1_own.toFixed(2)} · fused ${st.f1_fused.toFixed(2)}</span>`;
+    const own = m.status.map(s => s.f1_own), fused = m.status.map(s => s.f1_fused), kb = m.status.map(s => s.bytes / 1024);
+    chart($('chartF1'), [{ values: own, color: css('--curve-own'), width: 2 }, { values: fused, color: css('--fg'), width: 2.4 }], .8, 1, 'wall F1', v => v.toFixed(1));
+    chart($('chartKB'), [{ values: kb, color: css('--fg'), width: 2.4 }], 0, Math.max(1, Math.ceil(Math.max(...kb.slice(0, t + 1)) * 1.15)), 'kB', v => v.toFixed(0));
+    stepIn.value = t; readout.textContent = `t = ${t}`;
+  }
+  function stop() { if (timer) { clearInterval(timer); timer = null; } runBtn.textContent = (run && t >= run.meta.T - 1) ? 'Replay' : 'Run'; }
+  function play() {
+    if (!run) return; if (t >= run.meta.T - 1) t = 0;
+    stop(); runBtn.textContent = 'Pause';
+    timer = setInterval(() => { if (t >= run.meta.T - 1) { stop(); return; } t++; frame(); }, 1000 / +fpsSel.value);
+  }
+  async function select(autoplay) {
+    stop(); const name = key();
+    try { localStorage.setItem('sheafgbp-demo', JSON.stringify({ world: worldSel.value, seed: seedSel.value, fps: fpsSel.value })); } catch (e) {}
+    try { run = await load(name); } catch (e) { msg.textContent = `Could not load this run (${e.message}).`; return; }
+    buildGt(); t = 0; stepIn.max = run.meta.T - 1;
+    const m = run.meta; $('sub').textContent = `${m.agents} agents, each limited to 64 Gaussian variables and 64 precisions. Agents random-walk inside their own rooms or corridor segments of a ${m.rooms}-room plan; neighbours within ${m.radio} m exchange their sheaf vectors every ${m.comm_every} steps; the decoder reads only the fused posterior.`;
+    frame(); if (autoplay) play();
+  }
+  runBtn.addEventListener('click', () => { if (timer) stop(); else play(); });
+  restartBtn.addEventListener('click', () => { stop(); t = 0; frame(); runBtn.textContent = 'Run'; });
+  randomBtn.addEventListener('click', () => {
+    let w, s; do { w = Math.floor(Math.random() * WORLDS.length); s = SEEDS[Math.floor(Math.random() * SEEDS.length)]; } while (String(w) === worldSel.value && String(s) === seedSel.value);
+    worldSel.value = w; seedSel.value = s; select(true);
+  });
+  worldSel.addEventListener('change', () => select(false)); seedSel.addEventListener('change', () => select(false));
+  fpsSel.addEventListener('change', () => { try { localStorage.setItem('sheafgbp-demo', JSON.stringify({ world: worldSel.value, seed: seedSel.value, fps: fpsSel.value })); } catch (e) {} if (timer) play(); });
+  stepIn.addEventListener('input', () => { stop(); t = +stepIn.value; frame(); });
+  const mq = window.matchMedia('(prefers-color-scheme: dark)'); mq.addEventListener && mq.addEventListener('change', () => { if (run) { buildGt(); frame(); } });
+  new MutationObserver(() => { if (run) { buildGt(); frame(); } }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  select(false);
+})();
+</script>

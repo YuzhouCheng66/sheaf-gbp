@@ -34,3 +34,6 @@ scripts/sync_to_bigboy.sh
 .DS_Store
 .idea/
 .vscode/
+
+# local test wrapper for demo_web
+demo_web/_local.html

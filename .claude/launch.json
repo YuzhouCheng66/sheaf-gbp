@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "demo-web",
+      "runtimeExecutable": "D:/anaconda3/envs/jax-gpu/python.exe",
+      "runtimeArgs": ["-m", "http.server", "8765", "--bind", "127.0.0.1", "--directory", "demo_web"],
+      "port": 8765
+    }
+  ]
+}
