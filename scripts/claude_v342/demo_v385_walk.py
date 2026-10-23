@@ -228,14 +228,16 @@ def render(t):
     fig.text(x0 - .005, .150, 'd', fontsize=12, fontweight='bold'); fig.text(x0 + .015, .150, 'Mean wall F1 and cumulative payload', fontsize=10)
     ts = np.arange(T); fo = np.array([s_['f1_own'] for s_ in status]); ff = np.array([s_['f1_fused'] for s_ in status]); kb = np.array([s_['bytes'] for s_ in status]) / 1024.
     for k, (ax, y, col, lab, lo, hi) in enumerate(((fig.add_axes([x0 + .012, .055, .22, .085]), (fo, ff), ('#9a9a9a', '#1b1b1b'), ('own', 'fused'), .80, 1.0),
-                                                    (fig.add_axes([x0 + .30, .055, .22, .085]), (kb,), ('#1b1b1b',), ('payload (kB)',), 0., max(kb.max() * 1.1, 1.)))):
+                                                    (fig.add_axes([x0 + .30, .055, .22, .085]), (kb,), ('#1b1b1b',), ('payload (kB)',), 0., 1.))):
         for yy, cc, ll in zip(y, col, lab):
             ax.plot(ts[:t + 1], yy[:t + 1], color=cc, lw=1.1, label=ll)
-            ax.plot(ts[t + 1:], yy[t + 1:], color=cc, lw=1.1, alpha=.18)
-        ax.axvline(t, color='#c8c8c8', lw=.6, zorder=0)
+            ax.plot([t], [yy[t]], marker='o', ms=3, color=cc)
         for ev in links:
-            ax.plot([ev], [lo + (hi - lo) * .04], marker='|', color='#b0b0b0', ms=4, mew=.6)
-        ax.set_xlim(0, T - 1); ax.set_ylim(lo, hi); ax.set_xlabel('step', fontsize=8, labelpad=1, color='#444444'); ax.tick_params(labelsize=7, length=2, width=.5, colors='#444444')
+            if ev <= t:
+                ax.plot([ev], [lo + (hi - lo) * .04], marker='|', color='#b0b0b0', ms=4, mew=.6)
+        if k == 1:
+            hi = max(kb[:t + 1].max() * 1.15, 1.)
+        ax.set_xlim(0, max(t, 12)); ax.set_ylim(lo, hi); ax.set_xlabel('step', fontsize=8, labelpad=1, color='#444444'); ax.tick_params(labelsize=7, length=2, width=.5, colors='#444444')
         ax.spines['top'].set_visible(False); ax.spines['right'].set_visible(False)
         for sp in ('left', 'bottom'):
             ax.spines[sp].set_edgecolor('#999999'); ax.spines[sp].set_linewidth(.5)

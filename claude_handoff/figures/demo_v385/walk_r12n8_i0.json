@@ -19,7 +19,7 @@
   "step": 0.35,
   "seed": 0,
   "fps": 5,
-  "stills": "0,12,36,89"
+  "stills": "0,12,24,36,54,89"
  },
  "world_id": "v293:VALIDATION:0:corridor-spine:12",
  "assignment": [
