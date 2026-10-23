@@ -19,6 +19,7 @@ ap.add_argument('--final-window', type=float, default=500., help='seconds betwee
 ap.add_argument('--mode', choices=['parallel', 'solo'], required=True); ap.add_argument('--min-rate', type=float, default=0.094)
 ap.add_argument('--updates', type=int, default=200); ap.add_argument('--total-updates', type=int, default=57600)
 ap.add_argument('--width', type=float, default=2.0); ap.add_argument('--decoder-params', type=int, default=2491330)
+ap.add_argument('--code-embed', type=int, default=None, help='if given, run.json code_embed must equal this (v388 batches)')
 a = ap.parse_args()
 reasons = []; rates = []; loads = []; vals = []
 ctrl = json.load(open(a.control_run))['parameters']
@@ -30,6 +31,8 @@ for d in a.preflight:
             reasons.append(f'{d.name}: history {[(e.get("updates"), e.get("train_loss")) for e in h]} != one record of {a.updates} finite-loss updates')
         if float(r.get('decoder_width', r['args'].get('decoder_width', 1.0))) != a.width:
             reasons.append(f'{d.name}: decoder_width {r.get("decoder_width")} != {a.width}')
+        if a.code_embed is not None and int(r.get('code_embed', r['args'].get('code_embed', 0))) != a.code_embed:
+            reasons.append(f'{d.name}: code_embed {r.get("code_embed")} != {a.code_embed}')
         p = r['parameters']
         if p.get('decoder') != a.decoder_params:
             reasons.append(f'{d.name}: decoder params {p.get("decoder")} != {a.decoder_params}')
