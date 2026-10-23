@@ -1,0 +1,78 @@
+{
+  "version": 306,
+  "status": "PREREGISTERED_ONE_FIXED_JOINT_NATIVE_PAIR",
+  "output_root": "/home/yuzhou/Desktop/sheaf-gbp/support-native-pair-v306-5090",
+  "admission_root": "/home/yuzhou/Desktop/sheaf-gbp/support-native-v306-r1-admission-5090",
+  "admission_report_sha256": "e2bee45dfd511c38bd90723d70134d6d400774d5c8cf06fc44147149c752a3c6",
+  "admission_source_manifest_sha256": "6d62528248c8b88709c7645925cf40249a7f82efba74b23dbde320753c3f56e9",
+  "old_bank": "/home/yuzhou/Desktop/sheaf-gbp/multiroom-domain-v295-5090/data-bank",
+  "old_manifest_pins": {
+    "TRAIN": "2d6029077a39fe973cf9f93cb4acf4a04da7629ba4b73cb4a4fb85a24825158d",
+    "VALIDATION": "4e5438ee5ffcef5f1d3f5c406f3aced4562c38b2836f3d53dbfc7ebcc7d99564"
+  },
+  "device": {"host":"uk-linux","UUID":"GPU-238bdbd5-9f06-da6d-09f6-830fd831e817","Windows_GPU":false,"bigboy":false},
+  "arms_in_sequential_order": ["support_local","cross_address"],
+  "data": {
+    "native_sizes": [128,256,512], "rooms": [6,12,20], "agents": [8,16],
+    "TRAIN_indices": [0,255], "VALIDATION_indices": [0,7],
+    "TRAIN_pool_tuples":4608, "draw_seed":306101, "draws_per_arm":2160,
+    "actual_unique_TRAIN_scenes":1776, "actual_unique_TRAIN_worlds":296,
+    "VALIDATION_scenes":144, "VALIDATION_worlds":24,
+    "generation":"Prepare only fixed-draw unique TRAIN scenes and all144 VALIDATION scenes. Old native128 cached sensors read-only; new256/512 continuous geometry plus native DDA, never resize.",
+    "frame":"Public20m square; radius8m, sensor5m/256first-hit rays, 3poses. Same physicalworld/trajectory/graph across resolution for fixedN. Not varied physicalscale or general building distribution.",
+    "bank_get":"Read-only pinned after preparation; no implicit cache generation/GT completion/learned-factor cache.",
+    "targets":"AtR0/1/2/4/8 use actual selected-forest arrived original-source union only. No all-radius shortcuts. Target map and doormask never enter source or decoder.",
+    "TEST_opened":false
+  },
+  "model": {
+    "mean_dim":64, "diagonal_dim":64, "public_addresses":[4,4], "per_address_dim":4,
+    "seed":306101, "fresh_both_arms":true, "same_initial_function":true,
+    "stored_parameters_each":146730, "effective_parameters":{"support_local":129450,"cross_address":146730},
+    "equal_FLOPs_or_effective_parameter_claim":false,
+    "execution_adapter":"Apply explicit tested FixedNativePool4 after construction/restore; original typed model/source and all parameter shapes remain unchanged. FP32 neural/FP64 GBP; no AMP/TF32.",
+    "decoder_private_skip":false, "exact_masked_physical_likelihood_claim":false,
+    "spatial_invariance":"FixedN and fixed source-set FLOAT only. Profile4 whole-packet exponent can couple addresses; empty-source prior shares can alter covariance."
+  },
+  "training": {
+    "optimizer":"AdamW", "lr_start":0.001, "lr_end":0.0001, "schedule":"Cosine over2160 updates, identical arms",
+    "weight_decay":0, "gradient_clip_norm":5, "updates_per_arm":2160,
+    "stages":[0,1,2,4,8], "stage_weights":[0.2,0.2,0.2,0.2,0.2],
+    "loss":"KnownBCE on every native pixel plus wallBCE only target-known pixels, per-recipient normalization; equal stages and equal H/rooms/N macroblock draws.",
+    "implementation":"Exact tested staged readout backward then one original-live-feature source/GBP backward, all pixels/stages/agents retained.",
+    "fixed_evaluations":[0,1080,2160], "early_K0_stop":false, "automatic_extension":false,
+    "whole_pair_seconds_cap_after_preparation":7200,
+    "CPU_bank_preparation_seconds_cap":3600,
+    "budget_qualification":"2160 is a bounded structural learning pilot, not convergence. Incomplete pair cannot pass; keep partial checkpoints/failures. Preparation time, actual training/validation/IO time all reported separately.",
+    "resume_implemented":false
+  },
+  "validation": {
+    "fixed_thresholds":"known_logit>=0 and wall_logit>=0; ternaryraw, no postprocessing/own-overwrite/oracle.",
+    "all_scenes_all_stages":true,
+    "save":"Raw original maps, actual-reached targets, raw predictions, factors, allroundbeliefs/codes, physical/selectedgraphs, door_masks, contexts and actual172B packets with hashes for every case. Atendpoint save full native known/wall logits for preregistered index0,N16,R0/R8 allH/rooms only; no outcome-based case choice.",
+    "numeric_audit":"Existing receive-only actualpacket auditor everycase; repeated/stale packets rejected without confidence inflation; replay bytes separately recorded as diagnostic extra sends.",
+    "metrics":"Own/union/peer typedaccuracy; wallprecision/recall/F1; unknownfalseknown; doorfreerecall; exact4neighbor connectivity; counts and physical/routehop coverage.",
+    "aggregation":"Equal Hxrooms(9cells), within cell equal N8/N16, withinN equalworlds. Preserve everyR/H/rooms/N result and node denominators; no pixel-weighted macro or successcase selection.",
+    "split_status":"Reused development VALIDATION, not independent TEST. Strong old128 evidence is unmatched historical reference only, not same initialization or joint-native training budget."
+  },
+  "gate": {
+    "K0_both_arms":{"macro_own_wall_f1_min":0.80,"worst_H_rooms_own_wall_f1_min":0.70,"macro_own_wall_precision_min":0.80,"macro_own_wall_recall_min":0.75,"macro_own_known_recall_min":0.95},
+    "K0_qualification":"Endpoint necessary condition for interpreting fusion mechanism, not early stopping or a capacity impossibility theorem. Still report all results on failure.",
+    "primary":{"R8_macro_peer_wall_f1_gain_min":0.05,"macro_own_K0_to_R8_f1_retention_gain_min":0.05},
+    "protection":{"macro_K0_own_f1_drop_max":0.02,"macro_R8_own_f1_drop_max":0.0,"macro_R8_unknown_fpr_rise_max":0.005,"macro_R8_unknown_fpr_absolute_max":0.05,"macro_R8_topology_drop_max":0.02,"macro_R8_wall_precision_drop_max":0.02,"macro_R8_door_free_recall_drop_max":0.02,"worst_cell_R8_own_or_peer_f1_or_topology_drop_max":0.05,"worst_cell_R8_unknown_fpr_rise_max":0.02},
+    "unknown_metric_or_incomplete_is_pass":false,
+    "successful_pilot_is_full_goal_success":false
+  },
+  "communication": {
+    "profile":4,"actual_bytes_per_directed_packet":172,"rounds":8,
+    "accounting":"Record actual serialized sends and source-arrival coverage at everypaidround. Setup/publicframe/forestdiscovery/radio are unmeasured, not0. No100xclaim from data-only packet dimensions; fairraw transcript remains separate CPU audit.",
+    "general_loops_dynamic_graphs_claim":false,"whole_process_100x_claim":false
+  },
+  "preserved_reference": {
+    "v299_joint128_checkpoint_sha256":"28cbc27ca76221c87810508bffd880a32f20c4a2a8a6cd614ee2ceaec165ccb1",
+    "v298_own128_checkpoint_sha256":"078fcfcb94088b828d37dd3cd8607f7f2c135783e43ec1d97c3ea0feaffb673b",
+    "v304_failed_observed_diagonal":"Preserve both fixed2000 endpoints, audited failures and no-restart decision.",
+    "v263_counterevidence":"Earlier spatial64's wallF1 gain accompanied severe topology failure; newlocal model must report topology, not infer success from capacity or localization."
+  },
+  "post_training":"After this pair completes, audit actual raw maps and packets, then independent multiagent first-principles reviews of representation/objective/inference/data. One high-leverage next intervention only after evidence; no automatic extension or tuning sweep.",
+  "full_goal_complete":false
+}

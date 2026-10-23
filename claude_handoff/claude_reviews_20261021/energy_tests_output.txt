@@ -1,0 +1,87 @@
+
+=== T1: v324 edge_rollout (cavity GBP) vs v320 centralized dense solve of the SAME energy ===
+  diameter=4 rounds=8 wire=False: max|mean err|=1.110e-15  max|var err|=8.882e-16
+PASS tree cavity == centralized (wire=False)
+  diameter=4 rounds=8 wire=True: max|mean err|=6.275e-08  max|var err|=3.095e-08
+PASS tree cavity == centralized (wire=True)
+PASS README q_msg=a^2Q/(Q+b^2), h_msg=abH/(Q+b^2) matches edge_rollout lines 162-177
+
+=== T2: K0 closed form ===
+PASS v324 K0 mean==mu, var==1/q exactly (no prior)
+  v295/v310 K0 mean = mu*q/(q+lambda/(N64)); shrink factor at q=1e-4 (PRECISION_MIN): 0.998051, at q=1: 0.999999805
+PASS v295 K0 shrinkage negligible for q>=0.2
+
+=== T3: empty observation ===
+  v324 path 0-(empty)-2, a=b=1: posterior means [1.2499750024997498, 0.49995000499950004, -0.2500249975002499]  precisions [1.3333777748150124, 1.0001, 1.3333777748150124]
+  empty source round-1 message precision into a neighbour = EPS/(EPS+1) = 9.999e-05 (pull toward 0; not zero)
+  unit-noise chain, source q=1 relayed through 1 empty nodes: arriving precision=0.3334 (closed form 1/(k+2)=0.3333), arriving mean=0.9995
+  unit-noise chain, source q=1 relayed through 2 empty nodes: arriving precision=0.2501 (closed form 1/(k+2)=0.2500), arriving mean=0.9991
+  unit-noise chain, source q=1 relayed through 4 empty nodes: arriving precision=0.1668 (closed form 1/(k+2)=0.1667), arriving mean=0.9980
+  unit-noise chain, source q=1 relayed through 6 empty nodes: arriving precision=0.1252 (closed form 1/(k+2)=0.1250), arriving mean=0.9965
+  two sources mu=+1/-1, q=1, a=b=0.1: received msg precision=0.0099, fused mean at node1=-0.9804 (equality limit 0)
+  two sources mu=+1/-1, q=1, a=b=1.0: received msg precision=0.5000, fused mean at node1=-0.3333 (equality limit 0)
+  two sources mu=+1/-1, q=1, a=b=10.0: received msg precision=0.9901, fused mean at node1=-0.0050 (equality limit 0)
+  two sources mu=+1/-1, q=1, a=b=230.0: received msg precision=1.0000, fused mean at node1=-0.0000 (equality limit 0)
+  sender a=0.001, receiver b=1.0: node1 mean 2.5025 (own mu=5); msg q=1.0000 msg h=0.0050
+  sender a=1.0, receiver b=0.001: node1 mean 5.0025 (own mu=5); msg q=0.0000 msg h=0.0025
+
+=== T4: complementary observations: ownership code vs dense code under diagonal precision ===
+  (i) ownership code x=(fA,fB), q=0 on unobserved coordinate
+      fused = [0.9999999000000099, 0.9999999000000099]
+PASS ownership + abstention recovers (1,1)
+  (ii) dense code z=R x, each agent fills the unseen feature with u and must give diagonal q
+      best achievable over a 7^4 grid of diagonal precisions: max|x_hat - (1,1)| = 0.500 at q=(1e-06, 1e-06, 1.0, 1e-06), x_hat=[0.5, 0.5]
+PASS NO diagonal precision in the rotated basis composes the two partial maps (error >= 0.5 => both walls below threshold .5)
+      required z-space precision for agent 1 = R diag(1,0) R^T = [[0.4999999999999999, 0.4999999999999999], [0.4999999999999999, 0.4999999999999999]] (rank 1, off-diagonal = diagonal: not representable)
+  (iii) 16 sources each owning one room feature, dense code, equal q: every feature shrinks to f/16 + 15u/16
+      fused feature values = 0.0625 everywhere -> all walls below threshold; the decoder sees the dataset centroid
+  (iv) v324 unit-noise edge, a=b=1, two nodes, dense code, q=1: receiver keeps weight 1, peer gets Q/(Q+1)=.5
+      node0 x_hat = [0.6666666666666665, 0.33333333333333326]  node1 x_hat = [0.33333333333333326, 0.6666666666666665]
+  (v) v324 with ownership code and q=EPS on the unobserved coordinate, a=b=1:
+      node0 x_hat = [0.9999000199960008, 0.9998000399920016]  (unit-noise edge still recovers ~(1,1) when the receiver abstains)
+
+=== T5: duplicate / stale evidence idempotence ===
+  packets=112 bytes/packet=576 duplicates counted=112 bytes charged=129024
+PASS v324 replay: doubled packet journal gives identical beliefs; duplicates billed, not fused
+PASS v324 beliefs constant for rounds >= diameter (4); precision does not grow with extra rounds (drift=0.0e+00)
+
+=== T7: loops ===
+  4-cycle unit-noise: |mean err| after 200 sweeps = 5.55e-17; GBP var / exact var = [0.951, 0.951, 0.951, 0.951]
+PASS loopy unit-noise GBP: mean exact, variance under-estimated (over-confident)
+  equality BP on triangle, round 1: node0 precision=3.0 (exact centralized = 3)
+  equality BP on triangle, round 2: node0 precision=5.0 (exact centralized = 3)
+  equality BP on triangle, round 4: node0 precision=9.0 (exact centralized = 3)
+  equality BP on triangle, round 8: node0 precision=17.0 (exact centralized = 3)
+PASS hard-equality messages on a cycle diverge: that is why v295/v324 refuse non-forests (forest_edges / validate_forest)
+
+=== T8: which restriction families keep exact diagonal closure ===
+  positive diagonal a,b                              i->j offdiag/diag=0.00e+00  j->i offdiag/diag=0.00e+00  rank=6
+  signed scaled permutation                          i->j offdiag/diag=0.00e+00  j->i offdiag/diag=0.00e+00  rank=6
+  partial selection S (3 of 6)                       i->j offdiag/diag=0.00e+00  j->i offdiag/diag=0.00e+00  rank=3
+  same orthogonal U both ends (=identity edge gauge) i->j offdiag/diag=1.68e-16  j->i offdiag/diag=1.68e-16  rank=6
+  orthogonal U one end, I other end                  i->j offdiag/diag=1.17e-01  j->i offdiag/diag=1.41e-01  rank=6
+  dense generic                                      i->j offdiag/diag=5.05e-01  j->i offdiag/diag=5.05e-01  rank=6
+  row-sum [1 1 0..] one side only                    i->j offdiag/diag=0.00e+00  j->i offdiag/diag=1.00e+00  rank=1
+  Claim (checked above): message precision B^T (A Q^-1 A^T + I)^-1 B is diagonal for EVERY diagonal Q iff, up to a common orthogonal factor on the edge stalk
+  (an unobservable gauge: ||U(Dx_i - DPx_j)|| = ||Dx_i - DPx_j||), A has <=1 nonzero per column and B <=1 per row; both directions => scaled partial permutations.
+  Different charts at the two ends (U vs I) never close; the row-sum case closes in one direction only.
+  true dense                               energy along unobserved (1,-1): 1.000e-06   along observed (1,1): 2.000e+00
+  diag(Q) [diag(J^TJ)]                     energy along unobserved (1,-1): 1.000e+00   along observed (1,1): 1.000e+00
+  moment-matched 1/Cov_kk [v300 message]   energy along unobserved (1,-1): 2.000e-06   along observed (1,1): 2.000e-06
+  diag(Q) fabricates precision 1.0 in the null direction; moment matching drops the observed direction to ~2e-6: both discard the constraint structure.
+
+=== T9: v324 own-factor dominance at initialisation (bias .5413 -> q~1; a=b=.1+softplus(0)=.793) ===
+  source q at init = 1.0001; a=b at init = 0.7931; first-hop message precision = a^2 q/(q+b^2) = 0.3862 => peer weight/own weight = 0.386
+  floor a=b=.1: message precision = 0.00990 (weight ratio 0.0099); v340 audit: 87% of restriction coefficients sit at this floor, max ~232 (a^2~5.4e4 -> equality-like)
+done
+
+=== T6: v295 equality forest: cavity rollout vs central_reference (reached sources) ===
+  generator forest edges: [(0, 2), (0, 3), (1, 6), (2, 4), (3, 5), (3, 7), (6, 7)] diameter= 6
+  rounds=1: reached counts [3, 2, 3, 4, 2, 2, 3, 3]  mean err 2.2e-16 var err 2.2e-16
+  rounds=2: reached counts [6, 3, 4, 6, 3, 4, 4, 6]  mean err 4.4e-16 var err 5.6e-17
+  rounds=4: reached counts [8, 6, 7, 8, 6, 8, 7, 8]  mean err 4.4e-16 var err 2.8e-17
+  rounds=8: reached counts [8, 8, 8, 8, 8, 8, 8, 8]  mean err 4.4e-16 var err 2.8e-17
+PASS v295 R8 belief == sum of reached source factors (precision-weighted average of hard codes)
+  node0 K0 var mean 1.346 -> R8 var mean 0.064 (|S|=8); the decoder reads log of this
+  quantized(profile4) vs float R8: max|mean diff|=5.52e-02
+done

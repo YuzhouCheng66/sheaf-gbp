@@ -1,0 +1,255 @@
+"""Own-map Gaussian recognition factors and zero/one/two real GBP sweeps.
+
+The learned factor is a SURROGATE, not the exact decoded Bernoulli observation
+energy. Its precision is not calibrated occupancy confidence or provenance.
+Local Q is diagonal: this is a strict subcase, not a replacement claim for a
+full learned sheaf. Fixed source factors never absorb a posterior. The decoder
+sees ONLY a hard8 64D posterior mean and its original public coordinates.
+
+Native128 only. No training loss, target union, map overwrite, extra inner
+iteration, support stream, or source-deduplication mechanism lives here.
+Tree propagation tests do not establish loopy confidence calibration. Actual
+validation serialization uses v267 sessions whose establishment is external
+and unmeasured, not free. Nothing here establishes 100x full communication.
+"""
+import copy
+import math
+from numbers import Integral, Real
+
+import torch
+from torch import nn
+
+from scripts.mapping_implicit_model_v192 import latent_quantize
+from scripts.mapping_local_capacity_v269 import LocalCapacity64, _state_hash
+from scripts import mapping_recurrent_gbp_v213 as recurrent
+from scripts import mapping_observed_wire_v246 as wire
+from scripts import mapping_session_bound_wire_v267 as transport
+
+
+MODEL_KIND = 'recognition_hops64_v277'
+PRECISION_MIN, PRECISION_MAX = 1e-4, 4.
+LATENT_PRIOR = 1e-4
+DEFAULT_SEED = 277101
+
+
+class RecognitionHops64(nn.Module):
+    resolution, latent_dim = 128, 64
+
+    def __init__(self, parent, *, seed=DEFAULT_SEED, source_parent_construction=None):
+        super().__init__()
+        if not isinstance(parent, LocalCapacity64):
+            raise ValueError('An actual typed LocalCapacity64 parent is required')
+        if type(seed) is not int or not 0 <= seed < 2**63:
+            raise ValueError('Explicit nonnegative CPU initialization seed required')
+        self.seed = seed
+        self.source_parent_construction = copy.deepcopy(
+            parent.construction_metadata() if source_parent_construction is None else source_parent_construction)
+        self.capacity = copy.deepcopy(parent)
+        self.capacity.train_decoder = True
+        for parameter in self.capacity.parameters():
+            parameter.requires_grad_(True)
+            parameter.grad = None
+        with torch.random.fork_rng(devices=[]):
+            torch.random.default_generator.manual_seed(seed)
+            self.precision_head = nn.Linear(2048, 64, device='cpu', dtype=torch.float32)
+            nn.init.zeros_(self.precision_head.weight)
+            probability = (1. - PRECISION_MIN) / (PRECISION_MAX - PRECISION_MIN)
+            nn.init.constant_(self.precision_head.bias, math.log(probability / (1. - probability)))
+        # Construct on CPU, then follow the supplied parent's device.
+        self.precision_head.to(device=self.capacity.global_head.weight.device)
+        self.eval()
+
+    @classmethod
+    def from_parent_payload(cls, payload, *, seed=DEFAULT_SEED):
+        """Fresh precision head around a self-contained, pinned-by-caller parent.
+
+        Parent checkpoint provenance/SHA belongs to the runner; this constructor
+        never opens a path or inherits an optimizer. It preserves all E/lift/D
+        values exactly while enabling joint training of those original modules.
+        """
+        return cls(LocalCapacity64.from_payload(payload), seed=seed)
+
+    @classmethod
+    def from_payload(cls, payload):
+        """Restore this family's complete model without reopening an ancestor."""
+        if not isinstance(payload, dict) or not isinstance(payload.get('construction'), dict):
+            raise ValueError('Typed self-contained recognition payload required')
+        meta, state = payload['construction'], payload.get('state_dict')
+        if meta.get('model_kind') != MODEL_KIND or not isinstance(state, dict):
+            raise ValueError('Wrong recognition family or missing state')
+        parent_state = {k.removeprefix('capacity.'): v for k, v in state.items() if k.startswith('capacity.')}
+        parent = LocalCapacity64.from_payload(dict(construction=meta.get('capacity'), state_dict=parent_state))
+        model = cls(parent, seed=meta['seed'], source_parent_construction=meta['source_parent_construction'])
+        model.load_state_dict(state, strict=True)
+        if any(not bool(torch.isfinite(v).all()) for v in model.state_dict().values()):
+            raise ValueError('Nonfinite recognition model state')
+        if model.construction_metadata() != meta:
+            raise ValueError('Recognition construction metadata disagrees with model')
+        return model
+
+    def factors(self, private):
+        """Original private [B,N,128,128] -> immutable source canonical factors.
+
+        Q_ii = active*learned_q + lambda/(N*64), h=active*learned_q*mu.
+        Empty private sources contribute only the split public latent prior.
+        Public coordinates are generated by the existing parent. No node may
+        use peer raw data or map targets, nor any batch/global normalization.
+        Network FP32, natural-parameter assembly FP64, gradients preserved.
+        """
+        if (not isinstance(private, torch.Tensor) or private.ndim != 4
+                or min(private.shape[:2]) < 1 or private.shape[-2:] != (128, 128)):
+            raise ValueError('Nonempty original private [B,N,128,128] maps required')
+        b, n = private.shape[:2]
+        flat = private.reshape(b*n, 128, 128)
+        with torch.autocast(device_type=private.device.type, enabled=False):
+            features = self.capacity.encoder(self.capacity._private_channels(flat)).flatten(1)
+            if features.shape != (b*n, 2048) or features.dtype != torch.float32:
+                raise ValueError('Original finite FP32 CNN feature boundary required')
+            mu = latent_quantize(self.capacity.global_head(features).tanh()).reshape(b, n, 64)
+            learned_q = (PRECISION_MIN + (PRECISION_MAX-PRECISION_MIN)
+                         * self.precision_head(features).sigmoid()).reshape(b, n, 64)
+        if not torch.isfinite(mu).all() or not torch.isfinite(learned_q).all():
+            raise FloatingPointError('Nonfinite recognition source factor')
+        active = (private >= 0).flatten(2).any(-1)
+        evidence_q = active[..., None].double() * learned_q.double()
+        precision = evidence_q + LATENT_PRIOR / (n * 64)
+        h = evidence_q * mu.double()
+        return dict(q=torch.diag_embed(precision), h=h, mu=mu, learned_q=learned_q,
+                    active=active, prior_precision=LATENT_PRIOR/(n*64))
+
+    def decode(self, code):
+        """Only a hard8 posterior mean crosses this decoder boundary.
+
+        Returned flat heads are [B,N,16384]. No variance, precision, private
+        mask, map skip, or agent identity is accepted by this interface.
+        An empty source's zero mean uses the same learned decoder as any code;
+        unknown output is NOT manually forced.
+        """
+        if (not isinstance(code, torch.Tensor) or code.ndim != 3 or min(code.shape[:2]) < 1
+                or code.shape[-1] != 64 or code.dtype not in (torch.float32, torch.float64)
+                or code.device != self.capacity.global_head.weight.device or not torch.isfinite(code).all()):
+            raise ValueError('Same-device finite [B,N,64] posterior means required')
+        b, n = code.shape[:2]
+        with torch.autocast(device_type=code.device.type, enabled=False):
+            hard = latent_quantize(code.float()).reshape(b*n, 64)
+            output = self.capacity.decode_continuous(hard)
+        return {key: value.reshape(b, n, 128*128) for key, value in output.items()}
+
+    def trainable_parameters(self):
+        result = []
+        for name, parameter in self.named_parameters():
+            if not parameter.requires_grad:
+                raise AssertionError('All original E/lift/D plus precision head must train: '+name)
+            result.append(parameter)
+        return result
+
+    def weights_hash(self):
+        return _state_hash(self.state_dict())
+
+    def construction_metadata(self):
+        return dict(model_kind=MODEL_KIND, seed=self.seed, native_resolution=128,
+            latent_dim=64, capacity=self.capacity.construction_metadata(),
+            source_parent_construction=copy.deepcopy(self.source_parent_construction),
+            precision_head=[2048,64], precision_bounds=[PRECISION_MIN,PRECISION_MAX],
+            initial_precision_mathematical_value=1., latent_prior=LATENT_PRIOR,
+            source_factor='diagonal Gaussian learned recognition surrogate; empty contributes only split prior',
+            precision_calibrated=False, exact_decoded_observation_energy=False,
+            decoder_input='hard8 posterior mean64 only, existing public coordinates',
+            decoder_covariance_input=False, private_decoder_skip=False,
+            parameters=dict(capacity=sum(p.numel() for p in self.capacity.parameters()),
+                precision_head=sum(p.numel() for p in self.precision_head.parameters())),
+            total_parameters=sum(p.numel() for p in self.parameters()),
+            trainable_parameter_count=sum(p.numel() for p in self.trainable_parameters()),
+            optimizer_inherited=False, rounds_supported=[0,1,2], damping=.5, edge_precision=1.,
+            session_packet_bytes=172, session_establishment_measured=False,
+            communication_100x_claim=False, multihop_fidelity_claim=False,
+            loopy_confidence_calibrated=False)
+
+
+def _edges(edges, n):
+    """Unique undirected edges with registered unit precision; no silent merge."""
+    if not isinstance(edges, (list, tuple)):
+        raise ValueError('Explicit unique undirected (i,j,1.) edges required')
+    result, seen = [], set()
+    for item in edges:
+        if not isinstance(item, (tuple, list)) or len(item) != 3:
+            raise ValueError('Undirected weighted edge triples required')
+        i, j, w = item
+        if (any(isinstance(x, bool) or not isinstance(x, Integral) for x in (i,j))
+                or not 0 <= i < n or not 0 <= j < n or i == j
+                or isinstance(w, bool) or not isinstance(w, Real) or not math.isfinite(float(w)) or w != 1.):
+            raise ValueError('Registered distinct node indices and edge precision1 required')
+        key = tuple(sorted((int(i),int(j))))
+        if key in seen:
+            raise ValueError('Duplicate undirected edge')
+        seen.add(key)
+        result.append((int(i),int(j),1.))
+    return result
+
+
+def source_factor_hashes(factors):
+    """Explicit detached CPU audit only; do not use hashes as a model input."""
+    q, h = factors['q'], factors['h']
+    return [[_state_hash(dict(q=q[b,n],h=h[b,n])) for n in range(h.shape[1])]
+            for b in range(h.shape[0])]
+
+
+def rollout(model, private, edges, *, rounds=2, versions=None, serialize=False,
+            edge_contexts=None):
+    """Return every actual hop, without recomputing or replacing source factors.
+
+    ``edges`` is a public shared graph of unique undirected triples. Each
+    native sweep uses OLD caches synchronously; it cannot transmit two hops
+    in one round. This static helper does not implement dynamic delivery or
+    expose a training target union. ``serialize=True`` supports one world and
+    requires externally established per-edge nonces, charging 172B per send.
+    Otherwise byte counts are explicitly a protocol budget, not measurements.
+    """
+    if not isinstance(model, RecognitionHops64):
+        raise ValueError('Typed RecognitionHops64 required')
+    if type(rounds) is not int or rounds not in (0,1,2) or type(serialize) is not bool:
+        raise ValueError('Registered 0/1/2 sweeps and explicit serialize flag required')
+    factors = model.factors(private)
+    b, n = factors['h'].shape[:2]
+    graph = _edges(edges,n)
+    if versions is not None and (not isinstance(versions, torch.Tensor) or versions.device != private.device):
+        raise ValueError('Same-device explicit original source versions required')
+    state = recurrent.initialize(factors['q'],factors['h'],graph,versions)
+    if serialize:
+        if b != 1 or edge_contexts is None:
+            raise ValueError('Actual serializer requires B1 and externally established link contexts')
+        state = transport.bind_context(state,edge_contexts)
+    elif edge_contexts is not None:
+        raise ValueError('Contexts apply only to actual serialized validation')
+    outputs, codes, means, covariances, states = [],[],[],[],[]
+    trace, packets = [],[]
+    for hop in range(rounds+1):
+        if hop:
+            result = (transport.advance(state,1,damping=.5,trace=True) if serialize
+                      else wire.advance(state,1,damping=.5,quantized=True,trace=True))
+            state = result['state']
+            trace.extend(result['trace'])
+            if serialize:
+                packets.extend(result['packets'])
+            mean, covariance = result['mean'],result['covariance']
+        else:
+            mean,covariance = recurrent.belief(state)
+        # Q/h remain the ORIGINAL source objects; caches are replaced by advance.
+        if state['q'] is not factors['q'] or state['h'] is not factors['h']:
+            raise AssertionError('A posterior was incorrectly injected as source evidence')
+        code = latent_quantize(mean.float())
+        outputs.append(model.decode(code))
+        codes.append(code)
+        means.append(mean)
+        covariances.append(covariance)
+        states.append(state)
+    budget = transport.PACKET_BYTES * len(state['directed']) * rounds
+    return dict(outputs=outputs,codes=codes,means=means,covariances=covariances,
+        source_factors=factors,state=state,states=states,trace=trace,packets=packets,
+        initial=codes[0],final_code=codes[-1],own=outputs[0],fused=outputs[-1],
+        mean=means[-1],covariance=covariances[-1],
+        application_byte_budget_per_world=budget,
+        inner_application_byte_budget_per_world=148*len(state['directed'])*rounds,
+        actual_serialized_application_bytes=sum(map(len,packets)) if serialize else None,
+        context_establishment_implemented=False,context_establishment_bytes=None,
+        physical_network_headers_measured=False,full_process_communication_measured=False)

@@ -1,0 +1,187 @@
+{
+  "handoff_date": "2026-10-21",
+  "purpose": "Claude Code handoff: authenticated research anchors, not a universally best or fully successful model",
+  "entrypoint": "README.md",
+  "no_training_started_by_handoff": true,
+  "portable_weights_bundle": false,
+  "checkpoint_and_bulk_data_policy": "Remain at their original remote/local paths; no large checkpoint/data copying or deletion during handoff",
+  "workspace": "C:/Users/27118/Desktop/sheaf-gbp/experiments/sheaf-gbp-p6-local-skill",
+  "ssh": {
+    "alias": "uk-linux",
+    "endpoint": "yuzhou@100.69.198.56",
+    "gpu_uuid": "GPU-238bdbd5-9f06-da6d-09f6-830fd831e817",
+    "gpu_name": "NVIDIA RTX 5090",
+    "python": "/home/yuzhou/anaconda3/envs/jax-gpu/bin/python",
+    "python_version_observed": "3.11.13",
+    "torch_version_observed": "2.11.0+cu128",
+    "credentials_included": false,
+    "minimum_free_output_bytes": 30000000000,
+    "check_actual_occupancy_before_any_new_job": true
+  },
+  "live_snapshot": {
+    "observed_utc": "2026-10-21T01:08:16Z",
+    "matching_research_training_processes": [],
+    "other_project_using_gpu": true,
+    "other_project_memory_MiB": 9954,
+    "other_project_process_must_not_be_modified": true,
+    "home_filesystem_free_bytes": 25576394752,
+    "mnt_datasets_free_bytes": 1695776014336,
+    "home_below_safety_floor": true,
+    "is_permanent_state": false
+  },
+  "reference_source": {
+    "remote_root": "/home/yuzhou/Desktop/sheaf-gbp/v299-multiscale-v310-5090/source",
+    "remote_manifest": "/home/yuzhou/Desktop/sheaf-gbp/v299-multiscale-v310-5090/source-manifest.json",
+    "local_root_relative_to_handoff": "reference_source_v310",
+    "local_manifest_relative_to_handoff": "source-manifest-v310.json",
+    "manifest_sha256": "a0154cb73488ab3bf7f3f34f15d193af6133d422587e46654103835c99185d8d",
+    "files": 70,
+    "source_file_bytes": 836899,
+    "remote_files_SHA_verified": 70,
+    "copied_local_files_SHA_verified": 70,
+    "notes": "Only the 70 manifest-listed source/config/test files were copied. No pycache, checkpoint or bulk data. Unmodified historical scripts include obsolete launch commands; do not run their training entrypoints."
+  },
+  "checkpoints": [
+    {
+      "id": "v310_e12",
+      "role": "Recommended multisize quality research anchor; historical quality guards failed; not globally best",
+      "path": "/home/yuzhou/Desktop/sheaf-gbp/v299-multiscale-v310-5090/checkpoints/u000021312-e0013-epoch-1792323462678299519.pt",
+      "host": "uk-linux",
+      "file_sha256": "31da2f3962c1a102367088dbcdd4063d11bbcb77ac4f75f11d91f95efefeeb3a",
+      "model_sha256": "d1d397b654e6e108b23e1fdabf8f6bb2588d4756835cb9b9d66219be1a369203",
+      "completed_validation_epoch": 12,
+      "continuation_updates": 21312,
+      "file_epoch13_means": "Next training epoch, not completed validation epoch",
+      "file_sha_rechecked_on_handoff": true,
+      "CPU_typed_load_verified_on_handoff": true,
+      "loader": "MultiscaleV299.from_payload(torch.load(path,map_location='cpu',weights_only=False)['model'])"
+    },
+    {
+      "id": "v299_control",
+      "role": "Original native128 global64 control, validated step2000",
+      "path": "/home/yuzhou/Desktop/sheaf-gbp/fixed-chart-v299-r1-5090/outputs/joint_control/validated-002000.pt",
+      "host": "uk-linux",
+      "file_sha256": "28cbc27ca76221c87810508bffd880a32f20c4a2a8a6cd614ee2ceaec165ccb1",
+      "model_sha256": "3f52478660b73b2ba6b2032b9a79510be5a7d081ee9a22b7b3c27222e70008db",
+      "file_sha_rechecked_on_handoff": true,
+      "CPU_typed_load_verified_on_handoff": true,
+      "loader": "ContentReadout64.from_payload(torch.load(path,map_location='cpu',weights_only=False))"
+    },
+    {
+      "id": "v304_diagonal_recognition_control",
+      "role": "Stronger native128 K0/R1 reference, not observed_diagonal candidate",
+      "path": "/home/yuzhou/Desktop/sheaf-gbp/observed-diagonal-pair-v304-5090/outputs/diagonal_recognition/validated-002000.pt",
+      "host": "uk-linux",
+      "file_sha256": "804373b133d21e1af416866ca0cce2a79a504a091b24472da184c5d079a8d1e6",
+      "file_sha_rechecked_on_handoff": true,
+      "CPU_typed_load_verified_on_handoff": false,
+      "notes": "Separate source family; do not use the supplied v299/v310 loader without deriving its correct typed payload loader"
+    },
+    {
+      "id": "v319_best_eligible_E0",
+      "role": "Restriction head only; best remains untrained E0 because all trained candidates failed guards",
+      "path": "/home/yuzhou/Desktop/sheaf-gbp/restriction-v319-5090/checkpoints/best.pt",
+      "host": "uk-linux",
+      "file_sha256": "09d37270fa55850ccc2f69822436751598252c17fadfeda571722af8b808fda8",
+      "requires_codec": "v310_e12",
+      "file_sha_rechecked_on_handoff": true,
+      "updates": 0
+    },
+    {
+      "id": "v319_research_E8",
+      "role": "Failed-protection learned restriction research comparison, head only",
+      "path": "/home/yuzhou/Desktop/sheaf-gbp/restriction-v319-5090/checkpoints/latest-epoch.pt",
+      "host": "uk-linux",
+      "file_sha256": "e7b2b1a8aa20cedf40265af77b4e7e4443f6872b76888ca4e7563345c8f45c96",
+      "requires_codec": "v310_e12",
+      "file_sha_rechecked_on_handoff": true,
+      "completed_validation_epoch": 8,
+      "updates": 14208
+    }
+  ],
+  "reports": [
+    {
+      "id": "v310_original_E12",
+      "host": "uk-linux",
+      "path": "/home/yuzhou/Desktop/sheaf-gbp/v299-multiscale-v310-5090/validation/epoch-0012.json",
+      "sha256": "a8d99dee6ba1376bca71ade58fe806314eb3b47768a53146f66fc63b02c4d631",
+      "notes": "README anchor table uses this original report; v319E0 has minor floating/threshold differences, not asserted bitwise identical"
+    },
+    {
+      "id": "v319_frozen_E0",
+      "host": "uk-linux",
+      "path": "/home/yuzhou/Desktop/sheaf-gbp/restriction-v319-5090/validation/epoch-0000.json",
+      "sha256": "95284c95b7997f02bbed8a09ed38610a25407057a51fa95529d41866c96ca2c8"
+    },
+    {
+      "id": "v299_summary",
+      "host": "local_windows",
+      "path": "D:/sheaf-gbp-artifacts/occupancy_codec_20261017/fixed-chart-v299-r1-5090-received/joint_control/summary.json",
+      "sha256": "44e3f3eec1acd12d2571bdb112e4474667ae753b99ec5ce7909a1c250cba4ff4"
+    },
+    {
+      "id": "v340_endpoint_audit",
+      "host": "local_windows",
+      "path_relative_to_workspace": "artifacts/v340-endpoint/audit.json",
+      "sha256": "03e302c23be1fd47c1186fcf99a608f4e33a20bb1bc8b276ac9174fc0b6b4e0d"
+    }
+  ],
+  "data": {
+    "current_synthetic_bank": {
+      "host": "uk-linux",
+      "root": "/home/yuzhou/Desktop/sheaf-gbp/support-native-pair-v306-5090/data-bank",
+      "manifest_sha256": "3e450d0675814f8fbfc8b8028df796fc19d5a42404abac460e6b1310ddf6ac8a",
+      "config_sha256": "0a1781b1e984ad467abf6ca3f35c077fe10ede61fbbc9c92dec9c9fca45f374a",
+      "not_self_contained": true,
+      "native128_dependency": {
+        "root": "/home/yuzhou/Desktop/sheaf-gbp/multiroom-domain-v295-5090/data-bank",
+        "TRAIN-manifest.json": "2d6029077a39fe973cf9f93cb4acf4a04da7629ba4b73cb4a4fb85a24825158d",
+        "VALIDATION-manifest.json": "4e5438ee5ffcef5f1d3f5c406f3aced4562c38b2836f3d53dbfc7ebcc7d99564",
+        "required_scene_files": "Each selected scene's original NPZ and JSON metadata, authenticated by those manifests; NativeBank._old loads these rather than regenerating128 scenes",
+        "preserve_read_only": true
+      },
+      "independent_TRAIN_worlds": 296,
+      "independent_VALIDATION_worlds": 24,
+      "native_sizes": [128, 256, 512],
+      "agents": [8, 16],
+      "rooms": [6, 12, 20],
+      "all_size_TRAIN_tuples": 1776,
+      "all_size_VALIDATION_tuples": 144,
+      "discovery_128_256_TRAIN_tuples": 1184,
+      "discovery_128_256_VALIDATION_tuples": 96,
+      "contains_HouseExpo": false,
+      "TEST_opened": false
+    },
+    "houseexpo_pilot": {
+      "host": "local_windows",
+      "user_confirmed_dataset": true,
+      "official_url": "https://github.com/TeaganLi/HouseExpo",
+      "paper_url": "https://arxiv.org/abs/1903.09845",
+      "root": "D:/sheaf-gbp-artifacts/occupancy_codec_20261014/houseexpo-pilot-v121",
+      "manifest_sha256": "a03eeb0cede80d20ccec090b47d3affbab4f51eec78a143536491231065fbaa9",
+      "train_npz_sha256": "93c8aec0c3098ae8bb4e8eedf931af30850a2484c05107ca113d7bd17834b1e6",
+      "validation_npz_sha256": "f0b6c5ad3aa6c2b046333177bcaddb6fdcd70d3120a437af3b84968f46e22f3a",
+      "source_archive": "D:/sheaf-gbp-artifacts/occupancy_codec_20261014/houseexpo-source/json.tar.gz",
+      "source_archive_sha256": "dad4a7d230937bdfe1d57c91330e697b625ec681eefd9cda3159082a939b4f2f",
+      "TRAIN_houses": 200,
+      "VALIDATION_houses": 40,
+      "TRAIN_graphs": 6400,
+      "VALIDATION_graphs": 1280,
+      "native_resolution": 128,
+      "agents": 6,
+      "TEST_opened": false,
+      "real_furniture_instance_occupancy_labels": false,
+      "current_model_trained_on_this_pilot": false
+    }
+  },
+  "state": {
+    "current_program": "configs/mapping_current_program_v341.json",
+    "v341": "design_only_implementation_pending_notstarted",
+    "v340": "completed_audited_reviewed_once_rejected",
+    "historical_runs_to_resume_automatically": [],
+    "next_terminal_review_mode": "PRIMARY_LITERATURE_AND_OFFICIAL_CODE",
+    "standing_authority": "configs/mapping_continuous_authority_20261020.json",
+    "default_new_batch_inclusive_seconds": 7200,
+    "full_goal_complete": false
+  }
+}

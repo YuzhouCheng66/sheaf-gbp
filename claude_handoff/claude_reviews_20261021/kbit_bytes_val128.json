@@ -1,0 +1,57 @@
+{
+ "n_scenes": 48,
+ "mean_directed_messages_per_round": 21.958333333333332,
+ "mean_nonprior_coordinates_per_message": 30.5426944971537,
+ "mean_observed_block_fraction_per_agent": 0.15185546875,
+ "sealed_packet_bytes": 172,
+ "schemes": {
+  "k8": {
+   "bits_per_coordinate": 16,
+   "fixed_bytes_per_message": 128.0,
+   "masked_mean_bytes_per_message": 69.0853889943074,
+   "masked_bytes_per_round_per_world": 1516.9999999999998,
+   "fixed_over_sealed": 0.7441860465116279,
+   "masked_over_sealed": 0.40165923833899647
+  },
+  "k6": {
+   "bits_per_coordinate": 12,
+   "fixed_bytes_per_message": 96.0,
+   "masked_mean_bytes_per_message": 53.81404174573055,
+   "masked_bytes_per_round_per_world": 1181.6666666666665,
+   "fixed_over_sealed": 0.5581395348837209,
+   "masked_over_sealed": 0.31287233573099155
+  },
+  "k5": {
+   "bits_per_coordinate": 10,
+   "fixed_bytes_per_message": 80.0,
+   "masked_mean_bytes_per_message": 46.178368121442126,
+   "masked_bytes_per_round_per_world": 1014.0,
+   "fixed_over_sealed": 0.46511627906976744,
+   "masked_over_sealed": 0.2684788844269891
+  },
+  "k4": {
+   "bits_per_coordinate": 8,
+   "fixed_bytes_per_message": 64.0,
+   "masked_mean_bytes_per_message": 38.5426944971537,
+   "masked_bytes_per_round_per_world": 846.3333333333333,
+   "fixed_over_sealed": 0.37209302325581395,
+   "masked_over_sealed": 0.22408543312298662
+  },
+  "k3": {
+   "bits_per_coordinate": 6,
+   "fixed_bytes_per_message": 48.0,
+   "masked_mean_bytes_per_message": 30.907020872865274,
+   "masked_bytes_per_round_per_world": 678.6666666666666,
+   "fixed_over_sealed": 0.27906976744186046,
+   "masked_over_sealed": 0.17969198181898416
+  },
+  "k2": {
+   "bits_per_coordinate": 4,
+   "fixed_bytes_per_message": 32.0,
+   "masked_mean_bytes_per_message": 23.27134724857685,
+   "masked_bytes_per_round_per_world": 510.99999999999994,
+   "fixed_over_sealed": 0.18604651162790697,
+   "masked_over_sealed": 0.13529853051498167
+  }
+ }
+}

@@ -1,0 +1,3428 @@
+{
+ "checkpoint": "/mnt/user-data/uploads/sheaf-gbp-p6-local-skill/tmp/claude_stage/ckpt/long-s342202-final.pt",
+ "checkpoint_sha256": "eec618d02f5b5f9a7f52b162ad586859cc20c654c1efb70affb5bc2302221585",
+ "tests_ok": true,
+ "panels": {
+  "val": {
+   "rows": [
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 0,
+      "rooms": 6,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9784563794980232,
+        "union_accuracy": 0.9819648894858551,
+        "unknown_known_fpr": 0.0013786711395774361,
+        "own_wall_f1": 0.9784563794980232,
+        "door_free_recall": 0.772177822177822,
+        "pair_topology_accuracy": 0.9578607179913243
+       },
+       "8": {
+        "wall_f1": 0.9539068298447948,
+        "union_accuracy": 0.9838698784331382,
+        "unknown_known_fpr": 0.023063080128812273,
+        "own_wall_f1": 0.943390292307858,
+        "door_free_recall": 0.8064516129032258,
+        "pair_topology_accuracy": 0.7116354252533585
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9784563794980232,
+        "union_accuracy": 0.9819648894858551,
+        "unknown_known_fpr": 0.0013786711395774361,
+        "own_wall_f1": 0.9784563794980232,
+        "door_free_recall": 0.772177822177822,
+        "pair_topology_accuracy": 0.9578607179913243
+       },
+       "8": {
+        "wall_f1": 0.9531354798781394,
+        "union_accuracy": 0.9844552003601981,
+        "unknown_known_fpr": 0.023607690850539875,
+        "own_wall_f1": 0.943390292307858,
+        "door_free_recall": 0.8064516129032258,
+        "pair_topology_accuracy": 0.7118036467358171
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9758866126281517,
+        "union_accuracy": 0.9812651780359684,
+        "unknown_known_fpr": 0.0013953399341844323,
+        "own_wall_f1": 0.9758866126281517,
+        "door_free_recall": 0.7598151848151848,
+        "pair_topology_accuracy": 0.957020253556797
+       },
+       "8": {
+        "wall_f1": 0.9526989426822482,
+        "union_accuracy": 0.9842413327330032,
+        "unknown_known_fpr": 0.0234892972153817,
+        "own_wall_f1": 0.9397407468548707,
+        "door_free_recall": 0.8064516129032258,
+        "pair_topology_accuracy": 0.7116548235290597
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.18897637724876404,
+      "lex_ownq": 0.18897637724876404
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 1,
+      "rooms": 6,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9588910214593236,
+        "union_accuracy": 0.9744110744235912,
+        "unknown_known_fpr": 0.003115481129743964,
+        "own_wall_f1": 0.9588910214593236,
+        "door_free_recall": 0.9102392344497607,
+        "pair_topology_accuracy": 0.9473296880969292
+       },
+       "8": {
+        "wall_f1": 0.9231160501792952,
+        "union_accuracy": 0.9868220209626539,
+        "unknown_known_fpr": 0.0744052157999085,
+        "own_wall_f1": 0.9139120714558808,
+        "door_free_recall": 0.6851851851851852,
+        "pair_topology_accuracy": 0.9896750653748085
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9588910214593236,
+        "union_accuracy": 0.9744110744235912,
+        "unknown_known_fpr": 0.003115481129743964,
+        "own_wall_f1": 0.9588910214593236,
+        "door_free_recall": 0.9102392344497607,
+        "pair_topology_accuracy": 0.9473296880969292
+       },
+       "8": {
+        "wall_f1": 0.9231160501792952,
+        "union_accuracy": 0.9868220209626539,
+        "unknown_known_fpr": 0.0744052157999085,
+        "own_wall_f1": 0.9139120714558808,
+        "door_free_recall": 0.6851851851851852,
+        "pair_topology_accuracy": 0.9896750653748085
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9576218053295731,
+        "union_accuracy": 0.9743405781096012,
+        "unknown_known_fpr": 0.003148936543713462,
+        "own_wall_f1": 0.9576218053295731,
+        "door_free_recall": 0.9102392344497607,
+        "pair_topology_accuracy": 0.9484196804747347
+       },
+       "8": {
+        "wall_f1": 0.9225496915695682,
+        "union_accuracy": 0.9867711407347105,
+        "unknown_known_fpr": 0.0745767881653195,
+        "own_wall_f1": 0.9144876944298441,
+        "door_free_recall": 0.6851851851851852,
+        "pair_topology_accuracy": 0.9897460232463666
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.04297742247581482
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 2,
+      "rooms": 6,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9758653363985396,
+        "union_accuracy": 0.9781185840692763,
+        "unknown_known_fpr": 0.0023530999312239083,
+        "own_wall_f1": 0.9758653363985396,
+        "door_free_recall": 0.7546146663793722,
+        "pair_topology_accuracy": 0.9495077661017027
+       },
+       "8": {
+        "wall_f1": 0.9766614750524931,
+        "union_accuracy": 0.9825165058405282,
+        "unknown_known_fpr": 0.03006958250497018,
+        "own_wall_f1": 0.967488865678397,
+        "door_free_recall": 0.75,
+        "pair_topology_accuracy": 0.9834337693994899
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9758653363985396,
+        "union_accuracy": 0.9781185840692763,
+        "unknown_known_fpr": 0.0023530999312239083,
+        "own_wall_f1": 0.9758653363985396,
+        "door_free_recall": 0.7546146663793722,
+        "pair_topology_accuracy": 0.9495077661017027
+       },
+       "8": {
+        "wall_f1": 0.9766614750524931,
+        "union_accuracy": 0.9825165058405282,
+        "unknown_known_fpr": 0.03006958250497018,
+        "own_wall_f1": 0.967488865678397,
+        "door_free_recall": 0.75,
+        "pair_topology_accuracy": 0.9834337693994899
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9704175114184573,
+        "union_accuracy": 0.9786182395054654,
+        "unknown_known_fpr": 0.002345111200528731,
+        "own_wall_f1": 0.9704175114184573,
+        "door_free_recall": 0.7546146663793722,
+        "pair_topology_accuracy": 0.952188491342394
+       },
+       "8": {
+        "wall_f1": 0.9763593380614657,
+        "union_accuracy": 0.9825292026409345,
+        "unknown_known_fpr": 0.030126930723352194,
+        "own_wall_f1": 0.9669523644484925,
+        "door_free_recall": 0.75,
+        "pair_topology_accuracy": 0.9834728674769431
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.16535432636737823
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 3,
+      "rooms": 6,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9767055964534767,
+        "union_accuracy": 0.982169759996127,
+        "unknown_known_fpr": 0.0013593380454406943,
+        "own_wall_f1": 0.9767055964534767,
+        "door_free_recall": 0.8080780699376524,
+        "pair_topology_accuracy": 0.9692854785777983
+       },
+       "8": {
+        "wall_f1": 0.9663605512066771,
+        "union_accuracy": 0.9787525247156372,
+        "unknown_known_fpr": 0.03077970474415938,
+        "own_wall_f1": 0.96404991654395,
+        "door_free_recall": 0.6530172413793103,
+        "pair_topology_accuracy": 0.8280560881714178
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9767055964534767,
+        "union_accuracy": 0.982169759996127,
+        "unknown_known_fpr": 0.0013593380454406943,
+        "own_wall_f1": 0.9767055964534767,
+        "door_free_recall": 0.8080780699376524,
+        "pair_topology_accuracy": 0.9692854785777983
+       },
+       "8": {
+        "wall_f1": 0.9663605512066771,
+        "union_accuracy": 0.9787525247156372,
+        "unknown_known_fpr": 0.03077970474415938,
+        "own_wall_f1": 0.96404991654395,
+        "door_free_recall": 0.6530172413793103,
+        "pair_topology_accuracy": 0.8280560881714178
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9760547727430201,
+        "union_accuracy": 0.9813989086145668,
+        "unknown_known_fpr": 0.0014085930217021844,
+        "own_wall_f1": 0.9760547727430201,
+        "door_free_recall": 0.7950664136622391,
+        "pair_topology_accuracy": 0.9679335415293426
+       },
+       "8": {
+        "wall_f1": 0.9665871121718377,
+        "union_accuracy": 0.9787392367385989,
+        "unknown_known_fpr": 0.030815536763652,
+        "own_wall_f1": 0.9637938940082817,
+        "door_free_recall": 0.6551724137931034,
+        "pair_topology_accuracy": 0.8279931535916729
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.07086613774299622
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 4,
+      "rooms": 6,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9732205525884763,
+        "union_accuracy": 0.9800705278629416,
+        "unknown_known_fpr": 0.0014489722325634056,
+        "own_wall_f1": 0.9732205525884763,
+        "door_free_recall": 0.828695652173913,
+        "pair_topology_accuracy": 0.9661713494992622
+       },
+       "8": {
+        "wall_f1": 0.9738072769265735,
+        "union_accuracy": 0.9931369226299991,
+        "unknown_known_fpr": 0.02501238236750867,
+        "own_wall_f1": 0.9693296761234206,
+        "door_free_recall": 0.6774193548387096,
+        "pair_topology_accuracy": 0.48933781626194867
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9732205525884763,
+        "union_accuracy": 0.9800705278629416,
+        "unknown_known_fpr": 0.0014489722325634056,
+        "own_wall_f1": 0.9732205525884763,
+        "door_free_recall": 0.828695652173913,
+        "pair_topology_accuracy": 0.9661713494992622
+       },
+       "8": {
+        "wall_f1": 0.9738072769265735,
+        "union_accuracy": 0.9931369226299991,
+        "unknown_known_fpr": 0.02501238236750867,
+        "own_wall_f1": 0.9693296761234206,
+        "door_free_recall": 0.6774193548387096,
+        "pair_topology_accuracy": 0.48933781626194867
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9741456821394157,
+        "union_accuracy": 0.9802274561524178,
+        "unknown_known_fpr": 0.0014665066263286517,
+        "own_wall_f1": 0.9741456821394157,
+        "door_free_recall": 0.828695652173913,
+        "pair_topology_accuracy": 0.9658743217498935
+       },
+       "8": {
+        "wall_f1": 0.9742212674543501,
+        "union_accuracy": 0.9932216519802459,
+        "unknown_known_fpr": 0.024929833250784218,
+        "own_wall_f1": 0.9708491875284321,
+        "door_free_recall": 0.6774193548387096,
+        "pair_topology_accuracy": 0.48936875082038667
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.04724409431219101
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 5,
+      "rooms": 6,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.971213124999357,
+        "union_accuracy": 0.9920463665432369,
+        "unknown_known_fpr": 0.002153428532910108,
+        "own_wall_f1": 0.971213124999357,
+        "door_free_recall": 0.9434523809523808,
+        "pair_topology_accuracy": 0.9893557862717419
+       },
+       "8": {
+        "wall_f1": 0.9744219740486699,
+        "union_accuracy": 0.9923740053050398,
+        "unknown_known_fpr": 0.055464996568291014,
+        "own_wall_f1": 0.9655130065113264,
+        "door_free_recall": 0.7384259259259258,
+        "pair_topology_accuracy": 0.9907261335651321
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.971213124999357,
+        "union_accuracy": 0.9920463665432369,
+        "unknown_known_fpr": 0.002153428532910108,
+        "own_wall_f1": 0.971213124999357,
+        "door_free_recall": 0.9434523809523808,
+        "pair_topology_accuracy": 0.9893557862717419
+       },
+       "8": {
+        "wall_f1": 0.9744219740486699,
+        "union_accuracy": 0.9923740053050398,
+        "unknown_known_fpr": 0.055464996568291014,
+        "own_wall_f1": 0.9655130065113264,
+        "door_free_recall": 0.7384259259259258,
+        "pair_topology_accuracy": 0.9907261335651321
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9690770310475526,
+        "union_accuracy": 0.9908264636648505,
+        "unknown_known_fpr": 0.002171279377452551,
+        "own_wall_f1": 0.9690770310475526,
+        "door_free_recall": 0.8931878306878307,
+        "pair_topology_accuracy": 0.9867670362636546
+       },
+       "8": {
+        "wall_f1": 0.9744186046511628,
+        "union_accuracy": 0.9924213717317165,
+        "unknown_known_fpr": 0.05542210020590254,
+        "own_wall_f1": 0.9644994978939452,
+        "door_free_recall": 0.7407407407407407,
+        "pair_topology_accuracy": 0.990835193785964
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.04724409431219101
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 6,
+      "rooms": 6,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9803101757932651,
+        "union_accuracy": 0.9807732745513331,
+        "unknown_known_fpr": 0.0013061933450821692,
+        "own_wall_f1": 0.9803101757932651,
+        "door_free_recall": 0.9397031539888683,
+        "pair_topology_accuracy": 0.9644807674058323
+       },
+       "8": {
+        "wall_f1": 0.9652696184348208,
+        "union_accuracy": 0.9721942928277316,
+        "unknown_known_fpr": 0.02196599899006901,
+        "own_wall_f1": 0.9669297123563882,
+        "door_free_recall": 0.8870967741935484,
+        "pair_topology_accuracy": 0.7469924924803844
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9803101757932651,
+        "union_accuracy": 0.9807732745513331,
+        "unknown_known_fpr": 0.0013061933450821692,
+        "own_wall_f1": 0.9803101757932651,
+        "door_free_recall": 0.9397031539888683,
+        "pair_topology_accuracy": 0.9644807674058323
+       },
+       "8": {
+        "wall_f1": 0.9652696184348208,
+        "union_accuracy": 0.9721823230872355,
+        "unknown_known_fpr": 0.02196599899006901,
+        "own_wall_f1": 0.9669297123563882,
+        "door_free_recall": 0.8870967741935484,
+        "pair_topology_accuracy": 0.7469700326712969
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9782844605872736,
+        "union_accuracy": 0.980547193209752,
+        "unknown_known_fpr": 0.0013569131422925358,
+        "own_wall_f1": 0.9782844605872736,
+        "door_free_recall": 0.9397031539888683,
+        "pair_topology_accuracy": 0.9645522206652666
+       },
+       "8": {
+        "wall_f1": 0.963963963963964,
+        "union_accuracy": 0.971942928277315,
+        "unknown_known_fpr": 0.022050159905739775,
+        "own_wall_f1": 0.9596960544541115,
+        "door_free_recall": 0.8870967741935484,
+        "pair_topology_accuracy": 0.7468284711523403
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.007874011993408203,
+      "lex_ownq": 0.045758962631225586
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 7,
+      "rooms": 6,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9732071520255962,
+        "union_accuracy": 0.9774398578846315,
+        "unknown_known_fpr": 0.0016661536374593074,
+        "own_wall_f1": 0.9732071520255962,
+        "door_free_recall": 0.9253061224489796,
+        "pair_topology_accuracy": 0.9560504166957517
+       },
+       "8": {
+        "wall_f1": 0.9712824608580001,
+        "union_accuracy": 0.9806701030927835,
+        "unknown_known_fpr": 0.03515023112480739,
+        "own_wall_f1": 0.9663386377224581,
+        "door_free_recall": 0.9032258064516129,
+        "pair_topology_accuracy": 0.7066609480833425
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9732071520255962,
+        "union_accuracy": 0.9774398578846315,
+        "unknown_known_fpr": 0.0016661536374593074,
+        "own_wall_f1": 0.9732071520255962,
+        "door_free_recall": 0.9253061224489796,
+        "pair_topology_accuracy": 0.9560504166957517
+       },
+       "8": {
+        "wall_f1": 0.9712824608580001,
+        "union_accuracy": 0.9806701030927835,
+        "unknown_known_fpr": 0.03515023112480739,
+        "own_wall_f1": 0.9663386377224581,
+        "door_free_recall": 0.9032258064516129,
+        "pair_topology_accuracy": 0.7066609480833425
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9741332567191293,
+        "union_accuracy": 0.9773283127631305,
+        "unknown_known_fpr": 0.0016984537450057244,
+        "own_wall_f1": 0.9741332567191293,
+        "door_free_recall": 0.9438775510204082,
+        "pair_topology_accuracy": 0.9571457735253911
+       },
+       "8": {
+        "wall_f1": 0.9714285714285714,
+        "union_accuracy": 0.9805942995755003,
+        "unknown_known_fpr": 0.035130970724191066,
+        "own_wall_f1": 0.9658237571015752,
+        "door_free_recall": 0.9032258064516129,
+        "pair_topology_accuracy": 0.7065519508779561
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.07874014973640442
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 0,
+      "rooms": 6,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9817045225420322,
+        "union_accuracy": 0.9815215343206085,
+        "unknown_known_fpr": 0.0015669918441696905,
+        "own_wall_f1": 0.9817045225420322,
+        "door_free_recall": 0.8816515495086924,
+        "pair_topology_accuracy": 0.9530076229862671
+       },
+       "8": {
+        "wall_f1": 0.9604666193490501,
+        "union_accuracy": 0.9920868644067797,
+        "unknown_known_fpr": 0.007526178010471204,
+        "own_wall_f1": 0.9670013351431106,
+        "door_free_recall": 0.9294354838709677,
+        "pair_topology_accuracy": 0.9893669589372391
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9817045225420322,
+        "union_accuracy": 0.9815215343206085,
+        "unknown_known_fpr": 0.0015669918441696905,
+        "own_wall_f1": 0.9817045225420322,
+        "door_free_recall": 0.8816515495086924,
+        "pair_topology_accuracy": 0.9530076229862671
+       },
+       "8": {
+        "wall_f1": 0.9604224331264811,
+        "union_accuracy": 0.9920815677966102,
+        "unknown_known_fpr": 0.0076079842931937175,
+        "own_wall_f1": 0.9664014331909023,
+        "door_free_recall": 0.9344758064516128,
+        "pair_topology_accuracy": 0.9894245950070969
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9795719817914468,
+        "union_accuracy": 0.9815008233524432,
+        "unknown_known_fpr": 0.001547757180250207,
+        "own_wall_f1": 0.9795719817914468,
+        "door_free_recall": 0.8816515495086924,
+        "pair_topology_accuracy": 0.9537032740268281
+       },
+       "8": {
+        "wall_f1": 0.9601574028529267,
+        "union_accuracy": 0.9920338983050847,
+        "unknown_known_fpr": 0.007417102966841187,
+        "own_wall_f1": 0.9640978272115373,
+        "door_free_recall": 0.9354838709677419,
+        "pair_topology_accuracy": 0.9894591581700584
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.07086613774299622,
+      "lex_ownq": 0.14173229038715363
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 1,
+      "rooms": 6,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9670489401744039,
+        "union_accuracy": 0.9791172963150672,
+        "unknown_known_fpr": 0.0021009908805616007,
+        "own_wall_f1": 0.9670489401744039,
+        "door_free_recall": 0.8247121520673046,
+        "pair_topology_accuracy": 0.9644096784327638
+       },
+       "8": {
+        "wall_f1": 0.9343189383555469,
+        "union_accuracy": 0.9855651105651104,
+        "unknown_known_fpr": 0.027365677626303125,
+        "own_wall_f1": 0.9315016681705336,
+        "door_free_recall": 0.853125,
+        "pair_topology_accuracy": 0.9832378104033436
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9670489401744039,
+        "union_accuracy": 0.9791172963150672,
+        "unknown_known_fpr": 0.0021009908805616007,
+        "own_wall_f1": 0.9670489401744039,
+        "door_free_recall": 0.8247121520673046,
+        "pair_topology_accuracy": 0.9644096784327638
+       },
+       "8": {
+        "wall_f1": 0.9344225315768274,
+        "union_accuracy": 0.9855157511407511,
+        "unknown_known_fpr": 0.027490978348035287,
+        "own_wall_f1": 0.9318714906557407,
+        "door_free_recall": 0.853125,
+        "pair_topology_accuracy": 0.9830950552812396
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9652376417808911,
+        "union_accuracy": 0.9789811128876175,
+        "unknown_known_fpr": 0.0021341628912628146,
+        "own_wall_f1": 0.9652376417808911,
+        "door_free_recall": 0.8172553231819044,
+        "pair_topology_accuracy": 0.9642715570938007
+       },
+       "8": {
+        "wall_f1": 0.934094447327452,
+        "union_accuracy": 0.9854334854334854,
+        "unknown_known_fpr": 0.027465918203688853,
+        "own_wall_f1": 0.9310346145163084,
+        "door_free_recall": 0.85,
+        "pair_topology_accuracy": 0.9829879811663981
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.03149604797363281,
+      "lex_ownq": 0.09448818862438202
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 2,
+      "rooms": 6,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9727496032420675,
+        "union_accuracy": 0.9799234083412676,
+        "unknown_known_fpr": 0.002081293466143848,
+        "own_wall_f1": 0.9727496032420675,
+        "door_free_recall": 0.8122008547008547,
+        "pair_topology_accuracy": 0.9625419550015646
+       },
+       "8": {
+        "wall_f1": 0.9752099026633135,
+        "union_accuracy": 0.9886682447834474,
+        "unknown_known_fpr": 0.01736390116512656,
+        "own_wall_f1": 0.9716006931427636,
+        "door_free_recall": 0.7762096774193548,
+        "pair_topology_accuracy": 0.7568079449827825
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9727496032420675,
+        "union_accuracy": 0.9799234083412676,
+        "unknown_known_fpr": 0.002081293466143848,
+        "own_wall_f1": 0.9727496032420675,
+        "door_free_recall": 0.8122008547008547,
+        "pair_topology_accuracy": 0.9625419550015646
+       },
+       "8": {
+        "wall_f1": 0.9751127605031941,
+        "union_accuracy": 0.9886518060669823,
+        "unknown_known_fpr": 0.01743923262354359,
+        "own_wall_f1": 0.9716006931427636,
+        "door_free_recall": 0.7762096774193548,
+        "pair_topology_accuracy": 0.7568079449827825
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9716875294674955,
+        "union_accuracy": 0.9800418887706386,
+        "unknown_known_fpr": 0.0020726671015576805,
+        "own_wall_f1": 0.9716875294674955,
+        "door_free_recall": 0.8097970085470085,
+        "pair_topology_accuracy": 0.9625213041673016
+       },
+       "8": {
+        "wall_f1": 0.9752149721800708,
+        "union_accuracy": 0.9886901630720674,
+        "unknown_known_fpr": 0.01747689835275211,
+        "own_wall_f1": 0.9720602006095234,
+        "door_free_recall": 0.7741935483870968,
+        "pair_topology_accuracy": 0.756862048226719
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.02362203598022461,
+      "lex_ownq": 0.16535432636737823
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 3,
+      "rooms": 6,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9813795728293984,
+        "union_accuracy": 0.9833156495460064,
+        "unknown_known_fpr": 0.0014409474776833338,
+        "own_wall_f1": 0.9813795728293984,
+        "door_free_recall": 0.8831762323697807,
+        "pair_topology_accuracy": 0.9665531991993948
+       },
+       "8": {
+        "wall_f1": 0.978884497973703,
+        "union_accuracy": 0.9952190463165572,
+        "unknown_known_fpr": 0.027580317577548006,
+        "own_wall_f1": 0.972712230626388,
+        "door_free_recall": 0.7270833333333333,
+        "pair_topology_accuracy": 0.9942885540449682
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9813795728293984,
+        "union_accuracy": 0.9833156495460064,
+        "unknown_known_fpr": 0.0014409474776833338,
+        "own_wall_f1": 0.9813795728293984,
+        "door_free_recall": 0.8831762323697807,
+        "pair_topology_accuracy": 0.9665531991993948
+       },
+       "8": {
+        "wall_f1": 0.9782240170201266,
+        "union_accuracy": 0.9951962527352298,
+        "unknown_known_fpr": 0.027649556868537668,
+        "own_wall_f1": 0.9722327095496647,
+        "door_free_recall": 0.7072916666666667,
+        "pair_topology_accuracy": 0.9942635753872906
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9818524141858533,
+        "union_accuracy": 0.9834370383921832,
+        "unknown_known_fpr": 0.0014619207266981897,
+        "own_wall_f1": 0.9818524141858533,
+        "door_free_recall": 0.8831762323697807,
+        "pair_topology_accuracy": 0.9669802015666542
+       },
+       "8": {
+        "wall_f1": 0.978005115089514,
+        "union_accuracy": 0.9951677607585704,
+        "unknown_known_fpr": 0.027695716395864108,
+        "own_wall_f1": 0.9721975278155036,
+        "door_free_recall": 0.7,
+        "pair_topology_accuracy": 0.994201171976112
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.11811023950576782,
+      "lex_ownq": 0.11811023950576782
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 4,
+      "rooms": 6,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9662989426806631,
+        "union_accuracy": 0.9737822470910316,
+        "unknown_known_fpr": 0.0015162247089785118,
+        "own_wall_f1": 0.9662989426806631,
+        "door_free_recall": 0.9300905155450608,
+        "pair_topology_accuracy": 0.9536525890927107
+       },
+       "8": {
+        "wall_f1": 0.9500800884067645,
+        "union_accuracy": 0.9846133401127855,
+        "unknown_known_fpr": 0.028291719058738996,
+        "own_wall_f1": 0.9598979298187774,
+        "door_free_recall": 0.48185483870967744,
+        "pair_topology_accuracy": 0.5692528263600998
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9662989426806631,
+        "union_accuracy": 0.9737822470910316,
+        "unknown_known_fpr": 0.0015162247089785118,
+        "own_wall_f1": 0.9662989426806631,
+        "door_free_recall": 0.9300905155450608,
+        "pair_topology_accuracy": 0.9536525890927107
+       },
+       "8": {
+        "wall_f1": 0.9500800884067645,
+        "union_accuracy": 0.9846133401127855,
+        "unknown_known_fpr": 0.028325399676666068,
+        "own_wall_f1": 0.9598979298187774,
+        "door_free_recall": 0.48185483870967744,
+        "pair_topology_accuracy": 0.5692528263600998
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9682467861390947,
+        "union_accuracy": 0.9743971163577222,
+        "unknown_known_fpr": 0.0014991528735701764,
+        "own_wall_f1": 0.9682467861390947,
+        "door_free_recall": 0.9199895054440508,
+        "pair_topology_accuracy": 0.9544210001532196
+       },
+       "8": {
+        "wall_f1": 0.9501761449421238,
+        "union_accuracy": 0.9846537857076824,
+        "unknown_known_fpr": 0.02838153403987785,
+        "own_wall_f1": 0.9614564824089128,
+        "door_free_recall": 0.4838709677419355,
+        "pair_topology_accuracy": 0.5692804787055297
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.02362203598022461,
+      "lex_ownq": 0.08661419153213501
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 5,
+      "rooms": 6,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9792950040810009,
+        "union_accuracy": 0.980629866007409,
+        "unknown_known_fpr": 0.0012592657078421966,
+        "own_wall_f1": 0.9792950040810009,
+        "door_free_recall": 0.7950294287755587,
+        "pair_topology_accuracy": 0.9651430242562354
+       },
+       "8": {
+        "wall_f1": 0.9776966797135601,
+        "union_accuracy": 0.9956078310783107,
+        "unknown_known_fpr": 0.02339460491764144,
+        "own_wall_f1": 0.9814300573259579,
+        "door_free_recall": 0.8911290322580645,
+        "pair_topology_accuracy": 0.9980800245101064
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9792950040810009,
+        "union_accuracy": 0.980629866007409,
+        "unknown_known_fpr": 0.0012592657078421966,
+        "own_wall_f1": 0.9792950040810009,
+        "door_free_recall": 0.7950294287755587,
+        "pair_topology_accuracy": 0.9651430242562354
+       },
+       "8": {
+        "wall_f1": 0.978341259979095,
+        "union_accuracy": 0.9957000820008199,
+        "unknown_known_fpr": 0.02288732394366197,
+        "own_wall_f1": 0.9814300573259579,
+        "door_free_recall": 0.9032258064516129,
+        "pair_topology_accuracy": 0.9981590424169995
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9795302942506547,
+        "union_accuracy": 0.9808681232366994,
+        "unknown_known_fpr": 0.0013108873031412542,
+        "own_wall_f1": 0.9795302942506547,
+        "door_free_recall": 0.7840404177865478,
+        "pair_topology_accuracy": 0.9654601914637391
+       },
+       "8": {
+        "wall_f1": 0.9784560143626571,
+        "union_accuracy": 0.9957359573595735,
+        "unknown_known_fpr": 0.022917164000954882,
+        "own_wall_f1": 0.9822275815376361,
+        "door_free_recall": 0.9032258064516129,
+        "pair_topology_accuracy": 0.9981929075260731
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.14960628747940063,
+      "lex_ownq": 0.14960628747940063
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 6,
+      "rooms": 6,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9700165447195376,
+        "union_accuracy": 0.975512509177027,
+        "unknown_known_fpr": 0.0013561361592011724,
+        "own_wall_f1": 0.9700165447195376,
+        "door_free_recall": 0.8266733266733267,
+        "pair_topology_accuracy": 0.9557221111992212
+       },
+       "8": {
+        "wall_f1": 0.9396999221901002,
+        "union_accuracy": 0.9817757641330809,
+        "unknown_known_fpr": 0.038494237672397506,
+        "own_wall_f1": 0.9418403259519578,
+        "door_free_recall": 0.9213709677419355,
+        "pair_topology_accuracy": 0.9819798955546934
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9700165447195376,
+        "union_accuracy": 0.975512509177027,
+        "unknown_known_fpr": 0.0013561361592011724,
+        "own_wall_f1": 0.9700165447195376,
+        "door_free_recall": 0.8266733266733267,
+        "pair_topology_accuracy": 0.9557221111992212
+       },
+       "8": {
+        "wall_f1": 0.9397710063174466,
+        "union_accuracy": 0.9817870345325039,
+        "unknown_known_fpr": 0.03830530889854525,
+        "own_wall_f1": 0.9419004204273748,
+        "door_free_recall": 0.9344758064516128,
+        "pair_topology_accuracy": 0.9819675411199258
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9664130027290305,
+        "union_accuracy": 0.974114533399063,
+        "unknown_known_fpr": 0.0014349132739325963,
+        "own_wall_f1": 0.9664130027290305,
+        "door_free_recall": 0.8266733266733267,
+        "pair_topology_accuracy": 0.954100909243592
+       },
+       "8": {
+        "wall_f1": 0.9387956564659428,
+        "union_accuracy": 0.9816067081417366,
+        "unknown_known_fpr": 0.038352541092008315,
+        "own_wall_f1": 0.938295600970178,
+        "door_free_recall": 0.9354838709677419,
+        "pair_topology_accuracy": 0.9819304753288205
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0629921555519104,
+      "lex_ownq": 0.07086614519357681
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 7,
+      "rooms": 6,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9777155692860531,
+        "union_accuracy": 0.9850700628133808,
+        "unknown_known_fpr": 0.0018559049938744068,
+        "own_wall_f1": 0.9777155692860531,
+        "door_free_recall": 0.852008177008177,
+        "pair_topology_accuracy": 0.9746651999062598
+       },
+       "8": {
+        "wall_f1": 0.9629954626666558,
+        "union_accuracy": 0.9929155156537753,
+        "unknown_known_fpr": 0.02627172338884866,
+        "own_wall_f1": 0.9686916613163559,
+        "door_free_recall": 0.905241935483871,
+        "pair_topology_accuracy": 0.9953010819819612
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9777155692860531,
+        "union_accuracy": 0.9850700628133808,
+        "unknown_known_fpr": 0.0018559049938744068,
+        "own_wall_f1": 0.9777155692860531,
+        "door_free_recall": 0.852008177008177,
+        "pair_topology_accuracy": 0.9746651999062598
+       },
+       "8": {
+        "wall_f1": 0.96259962572965,
+        "union_accuracy": 0.9928406998158379,
+        "unknown_known_fpr": 0.02627172338884866,
+        "own_wall_f1": 0.9686916613163559,
+        "door_free_recall": 0.905241935483871,
+        "pair_topology_accuracy": 0.9952502020218412
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9753209156896898,
+        "union_accuracy": 0.9851284749802509,
+        "unknown_known_fpr": 0.00182074740344215,
+        "own_wall_f1": 0.9753209156896898,
+        "door_free_recall": 0.843428330928331,
+        "pair_topology_accuracy": 0.9748914544432081
+       },
+       "8": {
+        "wall_f1": 0.962000962000962,
+        "union_accuracy": 0.9927255985267035,
+        "unknown_known_fpr": 0.02624909485879797,
+        "own_wall_f1": 0.9641827702233848,
+        "door_free_recall": 0.9032258064516129,
+        "pair_topology_accuracy": 0.9951102808311649
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.03937007859349251,
+      "lex_ownq": 0.047244101762771606
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 0,
+      "rooms": 12,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9540108829993392,
+        "union_accuracy": 0.9712020648341508,
+        "unknown_known_fpr": 0.001820626868912064,
+        "own_wall_f1": 0.9540108829993392,
+        "door_free_recall": 0.9196895960303648,
+        "pair_topology_accuracy": 0.9534567852538087
+       },
+       "8": {
+        "wall_f1": 0.9489269893748413,
+        "union_accuracy": 0.9721354923032239,
+        "unknown_known_fpr": 0.024965782269951567,
+        "own_wall_f1": 0.9470233573646993,
+        "door_free_recall": 0.8378378378378378,
+        "pair_topology_accuracy": 0.9575062571701456
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9540108829993392,
+        "union_accuracy": 0.9712020648341508,
+        "unknown_known_fpr": 0.001820626868912064,
+        "own_wall_f1": 0.9540108829993392,
+        "door_free_recall": 0.9196895960303648,
+        "pair_topology_accuracy": 0.9534567852538087
+       },
+       "8": {
+        "wall_f1": 0.9489269893748413,
+        "union_accuracy": 0.9721354923032239,
+        "unknown_known_fpr": 0.024965782269951567,
+        "own_wall_f1": 0.9470233573646993,
+        "door_free_recall": 0.8378378378378378,
+        "pair_topology_accuracy": 0.9575062571701456
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.95281680895756,
+        "union_accuracy": 0.9686851759771911,
+        "unknown_known_fpr": 0.00179587412202228,
+        "own_wall_f1": 0.95281680895756,
+        "door_free_recall": 0.9153452964796107,
+        "pair_topology_accuracy": 0.9485217398505348
+       },
+       "8": {
+        "wall_f1": 0.9489448604492853,
+        "union_accuracy": 0.9721173395294801,
+        "unknown_known_fpr": 0.024952621604548326,
+        "own_wall_f1": 0.9473665327794358,
+        "door_free_recall": 0.8378378378378378,
+        "pair_topology_accuracy": 0.957386490710814
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.04555988311767578
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 1,
+      "rooms": 12,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9712638003937559,
+        "union_accuracy": 0.9646399267758137,
+        "unknown_known_fpr": 0.0014782787303532685,
+        "own_wall_f1": 0.9712638003937559,
+        "door_free_recall": 0.9431112365894975,
+        "pair_topology_accuracy": 0.9341698732499139
+       },
+       "8": {
+        "wall_f1": 0.9438034036986525,
+        "union_accuracy": 0.9639259082976361,
+        "unknown_known_fpr": 0.009398869159805576,
+        "own_wall_f1": 0.9336962891633259,
+        "door_free_recall": 0.755841121495327,
+        "pair_topology_accuracy": 0.9425725531446058
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9712638003937559,
+        "union_accuracy": 0.9646399267758137,
+        "unknown_known_fpr": 0.0014782787303532685,
+        "own_wall_f1": 0.9712638003937559,
+        "door_free_recall": 0.9431112365894975,
+        "pair_topology_accuracy": 0.9341698732499139
+       },
+       "8": {
+        "wall_f1": 0.9438034036986525,
+        "union_accuracy": 0.9639259082976361,
+        "unknown_known_fpr": 0.009398869159805576,
+        "own_wall_f1": 0.9336962891633259,
+        "door_free_recall": 0.755841121495327,
+        "pair_topology_accuracy": 0.9425725531446058
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9711522431156387,
+        "union_accuracy": 0.965828684085159,
+        "unknown_known_fpr": 0.0015181300355676286,
+        "own_wall_f1": 0.9711522431156387,
+        "door_free_recall": 0.9431112365894975,
+        "pair_topology_accuracy": 0.9366675486774331
+       },
+       "8": {
+        "wall_f1": 0.943864229765013,
+        "union_accuracy": 0.964144058384896,
+        "unknown_known_fpr": 0.009622061303442118,
+        "own_wall_f1": 0.9402475571682185,
+        "door_free_recall": 0.7570093457943925,
+        "pair_topology_accuracy": 0.943144874352928
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.08661417663097382
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 2,
+      "rooms": 12,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9642382716240797,
+        "union_accuracy": 0.9717490187937775,
+        "unknown_known_fpr": 0.001527287076756327,
+        "own_wall_f1": 0.9642382716240797,
+        "door_free_recall": 0.8433962264150944,
+        "pair_topology_accuracy": 0.948570169176542
+       },
+       "8": {
+        "wall_f1": 0.9255292670707499,
+        "union_accuracy": 0.9640625,
+        "unknown_known_fpr": 0.026675841968911915,
+        "own_wall_f1": 0.9250497256251138,
+        "door_free_recall": 0.7087264150943395,
+        "pair_topology_accuracy": 0.6230138850506349
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9642382716240797,
+        "union_accuracy": 0.9717490187937775,
+        "unknown_known_fpr": 0.001527287076756327,
+        "own_wall_f1": 0.9642382716240797,
+        "door_free_recall": 0.8433962264150944,
+        "pair_topology_accuracy": 0.948570169176542
+       },
+       "8": {
+        "wall_f1": 0.9255292670707499,
+        "union_accuracy": 0.9640625,
+        "unknown_known_fpr": 0.026675841968911915,
+        "own_wall_f1": 0.9250497256251138,
+        "door_free_recall": 0.7087264150943395,
+        "pair_topology_accuracy": 0.6230138850506349
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9628247644958721,
+        "union_accuracy": 0.9725172502663235,
+        "unknown_known_fpr": 0.0015607709564099113,
+        "own_wall_f1": 0.9628247644958721,
+        "door_free_recall": 0.85614132445431,
+        "pair_topology_accuracy": 0.9508159740747737
+       },
+       "8": {
+        "wall_f1": 0.9258542875564152,
+        "union_accuracy": 0.9640449438202248,
+        "unknown_known_fpr": 0.02655440414507772,
+        "own_wall_f1": 0.925219488978428,
+        "door_free_recall": 0.7169811320754716,
+        "pair_topology_accuracy": 0.623141817810433
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.047244101762771606
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 3,
+      "rooms": 12,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9681919608273517,
+        "union_accuracy": 0.9831454660973903,
+        "unknown_known_fpr": 0.001663533805759618,
+        "own_wall_f1": 0.9681919608273517,
+        "door_free_recall": 0.929135397123202,
+        "pair_topology_accuracy": 0.9730515239329243
+       },
+       "8": {
+        "wall_f1": 0.9585229583846537,
+        "union_accuracy": 0.9829163408913213,
+        "unknown_known_fpr": 0.02335068575432976,
+        "own_wall_f1": 0.9577087786607363,
+        "door_free_recall": 0.8301886792452831,
+        "pair_topology_accuracy": 0.9780828885361833
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9681919608273517,
+        "union_accuracy": 0.9831454660973903,
+        "unknown_known_fpr": 0.001663533805759618,
+        "own_wall_f1": 0.9681919608273517,
+        "door_free_recall": 0.929135397123202,
+        "pair_topology_accuracy": 0.9730515239329243
+       },
+       "8": {
+        "wall_f1": 0.9585229583846537,
+        "union_accuracy": 0.9829163408913213,
+        "unknown_known_fpr": 0.02335068575432976,
+        "own_wall_f1": 0.9577087786607363,
+        "door_free_recall": 0.8301886792452831,
+        "pair_topology_accuracy": 0.9780828885361833
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9691564341910339,
+        "union_accuracy": 0.9833842856511841,
+        "unknown_known_fpr": 0.0015909214666219467,
+        "own_wall_f1": 0.9691564341910339,
+        "door_free_recall": 0.9321841776110069,
+        "pair_topology_accuracy": 0.9736001635682529
+       },
+       "8": {
+        "wall_f1": 0.9587217043941412,
+        "union_accuracy": 0.98295543393276,
+        "unknown_known_fpr": 0.023425768345179697,
+        "own_wall_f1": 0.9582514618732259,
+        "door_free_recall": 0.8301886792452831,
+        "pair_topology_accuracy": 0.9784344323819358
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.07086613774299622
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 4,
+      "rooms": 12,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9660016533047273,
+        "union_accuracy": 0.9728727570582898,
+        "unknown_known_fpr": 0.0011671856476212505,
+        "own_wall_f1": 0.9660016533047273,
+        "door_free_recall": 0.9255844155844155,
+        "pair_topology_accuracy": 0.9529632107842798
+       },
+       "8": {
+        "wall_f1": 0.9680493917233086,
+        "union_accuracy": 0.988010128090557,
+        "unknown_known_fpr": 0.010095656670113754,
+        "own_wall_f1": 0.9660648917666859,
+        "door_free_recall": 0.7426470588235294,
+        "pair_topology_accuracy": 0.9828458776349673
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9660016533047273,
+        "union_accuracy": 0.9728727570582898,
+        "unknown_known_fpr": 0.0011671856476212505,
+        "own_wall_f1": 0.9660016533047273,
+        "door_free_recall": 0.9255844155844155,
+        "pair_topology_accuracy": 0.9529632107842798
+       },
+       "8": {
+        "wall_f1": 0.9680493917233086,
+        "union_accuracy": 0.988010128090557,
+        "unknown_known_fpr": 0.010095656670113754,
+        "own_wall_f1": 0.9660648917666859,
+        "door_free_recall": 0.7426470588235294,
+        "pair_topology_accuracy": 0.9828458776349673
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9618990651895841,
+        "union_accuracy": 0.9729455544347243,
+        "unknown_known_fpr": 0.0011832091171566476,
+        "own_wall_f1": 0.9618990651895841,
+        "door_free_recall": 0.9165367965367964,
+        "pair_topology_accuracy": 0.9538439893535755
+       },
+       "8": {
+        "wall_f1": 0.967699406723797,
+        "union_accuracy": 0.9879356568364611,
+        "unknown_known_fpr": 0.010031023784901758,
+        "own_wall_f1": 0.9645695152388997,
+        "door_free_recall": 0.7450980392156863,
+        "pair_topology_accuracy": 0.9829291837763849
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.05511811003088951
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 5,
+      "rooms": 12,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9718880659614118,
+        "union_accuracy": 0.9753315414997042,
+        "unknown_known_fpr": 0.0013960914459716874,
+        "own_wall_f1": 0.9718880659614118,
+        "door_free_recall": 0.8976684859990509,
+        "pair_topology_accuracy": 0.9555456077017341
+       },
+       "8": {
+        "wall_f1": 0.9720456978834733,
+        "union_accuracy": 0.9669845196297479,
+        "unknown_known_fpr": 0.010464024510772881,
+        "own_wall_f1": 0.9670078647099842,
+        "door_free_recall": 0.769047619047619,
+        "pair_topology_accuracy": 0.720017657946489
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9718880659614118,
+        "union_accuracy": 0.9753315414997042,
+        "unknown_known_fpr": 0.0013960914459716874,
+        "own_wall_f1": 0.9718880659614118,
+        "door_free_recall": 0.8976684859990509,
+        "pair_topology_accuracy": 0.9555456077017341
+       },
+       "8": {
+        "wall_f1": 0.9720456978834733,
+        "union_accuracy": 0.9669845196297479,
+        "unknown_known_fpr": 0.010464024510772881,
+        "own_wall_f1": 0.9670078647099842,
+        "door_free_recall": 0.769047619047619,
+        "pair_topology_accuracy": 0.720017657946489
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9685687896960109,
+        "union_accuracy": 0.9751624851875464,
+        "unknown_known_fpr": 0.001389683670273872,
+        "own_wall_f1": 0.9685687896960109,
+        "door_free_recall": 0.8890859832305015,
+        "pair_topology_accuracy": 0.9563193330844042
+       },
+       "8": {
+        "wall_f1": 0.972937293729373,
+        "union_accuracy": 0.9669645706990105,
+        "unknown_known_fpr": 0.010476378730974501,
+        "own_wall_f1": 0.9688479369457483,
+        "door_free_recall": 0.7714285714285715,
+        "pair_topology_accuracy": 0.720032324701294
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.045525312423706055
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 6,
+      "rooms": 12,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9618075679015772,
+        "union_accuracy": 0.9757900104553315,
+        "unknown_known_fpr": 0.0016571292578274682,
+        "own_wall_f1": 0.9618075679015772,
+        "door_free_recall": 0.9082894909571942,
+        "pair_topology_accuracy": 0.9570223867289386
+       },
+       "8": {
+        "wall_f1": 0.9763913516903115,
+        "union_accuracy": 0.9901113671274961,
+        "unknown_known_fpr": 0.015330666396597123,
+        "own_wall_f1": 0.9767836151534606,
+        "door_free_recall": 0.8686868686868687,
+        "pair_topology_accuracy": 0.9869523731162406
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9618075679015772,
+        "union_accuracy": 0.9757900104553315,
+        "unknown_known_fpr": 0.0016571292578274682,
+        "own_wall_f1": 0.9618075679015772,
+        "door_free_recall": 0.9082894909571942,
+        "pair_topology_accuracy": 0.9570223867289386
+       },
+       "8": {
+        "wall_f1": 0.9797008393527563,
+        "union_accuracy": 0.9922427035330261,
+        "unknown_known_fpr": 0.015280028357302005,
+        "own_wall_f1": 0.9762606026011593,
+        "door_free_recall": 0.8686868686868687,
+        "pair_topology_accuracy": 0.9900975255350556
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9684076255579037,
+        "union_accuracy": 0.9765664577314719,
+        "unknown_known_fpr": 0.001673730126868172,
+        "own_wall_f1": 0.9684076255579037,
+        "door_free_recall": 0.8986054590069577,
+        "pair_topology_accuracy": 0.9568322534619154
+       },
+       "8": {
+        "wall_f1": 0.9810040705563093,
+        "union_accuracy": 0.9927803379416282,
+        "unknown_known_fpr": 0.015292687867125785,
+        "own_wall_f1": 0.9780594724460283,
+        "door_free_recall": 0.8686868686868687,
+        "pair_topology_accuracy": 0.9906574905807144
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.2755905091762543,
+      "lex_ownq": 0.28346455097198486
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 7,
+      "rooms": 12,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.950661584828996,
+        "union_accuracy": 0.9685896635429733,
+        "unknown_known_fpr": 0.0014678751453803612,
+        "own_wall_f1": 0.950661584828996,
+        "door_free_recall": 0.8960768734371218,
+        "pair_topology_accuracy": 0.9457404361933226
+       },
+       "8": {
+        "wall_f1": 0.9601345600739211,
+        "union_accuracy": 0.9828374846248462,
+        "unknown_known_fpr": 0.010842611336032388,
+        "own_wall_f1": 0.961725929036232,
+        "door_free_recall": 0.8349514563106796,
+        "pair_topology_accuracy": 0.9779629340829825
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.950661584828996,
+        "union_accuracy": 0.9685896635429733,
+        "unknown_known_fpr": 0.0014678751453803612,
+        "own_wall_f1": 0.950661584828996,
+        "door_free_recall": 0.8960768734371218,
+        "pair_topology_accuracy": 0.9457404361933226
+       },
+       "8": {
+        "wall_f1": 0.9601345600739211,
+        "union_accuracy": 0.9828374846248462,
+        "unknown_known_fpr": 0.010842611336032388,
+        "own_wall_f1": 0.961725929036232,
+        "door_free_recall": 0.8349514563106796,
+        "pair_topology_accuracy": 0.9779629340829825
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9459516385024831,
+        "union_accuracy": 0.9664084031132244,
+        "unknown_known_fpr": 0.0015981300719828072,
+        "own_wall_f1": 0.9459516385024831,
+        "door_free_recall": 0.9028188271355972,
+        "pair_topology_accuracy": 0.9434532390976516
+       },
+       "8": {
+        "wall_f1": 0.9607717041800643,
+        "union_accuracy": 0.9829335793357934,
+        "unknown_known_fpr": 0.01082995951417004,
+        "own_wall_f1": 0.9621105861673777,
+        "door_free_recall": 0.8349514563106796,
+        "pair_topology_accuracy": 0.9780494487183405
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.07874016463756561
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 0,
+      "rooms": 12,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9566554409100576,
+        "union_accuracy": 0.9707117670657843,
+        "unknown_known_fpr": 0.0013203454586139206,
+        "own_wall_f1": 0.9566554409100576,
+        "door_free_recall": 0.8977130516289202,
+        "pair_topology_accuracy": 0.9503829277305562
+       },
+       "8": {
+        "wall_f1": 0.935533486839262,
+        "union_accuracy": 0.9789028407632412,
+        "unknown_known_fpr": 0.05669842452629338,
+        "own_wall_f1": 0.9289928137953861,
+        "door_free_recall": 0.7953125,
+        "pair_topology_accuracy": 0.8498039551675579
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9566554409100576,
+        "union_accuracy": 0.9707117670657843,
+        "unknown_known_fpr": 0.0013203454586139206,
+        "own_wall_f1": 0.9566554409100576,
+        "door_free_recall": 0.8977130516289202,
+        "pair_topology_accuracy": 0.9503829277305562
+       },
+       "8": {
+        "wall_f1": 0.935533486839262,
+        "union_accuracy": 0.9789028407632412,
+        "unknown_known_fpr": 0.05669842452629338,
+        "own_wall_f1": 0.9289928137953861,
+        "door_free_recall": 0.7953125,
+        "pair_topology_accuracy": 0.8498039551675579
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9550001745925628,
+        "union_accuracy": 0.9687409123672421,
+        "unknown_known_fpr": 0.0013001644760965432,
+        "own_wall_f1": 0.9550001745925628,
+        "door_free_recall": 0.8895842833257334,
+        "pair_topology_accuracy": 0.9467323379065479
+       },
+       "8": {
+        "wall_f1": 0.9357034795763994,
+        "union_accuracy": 0.9789509711645418,
+        "unknown_known_fpr": 0.05663189269746647,
+        "own_wall_f1": 0.9295992483269054,
+        "door_free_recall": 0.7916666666666666,
+        "pair_topology_accuracy": 0.8498124800899037
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.05511808395385742
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 1,
+      "rooms": 12,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9721612668274046,
+        "union_accuracy": 0.9757071849687218,
+        "unknown_known_fpr": 0.0015528029963428939,
+        "own_wall_f1": 0.9721612668274046,
+        "door_free_recall": 0.9134151749717787,
+        "pair_topology_accuracy": 0.9551936097104736
+       },
+       "8": {
+        "wall_f1": 0.9356792977211353,
+        "union_accuracy": 0.9792294649585531,
+        "unknown_known_fpr": 0.04210731622746186,
+        "own_wall_f1": 0.9381388903589247,
+        "door_free_recall": 0.8083333333333333,
+        "pair_topology_accuracy": 0.7332888069555505
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9721612668274046,
+        "union_accuracy": 0.9757071849687218,
+        "unknown_known_fpr": 0.0015528029963428939,
+        "own_wall_f1": 0.9721612668274046,
+        "door_free_recall": 0.9134151749717787,
+        "pair_topology_accuracy": 0.9551936097104736
+       },
+       "8": {
+        "wall_f1": 0.9353272683061186,
+        "union_accuracy": 0.9791470422004522,
+        "unknown_known_fpr": 0.04210731622746186,
+        "own_wall_f1": 0.9381388903589247,
+        "door_free_recall": 0.8083333333333333,
+        "pair_topology_accuracy": 0.7332888069555505
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9708783466416795,
+        "union_accuracy": 0.9758119705586786,
+        "unknown_known_fpr": 0.001541116655507218,
+        "own_wall_f1": 0.9708783466416795,
+        "door_free_recall": 0.9146347363328495,
+        "pair_topology_accuracy": 0.9562805234481436
+       },
+       "8": {
+        "wall_f1": 0.9353007945516458,
+        "union_accuracy": 0.9790881688018086,
+        "unknown_known_fpr": 0.042128987517337034,
+        "own_wall_f1": 0.9399635990210723,
+        "door_free_recall": 0.8083333333333333,
+        "pair_topology_accuracy": 0.7332717478062473
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.16535437107086182,
+      "lex_ownq": 0.16535437107086182
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 2,
+      "rooms": 12,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9549293040519797,
+        "union_accuracy": 0.9718921318771663,
+        "unknown_known_fpr": 0.001346102250557364,
+        "own_wall_f1": 0.9549293040519797,
+        "door_free_recall": 0.8935497780862834,
+        "pair_topology_accuracy": 0.9517906262152455
+       },
+       "8": {
+        "wall_f1": 0.9025495387528586,
+        "union_accuracy": 0.9703534388646289,
+        "unknown_known_fpr": 0.033220511869436205,
+        "own_wall_f1": 0.9035613429859204,
+        "door_free_recall": 0.7864583333333333,
+        "pair_topology_accuracy": 0.961115327795526
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9549293040519797,
+        "union_accuracy": 0.9718921318771663,
+        "unknown_known_fpr": 0.001346102250557364,
+        "own_wall_f1": 0.9549293040519797,
+        "door_free_recall": 0.8935497780862834,
+        "pair_topology_accuracy": 0.9517906262152455
+       },
+       "8": {
+        "wall_f1": 0.8991910029902156,
+        "union_accuracy": 0.969233306040757,
+        "unknown_known_fpr": 0.03261776706231454,
+        "own_wall_f1": 0.8998851136454923,
+        "door_free_recall": 0.78125,
+        "pair_topology_accuracy": 0.9601530798662017
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9534508646730022,
+        "union_accuracy": 0.9713080687053565,
+        "unknown_known_fpr": 0.001329767010054592,
+        "own_wall_f1": 0.9534508646730022,
+        "door_free_recall": 0.9054378899743953,
+        "pair_topology_accuracy": 0.9512913173652985
+       },
+       "8": {
+        "wall_f1": 0.8982725527831094,
+        "union_accuracy": 0.9688864628820961,
+        "unknown_known_fpr": 0.03245548961424333,
+        "own_wall_f1": 0.895020307328971,
+        "door_free_recall": 0.7803030303030303,
+        "pair_topology_accuracy": 0.9596972710487566
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.33070868253707886,
+      "lex_ownq": 0.33070868253707886
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 3,
+      "rooms": 12,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9655089698851964,
+        "union_accuracy": 0.9720426035950347,
+        "unknown_known_fpr": 0.0018152279157064345,
+        "own_wall_f1": 0.9655089698851964,
+        "door_free_recall": 0.9238186168686475,
+        "pair_topology_accuracy": 0.947577782821596
+       },
+       "8": {
+        "wall_f1": 0.9675437899110361,
+        "union_accuracy": 0.9921568627450981,
+        "unknown_known_fpr": 0.040298025465953125,
+        "own_wall_f1": 0.9603137547951313,
+        "door_free_recall": 0.9190573770491803,
+        "pair_topology_accuracy": 0.9952496969247671
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9655089698851964,
+        "union_accuracy": 0.9720426035950347,
+        "unknown_known_fpr": 0.0018152279157064345,
+        "own_wall_f1": 0.9655089698851964,
+        "door_free_recall": 0.9238186168686475,
+        "pair_topology_accuracy": 0.947577782821596
+       },
+       "8": {
+        "wall_f1": 0.9675437899110361,
+        "union_accuracy": 0.9921568627450981,
+        "unknown_known_fpr": 0.040298025465953125,
+        "own_wall_f1": 0.9603137547951313,
+        "door_free_recall": 0.9190573770491803,
+        "pair_topology_accuracy": 0.9952496969247671
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9662983303206276,
+        "union_accuracy": 0.9718374638557907,
+        "unknown_known_fpr": 0.0018480466276841745,
+        "own_wall_f1": 0.9662983303206276,
+        "door_free_recall": 0.9237384886635193,
+        "pair_topology_accuracy": 0.9467424933501896
+       },
+       "8": {
+        "wall_f1": 0.9675471698113207,
+        "union_accuracy": 0.9921568627450981,
+        "unknown_known_fpr": 0.04022882450636649,
+        "own_wall_f1": 0.9600941798879574,
+        "door_free_recall": 0.9180327868852459,
+        "pair_topology_accuracy": 0.995223763432517
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.05511808395385742
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 4,
+      "rooms": 12,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9610880473700688,
+        "union_accuracy": 0.9766328555672904,
+        "unknown_known_fpr": 0.0013305646294679081,
+        "own_wall_f1": 0.9610880473700688,
+        "door_free_recall": 0.899665135915136,
+        "pair_topology_accuracy": 0.9607853908200898
+       },
+       "8": {
+        "wall_f1": 0.9277085427954472,
+        "union_accuracy": 0.9616689360503333,
+        "unknown_known_fpr": 0.058969049694856154,
+        "own_wall_f1": 0.9266892894802179,
+        "door_free_recall": 0.6315524193548387,
+        "pair_topology_accuracy": 0.7766737381486168
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9610880473700688,
+        "union_accuracy": 0.9766328555672904,
+        "unknown_known_fpr": 0.0013305646294679081,
+        "own_wall_f1": 0.9610880473700688,
+        "door_free_recall": 0.899665135915136,
+        "pair_topology_accuracy": 0.9607853908200898
+       },
+       "8": {
+        "wall_f1": 0.9284085172241098,
+        "union_accuracy": 0.9618684853037844,
+        "unknown_known_fpr": 0.05937227550130776,
+        "own_wall_f1": 0.9283226154296987,
+        "door_free_recall": 0.6300403225806452,
+        "pair_topology_accuracy": 0.7767264179190088
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9592274296066746,
+        "union_accuracy": 0.9754360594920299,
+        "unknown_known_fpr": 0.001322737753525228,
+        "own_wall_f1": 0.9592274296066746,
+        "door_free_recall": 0.8903595803595804,
+        "pair_topology_accuracy": 0.9586962039544429
+       },
+       "8": {
+        "wall_f1": 0.9277777777777778,
+        "union_accuracy": 0.9616865433374026,
+        "unknown_known_fpr": 0.05928509154315606,
+        "own_wall_f1": 0.9199248699289241,
+        "door_free_recall": 0.6290322580645161,
+        "pair_topology_accuracy": 0.7765177285559044
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0629921555519104,
+      "lex_ownq": 0.09448818862438202
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 5,
+      "rooms": 12,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9685151994750774,
+        "union_accuracy": 0.9785300053806198,
+        "unknown_known_fpr": 0.0014471187712581466,
+        "own_wall_f1": 0.9685151994750774,
+        "door_free_recall": 0.9099070637445505,
+        "pair_topology_accuracy": 0.961273772933356
+       },
+       "8": {
+        "wall_f1": 0.9445626710189974,
+        "union_accuracy": 0.9824788283569058,
+        "unknown_known_fpr": 0.022489858012170384,
+        "own_wall_f1": 0.9477291305870964,
+        "door_free_recall": 0.8843749999999999,
+        "pair_topology_accuracy": 0.9816675139102661
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9685151994750774,
+        "union_accuracy": 0.9785300053806198,
+        "unknown_known_fpr": 0.0014471187712581466,
+        "own_wall_f1": 0.9685151994750774,
+        "door_free_recall": 0.9099070637445505,
+        "pair_topology_accuracy": 0.961273772933356
+       },
+       "8": {
+        "wall_f1": 0.9515809372909692,
+        "union_accuracy": 0.9849888685175485,
+        "unknown_known_fpr": 0.02099391480730223,
+        "own_wall_f1": 0.9474718977859601,
+        "door_free_recall": 0.8843749999999999,
+        "pair_topology_accuracy": 0.9841248727604556
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9685932797578772,
+        "union_accuracy": 0.9781263783306156,
+        "unknown_known_fpr": 0.0014504718442914517,
+        "own_wall_f1": 0.9685932797578772,
+        "door_free_recall": 0.9087706750029456,
+        "pair_topology_accuracy": 0.9603733966586706
+       },
+       "8": {
+        "wall_f1": 0.9502762430939227,
+        "union_accuracy": 0.9848961061637855,
+        "unknown_known_fpr": 0.021095334685598377,
+        "own_wall_f1": 0.9453864469130837,
+        "door_free_recall": 0.8833333333333333,
+        "pair_topology_accuracy": 0.9842365033377254
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.18897640705108643,
+      "lex_ownq": 1.0944881439208984
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 6,
+      "rooms": 12,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9618980324168689,
+        "union_accuracy": 0.9747715961238639,
+        "unknown_known_fpr": 0.0013782773624471264,
+        "own_wall_f1": 0.9618980324168689,
+        "door_free_recall": 0.8594988768498943,
+        "pair_topology_accuracy": 0.9559710369049276
+       },
+       "8": {
+        "wall_f1": 0.9602550745342424,
+        "union_accuracy": 0.9861000881834215,
+        "unknown_known_fpr": 0.028858544805709756,
+        "own_wall_f1": 0.9631496029206528,
+        "door_free_recall": 0.9067540322580645,
+        "pair_topology_accuracy": 0.9860529643942355
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9618980324168689,
+        "union_accuracy": 0.9747715961238639,
+        "unknown_known_fpr": 0.0013782773624471264,
+        "own_wall_f1": 0.9618980324168689,
+        "door_free_recall": 0.8594988768498943,
+        "pair_topology_accuracy": 0.9559710369049276
+       },
+       "8": {
+        "wall_f1": 0.9623588202271146,
+        "union_accuracy": 0.9886849647266314,
+        "unknown_known_fpr": 0.028784199048374308,
+        "own_wall_f1": 0.9621776651429799,
+        "door_free_recall": 0.910282258064516,
+        "pair_topology_accuracy": 0.9907147128595695
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9632085228682354,
+        "union_accuracy": 0.974275868640542,
+        "unknown_known_fpr": 0.0013901831614841508,
+        "own_wall_f1": 0.9632085228682354,
+        "door_free_recall": 0.8769467935165609,
+        "pair_topology_accuracy": 0.9538197018221604
+       },
+       "8": {
+        "wall_f1": 0.9625668449197861,
+        "union_accuracy": 0.9893298059964727,
+        "unknown_known_fpr": 0.02894528152260111,
+        "own_wall_f1": 0.9608980463497363,
+        "door_free_recall": 0.9112903225806451,
+        "pair_topology_accuracy": 0.9919424208826767
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.5039370059967041,
+      "lex_ownq": 0.5118110775947571
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 7,
+      "rooms": 12,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9657572143430707,
+        "union_accuracy": 0.9748098459925474,
+        "unknown_known_fpr": 0.0015644179332101743,
+        "own_wall_f1": 0.9657572143430707,
+        "door_free_recall": 0.9083326737288322,
+        "pair_topology_accuracy": 0.9547837165443962
+       },
+       "8": {
+        "wall_f1": 0.9509493628561553,
+        "union_accuracy": 0.9812905259365994,
+        "unknown_known_fpr": 0.04022253787878788,
+        "own_wall_f1": 0.945811140157149,
+        "door_free_recall": 0.8166322314049588,
+        "pair_topology_accuracy": 0.9801111322091383
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9657572143430707,
+        "union_accuracy": 0.9748098459925474,
+        "unknown_known_fpr": 0.0015644179332101743,
+        "own_wall_f1": 0.9657572143430707,
+        "door_free_recall": 0.9083326737288322,
+        "pair_topology_accuracy": 0.9547837165443962
+       },
+       "8": {
+        "wall_f1": 0.9509493628561553,
+        "union_accuracy": 0.9812905259365994,
+        "unknown_known_fpr": 0.04022253787878788,
+        "own_wall_f1": 0.945811140157149,
+        "door_free_recall": 0.8166322314049588,
+        "pair_topology_accuracy": 0.9801111322091383
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9630944701341289,
+        "union_accuracy": 0.9745630872482678,
+        "unknown_known_fpr": 0.0015921889456496367,
+        "own_wall_f1": 0.9630944701341289,
+        "door_free_recall": 0.9108644556723787,
+        "pair_topology_accuracy": 0.9549642029146603
+       },
+       "8": {
+        "wall_f1": 0.9508562918838421,
+        "union_accuracy": 0.9812680115273775,
+        "unknown_known_fpr": 0.040340909090909094,
+        "own_wall_f1": 0.9448797304044682,
+        "door_free_recall": 0.8181818181818182,
+        "pair_topology_accuracy": 0.980076212294294
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.16535432636737823
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 0,
+      "rooms": 20,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9644543666761449,
+        "union_accuracy": 0.9734908519559259,
+        "unknown_known_fpr": 0.0019048184056255993,
+        "own_wall_f1": 0.9644543666761449,
+        "door_free_recall": 0.8954178949193689,
+        "pair_topology_accuracy": 0.9518346529069537
+       },
+       "8": {
+        "wall_f1": 0.9140785870790709,
+        "union_accuracy": 0.9576561840439004,
+        "unknown_known_fpr": 0.012987291773999658,
+        "own_wall_f1": 0.9276347008816122,
+        "door_free_recall": 0.7242187499999999,
+        "pair_topology_accuracy": 0.7765977539421609
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9644543666761449,
+        "union_accuracy": 0.9734908519559259,
+        "unknown_known_fpr": 0.0019048184056255993,
+        "own_wall_f1": 0.9644543666761449,
+        "door_free_recall": 0.8954178949193689,
+        "pair_topology_accuracy": 0.9518346529069537
+       },
+       "8": {
+        "wall_f1": 0.9140785870790709,
+        "union_accuracy": 0.9576561840439004,
+        "unknown_known_fpr": 0.012987291773999658,
+        "own_wall_f1": 0.9276347008816122,
+        "door_free_recall": 0.7242187499999999,
+        "pair_topology_accuracy": 0.7765977539421609
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9608202352609465,
+        "union_accuracy": 0.9707741314500231,
+        "unknown_known_fpr": 0.0018404916586478401,
+        "own_wall_f1": 0.9608202352609465,
+        "door_free_recall": 0.8864588752095255,
+        "pair_topology_accuracy": 0.9460076543615981
+       },
+       "8": {
+        "wall_f1": 0.9141989369779803,
+        "union_accuracy": 0.9577880962431405,
+        "unknown_known_fpr": 0.012965825176026104,
+        "own_wall_f1": 0.9275227888877557,
+        "door_free_recall": 0.725,
+        "pair_topology_accuracy": 0.7767407342680681
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.05511810630559921
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 1,
+      "rooms": 20,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9421007741277374,
+        "union_accuracy": 0.9555178194460845,
+        "unknown_known_fpr": 0.001598663329112653,
+        "own_wall_f1": 0.9421007741277374,
+        "door_free_recall": 0.8251155058220276,
+        "pair_topology_accuracy": 0.9138843621900306
+       },
+       "8": {
+        "wall_f1": 0.8962851278337578,
+        "union_accuracy": 0.9461112172749857,
+        "unknown_known_fpr": 0.028080441216034438,
+        "own_wall_f1": 0.8861690961254176,
+        "door_free_recall": 0.8014705882352942,
+        "pair_topology_accuracy": 0.9123918826729946
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9421007741277374,
+        "union_accuracy": 0.9555178194460845,
+        "unknown_known_fpr": 0.001598663329112653,
+        "own_wall_f1": 0.9421007741277374,
+        "door_free_recall": 0.8251155058220276,
+        "pair_topology_accuracy": 0.9138843621900306
+       },
+       "8": {
+        "wall_f1": 0.8962851278337578,
+        "union_accuracy": 0.9461112172749857,
+        "unknown_known_fpr": 0.028080441216034438,
+        "own_wall_f1": 0.8861690961254176,
+        "door_free_recall": 0.8014705882352942,
+        "pair_topology_accuracy": 0.9123918826729946
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9343262347052921,
+        "union_accuracy": 0.9531415430247843,
+        "unknown_known_fpr": 0.0017014259193140514,
+        "own_wall_f1": 0.9343262347052921,
+        "door_free_recall": 0.8376155058220276,
+        "pair_topology_accuracy": 0.9115353584444819
+       },
+       "8": {
+        "wall_f1": 0.896457765667575,
+        "union_accuracy": 0.94649340722339,
+        "unknown_known_fpr": 0.028607299793740472,
+        "own_wall_f1": 0.8910943242699729,
+        "door_free_recall": 0.8,
+        "pair_topology_accuracy": 0.9128703001077302
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.08661417663097382
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 2,
+      "rooms": 20,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9619016958201785,
+        "union_accuracy": 0.9759785868759199,
+        "unknown_known_fpr": 0.001398411150695026,
+        "own_wall_f1": 0.9619016958201785,
+        "door_free_recall": 0.8821748335024038,
+        "pair_topology_accuracy": 0.958134961871919
+       },
+       "8": {
+        "wall_f1": 0.9049241332563887,
+        "union_accuracy": 0.9585148874364561,
+        "unknown_known_fpr": 0.023905847738139023,
+        "own_wall_f1": 0.903534399323629,
+        "door_free_recall": 0.847457627118644,
+        "pair_topology_accuracy": 0.943089574069683
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9619016958201785,
+        "union_accuracy": 0.9759785868759199,
+        "unknown_known_fpr": 0.001398411150695026,
+        "own_wall_f1": 0.9619016958201785,
+        "door_free_recall": 0.8821748335024038,
+        "pair_topology_accuracy": 0.958134961871919
+       },
+       "8": {
+        "wall_f1": 0.9049241332563887,
+        "union_accuracy": 0.9585148874364561,
+        "unknown_known_fpr": 0.023905847738139023,
+        "own_wall_f1": 0.903534399323629,
+        "door_free_recall": 0.847457627118644,
+        "pair_topology_accuracy": 0.943089574069683
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9599150703145906,
+        "union_accuracy": 0.9759142483810006,
+        "unknown_known_fpr": 0.0014219180422430332,
+        "own_wall_f1": 0.9599150703145906,
+        "door_free_recall": 0.8929343271732898,
+        "pair_topology_accuracy": 0.9586752907894782
+       },
+       "8": {
+        "wall_f1": 0.9048596851471595,
+        "union_accuracy": 0.9584241103848947,
+        "unknown_known_fpr": 0.023997793306362633,
+        "own_wall_f1": 0.9032669370450646,
+        "door_free_recall": 0.847457627118644,
+        "pair_topology_accuracy": 0.9487482259104097
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.08661416172981262
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 3,
+      "rooms": 20,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9607770388195456,
+        "union_accuracy": 0.9596143400165956,
+        "unknown_known_fpr": 0.0020919427882787433,
+        "own_wall_f1": 0.9607770388195456,
+        "door_free_recall": 0.8536981036981038,
+        "pair_topology_accuracy": 0.9246473669209596
+       },
+       "8": {
+        "wall_f1": 0.9450624231723657,
+        "union_accuracy": 0.968761708505058,
+        "unknown_known_fpr": 0.025269328263624845,
+        "own_wall_f1": 0.9511621502856625,
+        "door_free_recall": 0.8907967032967032,
+        "pair_topology_accuracy": 0.9479025115389021
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9607770388195456,
+        "union_accuracy": 0.9596143400165956,
+        "unknown_known_fpr": 0.0020919427882787433,
+        "own_wall_f1": 0.9607770388195456,
+        "door_free_recall": 0.8536981036981038,
+        "pair_topology_accuracy": 0.9246473669209596
+       },
+       "8": {
+        "wall_f1": 0.9452443626162785,
+        "union_accuracy": 0.968761708505058,
+        "unknown_known_fpr": 0.025190114068441065,
+        "own_wall_f1": 0.9511621502856625,
+        "door_free_recall": 0.8907967032967032,
+        "pair_topology_accuracy": 0.9477968544621107
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9592929135709332,
+        "union_accuracy": 0.9604805535098391,
+        "unknown_known_fpr": 0.002058640343539886,
+        "own_wall_f1": 0.9592929135709332,
+        "door_free_recall": 0.8588089838089839,
+        "pair_topology_accuracy": 0.9266941013835781
+       },
+       "8": {
+        "wall_f1": 0.9448275862068966,
+        "union_accuracy": 0.9687148744848257,
+        "unknown_known_fpr": 0.025258011950027158,
+        "own_wall_f1": 0.9500164564871134,
+        "door_free_recall": 0.8901098901098901,
+        "pair_topology_accuracy": 0.9477439788184646
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.03149604797363281,
+      "lex_ownq": 0.045123159885406494
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 4,
+      "rooms": 20,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.962162550970838,
+        "union_accuracy": 0.9744354739570054,
+        "unknown_known_fpr": 0.0016600444768964252,
+        "own_wall_f1": 0.962162550970838,
+        "door_free_recall": 0.9607738095238094,
+        "pair_topology_accuracy": 0.9561205911034283
+       },
+       "8": {
+        "wall_f1": 0.9166727692184584,
+        "union_accuracy": 0.956087243305349,
+        "unknown_known_fpr": 0.0049206623575614415,
+        "own_wall_f1": 0.9295982447953515,
+        "door_free_recall": 0.8198938321536906,
+        "pair_topology_accuracy": 0.9311305875058592
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.962162550970838,
+        "union_accuracy": 0.9744354739570054,
+        "unknown_known_fpr": 0.0016600444768964252,
+        "own_wall_f1": 0.962162550970838,
+        "door_free_recall": 0.9607738095238094,
+        "pair_topology_accuracy": 0.9561205911034283
+       },
+       "8": {
+        "wall_f1": 0.9166727692184584,
+        "union_accuracy": 0.956087243305349,
+        "unknown_known_fpr": 0.0049206623575614415,
+        "own_wall_f1": 0.9295982447953515,
+        "door_free_recall": 0.8198938321536906,
+        "pair_topology_accuracy": 0.9311305875058592
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9624332191965537,
+        "union_accuracy": 0.9741681858435552,
+        "unknown_known_fpr": 0.0016037908220430852,
+        "own_wall_f1": 0.9624332191965537,
+        "door_free_recall": 0.9592857142857143,
+        "pair_topology_accuracy": 0.9559957520425587
+       },
+       "8": {
+        "wall_f1": 0.9157983924127958,
+        "union_accuracy": 0.9559733604721221,
+        "unknown_known_fpr": 0.004931206727241529,
+        "own_wall_f1": 0.9271786622757032,
+        "door_free_recall": 0.8215369059656219,
+        "pair_topology_accuracy": 0.9315714782746156
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.047244101762771606
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 5,
+      "rooms": 20,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9544728618961167,
+        "union_accuracy": 0.9797146677941779,
+        "unknown_known_fpr": 0.0018943174601900581,
+        "own_wall_f1": 0.9544728618961167,
+        "door_free_recall": 0.9212306046013911,
+        "pair_topology_accuracy": 0.9681714891189663
+       },
+       "8": {
+        "wall_f1": 0.8443752631007214,
+        "union_accuracy": 0.9419443410275502,
+        "unknown_known_fpr": 0.02296358517980385,
+        "own_wall_f1": 0.8320361750009948,
+        "door_free_recall": 0.7752890173410405,
+        "pair_topology_accuracy": 0.8283339997585466
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9544728618961167,
+        "union_accuracy": 0.9797146677941779,
+        "unknown_known_fpr": 0.0018943174601900581,
+        "own_wall_f1": 0.9544728618961167,
+        "door_free_recall": 0.9212306046013911,
+        "pair_topology_accuracy": 0.9681714891189663
+       },
+       "8": {
+        "wall_f1": 0.8519243635592584,
+        "union_accuracy": 0.9434800819061802,
+        "unknown_known_fpr": 0.022940882673447148,
+        "own_wall_f1": 0.8407994168760571,
+        "door_free_recall": 0.7745664739884393,
+        "pair_topology_accuracy": 0.8297814794973796
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9527363929305663,
+        "union_accuracy": 0.979184598096832,
+        "unknown_known_fpr": 0.00192674746446716,
+        "own_wall_f1": 0.9527363929305663,
+        "door_free_recall": 0.899625468164794,
+        "pair_topology_accuracy": 0.9668546499289499
+       },
+       "8": {
+        "wall_f1": 0.8524833209785025,
+        "union_accuracy": 0.9432241250930752,
+        "unknown_known_fpr": 0.022793316382128587,
+        "own_wall_f1": 0.8350093088803298,
+        "door_free_recall": 0.7745664739884393,
+        "pair_topology_accuracy": 0.8135770349345696
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.1496063470840454,
+      "lex_ownq": 0.1496063470840454
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 6,
+      "rooms": 20,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9458812103950998,
+        "union_accuracy": 0.964437141132709,
+        "unknown_known_fpr": 0.0013469899375022332,
+        "own_wall_f1": 0.9458812103950998,
+        "door_free_recall": 0.9035625254375255,
+        "pair_topology_accuracy": 0.9363327589984132
+       },
+       "8": {
+        "wall_f1": 0.951677096578137,
+        "union_accuracy": 0.9707197836488455,
+        "unknown_known_fpr": 0.008508249114623823,
+        "own_wall_f1": 0.9606577007192224,
+        "door_free_recall": 0.8328651685393258,
+        "pair_topology_accuracy": 0.9503840254292657
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9458812103950998,
+        "union_accuracy": 0.964437141132709,
+        "unknown_known_fpr": 0.0013469899375022332,
+        "own_wall_f1": 0.9458812103950998,
+        "door_free_recall": 0.9035625254375255,
+        "pair_topology_accuracy": 0.9363327589984132
+       },
+       "8": {
+        "wall_f1": 0.9473088125862108,
+        "union_accuracy": 0.9696536301227376,
+        "unknown_known_fpr": 0.008702599982724369,
+        "own_wall_f1": 0.9606577007192224,
+        "door_free_recall": 0.8230337078651686,
+        "pair_topology_accuracy": 0.953128068217374
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9460107437198768,
+        "union_accuracy": 0.9629061752048224,
+        "unknown_known_fpr": 0.001329471893365069,
+        "own_wall_f1": 0.9460107437198768,
+        "door_free_recall": 0.9051057353140686,
+        "pair_topology_accuracy": 0.9335505813238671
+       },
+       "8": {
+        "wall_f1": 0.9470712773465068,
+        "union_accuracy": 0.9696276263781984,
+        "unknown_known_fpr": 0.008724194523624428,
+        "own_wall_f1": 0.9534282765145254,
+        "door_free_recall": 0.8258426966292135,
+        "pair_topology_accuracy": 0.9540236430312279
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0708661675453186,
+      "lex_ownq": 0.0708661675453186
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 7,
+      "rooms": 20,
+      "agents": 8,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9624912813066122,
+        "union_accuracy": 0.9686057656307179,
+        "unknown_known_fpr": 0.0019716586464050504,
+        "own_wall_f1": 0.9624912813066122,
+        "door_free_recall": 0.9391030844155844,
+        "pair_topology_accuracy": 0.9395840059836356
+       },
+       "8": {
+        "wall_f1": 0.8978023246864466,
+        "union_accuracy": 0.9649904214559387,
+        "unknown_known_fpr": 0.019426280902902184,
+        "own_wall_f1": 0.9037361361240761,
+        "door_free_recall": 0.8251404494382022,
+        "pair_topology_accuracy": 0.9634363031892412
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9624912813066122,
+        "union_accuracy": 0.9686057656307179,
+        "unknown_known_fpr": 0.0019716586464050504,
+        "own_wall_f1": 0.9624912813066122,
+        "door_free_recall": 0.9391030844155844,
+        "pair_topology_accuracy": 0.9395840059836356
+       },
+       "8": {
+        "wall_f1": 0.9044186599813924,
+        "union_accuracy": 0.9670498084291188,
+        "unknown_known_fpr": 0.019269527051236118,
+        "own_wall_f1": 0.9112829847890358,
+        "door_free_recall": 0.8117977528089888,
+        "pair_topology_accuracy": 0.9641475773641348
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9602662201842171,
+        "union_accuracy": 0.9667678436456972,
+        "unknown_known_fpr": 0.002036188071082444,
+        "own_wall_f1": 0.9602662201842171,
+        "door_free_recall": 0.9390422077922078,
+        "pair_topology_accuracy": 0.9363878968296615
+       },
+       "8": {
+        "wall_f1": 0.9047619047619048,
+        "union_accuracy": 0.9672413793103448,
+        "unknown_known_fpr": 0.019258330347545684,
+        "own_wall_f1": 0.9020592555451793,
+        "door_free_recall": 0.8089887640449438,
+        "pair_topology_accuracy": 0.9637639390693729
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 1.0472440719604492,
+      "lex_ownq": 1.0472440719604492
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 0,
+      "rooms": 20,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9548337544196392,
+        "union_accuracy": 0.9593582302355474,
+        "unknown_known_fpr": 0.0015976897927780739,
+        "own_wall_f1": 0.9548337544196392,
+        "door_free_recall": 0.8380975464557554,
+        "pair_topology_accuracy": 0.9262835341069307
+       },
+       "8": {
+        "wall_f1": 0.9223146435542575,
+        "union_accuracy": 0.9507246376811594,
+        "unknown_known_fpr": 0.11064918925316605,
+        "own_wall_f1": 0.9262777707918839,
+        "door_free_recall": 0.905940594059406,
+        "pair_topology_accuracy": 0.6775359739358118
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9548337544196392,
+        "union_accuracy": 0.9593582302355474,
+        "unknown_known_fpr": 0.0015976897927780739,
+        "own_wall_f1": 0.9548337544196392,
+        "door_free_recall": 0.8380975464557554,
+        "pair_topology_accuracy": 0.9262835341069307
+       },
+       "8": {
+        "wall_f1": 0.9223716908712396,
+        "union_accuracy": 0.9508349086326402,
+        "unknown_known_fpr": 0.11065658657829328,
+        "own_wall_f1": 0.9262777707918839,
+        "door_free_recall": 0.905940594059406,
+        "pair_topology_accuracy": 0.6775796784114967
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9541298031081921,
+        "union_accuracy": 0.9584256929073853,
+        "unknown_known_fpr": 0.0016308596736545147,
+        "own_wall_f1": 0.9541298031081921,
+        "door_free_recall": 0.7776903066367509,
+        "pair_topology_accuracy": 0.922919571689401
+       },
+       "8": {
+        "wall_f1": 0.9224904701397713,
+        "union_accuracy": 0.9509766855702584,
+        "unknown_known_fpr": 0.11066398390342053,
+        "own_wall_f1": 0.9255540752881686,
+        "door_free_recall": 0.905940594059406,
+        "pair_topology_accuracy": 0.6775356184116371
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.015748053789138794,
+      "lex_ownq": 0.07086614519357681
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 1,
+      "rooms": 20,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.954027445719757,
+        "union_accuracy": 0.9647369471158398,
+        "unknown_known_fpr": 0.0017771704981187667,
+        "own_wall_f1": 0.954027445719757,
+        "door_free_recall": 0.8989841378591379,
+        "pair_topology_accuracy": 0.9361709413972713
+       },
+       "8": {
+        "wall_f1": 0.8875024459450808,
+        "union_accuracy": 0.9384740655059053,
+        "unknown_known_fpr": 0.03676110635173173,
+        "own_wall_f1": 0.8773896232659779,
+        "door_free_recall": 0.8153266331658291,
+        "pair_topology_accuracy": 0.724532315290632
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.954027445719757,
+        "union_accuracy": 0.9647369471158398,
+        "unknown_known_fpr": 0.0017771704981187667,
+        "own_wall_f1": 0.954027445719757,
+        "door_free_recall": 0.8989841378591379,
+        "pair_topology_accuracy": 0.9361709413972713
+       },
+       "8": {
+        "wall_f1": 0.8875024459450808,
+        "union_accuracy": 0.9384740655059053,
+        "unknown_known_fpr": 0.03676110635173173,
+        "own_wall_f1": 0.8773896232659779,
+        "door_free_recall": 0.8153266331658291,
+        "pair_topology_accuracy": 0.724532315290632
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9504026362928085,
+        "union_accuracy": 0.9638210622845946,
+        "unknown_known_fpr": 0.0017895202424842926,
+        "own_wall_f1": 0.9504026362928085,
+        "door_free_recall": 0.8958426034676035,
+        "pair_topology_accuracy": 0.9350473260936095
+       },
+       "8": {
+        "wall_f1": 0.8875739644970414,
+        "union_accuracy": 0.9385121149397297,
+        "unknown_known_fpr": 0.036837596377432384,
+        "own_wall_f1": 0.8796746908406277,
+        "door_free_recall": 0.8140703517587939,
+        "pair_topology_accuracy": 0.7244744194273097
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.0445408821105957
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 2,
+      "rooms": 20,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9574172756701762,
+        "union_accuracy": 0.9627385509103518,
+        "unknown_known_fpr": 0.00176370792541143,
+        "own_wall_f1": 0.9574172756701762,
+        "door_free_recall": 0.89507692237594,
+        "pair_topology_accuracy": 0.9311731709315313
+       },
+       "8": {
+        "wall_f1": 0.8910782329464482,
+        "union_accuracy": 0.9491397404910317,
+        "unknown_known_fpr": 0.07385896984629825,
+        "own_wall_f1": 0.8891891992685971,
+        "door_free_recall": 0.9095149253731343,
+        "pair_topology_accuracy": 0.8230223188824932
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9574172756701762,
+        "union_accuracy": 0.9627385509103518,
+        "unknown_known_fpr": 0.00176370792541143,
+        "own_wall_f1": 0.9574172756701762,
+        "door_free_recall": 0.89507692237594,
+        "pair_topology_accuracy": 0.9311731709315313
+       },
+       "8": {
+        "wall_f1": 0.8924692723736823,
+        "union_accuracy": 0.9492828520544461,
+        "unknown_known_fpr": 0.07333831984043178,
+        "own_wall_f1": 0.8924289146097273,
+        "door_free_recall": 0.9098258706467661,
+        "pair_topology_accuracy": 0.822701341773876
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.957898288459803,
+        "union_accuracy": 0.9623511308682484,
+        "unknown_known_fpr": 0.0017833310908918943,
+        "own_wall_f1": 0.957898288459803,
+        "door_free_recall": 0.893704611736388,
+        "pair_topology_accuracy": 0.9299786477536521
+       },
+       "8": {
+        "wall_f1": 0.8940252943741823,
+        "union_accuracy": 0.9497519399567486,
+        "unknown_known_fpr": 0.07309632758418397,
+        "own_wall_f1": 0.9015739238756498,
+        "door_free_recall": 0.9104477611940298,
+        "pair_topology_accuracy": 0.8231218112577224
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.05511810630559921,
+      "lex_ownq": 0.05511810630559921
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 3,
+      "rooms": 20,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9393082786905211,
+        "union_accuracy": 0.961546646197547,
+        "unknown_known_fpr": 0.001983774815373148,
+        "own_wall_f1": 0.9393082786905211,
+        "door_free_recall": 0.9004311689124974,
+        "pair_topology_accuracy": 0.9345826246727843
+       },
+       "8": {
+        "wall_f1": 0.8847197086006058,
+        "union_accuracy": 0.9119075433911883,
+        "unknown_known_fpr": 0.03518523723858781,
+        "own_wall_f1": 0.8665339592963452,
+        "door_free_recall": 0.8391990291262136,
+        "pair_topology_accuracy": 0.8627340696558032
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9393082786905211,
+        "union_accuracy": 0.961546646197547,
+        "unknown_known_fpr": 0.001983774815373148,
+        "own_wall_f1": 0.9393082786905211,
+        "door_free_recall": 0.9004311689124974,
+        "pair_topology_accuracy": 0.9345826246727843
+       },
+       "8": {
+        "wall_f1": 0.8842128697212268,
+        "union_accuracy": 0.9100216955941255,
+        "unknown_known_fpr": 0.03510091072633236,
+        "own_wall_f1": 0.8658342974994467,
+        "door_free_recall": 0.839502427184466,
+        "pair_topology_accuracy": 0.8590154175391911
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9379169678318793,
+        "union_accuracy": 0.9612211171820789,
+        "unknown_known_fpr": 0.002044554069697878,
+        "own_wall_f1": 0.9379169678318793,
+        "door_free_recall": 0.8973604669475009,
+        "pair_topology_accuracy": 0.9335778971378179
+       },
+       "8": {
+        "wall_f1": 0.8845631507469444,
+        "union_accuracy": 0.9101468624833111,
+        "unknown_known_fpr": 0.035192264447942434,
+        "own_wall_f1": 0.8674547337731044,
+        "door_free_recall": 0.8398058252427184,
+        "pair_topology_accuracy": 0.8592888263947163
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0314960777759552,
+      "lex_ownq": 0.11023622751235962
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 4,
+      "rooms": 20,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.945435971418648,
+        "union_accuracy": 0.9607676380568275,
+        "unknown_known_fpr": 0.0018582016520303376,
+        "own_wall_f1": 0.945435971418648,
+        "door_free_recall": 0.904541205483085,
+        "pair_topology_accuracy": 0.9286182159953285
+       },
+       "8": {
+        "wall_f1": 0.9071846492383757,
+        "union_accuracy": 0.944573252688172,
+        "unknown_known_fpr": 0.027553387745974954,
+        "own_wall_f1": 0.9115196960588483,
+        "door_free_recall": 0.836890243902439,
+        "pair_topology_accuracy": 0.8013354904262845
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.945435971418648,
+        "union_accuracy": 0.9607676380568275,
+        "unknown_known_fpr": 0.0018582016520303376,
+        "own_wall_f1": 0.945435971418648,
+        "door_free_recall": 0.904541205483085,
+        "pair_topology_accuracy": 0.9286182159953285
+       },
+       "8": {
+        "wall_f1": 0.9072789645664991,
+        "union_accuracy": 0.944573252688172,
+        "unknown_known_fpr": 0.027560375670840787,
+        "own_wall_f1": 0.9112479569284134,
+        "door_free_recall": 0.836890243902439,
+        "pair_topology_accuracy": 0.8011233462924322
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9417810267067507,
+        "union_accuracy": 0.9593580704184468,
+        "unknown_known_fpr": 0.0018456276319520932,
+        "own_wall_f1": 0.9417810267067507,
+        "door_free_recall": 0.9077700279426768,
+        "pair_topology_accuracy": 0.9283013220259326
+       },
+       "8": {
+        "wall_f1": 0.9073569482288828,
+        "union_accuracy": 0.9444892473118279,
+        "unknown_known_fpr": 0.027504472271914132,
+        "own_wall_f1": 0.9118531890156103,
+        "door_free_recall": 0.8341463414634146,
+        "pair_topology_accuracy": 0.8008637269550677
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.015748053789138794,
+      "lex_ownq": 0.07086614519357681
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 5,
+      "rooms": 20,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.941489699230434,
+        "union_accuracy": 0.959590817259517,
+        "unknown_known_fpr": 0.00226672266631525,
+        "own_wall_f1": 0.941489699230434,
+        "door_free_recall": 0.8457330682483025,
+        "pair_topology_accuracy": 0.9273453885373114
+       },
+       "8": {
+        "wall_f1": 0.880476189841632,
+        "union_accuracy": 0.9194828115408227,
+        "unknown_known_fpr": 0.06746874620706397,
+        "own_wall_f1": 0.8667338268748878,
+        "door_free_recall": 0.8283492822966507,
+        "pair_topology_accuracy": 0.7764327403221969
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.941489699230434,
+        "union_accuracy": 0.959590817259517,
+        "unknown_known_fpr": 0.00226672266631525,
+        "own_wall_f1": 0.941489699230434,
+        "door_free_recall": 0.8457330682483025,
+        "pair_topology_accuracy": 0.9273453885373114
+       },
+       "8": {
+        "wall_f1": 0.8817119096049892,
+        "union_accuracy": 0.9204726826273788,
+        "unknown_known_fpr": 0.06750667556742324,
+        "own_wall_f1": 0.8666446645490953,
+        "door_free_recall": 0.8283492822966507,
+        "pair_topology_accuracy": 0.7776871999981732
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9433062093412983,
+        "union_accuracy": 0.9593993549002665,
+        "unknown_known_fpr": 0.002290415312755072,
+        "own_wall_f1": 0.9433062093412983,
+        "door_free_recall": 0.8424843330636412,
+        "pair_topology_accuracy": 0.9264278306780329
+       },
+       "8": {
+        "wall_f1": 0.8816827344434707,
+        "union_accuracy": 0.9206875383670964,
+        "unknown_known_fpr": 0.06748391795120767,
+        "own_wall_f1": 0.8618253361459859,
+        "door_free_recall": 0.8277511961722488,
+        "pair_topology_accuracy": 0.7780228330427684
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.04724408686161041,
+      "lex_ownq": 0.11811023950576782
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 6,
+      "rooms": 20,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9519702996866585,
+        "union_accuracy": 0.9698130222155978,
+        "unknown_known_fpr": 0.0013885479519123163,
+        "own_wall_f1": 0.9519702996866585,
+        "door_free_recall": 0.8960015713602515,
+        "pair_topology_accuracy": 0.9471315838950765
+       },
+       "8": {
+        "wall_f1": 0.912920604009846,
+        "union_accuracy": 0.9622443628736235,
+        "unknown_known_fpr": 0.06975216994061215,
+        "own_wall_f1": 0.9198610095912756,
+        "door_free_recall": 0.8808497536945814,
+        "pair_topology_accuracy": 0.862174760837688
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9519702996866585,
+        "union_accuracy": 0.9698130222155978,
+        "unknown_known_fpr": 0.0013885479519123163,
+        "own_wall_f1": 0.9519702996866585,
+        "door_free_recall": 0.8960015713602515,
+        "pair_topology_accuracy": 0.9471315838950765
+       },
+       "8": {
+        "wall_f1": 0.912920604009846,
+        "union_accuracy": 0.9622443628736235,
+        "unknown_known_fpr": 0.06975216994061215,
+        "own_wall_f1": 0.9198610095912756,
+        "door_free_recall": 0.8808497536945814,
+        "pair_topology_accuracy": 0.862174760837688
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9525390686471621,
+        "union_accuracy": 0.9697700246175293,
+        "unknown_known_fpr": 0.001400743383498458,
+        "own_wall_f1": 0.9525390686471621,
+        "door_free_recall": 0.9194916991186719,
+        "pair_topology_accuracy": 0.9474225906467366
+       },
+       "8": {
+        "wall_f1": 0.9124579124579124,
+        "union_accuracy": 0.9621132669113791,
+        "unknown_known_fpr": 0.06909547738693467,
+        "own_wall_f1": 0.9129136214482207,
+        "door_free_recall": 0.8817733990147784,
+        "pair_topology_accuracy": 0.8621233164461904
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.11811025440692902
+     }
+    },
+    {
+     "spec": {
+      "split": "VALIDATION",
+      "index": 7,
+      "rooms": 20,
+      "agents": 16,
+      "size": 128
+     },
+     "modes": {
+      "base": {
+       "0": {
+        "wall_f1": 0.9424862534046907,
+        "union_accuracy": 0.9647683147801189,
+        "unknown_known_fpr": 0.0017407616513337894,
+        "own_wall_f1": 0.9424862534046907,
+        "door_free_recall": 0.8578797680598358,
+        "pair_topology_accuracy": 0.9367842715426382
+       },
+       "8": {
+        "wall_f1": 0.9097546674975793,
+        "union_accuracy": 0.9633964446609035,
+        "unknown_known_fpr": 0.07387406682168646,
+        "own_wall_f1": 0.9085195212471472,
+        "door_free_recall": 0.8734903381642511,
+        "pair_topology_accuracy": 0.8517948462835891
+       }
+      },
+      "lex": {
+       "0": {
+        "wall_f1": 0.9424862534046907,
+        "union_accuracy": 0.9647683147801189,
+        "unknown_known_fpr": 0.0017407616513337894,
+        "own_wall_f1": 0.9424862534046907,
+        "door_free_recall": 0.8578797680598358,
+        "pair_topology_accuracy": 0.9367842715426382
+       },
+       "8": {
+        "wall_f1": 0.9097546674975793,
+        "union_accuracy": 0.9633964446609035,
+        "unknown_known_fpr": 0.07387406682168646,
+        "own_wall_f1": 0.9085195212471472,
+        "door_free_recall": 0.8734903381642511,
+        "pair_topology_accuracy": 0.8517948462835891
+       }
+      },
+      "lex_ownq": {
+       "0": {
+        "wall_f1": 0.9393051491645047,
+        "union_accuracy": 0.9636684385947218,
+        "unknown_known_fpr": 0.0016985182999084756,
+        "own_wall_f1": 0.9393051491645047,
+        "door_free_recall": 0.8556344395486845,
+        "pair_topology_accuracy": 0.9359379913391865
+       },
+       "8": {
+        "wall_f1": 0.9096774193548387,
+        "union_accuracy": 0.9633507853403142,
+        "unknown_known_fpr": 0.07379757679598581,
+        "own_wall_f1": 0.9074014475279029,
+        "door_free_recall": 0.8743961352657005,
+        "pair_topology_accuracy": 0.8517016858480273
+       }
+      }
+     },
+     "feat_maxdiff_vs_base_R8": {
+      "base": 0.0,
+      "lex": 0.0,
+      "lex_ownq": 0.04576253890991211
+     }
+    }
+   ],
+   "summary": {
+    "base": {
+     "0": {
+      "wall_f1": 0.963330542919687,
+      "union_accuracy": 0.9733208367007862,
+      "unknown_known_fpr": 0.0016694871182629306,
+      "own_wall_f1": 0.963330542919687,
+      "door_free_recall": 0.8828017329950523,
+      "pair_topology_accuracy": 0.9514753359914593
+     },
+     "8": {
+      "wall_f1": 0.9381081791407967,
+      "union_accuracy": 0.9715558613169136,
+      "unknown_known_fpr": 0.03306984412801242,
+      "own_wall_f1": 0.9367005772168161,
+      "door_free_recall": 0.8101951539349025,
+      "pair_topology_accuracy": 0.8704287406519611
+     }
+    },
+    "lex": {
+     "0": {
+      "wall_f1": 0.963330542919687,
+      "union_accuracy": 0.9733208367007862,
+      "unknown_known_fpr": 0.0016694871182629306,
+      "own_wall_f1": 0.963330542919687,
+      "door_free_recall": 0.8828017329950523,
+      "pair_topology_accuracy": 0.9514753359914593
+     },
+     "8": {
+      "wall_f1": 0.9385357113160948,
+      "union_accuracy": 0.9717353987387719,
+      "unknown_known_fpr": 0.033023934372817414,
+      "own_wall_f1": 0.9369931740926006,
+      "door_free_recall": 0.8098613145014034,
+      "pair_topology_accuracy": 0.8706631087658879
+     }
+    },
+    "lex_ownq": {
+     "0": {
+      "wall_f1": 0.9620227222163119,
+      "union_accuracy": 0.9728327441251571,
+      "unknown_known_fpr": 0.0016825148397042675,
+      "own_wall_f1": 0.9620227222163119,
+      "door_free_recall": 0.8798798477404581,
+      "pair_topology_accuracy": 0.9508441685900628
+     },
+     "8": {
+      "wall_f1": 0.9384898683895705,
+      "union_accuracy": 0.9717533915684671,
+      "unknown_known_fpr": 0.033020872880498424,
+      "own_wall_f1": 0.9360346210331653,
+      "door_free_recall": 0.8098951083551059,
+      "pair_topology_accuracy": 0.8705250312310486
+     }
+    }
+   }
+  }
+ },
+ "tie_rate_among_multi_source_blocks": 0.04674668351231838
+}

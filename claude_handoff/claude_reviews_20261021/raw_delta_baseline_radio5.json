@@ -1,0 +1,600 @@
+{
+ "args": {
+  "source": "/home/claude/sheafgbp/handoff_src/claude_handoff/reference_source_v310",
+  "out": "/home/claude/sheafgbp/reports/raw_delta_baseline_radio5.json",
+  "radio": 5.0,
+  "indices": "0-7",
+  "rooms": "6,12,20",
+  "agents": "8,16",
+  "rounds": 8,
+  "T": 6,
+  "size": 128
+ },
+ "header_bytes": 8,
+ "totals": {
+  "raw_full_2bit": 191870208,
+  "raw_full_zlib": 17743153,
+  "raw_delta_zlib": 2857484,
+  "packets": 46752,
+  "silent_delta_packets": 26022
+ },
+ "per_episode": [
+  {
+   "rooms": 6,
+   "agents": 8,
+   "index": 0,
+   "bytes": {
+    "raw_full_2bit": 2101248,
+    "raw_full_zlib": 186959,
+    "raw_delta_zlib": 20754,
+    "packets": 512,
+    "silent_delta_packets": 365
+   }
+  },
+  {
+   "rooms": 6,
+   "agents": 8,
+   "index": 1,
+   "bytes": {
+    "raw_full_2bit": 1575936,
+    "raw_full_zlib": 87985,
+    "raw_delta_zlib": 10237,
+    "packets": 384,
+    "silent_delta_packets": 308
+   }
+  },
+  {
+   "rooms": 6,
+   "agents": 8,
+   "index": 2,
+   "bytes": {
+    "raw_full_2bit": 2298240,
+    "raw_full_zlib": 186756,
+    "raw_delta_zlib": 26082,
+    "packets": 560,
+    "silent_delta_packets": 394
+   }
+  },
+  {
+   "rooms": 6,
+   "agents": 8,
+   "index": 3,
+   "bytes": {
+    "raw_full_2bit": 1904256,
+    "raw_full_zlib": 120372,
+    "raw_delta_zlib": 16986,
+    "packets": 464,
+    "silent_delta_packets": 336
+   }
+  },
+  {
+   "rooms": 6,
+   "agents": 8,
+   "index": 4,
+   "bytes": {
+    "raw_full_2bit": 2035584,
+    "raw_full_zlib": 129047,
+    "raw_delta_zlib": 14841,
+    "packets": 496,
+    "silent_delta_packets": 369
+   }
+  },
+  {
+   "rooms": 6,
+   "agents": 8,
+   "index": 5,
+   "bytes": {
+    "raw_full_2bit": 2166912,
+    "raw_full_zlib": 191786,
+    "raw_delta_zlib": 20001,
+    "packets": 528,
+    "silent_delta_packets": 390
+   }
+  },
+  {
+   "rooms": 6,
+   "agents": 8,
+   "index": 6,
+   "bytes": {
+    "raw_full_2bit": 2166912,
+    "raw_full_zlib": 144442,
+    "raw_delta_zlib": 20529,
+    "packets": 528,
+    "silent_delta_packets": 364
+   }
+  },
+  {
+   "rooms": 6,
+   "agents": 8,
+   "index": 7,
+   "bytes": {
+    "raw_full_2bit": 2495232,
+    "raw_full_zlib": 215348,
+    "raw_delta_zlib": 31081,
+    "packets": 608,
+    "silent_delta_packets": 386
+   }
+  },
+  {
+   "rooms": 6,
+   "agents": 16,
+   "index": 0,
+   "bytes": {
+    "raw_full_2bit": 5909760,
+    "raw_full_zlib": 376967,
+    "raw_delta_zlib": 60668,
+    "packets": 1440,
+    "silent_delta_packets": 1022
+   }
+  },
+  {
+   "rooms": 6,
+   "agents": 16,
+   "index": 1,
+   "bytes": {
+    "raw_full_2bit": 5712768,
+    "raw_full_zlib": 388926,
+    "raw_delta_zlib": 77653,
+    "packets": 1392,
+    "silent_delta_packets": 865
+   }
+  },
+  {
+   "rooms": 6,
+   "agents": 16,
+   "index": 2,
+   "bytes": {
+    "raw_full_2bit": 5712768,
+    "raw_full_zlib": 399195,
+    "raw_delta_zlib": 72371,
+    "packets": 1392,
+    "silent_delta_packets": 939
+   }
+  },
+  {
+   "rooms": 6,
+   "agents": 16,
+   "index": 3,
+   "bytes": {
+    "raw_full_2bit": 5647104,
+    "raw_full_zlib": 357100,
+    "raw_delta_zlib": 65913,
+    "packets": 1376,
+    "silent_delta_packets": 884
+   }
+  },
+  {
+   "rooms": 6,
+   "agents": 16,
+   "index": 4,
+   "bytes": {
+    "raw_full_2bit": 5778432,
+    "raw_full_zlib": 393594,
+    "raw_delta_zlib": 77138,
+    "packets": 1408,
+    "silent_delta_packets": 852
+   }
+  },
+  {
+   "rooms": 6,
+   "agents": 16,
+   "index": 5,
+   "bytes": {
+    "raw_full_2bit": 5712768,
+    "raw_full_zlib": 337998,
+    "raw_delta_zlib": 57681,
+    "packets": 1392,
+    "silent_delta_packets": 988
+   }
+  },
+  {
+   "rooms": 6,
+   "agents": 16,
+   "index": 6,
+   "bytes": {
+    "raw_full_2bit": 5909760,
+    "raw_full_zlib": 368158,
+    "raw_delta_zlib": 74263,
+    "packets": 1440,
+    "silent_delta_packets": 948
+   }
+  },
+  {
+   "rooms": 6,
+   "agents": 16,
+   "index": 7,
+   "bytes": {
+    "raw_full_2bit": 5712768,
+    "raw_full_zlib": 321882,
+    "raw_delta_zlib": 67804,
+    "packets": 1392,
+    "silent_delta_packets": 868
+   }
+  },
+  {
+   "rooms": 12,
+   "agents": 8,
+   "index": 0,
+   "bytes": {
+    "raw_full_2bit": 2495232,
+    "raw_full_zlib": 258036,
+    "raw_delta_zlib": 39426,
+    "packets": 608,
+    "silent_delta_packets": 285
+   }
+  },
+  {
+   "rooms": 12,
+   "agents": 8,
+   "index": 1,
+   "bytes": {
+    "raw_full_2bit": 2626560,
+    "raw_full_zlib": 314449,
+    "raw_delta_zlib": 48085,
+    "packets": 640,
+    "silent_delta_packets": 290
+   }
+  },
+  {
+   "rooms": 12,
+   "agents": 8,
+   "index": 2,
+   "bytes": {
+    "raw_full_2bit": 2035584,
+    "raw_full_zlib": 129943,
+    "raw_delta_zlib": 17481,
+    "packets": 496,
+    "silent_delta_packets": 330
+   }
+  },
+  {
+   "rooms": 12,
+   "agents": 8,
+   "index": 3,
+   "bytes": {
+    "raw_full_2bit": 1904256,
+    "raw_full_zlib": 165059,
+    "raw_delta_zlib": 18382,
+    "packets": 464,
+    "silent_delta_packets": 325
+   }
+  },
+  {
+   "rooms": 12,
+   "agents": 8,
+   "index": 4,
+   "bytes": {
+    "raw_full_2bit": 2232576,
+    "raw_full_zlib": 168695,
+    "raw_delta_zlib": 24447,
+    "packets": 544,
+    "silent_delta_packets": 371
+   }
+  },
+  {
+   "rooms": 12,
+   "agents": 8,
+   "index": 5,
+   "bytes": {
+    "raw_full_2bit": 2166912,
+    "raw_full_zlib": 156379,
+    "raw_delta_zlib": 18793,
+    "packets": 528,
+    "silent_delta_packets": 365
+   }
+  },
+  {
+   "rooms": 12,
+   "agents": 8,
+   "index": 6,
+   "bytes": {
+    "raw_full_2bit": 2560896,
+    "raw_full_zlib": 274830,
+    "raw_delta_zlib": 45913,
+    "packets": 624,
+    "silent_delta_packets": 263
+   }
+  },
+  {
+   "rooms": 12,
+   "agents": 8,
+   "index": 7,
+   "bytes": {
+    "raw_full_2bit": 2495232,
+    "raw_full_zlib": 203826,
+    "raw_delta_zlib": 24023,
+    "packets": 608,
+    "silent_delta_packets": 398
+   }
+  },
+  {
+   "rooms": 12,
+   "agents": 16,
+   "index": 0,
+   "bytes": {
+    "raw_full_2bit": 5712768,
+    "raw_full_zlib": 499255,
+    "raw_delta_zlib": 94818,
+    "packets": 1392,
+    "silent_delta_packets": 684
+   }
+  },
+  {
+   "rooms": 12,
+   "agents": 16,
+   "index": 1,
+   "bytes": {
+    "raw_full_2bit": 5647104,
+    "raw_full_zlib": 484751,
+    "raw_delta_zlib": 82077,
+    "packets": 1376,
+    "silent_delta_packets": 737
+   }
+  },
+  {
+   "rooms": 12,
+   "agents": 16,
+   "index": 2,
+   "bytes": {
+    "raw_full_2bit": 5778432,
+    "raw_full_zlib": 500455,
+    "raw_delta_zlib": 89318,
+    "packets": 1408,
+    "silent_delta_packets": 710
+   }
+  },
+  {
+   "rooms": 12,
+   "agents": 16,
+   "index": 3,
+   "bytes": {
+    "raw_full_2bit": 5909760,
+    "raw_full_zlib": 536389,
+    "raw_delta_zlib": 80136,
+    "packets": 1440,
+    "silent_delta_packets": 912
+   }
+  },
+  {
+   "rooms": 12,
+   "agents": 16,
+   "index": 4,
+   "bytes": {
+    "raw_full_2bit": 5581440,
+    "raw_full_zlib": 493653,
+    "raw_delta_zlib": 98666,
+    "packets": 1360,
+    "silent_delta_packets": 588
+   }
+  },
+  {
+   "rooms": 12,
+   "agents": 16,
+   "index": 5,
+   "bytes": {
+    "raw_full_2bit": 5909760,
+    "raw_full_zlib": 492277,
+    "raw_delta_zlib": 72758,
+    "packets": 1440,
+    "silent_delta_packets": 1039
+   }
+  },
+  {
+   "rooms": 12,
+   "agents": 16,
+   "index": 6,
+   "bytes": {
+    "raw_full_2bit": 5909760,
+    "raw_full_zlib": 506992,
+    "raw_delta_zlib": 84906,
+    "packets": 1440,
+    "silent_delta_packets": 839
+   }
+  },
+  {
+   "rooms": 12,
+   "agents": 16,
+   "index": 7,
+   "bytes": {
+    "raw_full_2bit": 5778432,
+    "raw_full_zlib": 497184,
+    "raw_delta_zlib": 83529,
+    "packets": 1408,
+    "silent_delta_packets": 815
+   }
+  },
+  {
+   "rooms": 20,
+   "agents": 8,
+   "index": 0,
+   "bytes": {
+    "raw_full_2bit": 2101248,
+    "raw_full_zlib": 198010,
+    "raw_delta_zlib": 29985,
+    "packets": 512,
+    "silent_delta_packets": 301
+   }
+  },
+  {
+   "rooms": 20,
+   "agents": 8,
+   "index": 1,
+   "bytes": {
+    "raw_full_2bit": 1969920,
+    "raw_full_zlib": 203510,
+    "raw_delta_zlib": 20756,
+    "packets": 480,
+    "silent_delta_packets": 332
+   }
+  },
+  {
+   "rooms": 20,
+   "agents": 8,
+   "index": 2,
+   "bytes": {
+    "raw_full_2bit": 2298240,
+    "raw_full_zlib": 192696,
+    "raw_delta_zlib": 30265,
+    "packets": 560,
+    "silent_delta_packets": 319
+   }
+  },
+  {
+   "rooms": 20,
+   "agents": 8,
+   "index": 3,
+   "bytes": {
+    "raw_full_2bit": 2298240,
+    "raw_full_zlib": 300100,
+    "raw_delta_zlib": 41984,
+    "packets": 560,
+    "silent_delta_packets": 258
+   }
+  },
+  {
+   "rooms": 20,
+   "agents": 8,
+   "index": 4,
+   "bytes": {
+    "raw_full_2bit": 2363904,
+    "raw_full_zlib": 207338,
+    "raw_delta_zlib": 28079,
+    "packets": 576,
+    "silent_delta_packets": 366
+   }
+  },
+  {
+   "rooms": 20,
+   "agents": 8,
+   "index": 5,
+   "bytes": {
+    "raw_full_2bit": 2363904,
+    "raw_full_zlib": 287077,
+    "raw_delta_zlib": 41785,
+    "packets": 576,
+    "silent_delta_packets": 302
+   }
+  },
+  {
+   "rooms": 20,
+   "agents": 8,
+   "index": 6,
+   "bytes": {
+    "raw_full_2bit": 2101248,
+    "raw_full_zlib": 204587,
+    "raw_delta_zlib": 22951,
+    "packets": 512,
+    "silent_delta_packets": 342
+   }
+  },
+  {
+   "rooms": 20,
+   "agents": 8,
+   "index": 7,
+   "bytes": {
+    "raw_full_2bit": 2429568,
+    "raw_full_zlib": 285333,
+    "raw_delta_zlib": 35835,
+    "packets": 592,
+    "silent_delta_packets": 336
+   }
+  },
+  {
+   "rooms": 20,
+   "agents": 16,
+   "index": 0,
+   "bytes": {
+    "raw_full_2bit": 5515776,
+    "raw_full_zlib": 701253,
+    "raw_delta_zlib": 115629,
+    "packets": 1344,
+    "silent_delta_packets": 573
+   }
+  },
+  {
+   "rooms": 20,
+   "agents": 16,
+   "index": 1,
+   "bytes": {
+    "raw_full_2bit": 5909760,
+    "raw_full_zlib": 774386,
+    "raw_delta_zlib": 134828,
+    "packets": 1440,
+    "silent_delta_packets": 538
+   }
+  },
+  {
+   "rooms": 20,
+   "agents": 16,
+   "index": 2,
+   "bytes": {
+    "raw_full_2bit": 5909760,
+    "raw_full_zlib": 755624,
+    "raw_delta_zlib": 115939,
+    "packets": 1440,
+    "silent_delta_packets": 663
+   }
+  },
+  {
+   "rooms": 20,
+   "agents": 16,
+   "index": 3,
+   "bytes": {
+    "raw_full_2bit": 5909760,
+    "raw_full_zlib": 730612,
+    "raw_delta_zlib": 127393,
+    "packets": 1440,
+    "silent_delta_packets": 486
+   }
+  },
+  {
+   "rooms": 20,
+   "agents": 16,
+   "index": 4,
+   "bytes": {
+    "raw_full_2bit": 5712768,
+    "raw_full_zlib": 725328,
+    "raw_delta_zlib": 118996,
+    "packets": 1392,
+    "silent_delta_packets": 485
+   }
+  },
+  {
+   "rooms": 20,
+   "agents": 16,
+   "index": 5,
+   "bytes": {
+    "raw_full_2bit": 5647104,
+    "raw_full_zlib": 753328,
+    "raw_delta_zlib": 113951,
+    "packets": 1376,
+    "silent_delta_packets": 564
+   }
+  },
+  {
+   "rooms": 20,
+   "agents": 16,
+   "index": 6,
+   "bytes": {
+    "raw_full_2bit": 5909760,
+    "raw_full_zlib": 760314,
+    "raw_delta_zlib": 124247,
+    "packets": 1440,
+    "silent_delta_packets": 425
+   }
+  },
+  {
+   "rooms": 20,
+   "agents": 16,
+   "index": 7,
+   "bytes": {
+    "raw_full_2bit": 5844096,
+    "raw_full_zlib": 774969,
+    "raw_delta_zlib": 118101,
+    "packets": 1424,
+    "silent_delta_packets": 503
+   }
+  }
+ ],
+ "note": "lossless raw union-map exchange on the same forests/rounds/silence rule as the learned CRDT; quality unmatched (F1=1)"
+}

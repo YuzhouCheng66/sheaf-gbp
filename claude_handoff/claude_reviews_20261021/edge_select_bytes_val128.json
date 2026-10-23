@@ -1,0 +1,30 @@
+{
+ "0.0": {
+  "mean_fraction_coordinates_sent": 1.0,
+  "mean_fraction_sender_observed_blocks_cut": 0.0
+ },
+ "15.0": {
+  "mean_fraction_coordinates_sent": 0.931540559772296,
+  "mean_fraction_sender_observed_blocks_cut": 0.0
+ },
+ "12.0": {
+  "mean_fraction_coordinates_sent": 0.7709618121442126,
+  "mean_fraction_sender_observed_blocks_cut": 0.0
+ },
+ "10.0": {
+  "mean_fraction_coordinates_sent": 0.6167575901328273,
+  "mean_fraction_sender_observed_blocks_cut": 0.00014683293210487438
+ },
+ "8.0": {
+  "mean_fraction_coordinates_sent": 0.4416805028462998,
+  "mean_fraction_sender_observed_blocks_cut": 0.030123987243964957
+ },
+ "6.0": {
+  "mean_fraction_coordinates_sent": 0.2679969165085389,
+  "mean_fraction_sender_observed_blocks_cut": 0.17228450428913622
+ },
+ "5.0": {
+  "mean_fraction_coordinates_sent": 0.1915915559772296,
+  "mean_fraction_sender_observed_blocks_cut": 0.3074573979870305
+ }
+}

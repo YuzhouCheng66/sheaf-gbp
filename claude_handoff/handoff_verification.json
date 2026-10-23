@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-21",
+  "scope": "Documentation, artifact organization and read-only CPU checks, not new scientific endpoint review or training",
+  "parallelism": {
+    "maximum_simultaneous_agents_including_root": 4,
+    "total_distinct_subagents_used": 5,
+    "inventory_round": ["handoff_best_version", "handoff_research_spec", "handoff_dataset_benchmark"],
+    "independent_review_round": ["handoff_independent_claims_review", "handoff_independent_operability_review"]
+  },
+  "checks": {
+    "copied_sealed_source_files_verified": "70/70 SHA256 match",
+    "local_source_bytes": 836899,
+    "remote_v310_source_verified": "70/70 SHA256 match",
+    "remote_v319_source_verified": "77/77 SHA256 match; not copied",
+    "v299_CPU_typed_load": "PASS; exact checkpoint and tensor-state SHA; source module path verified",
+    "v310_E12_CPU_typed_load": "PASS; exact checkpoint and tensor-state SHA; source module path verified",
+    "handoff_verifier_executed_on_remote_v299_and_v310": "PASS; CPU only; code streamed over SSH stdin, no remote diagnostic file created",
+    "v304_checkpoint_SHA": "PASS; no new metric evaluation or typed load",
+    "artifact_manifest_json": "valid",
+    "local_README_and_CLAUDE_links": "all resolved",
+    "wrong_checkpoint_negative_test": "rejected by SHA before torch.load",
+    "private_key_password_API_key_pattern_scan": "no matches in handoff directory",
+    "full_validation_rerun": false,
+    "GPU_work": false,
+    "training_or_resume": false,
+    "checkpoint_or_dataset_deletion": false,
+    "new_large_checkpoint_or_dataset_transfer": false
+  },
+  "independent_review_findings_closed": [
+    "Explicit zero F1 for erased true walls, not None exclusion",
+    "Preserved stronger scratch E32 partial512 results to avoid universal-best claim",
+    "Provided independent SHA-first CPU loader, not historical resume/latest loader",
+    "Pinned sealed source import path before mutable workspace modules",
+    "Documented transitive old native128 data-bank dependency",
+    "HouseExpo identity explicitly confirmed by user; not claimed as current training data or furniture labels"
+  ],
+  "remaining_limits": [
+    "No single universally best or fully qualified model identified",
+    "Large weights and data remain at indexed original paths; handoff folder alone is not a portable runnable data/weights bundle",
+    "No existing standalone full evaluation CLI; a new read-only adapter is still required for fresh metrics",
+    "GPU occupied by another project at snapshot; old home filesystem below30GB safety floor",
+    "v341 is only design; no implementation/admission/retained updates"
+  ]
+}
