@@ -30,11 +30,12 @@ log(){ echo "$(date -u +%FT%TZ) $*" | tee -a $LOG; }
 log "chain_day4_U started pid $$ sha256 $(sha256sum scripts/chain_day4_U.sh | cut -c1-16)"
 TSHA=$(sha256sum scripts/train_v388.py | cut -d' ' -f1)
 [ "$TSHA" = "1e34ce3d60d47ae4a57576508ac6ae603cbf71ca126eb2d5098769cb08f44dcb" ] || { log "ABORT: train_v388.py sha changed ($TSHA)"; exit 2; }
-GATE=$(grep -o '"verdict": "[^"]*"' runs/v388-gate/gate-s342202.json | head -1)
-case "$GATE" in *LAUNCH*) ;; *) log "ABORT: code-axis gate did not say LAUNCH ($GATE)"; exit 2 ;; esac
+GATE=$($P -c "import json; print(json.load(open('runs/v388-gate/gate-s342202.json'))['verdict']['verdict'])" 2>/dev/null)
+case "$GATE" in LAUNCH*) ;; *) log "ABORT: code-axis gate did not say LAUNCH ($GATE)"; exit 2 ;; esac
 log "batch U gate: $GATE"
 # wait for batch T (train_v386.py) to finish; never co-run with it
-while pgrep -f "^$P scripts/train_v386.py " >/dev/null; do sleep 120; done
+while pgrep -f "chain_day4_T.sh" >/dev/null || pgrep -f "^$P scripts/train_v386.py " >/dev/null; do sleep 120; done
+log "batch U: batch T chain and trainer are gone; proceeding (review M2)"
 for seed in 342101 342202; do
   for f in final.json run.json checkpoints/initial.pt validation/final-val.json; do [ -f runs/v382-long/d4800e4-s$seed/$f ] || { log "ABORT: control runs/v382-long/d4800e4-s$seed/$f missing"; exit 2; }; done
 done
@@ -54,7 +55,7 @@ for seed in 342101 342202; do
 done
 wait
 NOW=$(date +%s)
-CHK=$($P scripts/preflight_check_v386.py --preflight runs/v388-embed/pf-par-$TS-s342101 runs/v388-embed/pf-par-$TS-s342202 --control-run runs/v382-long/d4800e4-s342101/run.json --avail $((DE-NOW)) --final-window $((DT-DE)) --mode parallel --width 1.0 --decoder-params 636570 --code-embed 8 2>&1 | tail -1)
+CHK=$($P scripts/preflight_check_v386.py --preflight runs/v388-embed/pf-par-$TS-s342101 runs/v388-embed/pf-par-$TS-s342202 --control-run runs/v382-long/d4800e4-s342101/run.json --avail $((DE-NOW)) --final-window $((DT-DE)) --mode parallel --min-rate 0.075 --width 1.0 --decoder-params 636570 --code-embed 8 2>&1 | tail -1)
 log "batch U preflight (parallel): $CHK"
 case "$CHK" in
   "VALID FIT"*) MODE=PARALLEL ;;
