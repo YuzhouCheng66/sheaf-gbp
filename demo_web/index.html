@@ -32,30 +32,31 @@
   .controls input[type=range] { flex: 1; min-width: 120px; accent-color: var(--accent); }
   .readout { font-variant-numeric: tabular-nums; color: var(--fg); min-width: 7ch; }
   .note { color: var(--muted); font-size: 12px; }
-  .figure { display: grid; grid-template-columns: minmax(280px, 520px) minmax(0, 1fr); gap: 18px 28px; align-items: start; }
+  .figure { display: grid; grid-template-columns: minmax(280px, 500px) minmax(0, 1fr); gap: 18px 28px; align-items: start; }
+  .left { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
   .panel-label { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
   .panel-label b { font-size: 15px; }
   .panel-label span { font-size: 13px; }
   canvas { display: block; max-width: 100%; }
   #gt { width: 100%; aspect-ratio: 1; border: 1px solid var(--rule); background: var(--map-free); }
-  .tiles { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 8px; }
+  .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 14px; }
   .tile { min-width: 0; }
-  .tile .name { font-weight: 700; font-size: 12px; margin-bottom: 3px; }
-  .tile canvas { width: 100%; aspect-ratio: 1; border: 1px solid var(--rule); background: var(--map-unknown); }
+  .tile .name { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+  .tile canvas { width: 100%; aspect-ratio: 1; border: 1px solid var(--rule); background: var(--map-unknown); image-rendering: pixelated; image-rendering: crisp-edges; }
   .tile .under { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 4px; font-size: 11px; color: var(--muted); margin-top: 3px; font-variant-numeric: tabular-nums; line-height: 1.3; }
-  .right { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .right { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
   .status { font-variant-numeric: tabular-nums; color: var(--fg); display: flex; flex-wrap: wrap; gap: 4px 18px; }
   .legend { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; color: var(--muted); font-size: 12px; }
   .legend i { display: inline-block; width: 14px; height: 11px; border: 1px solid var(--rule); vertical-align: -1px; margin-right: 5px; }
-  .charts { display: grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap: 24px; }
-  .charts canvas { width: 100%; height: 130px; }
+  .charts { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  .charts canvas { width: 100%; height: 140px; }
   .charts .cap { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .foot { color: var(--faint); font-size: 12px; max-width: 90ch; }
   .msg { color: var(--muted); }
   @media (max-width: 900px) {
     .figure { grid-template-columns: 1fr; }
-    .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    .charts { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
@@ -91,18 +92,10 @@
   </div>
 
   <div class="figure">
-    <div>
-      <div class="panel-label"><b>a</b><span>Ground truth (grey = occupied), trajectories and radio links</span></div>
-      <canvas id="gt" width="1040" height="1040"></canvas>
-    </div>
-    <div class="right">
+    <div class="left">
       <div>
-        <div class="panel-label"><b>b</b><span>Local observation (own sensor only)</span></div>
-        <div class="tiles" id="rowb"></div>
-      </div>
-      <div>
-        <div class="panel-label"><b>c</b><span>Map decoded from the fused Sheaf-GBP posterior</span></div>
-        <div class="tiles" id="rowc"></div>
+        <div class="panel-label"><b>a</b><span>Ground truth (grey = occupied), trajectories and radio links</span></div>
+        <canvas id="gt" width="1040" height="1040"></canvas>
       </div>
       <div class="status" id="status"></div>
       <div class="legend">
@@ -114,13 +107,22 @@
       <div>
         <div class="panel-label"><b>d</b><span>Mean wall F1 and cumulative payload</span></div>
         <div class="charts">
-          <div><canvas id="chartF1" width="600" height="260"></canvas><div class="cap">wall F1 of the own code (grey) and of the fused posterior (black)</div></div>
-          <div><canvas id="chartKB" width="600" height="260"></canvas><div class="cap">bytes actually sent, diff-coded packets (8 B header + 8 B change mask + 2 B per changed coordinate + 8 version bytes)</div></div>
+          <div><canvas id="chartF1" width="1000" height="280"></canvas><div class="cap">wall F1 of the own code (grey) and of the fused posterior (black)</div></div>
+          <div><canvas id="chartKB" width="1000" height="280"></canvas><div class="cap">bytes actually sent, diff-coded packets (8 B header + 8 B change mask + 2 B per changed coordinate + 8 version bytes)</div></div>
         </div>
       </div>
     </div>
+    <div class="right">
+      <div>
+        <div class="panel-label"><b>b</b><span>Local observation (own sensor only)</span></div>
+        <div class="tiles" id="rowb"></div>
+      </div>
+      <div>
+        <div class="panel-label"><b>c</b><span>Map decoded from the fused Sheaf-GBP posterior</span></div>
+        <div class="tiles" id="rowc"></div>
+      </div>
+    </div>
   </div>
-  <p class="foot" id="foot">Each run is a real simulation of the sealed v293 world family with the trained ldynft-s342202 model (H128): v293 first-hit sensor (256 beams, 5 m), hard-8 codes, profile-4 wire, max-precision join with per-agent CRDT memory. Runs were precomputed on the GPU host and exported as RLE maps; this page only plays them back.</p>
 </div>
 
 <script>
@@ -213,11 +215,11 @@
 
   // ---- charts
   function chart(canvas, series, yLo, yHi, yLabel, fmt) {
-    const c = canvas.getContext('2d'), W = canvas.width, H = canvas.height, L = 62, R = 14, T0 = 14, B = 44;
+    const c = canvas.getContext('2d'), W = canvas.width, H = canvas.height, L = 70, R = 16, T0 = 14, B = 48;
     c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, W, H);
     const m = run.meta, xMax = Math.max(t, 12), X = (s) => L + (W - L - R) * s / xMax, Y = (v) => T0 + (H - T0 - B) * (1 - (v - yLo) / (yHi - yLo));
     c.strokeStyle = css('--rule'); c.lineWidth = 1; c.beginPath(); c.moveTo(L, T0); c.lineTo(L, H - B); c.lineTo(W - R, H - B); c.stroke();
-    c.fillStyle = css('--muted'); c.font = `15px ${css('--sans')}`; c.textAlign = 'center';
+    c.fillStyle = css('--muted'); c.font = `17px ${css('--sans')}`; c.textAlign = 'center';
     const xt = xMax <= 20 ? 5 : xMax <= 50 ? 10 : 20;
     for (let s = 0; s <= xMax; s += xt) { c.fillText(String(s), X(s), H - B + 20); c.beginPath(); c.moveTo(X(s), H - B); c.lineTo(X(s), H - B + 4); c.stroke(); }
     c.fillText('step', (L + W - R) / 2, H - 8);
