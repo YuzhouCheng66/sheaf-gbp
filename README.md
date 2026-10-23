@@ -15,7 +15,7 @@ K0 = decode from the agent's own code. R8 = decode after eight rounds of fusion.
 
 Compression on v293: rate-term training (lambda 0.01) plus real arithmetic coding brings a self message from 27.2 B to 14.1 B at a cost of 0.3 to 0.9 pp R8.
 
-What moved HouseExpo from R8 .64 to .88, one variable at a time: fit the chart to the house (+10 pp), more training houses (+5 to +10 pp), longer training (+2.4 pp for the second cosine cycle, +1.0 to +1.3 pp for the third). More bits per coordinate and rectangular charts did not help.
+What moved HouseExpo from R8 .64 to .90, one variable at a time: fit the chart to the house (+10 pp), more training houses (+5 to +10 pp), longer training (+2.4 pp for the second cosine cycle, +1.0 to +1.3 pp for the third). More bits per coordinate and rectangular charts did not help.
 
 ## Demo
 
