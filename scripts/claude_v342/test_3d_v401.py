@@ -69,7 +69,22 @@ for shift, want in ((1, 1.), (2, 0.)):
     r = T.metrics3d(pw.reshape(1, -1), tgt_w, S, no_skel)[0]
     assert abs(r['surface_f1']) < 1e-9 and abs(r['surface_f1_tol1'] - want) < 1e-9, (shift, r)
 r = T.metrics3d(tgt_w.clone(), tgt_w, S, no_skel)[0]; assert abs(r['surface_f1_tol1'] - 1) < 1e-9 and abs(r['surface_f1'] - 1) < 1e-9
-print('B. space_to_depth / depth_to_space inverse + index map; pool_ternary == explicit ternary-union loop; tolerance-1 surface F1 semantics')
+# review M1: a first-hit-layer target (free in front of the wall, occupied wall layer, unknown shadow behind): a wall decoded one voxel
+# INTO the shadow (x = 11, unknown in the target) or towards the sensor (x = 9) scores tol1 = 1; two voxels off or missing scores 0
+fh = torch.full((S, S, S), -1, dtype=torch.int8); fh[:10] = 0; fh[10] = 1; tgt_fh = fh.reshape(1, -1)
+def pred_wall(x):
+    pw = torch.zeros(S, S, S, dtype=torch.int8); pw[x] = 1; return pw.reshape(1, -1)
+for x, want in ((11, 1.), (9, 1.), (12, 0.), (10, 1.)):
+    r = T.metrics3d(pred_wall(x), tgt_fh, S, no_skel)[0]
+    assert abs(r['surface_f1_tol1'] - want) < 1e-9, (x, r)
+assert abs(T.metrics3d(pred_wall(10), tgt_fh, S, no_skel)[0]['surface_f1'] - 1) < 1e-9 and abs(T.metrics3d(pred_wall(11), tgt_fh, S, no_skel)[0]['surface_f1']) < 1e-9
+r = T.metrics3d(torch.zeros(1, S ** 3, dtype=torch.int8), tgt_fh, S, no_skel)[0]; assert abs(r['surface_f1_tol1']) < 1e-9 and abs(r['surface_f1']) < 1e-9   # missing wall
+# a fully known 3-layer slab (interior layer included) shifted by one voxel scores tol1 = 1 (reviewer's case), the exact slab scores 1 at both tolerances
+slab = torch.zeros(S, S, S, dtype=torch.int8); slab[:, :, 10:13] = 1; tgt_sl = slab.reshape(1, -1)
+sh = torch.zeros(S, S, S, dtype=torch.int8); sh[:, :, 11:14] = 1
+assert abs(T.metrics3d(sh.reshape(1, -1), tgt_sl, S, no_skel)[0]['surface_f1_tol1'] - 1) < 1e-9
+r = T.metrics3d(tgt_sl.clone(), tgt_sl, S, no_skel)[0]; assert abs(r['surface_f1_tol1'] - 1) < 1e-9 and abs(r['surface_f1'] - 1) < 1e-9
+print('B. space_to_depth / depth_to_space inverse + index map; pool_ternary == explicit ternary-union loop; tolerance-1 surface F1 semantics (incl. first-hit-layer target)')
 
 # ---------------------------------------------------------------- C. model equivalence at s = 1
 m1 = T.SheafModel3D(64, 1).eval(); m0 = T0.SheafModel3D(64, 1).eval()
@@ -113,7 +128,11 @@ with torch.no_grad():
     assert torch.equal(feats8, feats16), 'join must be idempotent at D = 256'
     known_logit, occ_logit = model.decoder(feats8)
     assert known_logit.shape == (n, 128 ** 3) and occ_logit.shape == (n, 128 ** 3)
-    # the readout is a true block readout: perturbing one compute cell's features moves only its 2x2x2 voxels (linearity of the output conv)
+    # the readout is a true block readout: perturbing one compute cell's features moves exactly its 2x2x2 voxels (1x1 output conv + depth_to_space)
+    h = torch.randn(1, model.decoder.output.in_channels, 64, 64, 64); h2 = h.clone(); h2[0, :, 5, 6, 7] += 1.
+    o1 = T.depth_to_space(model.decoder.output(h), 2); o2 = T.depth_to_space(model.decoder.output(h2), 2)
+    moved = (o1 != o2).any(1)[0]
+    assert moved.sum() == 8 and moved[10:12, 12:14, 14:16].all(), int(moved.sum())
     reached = torch.from_numpy(f128['reached'][4])
     tgt = T.stream_targets(own, reached)
     rows = T.metrics3d(tgt.clone(), tgt, 128)

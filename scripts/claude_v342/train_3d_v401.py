@@ -19,9 +19,14 @@ Everything else is v400: the k-bit 8+8 wire, the max-precision join over 8 round
 (known BCE + surface-weighted occupancy BCE on target-known voxels), the metrics (surface F1 with the 6-neighbourhood, variable-structure
 F1 with the skeleton removed, accuracy, unknown-known FPR). New at s > 1: the same metrics are ALSO reported after pooling prediction and
 target (and the skeleton) to the 64^3 grid by the ternary union over each s^3 block ("pooled64"), so a 128^3 run can be compared with
-batch 3D-A at the 0.2 m scale separately from the native 0.1 m scale; and every run also reports the TOLERANCE-1 surface F1 (a predicted
-surface voxel counts as a hit if a target surface voxel lies within one voxel in the 6-neighbourhood, and vice versa), which separates
-one-voxel jitter from missing structure at the native scale.
+batch 3D-A at the 0.2 m scale separately from the native 0.1 m scale; and every run also reports the TOLERANCE-1 surface F1: the
+predicted occupied voxels within one voxel of the target-known region (so a wall decoded one voxel INTO the unobserved shadow behind the
+first-hit layer still counts; review v401 M1) are scored against the target surface voxels with a one-voxel 6-neighbourhood tolerance in
+both directions (precision over non-interior predicted voxels, recall over all counted predicted voxels, so that a perfect prediction and
+any one-voxel shift of a solid both score 1). Read both ways: tol-1 close to the tolerance-0 value of a coarser run while the native value is lower => the residual is
++-1-voxel jitter; tol-1 clearly lower too => structure is missing. surface_f1 itself is unchanged and comparable with 3D-A.
+Note (review S3): public3's fourth channel is 1 / S (1/128 for the 128^3 model, 1/64 for v400); with the compute grid fixed it only tags
+the model's resolution.
 Scenes come from a cache written by gen_3d_cache_v401.py (TRAIN only); VALIDATION / fresh panels are generated on the fly (indices
 1,000,000+ and 1,000,032+) in a CPU worker pool BEFORE CUDA is initialised. TEST is never generated.
 """
@@ -314,13 +319,18 @@ def metrics3d(pred, target, size, skel=None):
         ps = po & ~((t == 1) & ~s)                      # ignore predicted occupied inside solid interiors (correct but uninformative)
         tp_s = (ps & s).sum().item(); fp_s = (ps & ~s).sum().item(); fn_s = (~ps & s).sum().item()
         surface_f1 = 2 * tp_s / max(2 * tp_s + fp_s + fn_s, 1) if (tp_s + fp_s + fn_s) else None
-        # tolerance-1 surface F1: precision = predicted surface voxels within one voxel (6-nbhd) of a target surface voxel; recall = target
-        # surface voxels within one voxel of a predicted surface voxel (boundary F-score with a one-voxel tolerance; = surface_f1 at tolerance 0)
-        if ps.any() and s.any():
-            prec1 = float((ps & dilate6(s[None], size)[0]).sum()) / float(ps.sum()); rec1 = float((s & dilate6(ps[None], size)[0]).sum()) / float(s.sum())
+        # tolerance-1 surface F1 (review v401 M1): predicted occupied voxels within one voxel of the target-known region count (a wall decoded
+        # one voxel into the unobserved shadow behind the first-hit layer is not dropped). precision = share of those that are NOT inside a
+        # target solid (interior voxels are correct but uninformative, as in surface_f1) and lie within one voxel (6-nbhd) of a target surface
+        # voxel; recall = share of target surface voxels within one voxel of ANY counted predicted voxel (interior ones included, so a thick
+        # solid shifted by one voxel is still recalled). Perfect prediction => 1; one-voxel shift => 1; two voxels or missing => 0.
+        po_any = (p == 1) & dilate6(known[None], size)[0]; po1 = po_any & ~((t == 1) & ~s)
+        if po_any.any() and s.any():
+            prec1 = float((po1 & dilate6(s[None], size)[0]).sum()) / float(po1.sum()) if po1.any() else 1.
+            rec1 = float((s & dilate6(po_any[None], size)[0]).sum()) / float(s.sum())
             surface_f1_tol1 = 2 * prec1 * rec1 / max(prec1 + rec1, 1e-12)
         else:
-            surface_f1_tol1 = 0. if (ps.any() or s.any()) else None
+            surface_f1_tol1 = 0. if (po_any.any() or s.any()) else None
         acc = float((p[known] == t[known]).float().mean())
         fpr = float((p[~known] >= 0).float().mean()) if (~known).any() else None
         rows.append(dict(occ_f1=occ_f1, surface_f1=surface_f1, surface_f1_tol1=surface_f1_tol1, var_occ_f1=var_occ_f1, accuracy=acc, unknown_known_fpr=fpr))

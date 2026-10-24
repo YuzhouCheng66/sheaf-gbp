@@ -2,29 +2,42 @@
 # Day-5 batch 3D-B (Claude, written 2026-10-24 ~12:30 UTC after batch 3D-A, before any 128^3 run). Pre-registered in D6-2.
 # Question: does the FIXED code (256 means + 256 precisions = 512 B per message, one scalar per 8x8x4 public block) still decode the
 # building when the map resolution doubles to 128^3 (0.1 m voxels, 8,192 voxels per coordinate instead of 1,024)?
-# One variable: the voxel size. Same worlds, same agent positions / radio forest / reached sets as batch 3D-A (v401 data module, placement
-# on the 0.2 m reference raster), beams scaled with the voxel (65,536 so the ray spacing at 5 m stays below the voxel), same code semantics,
-# same join, same loss and metrics, the SAME convolutional network (v401 runs every convolution on the 64^3 compute grid; the voxel grid is
-# reached by parameter-free space-to-depth / depth-to-space reshapes, so the model at 64^3 is v400 bit-for-bit). No control arm is run:
-# the reference is batch 3D-A (runs/v400-3d/a64-s<seed>, 16,000 updates each), same seeds.
+# One variable: the voxel size, with the sensor's angular density matched to the voxel (beams x4 = 65,536, so the ray spacing at 5 m stays
+# below the voxel; the measured porosity of the private maps does not increase). Same worlds, same agent positions / radio forest / reached
+# sets as batch 3D-A (v401 data module, placement on the 0.2 m reference raster), same code semantics, same join, same loss and metrics,
+# the same architecture and schedule on the 64^3 compute grid (v401: every convolution runs at 64^3; the voxel grid is reached by
+# parameter-free space-to-depth / depth-to-space reshapes; the first / last convolutions widen to 27 in / 16 out channels, +18,536
+# parameters, 1,143,403 vs 1,124,867, so the initial weights differ from 3D-A for the same seed; at 64^3 the model is v400 bit-for-bit).
+# No control arm is run: the reference is batch 3D-A (runs/v400-3d/a64-s<seed>, 16,000 updates each), same seeds.
+# Covariates recorded in advance (review v401 M2): per-agent known fraction .042 -> .035 (pooled back to 64^3: .039), R8 union .265 -> .226,
+# 6-surface share of occupied voxels .79 -> .51 -- a difference in native surface F1 from 3D-A is therefore not attributable to the code alone.
 # Pre-registered reading (final VAL, 32 scenes, N = 8, target-known scope, BOTH seeds), NATIVE 128^3 metrics:
 #   R8 surface F1 >= .85 AND K0 surface F1 >= .88 AND variable-structure F1 R8 >= .80 AND K0 >= .84  => the 512 B code SCALES to 128^3
 #                                                                                                     (within ~6 pp of 3D-A at twice the resolution);
-#   R8 surface F1 < .75 OR R8 variable F1 < .65 on either seed                                     => it does NOT scale at 8,192 voxels per
-#                                                                                                     coordinate (next lever: code layout or semantics);
+#   R8 surface F1 < .75 OR R8 variable F1 < .65 on either seed                                     => it does NOT scale under the fixed-compute
+#                                                                                                     block readout; the cause (512 B code vs the
+#                                                                                                     27-feature -> 16-logit linear readout per
+#                                                                                                     0.2 m cell) is NOT identified by this batch
+#                                                                                                     and needs a decoder-capacity control (review
+#                                                                                                     S8) before the code is touched;
 #   in between                                                                                      => partial; report and decide with the user.
 #   Fusion check: R8 surface F1 >= K0 surface F1 - 3 pp on both seeds; unknown-known FPR <= .03.
-#   Secondary readings (reported, NOT part of the verdict, no thresholds): (i) the TOLERANCE-1 surface F1 at 128^3 (a hit within one
-#   0.1 m voxel in the 6-neighbourhood), which separates one-voxel jitter from missing structure -- if tol-1 R8 is close to 3D-A's native
-#   R8 surface F1 (.916 / .927) while the native 128^3 number is lower, the residual is jitter at the finer scale, not lost information;
+#   Secondary readings (reported, NOT part of the verdict, no thresholds): (i) the TOLERANCE-1 surface F1 at 128^3 (review M1 definition:
+#   predicted occupied voxels within one voxel of the target-known region, scored against target surface voxels with a one-voxel
+#   6-neighbourhood tolerance both ways), read BOTH ways: tol-1 R8 close to 3D-A's native R8 (.916 / .927) or to 3D-A's own tol-1 R8
+#   (.958 / .963, post-hoc, runs/v401-3d128/posthoc) while the native 128^3 number is lower => the residual is +-1-voxel jitter at the
+#   finer scale; tol-1 clearly lower as well => structure is missing;
 #   (ii) the same metrics after pooling prediction, target and skeleton to 64^3 by the ternary union over each 2x2x2 block ("pooled64").
 #   Caveat recorded in advance: the any-pooled 0.1 m raster is THICKER than the native 0.2 m raster (occupied fraction .21 -> .30 on
 #   TRAIN 7), so pooled64 is a different target from 3D-A's and is never compared one-to-one with it.
-#   Budget confound: UPDATES comes from the preflight (rule below); if it ends below 12,000 the comparison with 3D-A (16,000) is
-#   budget-confounded and is reported as such (3D-A's VAL curve was flat from 12,000 to 16,000).
+#   Budget: UPDATES comes from the preflight (rule below). 16,000 is NOT reachable under the rule (it needs <= 0.33 s/update; the review's
+#   4080 probe predicts 0.36-0.40 s/update on the 5090 => 14,000-15,000), so the comparison is <= 15,000 vs 16,000 updates by design,
+#   accepted because 3D-A's VAL curve was flat from 12,000 to 16,000; below 12,000 the result is reported as budget-confounded.
 # Budget (pre-registered rule, as 3D-A): SOLO only (never co-runs with another trainer), seeds strictly sequential, each under its own
-#   inclusive 7,200 s lease; a 100-update CUDA preflight per seed measures s/update; UPDATES = largest multiple of 500 such that
-#   1.05 x (load + UPDATES x rate + 3 x val) <= 6,000 s, capped at 16,000, floored at 4,000 (below the floor that seed is INCONCLUSIVE).
+#   inclusive 7,200 s lease; a 100-update CUDA preflight per seed (under a 1,800 s timeout, review S1) measures s/update; UPDATES = largest
+#   multiple of 500 such that 1.05 x (load + UPDATES x rate + 3 x val) <= 6,000 s, capped at 16,000, floored at 4,000 (below the floor that
+#   seed is INCONCLUSIVE). The run evaluates 6 times (4 in-loop + final-val + final-fresh); the 3 x val not in the formula (< 2 min at 128^3)
+#   is covered by the 1.05 margin and the 6,600 / 7,150 s deadlines, exactly as in 3D-A (review S2).
 #   Validation every UPDATES/4 updates. Train deadline = start + 6,600 s; total deadline = start + 7,150 s.
 # Scheduling: waits for batch X (chain_day5_X.sh / train_v392.py) to finish. Writes only under /mnt/datasets (runs/v401-3d128).
 cd /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021 || exit 1
@@ -56,7 +69,7 @@ PY
 }
 for seed in 342101 342202; do
   TS2=$(date -u +%H%M%S)
-  $P scripts/train_3d_v401.py --out runs/v401-3d128/pf-solo-$TS2-s$seed --cache $CACHE --size 128 --device cuda --seed $seed --updates 16000 --max-updates 100 --val-every 100 --val-scenes 32 --deadline-total 0 --gen-workers 8 > runs/v401-3d128/pf-solo-$TS2-s$seed.log 2>&1
+  timeout -k 60 1800 $P scripts/train_3d_v401.py --out runs/v401-3d128/pf-solo-$TS2-s$seed --cache $CACHE --size 128 --device cuda --seed $seed --updates 16000 --max-updates 100 --val-every 100 --val-scenes 32 --deadline-total 0 --gen-workers 8 > runs/v401-3d128/pf-solo-$TS2-s$seed.log 2>&1
   read RS LS VS <<<"$(rate runs/v401-3d128/pf-solo-$TS2-s$seed.log)"
   UPD=$($P -c "import math; r=float('$RS'); u=int((6000/1.05-float('$LS')-3*float('$VS'))/r) if math.isfinite(r) and r>0 else 0; print(min(16000,(u//500)*500))")
   log "batch 3D-B solo preflight seed $seed: s/update $RS load $LS val $VS -> updates $UPD"
@@ -66,7 +79,7 @@ for seed in 342101 342202; do
 {"lease_start_epoch": $START, "train_deadline_epoch": $DE, "total_deadline_epoch": $DT, "inclusive_seconds": 7200, "world": "v401 3D storeys (v400 worlds)", "size": 128, "D": 256, "beams": 65536, "updates_each": $UPD,
  "mode": "sequential", "seed": $seed, "preflight_solo": "rate=$RS load=$LS val=$VS", "trainer": "scripts/train_3d_v401.py", "trainer_sha256": "$TSHA", "data_module_sha256": "$DSHA", "cache": "$CACHE",
  "reference": "runs/v400-3d/a64-s$seed (batch 3D-A, 64^3, 16000 updates, same worlds / positions / forest)",
- "expectation": "native 128^3 VAL: R8 surface F1 >= .85 and K0 >= .88 and variable-structure F1 R8 >= .80 and K0 >= .84 on both seeds => the 512 B code scales to 128^3; R8 surface < .75 or R8 variable < .65 on either => does not scale at 8,192 voxels per coordinate; between => partial; fusion check R8 >= K0 - 3pp; FPR <= .03; reported only: tolerance-1 surface F1 and pooled64 metrics (no thresholds); UPDATES < 12000 => budget-confounded; incomplete => INCONCLUSIVE"}
+ "expectation": "native 128^3 VAL: R8 surface F1 >= .85 and K0 >= .88 and variable-structure F1 R8 >= .80 and K0 >= .84 on both seeds => the 512 B code scales to 128^3; R8 surface < .75 or R8 variable < .65 on either => does not scale under the fixed-compute block readout (cause not identified: needs a decoder-capacity control); between => partial; fusion check R8 >= K0 - 3pp; FPR <= .03; reported only: tolerance-1 surface F1 and pooled64 metrics (no thresholds); UPDATES < 12000 => budget-confounded; incomplete => INCONCLUSIVE"}
 JSON
   log "batch 3D-B start seed $seed (sequential, $UPD updates)"
   $P scripts/train_3d_v401.py --out runs/v401-3d128/b128-s$seed --cache $CACHE --size 128 --device cuda --seed $seed --updates $UPD --val-every $((UPD/4)) --val-scenes 32 --deadline-epoch $DE --deadline-total $DT --gen-workers 8 > runs/v401-3d128/b128-s$seed.log 2>&1
@@ -95,7 +108,7 @@ ok = all(isinstance(r, dict) for r in rows.values())
 if ok:
     k0 = [r["K0_surface"] for r in rows.values()]; r8 = [r["R8_surface"] for r in rows.values()]
     k0v = [r["K0_var"] for r in rows.values()]; r8v = [r["R8_var"] for r in rows.values()]
-    verdict = "the 512 B code scales to 128^3" if min(r8) >= .85 and min(k0) >= .88 and min(r8v) >= .80 and min(k0v) >= .84 else ("does not scale at 8,192 voxels per coordinate" if min(r8) < .75 or min(r8v) < .65 else "partial")
+    verdict = "the 512 B code scales to 128^3" if min(r8) >= .85 and min(k0) >= .88 and min(r8v) >= .80 and min(k0v) >= .84 else ("does not scale under the block readout (cause not identified)" if min(r8) < .75 or min(r8v) < .65 else "partial")
     fusion_ok = all(r["R8_surface"] >= r["K0_surface"] - .03 for r in rows.values()); fpr_ok = all(r["R8_fpr"] <= .03 for r in rows.values())
     confounded = any(r["budget_confounded"] for r in rows.values())
 else:
