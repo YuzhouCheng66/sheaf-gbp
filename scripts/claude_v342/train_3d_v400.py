@@ -6,8 +6,9 @@ per coordinate); per-coordinate MAX-PRECISION selection (lattice join) over 8 sy
 that reads ONLY the fused posterior (hard-8 mean, log variance) and renders known / occupancy logits at S^3.
 Targets per hop k: ternary union of the own maps of the sources actually reached within k forest hops (stream targets).
 Loss: known BCE + occupancy BCE on target-known voxels with weight 1 + 4 x [target surface voxel]. Metrics in target-known scope:
-occupied F1, SURFACE F1 (occupied voxels with a free 6-neighbour in the target: the informative part of thick solids), three-way
-accuracy, unknown-known FPR. Scenes come from a cache written by gen_3d_cache_v400.py (TRAIN only); VALIDATION / fresh panels are
+occupied F1, SURFACE F1 (occupied voxels with a free 6-neighbour in the target: the informative part of thick solids), VARIABLE-STRUCTURE
+F1 (occupied voxels outside the world-independent skeleton of exterior walls + slabs, removed from both prediction and target; review M2:
+painting only the skeleton already scores surface F1 ~.70), three-way accuracy, unknown-known FPR. Scenes come from a cache written by gen_3d_cache_v400.py (TRAIN only); VALIDATION / fresh panels are
 generated on the fly (indices 1,000,000+ and 1,000,032+). TEST is never generated.
 """
 import argparse, hashlib, json, math, os, random, signal, sys, time
@@ -205,11 +206,20 @@ def stream_targets(own, reached):
 
 
 def surface_of(target_flat, size):
-    """target surface voxels: occupied with a free 6-neighbour (both in the target). [n, S^3] bool."""
+    """target surface voxels: occupied with a free 6-neighbour (both in the target). [n, S^3] bool. (three axis-wise max-pools = 6-neighbourhood)"""
     t = target_flat.reshape(-1, 1, size, size, size)
-    occ = (t == 1).float(); free = (t == 0).float()
-    free_nb = F.max_pool3d(free, 3, stride=1, padding=1)
-    return ((occ > 0) & (free_nb > 0)).reshape(target_flat.shape[0], -1)
+    occ = (t == 1); free = (t == 0).float()
+    free_nb = (F.max_pool3d(free, (3, 1, 1), stride=1, padding=(1, 0, 0)) + F.max_pool3d(free, (1, 3, 1), stride=1, padding=(0, 1, 0)) + F.max_pool3d(free, (1, 1, 3), stride=1, padding=(0, 0, 1))) > 0
+    return (occ & free_nb).reshape(target_flat.shape[0], -1)
+
+
+_SKELETON = {}
+def skeleton_flat(size, device):
+    """world-independent skeleton voxels (exterior walls + full slabs) as a flat bool tensor; review v400 M2."""
+    key = (size, str(device))
+    if key not in _SKELETON:
+        _SKELETON[key] = torch.from_numpy(d3.skeleton_mask(size).reshape(-1)).to(device)
+    return _SKELETON[key]
 
 
 def stage_loss(decoder, feats, target, size, w_surface=4.):
@@ -232,28 +242,32 @@ def predict(decoder, feats):
 def metrics3d(pred, target, size):
     """per node: occupied F1, surface F1 (target surface voxels vs predicted occupied), accuracy (3-way over target-known), unknown FPR."""
     rows = []
-    surf = surface_of(target, size)
+    surf = surface_of(target, size); skel = skeleton_flat(size, pred.device)
     for i in range(pred.shape[0]):
         p, t, s = pred[i], target[i], surf[i]
         known = t >= 0
         if known.sum() == 0:
-            rows.append(dict(occ_f1=None, surface_f1=None, accuracy=None, unknown_known_fpr=float((p[~known] >= 0).float().mean()) if (~known).any() else None)); continue
+            rows.append(dict(occ_f1=None, surface_f1=None, var_occ_f1=None, accuracy=None, unknown_known_fpr=float((p[~known] >= 0).float().mean()) if (~known).any() else None)); continue
         po = (p == 1) & known; to = (t == 1) & known
         tp = (po & to).sum().item(); fp = (po & ~to).sum().item(); fn = (~po & to).sum().item()
         occ_f1 = 2 * tp / max(2 * tp + fp + fn, 1) if (tp + fp + fn) else None
+        # variable-structure F1 (review M2): skeleton voxels (exterior walls + slabs, identical in every world) removed from both sides
+        pv = po & ~skel; tv = to & ~skel
+        tp_v = (pv & tv).sum().item(); fp_v = (pv & ~tv).sum().item(); fn_v = (~pv & tv).sum().item()
+        var_occ_f1 = 2 * tp_v / max(2 * tp_v + fp_v + fn_v, 1) if (tp_v + fp_v + fn_v) else None
         # surface F1: target surface voxels as positives; predicted positives = predicted occupied voxels that are target-surface OR not target-occupied-interior
         ps = po & ~((t == 1) & ~s)                      # ignore predicted occupied inside solid interiors (correct but uninformative)
         tp_s = (ps & s).sum().item(); fp_s = (ps & ~s).sum().item(); fn_s = (~ps & s).sum().item()
         surface_f1 = 2 * tp_s / max(2 * tp_s + fp_s + fn_s, 1) if (tp_s + fp_s + fn_s) else None
         acc = float((p[known] == t[known]).float().mean())
         fpr = float((p[~known] >= 0).float().mean()) if (~known).any() else None
-        rows.append(dict(occ_f1=occ_f1, surface_f1=surface_f1, accuracy=acc, unknown_known_fpr=fpr))
+        rows.append(dict(occ_f1=occ_f1, surface_f1=surface_f1, var_occ_f1=var_occ_f1, accuracy=acc, unknown_known_fpr=fpr))
     return rows
 
 
 def agg(rows):
     out = {}
-    for k in ('occ_f1', 'surface_f1', 'accuracy', 'unknown_known_fpr'):
+    for k in ('occ_f1', 'surface_f1', 'var_occ_f1', 'accuracy', 'unknown_known_fpr'):
         v = [r[k] for r in rows if r.get(k) is not None]
         out[k] = float(np.mean(v)) if v else None
     return out
@@ -330,11 +344,12 @@ def main():
                 np.savez_compressed(out / 'validation' / f"{label}-panel-{si}.npz", own=sc['own_t'].cpu().numpy(), occ=sc['occ'], mu=mu.cpu().numpy(), q=(q * mask).cpu().numpy(),
                                     **{f'pred_k{k}': preds[k].cpu().numpy().reshape(-1, size, size, size) for k in HOPS})
         summary = {str(k): {m: (float(np.mean([r['hops'][str(k)][m] for r in rows if r['hops'][str(k)][m] is not None])) if any(r['hops'][str(k)][m] is not None for r in rows) else None)
-                            for m in ('occ_f1', 'surface_f1', 'accuracy', 'unknown_known_fpr')} for k in HOPS}
+                            for m in ('occ_f1', 'surface_f1', 'var_occ_f1', 'accuracy', 'unknown_known_fpr')} for k in HOPS}
         return dict(rows=rows, summary=summary)
 
     def fmt(s):
-        return ' | '.join(f"R{k}: surf {s[str(k)]['surface_f1']:.3f} occ {s[str(k)]['occ_f1']:.3f} acc {s[str(k)]['accuracy']:.3f} fpr {s[str(k)]['unknown_known_fpr']:.3f}" for k in HOPS)
+        f3 = lambda v: 'n/a' if v is None else f'{v:.3f}'
+        return ' | '.join(f"R{k}: surf {f3(s[str(k)]['surface_f1'])} var {f3(s[str(k)]['var_occ_f1'])} occ {f3(s[str(k)]['occ_f1'])} acc {f3(s[str(k)]['accuracy'])} fpr {f3(s[str(k)]['unknown_known_fpr'])}" for k in HOPS)
 
     # ---- training
     history = []; updates = 0; best = (-1., None); losses = []

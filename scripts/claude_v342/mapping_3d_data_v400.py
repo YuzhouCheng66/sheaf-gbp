@@ -7,7 +7,7 @@ wall, a 2.0 x 2.4 m stair opening in each slab above the ground (at a corridor e
 0.4-1.0 m tall) per room. Occupancy = union of all solids; everything else (including outside the building, reached through windows)
 is free. Rasterisation at SIZE in {64, 128, 256} (voxel 0.2 / 0.1 / 0.05 m), cell-centre inclusion, same convention as v293.
 Sensing: each agent takes POSES = 3 poses jittered +-0.1 m around a free standing point (sensor 1.2 m above its storey's slab),
-BEAMS = 4096 first-hit rays on a Fibonacci sphere, strict 5 m range; the private map is the ternary union over poses.
+BEAMS = 16384 first-hit rays on a Fibonacci sphere (0.14 m spacing at 5 m), strict 5 m range; the private map is the ternary union over poses.
 Radio: 3D distance <= 8 m (floors do not block radio); the communication forest is the minimum-distance spanning forest over radio edges.
 Public blocks: 8 x 8 x 4 (1.6 m x 1.6 m x one storey) => 256 coordinates per agent.
 Splits by index: TRAIN index < 1_000_000, VALIDATION index in [1_000_000, 2_000_000), TEST never generated.
@@ -22,7 +22,7 @@ STOREY = EXTENT / FLOORS
 SIZES = (64, 128, 256)
 SENSOR_RANGE = 5.0
 RADIO_RADIUS = 8.0
-BEAMS = 4096
+BEAMS = 16384     # review v400: 4096 beams space 0.28 m apart at 5 m (> the 0.2 m voxel); 16384 -> 0.14 m
 POSES = 3
 BLOCKS = (8, 8, 4)
 SENSOR_HEIGHT = 1.2
@@ -51,7 +51,7 @@ def world_spec(split, index):
         z0 = f * STOREY
         solids.append([0, 0, z0, E, E, z0 + W])                                   # slab (ground for f = 0)
         if f > 0:                                                                # stair opening in the slab at a corridor end
-            yend = rng.choice([W, E - W - 2.4]); solids_hole = [cx0 + .1, yend, z0 - .01, cx0 + 2.1, yend + 2.4, z0 + W + .01]
+            yend = rng.choice([W, E - W - 2.4]); solids_hole = [cx0 + .1, yend, z0 - .01, cx0 + 2.1, yend + 2.4, z0 + W - .01]   # review M1: do not clip the wall row above the slab
             holes.append(solids_hole)
         zt = z0 + W; zc = z0 + STOREY                                            # floor top, ceiling (next slab bottom)
         for side, (rx0, rx1) in enumerate(((W, cx0), (cx1, E - W))):
@@ -84,8 +84,10 @@ def world_spec(split, index):
 
 def _fill(grid, box, value, size):
     cell = EXTENT / size
-    lo = np.clip(np.floor((np.asarray(box[:3]) - cell / 2) / cell + 1), 0, size).astype(int)    # cell-centre inclusion: centre in [b0, b1)
-    hi = np.clip(np.ceil((np.asarray(box[3:]) - cell / 2) / cell), 0, size).astype(int)
+    # cell-centre inclusion: voxel i is inside [b0, b1) iff b0 <= (i + .5) cell < b1  <=>  ceil(b0/cell - .5) <= i < ceil(b1/cell - .5)
+    # (review v400 M1: the previous floor(x + 1) form skipped the voxel layer whose centre lies exactly on b0, opening 0.2 m gaps at 64^3)
+    lo = np.clip(np.ceil(np.asarray(box[:3]) / cell - .5 - 1e-9), 0, size).astype(int)
+    hi = np.clip(np.ceil(np.asarray(box[3:]) / cell - .5 - 1e-9), 0, size).astype(int)
     if np.all(hi > lo):
         grid[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]] = value
 
@@ -101,6 +103,17 @@ def rasterize(spec, size):
     for b in spec['furniture']:
         _fill(occ, b, 1, size)
     return occ
+
+
+def skeleton_spec():
+    """the world-independent skeleton: four exterior walls and FLOORS full slabs (without stair openings)."""
+    E, W = EXTENT, 0.3
+    solids = [[0, 0, 0, W, E, E], [E - W, 0, 0, E, E, E], [0, 0, 0, E, W, E], [0, E - W, 0, E, E, E]] + [[0, 0, f * STOREY, E, E, f * STOREY + W] for f in range(FLOORS)]
+    return dict(solids=solids, holes=[], furniture=[])
+
+
+def skeleton_mask(size):
+    return rasterize(skeleton_spec(), size).astype(bool)
 
 
 def surface_mask(occ):

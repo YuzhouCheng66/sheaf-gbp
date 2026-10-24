@@ -21,6 +21,17 @@ assert all((occ[priv[a] == 1] == 1).all() and (occ[priv[a] == 0] == 0).all() for
 single = d3.observe(occ, fx['trajectory_m'][:1, 0])
 assert ((single >= 0) <= (priv[0] >= 0)).all(), 'the union over poses must contain the single-pose observation'
 print('1. sensor exactness and monotone union OK')
+# review M1: slabs are exactly one voxel row at 64^3 and interior walls touch the slab (no 0.2 m gap); a plane wall has no ray leak
+spec0 = d3.world_spec('TRAIN', 7); cell = d3.EXTENT / 64
+for f in range(d3.FLOORS):
+    zrow = int(np.ceil((f * d3.STOREY) / cell - .5 - 1e-9)); above = zrow + 1
+    assert occ[:, :, zrow].mean() > .9, f'slab row {zrow} must be (almost) fully occupied'
+    assert occ[1:-1, 1:-1, above].sum() > 300, f'wall row {above} directly above the slab must carry the interior walls (got {occ[1:-1, 1:-1, above].sum()})'
+wall = np.zeros((64, 64, 64), np.uint8); wall[:, 32, :] = 1                      # a 0.2 m plane wall across the cube
+obs = d3.observe(wall, np.array([[6.4, 3.0, 6.4]]))
+assert not (obs[:, 33:, :] == 0).any(), 'no free voxel may be observed behind a plane wall (ray leak)'
+sk = d3.skeleton_mask(64); assert sk.shape == (64, 64, 64) and 0.1 < sk.mean() < 0.3 and (occ[sk] == 1).mean() > .95, 'skeleton must be occupied in every world'
+print('1b. review M1 regressions: slab rows, wall contact, no ray leak; skeleton mask OK')
 
 # ---- join exactness
 n = 8; Dd = T.D
@@ -68,7 +79,11 @@ with torch.no_grad():
     tgt = T.stream_targets(own, reached)
     pred_perfect = tgt.clone()
     rows = T.metrics3d(pred_perfect, tgt, 64)
-    assert all(abs(r['occ_f1'] - 1) < 1e-9 and abs(r['surface_f1'] - 1) < 1e-9 and r['accuracy'] == 1. and r['unknown_known_fpr'] == 0. for r in rows)
+    assert all(abs(r['occ_f1'] - 1) < 1e-9 and abs(r['surface_f1'] - 1) < 1e-9 and abs(r['var_occ_f1'] - 1) < 1e-9 and r['accuracy'] == 1. and r['unknown_known_fpr'] == 0. for r in rows)
+    skel_pred = torch.where(tgt >= 0, torch.from_numpy(d3.skeleton_mask(64).reshape(-1)).to(torch.int8)[None].expand_as(tgt), torch.full_like(tgt, -1))   # paint only the skeleton
+    rs = T.metrics3d(skel_pred, tgt, 64)
+    print('    skeleton-only reference on this scene: surface F1 %.3f, variable F1 %.3f' % (np.mean([r['surface_f1'] for r in rs]), np.mean([r['var_occ_f1'] for r in rs])))
+    assert all(r['var_occ_f1'] < 0.05 for r in rs), 'painting only the skeleton must score ~0 on the variable-structure F1'
 print('3a. block-local encoder, mask semantics, decoder shape, perfect-prediction metrics OK')
 opt = torch.optim.AdamW(model.parameters(), lr=1e-3)
 model.train()
