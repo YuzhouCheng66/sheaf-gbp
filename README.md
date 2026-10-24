@@ -15,6 +15,7 @@ K0 = decode from the agent's own code. R8 = decode after eight rounds of fusion.
 | HouseExpo, decoder channels x2 + public-frame conditioning (current working baseline) | .915 / .913 | .939 / .937 | same schedule; +1.0 / +0.4 pp vs the row above (pre-registered verdict: ambiguous, all 8 paired comparisons positive, fresh panel +1.9 / +1.6) |
 | Synthetic v293 | .937 / .946 / .942 | ~.954 | three seeds; dynamic CRDT memory at t5: .937 |
 | 3D synthetic buildings, 64^3 voxels (256 means + 256 precisions per agent) | surface F1 .916 / .927, variable-structure F1 .864 / .888 | surface F1 .938 / .945 | first 3D batch (v400): 4-storey buildings, 8 agents, 512 B per message |
+| 3D synthetic buildings, 128^3 voxels (same 512 B code, block-readout decoder) | surface F1 .890 / .887, variable-structure F1 .815 / .815 | surface F1 .924 / .916 | batch 3D-B (v401); fusion costs ~3 pp at this resolution |
 
 Compression on v293: rate-term training (lambda 0.01) plus real arithmetic coding brings a self message from 27.2 B to 14.1 B at a cost of 0.3 to 0.9 pp R8.
 
