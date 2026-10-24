@@ -168,3 +168,33 @@ smoke 的 .495 / .496 只是 apartment_2、N8 的 4 个 fixture；全面板是 .
 已核实为正确的部分：PLY 解析与 trimesh 逐位一致、字节预算精确；被审 prep 代码逐位复现已存栅格；带内采样密度充分（16 点/cm² 复采样只多出 0.1–0.15 % 的孤立格，无狭长三角形）；旋转 / 逆旋转往返误差 0、独立重采样一致率 ≥ 0.99987、无镜像，`[y, x]` 约定贯通；`metric_trajectory` 与 v371 同构；划分不相交且无几何级泄漏（裁块正对照 1.0，最高 TRAIN-in-VAL 0.896 且非特异）；训练器对 v392 只改世界插线；`--epochs 0` 热启动全量加载 40 个张量并写出 `val` / `fresh`；真实缓存 manifest 过训练器全部 6 项断言，随机 16 行跨进程复现；测试在 uk-linux 88.9 s 通过；链脚本语法、等待模式、租约 JSON、分析键、INCONCLUSIVE 路径都成立，时间预算宽裕。
 
 必须先改的是数据与设计，而不是管线：M1 修正 room_2 的 8.7° 倾斜（及 apartment_0/1 的 ~1°）与把下层天花当地面的问题；M2 消除朝向混杂——HouseExpo 基线在 office_3 上 .18、转正后 .57–.61，按现设计 FT 只靠学会旋转就可能拿到约 +10 pp 的等权 G；M3 加入"同样多训练、HouseExpo 数据"的对照，因为单是多一个 HouseExpo 周期就让 Replica R8 涨 +0.8~+1.6 pp；M4 修正披露与判词接线。M1 + M2 合起来只需重跑一次 prep 与缓存（约 30 min），M3 每种子加约 25 min，仍在单租约内。改完后，建议对新的 prep / 世界 diff 与重跑的测试、smoke 输出做一次简短的定向复核（不必全量重审），再发射。
+
+## 复核（发射前）
+
+**复核结论：LAUNCH OK**（没有剩余的必改项；下面 3 条是不阻塞发射的建议）。
+
+复核时间：2026-10-25 00:35 UTC 前后，同样只读，只用 CPU（`nice -n 10`，≤ 6 线程）。复核脚本：`runs/review_v410/rv_recheck.py`（`mesh` / `align` 两部分）、复用的 `rv_map_check.py A,G` 与 `rv_zs_eval.py` / `rv_zs_rot2.py`，以及在 uk-linux `/tmp/rv_chain_synth/` 上把链脚本分析块**原文**跑在 5 组合成 `final.json` 上。
+
+| 文件 | 行数 | sha256 前 16 位（本地 = uk-linux `scripts/`） |
+|---|---|---|
+| `prep_realscan_base_v410.py` | 186 | `c6635a108b366b16` |
+| `mapping_realscan2d_data_v410.py` | 182 | `f1a37cb8b197c2da`（= 链脚本第 47 行钉死的 DSHA，= 新缓存 manifest 的 `data_module_sha256`） |
+| `train_v410.py` | 802 | `27878023c90cc0d5`（未改；= 第 46 行钉死的 TSHA） |
+| `gen_realscan_cache_v410.py` | 74 | `ad3a9ced2eebe856`（`script` 字段已改） |
+| `test_realscan2d_v410.py` | 135 | `70bd8fb5f1451ab8` |
+| `chain_day6_RS.sh` | 134 | `c44aee7a0e754fc3`（`bash -n` 通过） |
+| 数据 `replica-base/index.json` / `replica-train-k4800/manifest.json` | — | `0369efd99e5a8b9e` / `afae160120a8c045` |
+
+**M1 重力对齐与内部判定 ✓。** 18 个场景用 `index.json` 里存的旋转 R 作用于 −g/|g| 都精确得到 (0, 0, 1)；对齐后语义楼面（floor/rug/mat）平面拟合坡度 0.00–0.34°（office_1 的 6.49° 仍是 0.48 m 处那块标为 floor 的面，非倾斜）。room_2：楼面 z 5/50/95 % = .006/.013/.034 m、`floor_z` 0.025、自由 17.5 m²（原 10.6）；apartment_0 f1 自由 40.9 m²（原 69.1，假区已去）。按 prep 的定义（首个命中、`td ∈ [0.70, 0.90]`、绕向法向 z ≥ 0.7）重算的 interior 在**全部 19 层**与已存栅格逐位相等。
+- **绕向法向是否一致**：floor/rug/mat 面积中绕向法向 z ≥ 0.7 的占 94.6–99.9 %，z < 0 的占 0.00–4.2 %（最多 room_1 4.2 %、office_4 2.3 %）；天花类平均 z 为 −0.81 至 −0.999。不一致的小片实际造成的损失：位于楼面高度、但因面不朝上而被排除的**楼面 / 地毯**格每层 ≤ 0.09 m²（最多 office_0 的 rug 0.08 m² = 自由的 0.9 %、room_1 的 rug 0.07 m² = 0.6 %）；被排除的其余格是墙根、门、搁架等侧面，本来就不该算地面。结论：对 18 个场景，用绕向法向是安全的（顶点法向朝里这一发现与我第一轮测得的绕向 z ≈ +0.95…+0.998 一致）。
+- **±0.10 m 窗口是否删掉真地面**：在"首个命中朝上且在 1.2 m 内、且不是障碍"的格子中被窗口去掉的面积：apartment_0 f1 0.53 m²（其中 stair 0.50，正是有意排除的楼梯踏步）、apartment_0 f0 0.14 m²（shower-stall 0.13，淋浴盘高出地面 > 10 cm）、hotel_0 0.12 m²（墙根 / 淋浴盘 / 地上的毛巾，均高出 > 10 cm）、其余各层 ≤ 0.04 m²；其中真正的 floor / rug 类仅 frl_apartment_4 0.01 m²。19 层里没有任何下沉区（局地地面低于 −0.10 m 的只有楼梯）；地毯 1–2 cm 厚，在窗口内。结论：窗口没有删掉可观的真地面。
+
+**M2 墙向与偏航符号 ✓。** 网格法 `wall_angle_deg` 与我第一轮的栅格梯度法在 19 层上相差 ≤ 3.8°（office_3 51.75 vs 51.5，office_0 6.25 vs 2.5 差最大）。几何验证：在 512 栅格**图框**上重测主墙角，VAL 四层离轴 0.5 / 0.5 / 1.5 / 1.5°，TRAIN 10 个抽样（含 k90 = 1/2/3）离轴 0.5–1.5°；若符号取反，这些值应为 5.5–42.5°——所以 `yaw = −wall_angle (+ k·90°)` 的符号是对的，VAL 图框确实轴对齐。旋转往返（Chebyshev 0）、独立 `affine_transform` 一致率 0.99983–1.00000、det +1 在新偏航下复测仍成立。
+- 对齐后的 ZS（CPU，同口径，64 个 VAL fixture）：c3-s342101 / s342202 R8 **.486 / .510**、K0 .545 / .564、FPR8 .038 / .026；逐场景 apartment_2 .518/.542、hotel_0 .404/.455、office_3 **.527/.553**（原 .18）、office_4 .494/.490。我的评估在 fixture 0、1 上复现 smoke2 的 R8 .517、K0 .591。
+
+**M3 / M4 链脚本 ✓。** 对照臂接线：FT_HX = 同一 `c3-s<seed>` 初始化、同一 MODEL 参数、`--lr 1e-4 --epochs 1 --expect-updates 14400` 于 `houseexpo_fit-k4800`（manifest 14,400 场景，第 50 行检查），与 FT_RS 的 3 × 4,800 = 14,400 更新数和 LR 曲线一致；`fthx-s*-rs` 用 `--world realscan2d --epochs 0` 评 Replica。分析块原文在 5 组合成数据上：正常 → "real-scan data is the lever"，`G_data_pp` / `G_vs_ZS_pp` / `more_training_pp` / 逐场景（带场景名）/ 每 epoch 历史均正确；一个种子 FPR +0.5 pp → "partial BUT FPR protection violated"；FT_RS 只有 14,000 次 → INCONCLUSIVE；缺 `fthx-*-rs` → INCONCLUSIVE；缺遗忘评估 → `houseexpo_R8_after_FT_RS = None` 但判词照常。`run()` 剩余 ≤ 120 s 即跳过，`timeout` 用剩余秒数（不会是 0）；TSHA / DSHA 钉死且与现文件一致；历史保护覆盖 `zs/ftrs/fthx` 与 `analysis.json`。新缓存过训练器 6 项缓存断言，16 个随机行跨进程复现，加载 ×4,800 约 22 s。每种子预计约 52 min（ZS 2 + FT_RS 24 + 遗忘评估 2 + FT_HX 22 + Replica 评估 2），在 6,600 s 训练截止线内。M4 的披露、周期措辞、玻璃与"符号"文档串均已改正。
+
+**不阻塞的建议：**
+- **R1**（VAL 的四分之一转向是任意的）：主墙角在 [0, 90)，所以 hotel_0（87.25°）的 VAL 图框被转了 −87.25°，而不是最小的 +2.75°。实测 hotel_0 的 ZS R8：−87.25° .404 / .455，+2.75° .491 / .459，+92.75° .452 / .448（s342101 / s342202）。基线不具备四分之一转向不变性，而且转向也会重抽落点。单场景均值的落点 SE 本来就约 3 pp（16 个 fixture、逐 fixture SD ~13 pp），所以这里只有一部分是转向效应。所有臂用同一个 VAL 面板，因此 G_data 不受影响。若想让描述更干净，可把 VAL 的角度映射到 (−45°, 45°] 再取负。这只改 VAL 图框（TRAIN 用随机 k·90°，集合不变），但会改 DSHA 钉死值并需重跑测试；不改也可以发射。
+- **R2**（调度）：第 56 行只等 `^$P scripts/train_`。审查时 uk-linux 上正在跑 `gen_3d_cache_v420.py`。如果另有一条链也用"无训练器即开跑"，它可能在 RS 两次 `run` 之间插进来与 RS 并跑。请确保同一时间只启动一条链（或加锁文件）。
+- **R3**（披露）：把上面测得的对齐后全面板 ZS（.486 / .510；office_3 .527 / .553）补进 D7-1 / 结果报告，并注明它是在发射前看到的。阈值不变。
