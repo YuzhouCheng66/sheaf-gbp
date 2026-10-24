@@ -63,7 +63,7 @@ def main():
             if (i + 1) % 500 == 0:
                 print(f'{i + 1}/{len(specs)} {time.time() - t0:.0f}s', flush=True)
     mod = sys.modules[data.__name__].__file__
-    manifest = dict(script='gen_hx_cache_v375.py', world=args.world, per_stratum=args.per_stratum, size=args.size, hops=list(HOPS), scenes=len(rows),
+    manifest = dict(script='gen_realscan_cache_v410.py', world=args.world, per_stratum=args.per_stratum, size=args.size, hops=list(HOPS), scenes=len(rows),
                     data_module=os.path.basename(mod), data_module_sha256=hashlib.sha256(open(mod, 'rb').read()).hexdigest(),
                     index_sha256=hashlib.sha256(open(data.INDEX_FILE if args.world == 'realscan2d' else os.environ['HOUSEEXPO_INDEX'], 'rb').read()).hexdigest(), seconds=time.time() - t0, rows=rows)
     json.dump(manifest, open(out / 'manifest.json', 'w'), indent=1)

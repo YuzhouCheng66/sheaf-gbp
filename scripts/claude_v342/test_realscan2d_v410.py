@@ -8,6 +8,10 @@ D. Splits and determinism: TRAIN and VALIDATION never share a scene; the six FRL
    4 scenes x N{8,16} x 8 placements; the same spec regenerates the same private hash; fresh (index + 8) differs from val.
 E. Feasibility: every VAL and fresh spec and the first 240 TRAIN specs build (agents placed, every source has evidence).
 F. Trainer plumbing: train_v410 differs from train_v392 only in the world plumbing lines (checked on the source text).
+G. Base rasters (review v410 M1 iv / M2, dataset-independent): on every floor >= 99 % of the free cells have their local ground
+   (floor + 0.8 m - downward hit distance) within 0.10 m of the floor height; no free cell's downward ray hits a downward-facing
+   surface; one VALIDATION floor's base raster is reproduced bit-for-bit by the prep functions; every chart is aligned with its
+   floor's main wall direction (VAL yaw = -wall angle; TRAIN yaw = -wall angle + k x 90 deg).
 """
 import argparse, difflib, sys, time
 from pathlib import Path
@@ -96,4 +100,36 @@ changed = [l for l in difflib.unified_diff(a, b2, lineterm='', n=0) if (l.starts
 body = [l for l in changed if not l.startswith('+"""') and 'train_v410 = train_v392' not in l and 'floor slices of real 3D scans' not in l and 'are byte-for-byte the v392' not in l and 'HouseExpo index. The original v392' not in l and l != '+"""']
 assert all(('realscan' in l) or ('houseexpo_rect' in l and 'choices' in l) or ("'houseexpo', 'houseexpo_fit', 'houseexpo_rect'" in l) or ('HOUSEEXPO_INDEX' in l) for l in body), body
 print(f'F. train_v410 vs train_v392: {len(body)} changed code lines, all world plumbing')
+# ---- G. base rasters against the meshes (M1 iv) and chart alignment (M2)
+import json, math, hashlib, importlib.util
+import open3d as o3d
+_sp = importlib.util.spec_from_file_location('prep410', HERE / 'prep_realscan_base_v410.py'); P = importlib.util.module_from_spec(_sp); _sp.loader.exec_module(P)
+idx = json.load(open(R.INDEX_FILE)); root = Path(idx['root'])
+by_scene = {}
+for row in idx['rows']:
+    by_scene.setdefault(row['scene'], []).append(row)
+worst = []
+for scene, rows in by_scene.items():
+    V, F, VN = P.read_replica_ply(str(root / scene / 'mesh.ply'), normals=True)
+    Rg = np.asarray(rows[0]['gravity_rotation']); V = V @ Rg.T; VN = VN @ Rg.T; V = V - V.min(0)
+    sc = P.make_scene(V, F)
+    for row in rows:
+        z = np.load(Path(R.BASE_DIR) / row['file']); free = z['interior'] & ~z['obstacle']; zf = float(z['floor_z'])
+        td, nz = P.down_hits(sc, zf, free.shape, F, VN)
+        ground = zf + 0.8 - td[free]
+        frac = float(np.mean(np.abs(ground - zf) <= 0.10)); down = int(np.sum(nz[free] < 0))
+        worst.append((frac, row['file'], down))
+        assert frac >= 0.99, (row['file'], frac)
+        assert down == 0, (row['file'], down)
+        if scene == 'hotel_0':                                                      # bit-for-bit reproduction of one VALIDATION floor
+            rng = np.random.default_rng(int.from_bytes(hashlib.sha256(f"v410:{scene}:{row['floor']}".encode()).digest()[:8], 'little'))
+            assert np.array_equal(P.band_obstacles(V, F, zf, free.shape, rng), z['obstacle']) and np.array_equal(P.interior_of(sc, zf, free.shape, F, VN), z['interior'])
+print(f"G1. every floor: >= {min(w[0] for w in worst):.4f} of free cells sit within 0.10 m of their floor (worst {min(worst)[1]}); no free cell above a downward face; hotel_0 base raster reproduced bit-for-bit")
+for split in ('VALIDATION', 'TRAIN'):
+    for i in range(12):
+        sp = R.world_spec(split, i, rooms=(i % 4) + 1)
+        d = (math.degrees(sp['yaw']) + sp['wall_angle_deg']) % 90.
+        assert min(d, 90. - d) < 1e-6, (split, i, sp['yaw'], sp['wall_angle_deg'])
+        assert split == 'TRAIN' or sp['k90'] == 0
+print('G2. every chart is aligned with its floor\'s main wall direction (VAL exactly; TRAIN up to quarter turns)')
 print('ALL TESTS PASSED', f'{time.time() - t0:.0f}s')

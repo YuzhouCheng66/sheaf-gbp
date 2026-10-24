@@ -5,15 +5,18 @@ runs on it unchanged: the house-fitted square public chart L = max(8, ceil(max e
 grid over an H = 128 raster (cell L/H); a cell is free only if all 4 x 4 supersamples are free; three +-0.1 m poses around a centre
 with >= 0.45 m clearance in the largest free component (minimum separation 1.0 / 0.5 / 0 m); 256 first-hit beams, strict 5 m range;
 8 m radio; N in {8, 16}; the same fixture contract (inputs / evaluation / manifest) and the same door-mask heuristic.
-Geometry: the 2 cm base rasters of prep_realscan_base_v410.py (Replica now, HM3D later): free = interior & no mesh surface within
-0.15-1.60 m above the floor; everything else (obstacles, the scan boundary, glass, the void outside) is "wall", exactly as everything
-outside a HouseExpo polygon is wall. A fixture's raster resamples the base raster at a yaw angle (TRAIN only: uniform yaw per index,
-a rotation of the same floor; VALIDATION yaw = 0); a fine cell is free only if no blocked base cell lies within its half-diagonal
-(conservative: thin obstacles are never lost by resampling).
+Geometry: the 2 cm base rasters of prep_realscan_base_v410.py (Replica now, HM3D later; gravity-aligned, upward floors only, review
+M1): free = interior & no mesh surface within 0.15-1.60 m above the floor; everything else (obstacles, the scan boundary, the void
+beyond exterior windows) is "wall", exactly as everything outside a HouseExpo polygon is wall; interior glass is not in the mesh and
+is free in the slice. A fixture's raster resamples the base raster at a yaw that aligns the chart with the floor's main wall direction
+(review M2; VALIDATION: aligned; TRAIN: aligned and turned by k x 90 deg, k from a hash of the index); a fine cell is free only if no
+blocked base cell lies within its half-diagonal (conservative: thin obstacles are never lost by resampling; this erodes 3-11 % of the
+free area at 128^2, review S3).
 Splits by scene (never the same scene in two splits; the six FRL apartments are one flat restaged and stay together in TRAIN):
   VALIDATION = apartment_2, hotel_0, office_3, office_4 (one floor each; the 'rooms' field of a VALIDATION spec is the scene stratum
                1..4, so the trainer's equal-weight summary is equal weight per (scene, N)); index = agent placement (0-7 val, 8-15 fresh)
-  TRAIN      = every other floor of the base index (15 floors of 14 scenes); index i -> floor i mod 15, yaw from a hash of i
+  TRAIN      = every other floor of the base index (15 floors of 14 scenes; about 10 distinct layouts, the six FRL apartments being one
+               flat restaged, review S7); index i -> floor i mod 15, a quarter turn k(i) in {0, 1, 2, 3}
   TEST       = none in Replica (pilot); claims at scale come later from HM3D. Caveat: office_0-4 are rooms of one office building and
                room_0-2 may share a building with an apartment, so VALIDATION measures new rooms more than new buildings.
 """
@@ -73,7 +76,10 @@ def world_spec(split, index, rooms=1):
     units = _units()[split]
     index = int(index)
     row = units[index % len(units)] if split == 'TRAIN' else units[int(rooms) - 1]
-    yaw = 2 * math.pi * (_seed(f'v410:TRAIN:{index}:yaw') % 10 ** 9) / 10 ** 9 if split == 'TRAIN' else 0.
+    # review v410 M2: the chart is aligned with the building's main wall direction (as v371 aligns HouseExpo houses), so TRAIN, VAL and
+    # HouseExpo share one orientation distribution; TRAIN additionally turns the aligned floor by k x 90 deg (k from the index hash)
+    k90 = (_seed(f'v410:TRAIN:{index}:k90') % 4) if split == 'TRAIN' else 0
+    yaw = math.radians(-float(row['wall_angle_deg']) + 90. * k90)
     b = _base(row); c = b['cell']
     pts = (b['free_yx'][:, ::-1] + .5) * c                                          # free cell centres (x, y) in the scene frame
     R = np.array([[math.cos(yaw), -math.sin(yaw)], [math.sin(yaw), math.cos(yaw)]])
@@ -83,7 +89,7 @@ def world_spec(split, index, rooms=1):
     centre_rot = (lo + hi) / 2                                                     # centre of the rotated free region
     world_id = f"v410:{split}:{index}:{row['scene']}:f{row['floor']}" + (f':g{int(rooms)}' if split == 'VALIDATION' else '')
     return dict(version=VERSION, split=split, index=index, rooms=int(rooms), world_id=world_id, house_id=f"{row['scene']}_f{row['floor']}",
-                scene=row['scene'], floor=row['floor'], base_file=row['file'], yaw=yaw, chart_m=L, centre_rot=centre_rot.tolist(),
+                scene=row['scene'], floor=row['floor'], base_file=row['file'], yaw=yaw, k90=k90, wall_angle_deg=float(row['wall_angle_deg']), chart_m=L, centre_rot=centre_rot.tolist(),
                 chart_rule='L = max(8, ceil(max extent of the rotated free region + 1 m)); floor centred; 8x8 public blocks of L/8 m')
 
 
