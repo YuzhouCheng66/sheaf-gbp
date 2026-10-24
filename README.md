@@ -12,7 +12,7 @@ K0 = decode from the agent's own code. R8 = decode after eight rounds of fusion.
 |---|---|---|---|
 | HouseExpo (real floor plans) | .893 / .901 | .918 / .920 | house-fitted square chart, 14,400 TRAIN houses, three cosine cycles |
 | HouseExpo, decoder channels x2 | .905 / .909 | .935 / .930 | same schedule; +1.2 / +0.8 pp vs the row above (pre-registered verdict: ambiguous, all 8 paired comparisons positive) |
-| HouseExpo, decoder channels x2 + public-frame conditioning | .915 / .913 | .939 / .937 | same schedule; +1.0 / +0.4 pp vs the row above (pre-registered verdict: ambiguous, all 8 paired comparisons positive, fresh panel +1.9 / +1.6) |
+| HouseExpo, decoder channels x2 + public-frame conditioning (current working baseline) | .915 / .913 | .939 / .937 | same schedule; +1.0 / +0.4 pp vs the row above (pre-registered verdict: ambiguous, all 8 paired comparisons positive, fresh panel +1.9 / +1.6) |
 | Synthetic v293 | .937 / .946 / .942 | ~.954 | three seeds; dynamic CRDT memory at t5: .937 |
 | 3D synthetic buildings, 64^3 voxels (256 means + 256 precisions per agent) | surface F1 .916 / .927, variable-structure F1 .864 / .888 | surface F1 .938 / .945 | first 3D batch (v400): 4-storey buildings, 8 agents, 512 B per message |
 
