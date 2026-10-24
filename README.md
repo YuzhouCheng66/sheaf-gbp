@@ -11,6 +11,7 @@ K0 = decode from the agent's own code. R8 = decode after eight rounds of fusion.
 | World | VAL R8 | VAL K0 | Notes |
 |---|---|---|---|
 | HouseExpo (real floor plans) | .893 / .901 | .918 / .920 | house-fitted square chart, 14,400 TRAIN houses, three cosine cycles |
+| HouseExpo, decoder channels x2 | .905 / .909 | .935 / .930 | same schedule; +1.2 / +0.8 pp vs the row above (pre-registered verdict: ambiguous, all 8 paired comparisons positive) |
 | Synthetic v293 | .937 / .946 / .942 | ~.954 | three seeds; dynamic CRDT memory at t5: .937 |
 
 Compression on v293: rate-term training (lambda 0.01) plus real arithmetic coding brings a self message from 27.2 B to 14.1 B at a cost of 0.3 to 0.9 pp R8.
