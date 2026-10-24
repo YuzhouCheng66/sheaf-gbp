@@ -6,7 +6,7 @@
 # ONE intervention: train_v392.py --frame-cond (on top of the wide decoder, --decoder-width 2.0, which is the current numerically best
 # architecture: D5-8). Identity-initialised (new conv columns zero) => the arm starts as exactly the batch-T function; test_v392_frame.py.
 # Protocol = batch Q / T (from scratch, houseexpo_fit, 14,400-house cache, 4 epochs = 57,600 updates, lr 3e-4, max fusion, posterior_only).
-# CONTROL = batch V itself (runs/v386-decoder/wide-s<seed>, W = 2.0, no conditioning): same seed => identical encoder/head init, identical
+# CONTROL = batch T itself (runs/v386-decoder/wide-s<seed>, W = 2.0, no conditioning): same seed => identical encoder/head init, identical
 # decoder init except the zero columns, identical data order (analyze_v392.py checks encoder/head bit-exactly on initial.pt).
 # Pre-registered reading (final VAL R8 wall F1, 6-stratum equal weight, final weights, both seeds 342101 / 342202):
 #   FRAME >= T + 1 pp on BOTH seeds   => the public frame (scale + phase) is a lever (then: carry it through the 3-cycle schedule);
@@ -15,7 +15,7 @@
 #   Mechanism check (reported, not decisive): the gain should be largest on the largest charts (8+-room stratum) where cell size departs
 #   most from the 20 m chart; a gain that is flat across strata would point to the block-phase planes rather than scale.
 #   Protection: VAL R8 unknown-known FPR may not rise by > 0.3 pp. Secondary: K0, fresh, 1-px-tolerance F1 (post hoc, gate script).
-# Budget: wide decoder => solo runs (batch V: 0.1435 s/update shared vs 0.0828 solo). The same validated preflight decides PARALLEL vs
+# Budget: wide decoder => solo runs (batch T: 0.1435 s/update shared vs 0.0828 solo). The same validated preflight decides PARALLEL vs
 #   SEQUENTIAL (expected SEQUENTIAL: two leases, ~3 h); --width 2.0 --decoder-params 2511202 --frame-cond 1. Incomplete => INCONCLUSIVE.
 # Writes only under /mnt/datasets (runs/v392-frame). GPU must be free of our jobs (anchored pgrep guard).
 cd /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021 || exit 1
@@ -28,7 +28,7 @@ log "chain_day4_V started pid $$ sha256 $(sha256sum scripts/chain_day4_V.sh | cu
 TSHA=$(sha256sum scripts/train_v392.py | cut -d' ' -f1)
 [ "$TSHA" = "ef4dc60082ef9f5f7076cf6bec4b7173b987ee730dd5f63f26a8321d40db00d2" ] || { log "ABORT: train_v392.py sha changed ($TSHA)"; exit 2; }
 for seed in 342101 342202; do
-  for f in final.json run.json checkpoints/initial.pt validation/final-val.json; do [ -f runs/v392-frame/frame-s$seed/$f ] || { log "ABORT: control runs/v392-frame/frame-s$seed/$f missing"; exit 2; }; done
+  for f in final.json run.json checkpoints/initial.pt validation/final-val.json; do [ -f runs/v386-decoder/wide-s$seed/$f ] || { log "ABORT: control (batch T) runs/v386-decoder/wide-s$seed/$f missing"; exit 2; }; done
 done
 ls -d runs/v392-frame/frame-s* >/dev/null 2>&1 && { log "ABORT: runs/v392-frame/frame-s* already exists (never overwrite history)"; exit 2; }
 pgrep -f "^$P scripts/train_v3" >/dev/null && { log "ABORT: a trainer process is already running"; exit 2; }
@@ -70,7 +70,7 @@ case "$MODE" in
     cat > runs/v392-frame/lease.json <<JSON
 {"lease_start_epoch": $START, "train_deadline_epoch": $DE, "total_deadline_epoch": $DT, "inclusive_seconds": 7200, "world": "houseexpo_fit", "updates_each": 57600,
  "mode": "parallel", "preflight": "$CHK", "trainer": "scripts/train_v392.py", "trainer_sha256": "$TSHA", "decoder_width": 2.0, "frame_cond": true,
- "control": "runs/v382-long/d4800e4-s<seed> (batch V, decoder width 2.0, no frame conditioning, same seed/recipe)",
+ "control": "runs/v386-decoder/wide-s<seed> (batch T, decoder width 2.0, no frame conditioning, same seed/recipe)",
  "expectation": "FRAME >= T + 1pp final VAL R8 on both seeds => public-frame conditioning is a lever; |gain| < 1pp on both => not a lever; else ambiguous; incomplete => INCONCLUSIVE; FPR may not rise > 0.3pp"}
 JSON
     log "batch V start (parallel, wide decoder + frame conditioning, from scratch, batch-Q recipe)"
@@ -87,7 +87,7 @@ JSON
       cat > $LF <<JSON
 {"lease_start_epoch": $LS, "train_deadline_epoch": $LDE, "total_deadline_epoch": $LDT, "inclusive_seconds": 7200, "world": "houseexpo_fit", "updates_each": 57600,
  "mode": "sequential", "seed": $seed, "preflight_parallel": "$CHK", "preflight_solo": "$CHK2", "trainer": "scripts/train_v392.py", "trainer_sha256": "$TSHA", "decoder_width": 2.0, "frame_cond": true,
- "control": "runs/v382-long/d4800e4-s$seed (batch V, decoder width 2.0, no frame conditioning, same seed/recipe)",
+ "control": "runs/v386-decoder/wide-s$seed (batch T, decoder width 2.0, no frame conditioning, same seed/recipe)",
  "expectation": "FRAME >= T + 1pp final VAL R8 on both seeds => public-frame conditioning is a lever; |gain| < 1pp on both => not a lever; else ambiguous; incomplete => INCONCLUSIVE; FPR may not rise > 0.3pp"}
 JSON
       log "batch V start seed $seed (sequential lease $LF, wide decoder + frame conditioning, from scratch, batch-Q recipe)"
