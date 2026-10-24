@@ -34,8 +34,8 @@ log "batch 3D-A: batch V is gone; starting"
 mkdir -p runs/v400-3d
 TS=$(date -u +%H%M%S)
 GPUUSED=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits | head -1)
-if [ "${GPUUSED:-99999}" -gt 4000 ]; then                                   # review M3: a parallel pair needs ~26 GB; another resident job => go solo
-  log "batch 3D-A: GPU already holds ${GPUUSED} MiB -> skipping the parallel preflight (SOLO)"; PLAN="SOLO gpu_busy=${GPUUSED}MiB"
+if [ "${FORCE_SOLO:-0}" = "1" ] || [ "${GPUUSED:-99999}" -gt 4000 ]; then      # review M3: a parallel pair needs ~26 GB; another resident job => go solo; FORCE_SOLO=1 after the 05:00 UTC incident (parallel rate 1.2 s/upd vs 0.74 in the preflight)
+  log "batch 3D-A: parallel skipped (FORCE_SOLO=${FORCE_SOLO:-0}, GPU holds ${GPUUSED} MiB) -> SOLO"; PLAN="SOLO forced=${FORCE_SOLO:-0} gpu_busy=${GPUUSED}MiB"
 else
 log "batch 3D-A preflight start (100 updates x 2 seeds in parallel, 64^3, D = 256)"
 for seed in 342101 342202; do
