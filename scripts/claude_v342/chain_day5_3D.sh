@@ -32,16 +32,6 @@ while pgrep -f "chain_day4_V.sh" >/dev/null || pgrep -f "^$P scripts/train_v392.
 pgrep -f "^$P scripts/train_" >/dev/null && { log "ABORT: a trainer process is already running"; exit 2; }
 log "batch 3D-A: batch V is gone; starting"
 mkdir -p runs/v400-3d
-TS=$(date -u +%H%M%S)
-GPUUSED=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits | head -1)
-if [ "${FORCE_SOLO:-0}" = "1" ] || [ "${GPUUSED:-99999}" -gt 4000 ]; then      # review M3: a parallel pair needs ~26 GB; another resident job => go solo; FORCE_SOLO=1 after the 05:00 UTC incident (parallel rate 1.2 s/upd vs 0.74 in the preflight)
-  log "batch 3D-A: parallel skipped (FORCE_SOLO=${FORCE_SOLO:-0}, GPU holds ${GPUUSED} MiB) -> SOLO"; PLAN="SOLO forced=${FORCE_SOLO:-0} gpu_busy=${GPUUSED}MiB"
-else
-log "batch 3D-A preflight start (100 updates x 2 seeds in parallel, 64^3, D = 256)"
-for seed in 342101 342202; do
-  $P scripts/train_3d_v400.py --out runs/v400-3d/pf-par-$TS-s$seed --cache $CACHE --size 64 --device cuda --seed $seed --updates 16000 --max-updates 100 --val-every 100 --val-scenes 32 --deadline-total 0 > runs/v400-3d/pf-par-$TS-s$seed.log 2>&1 &
-done
-wait
 rate(){ $P - "$1" <<'PY'
 import json, re, sys
 try:                                                                        # review M3: never raise; a crashed preflight yields "nan 0 0"
@@ -54,6 +44,16 @@ except Exception:
     print("nan 0 0")
 PY
 }
+TS=$(date -u +%H%M%S)
+GPUUSED=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits | head -1)
+if [ "${FORCE_SOLO:-0}" = "1" ] || [ "${GPUUSED:-99999}" -gt 4000 ]; then      # review M3: a parallel pair needs ~26 GB; another resident job => go solo; FORCE_SOLO=1 after the 05:00 UTC incident (parallel rate 1.2 s/upd vs 0.74 in the preflight)
+  log "batch 3D-A: parallel skipped (FORCE_SOLO=${FORCE_SOLO:-0}, GPU holds ${GPUUSED} MiB) -> SOLO"; PLAN="SOLO forced=${FORCE_SOLO:-0} gpu_busy=${GPUUSED}MiB"
+else
+log "batch 3D-A preflight start (100 updates x 2 seeds in parallel, 64^3, D = 256)"
+for seed in 342101 342202; do
+  $P scripts/train_3d_v400.py --out runs/v400-3d/pf-par-$TS-s$seed --cache $CACHE --size 64 --device cuda --seed $seed --updates 16000 --max-updates 100 --val-every 100 --val-scenes 32 --deadline-total 0 > runs/v400-3d/pf-par-$TS-s$seed.log 2>&1 &
+done
+wait
 read R1 L1 V1 <<<"$(rate runs/v400-3d/pf-par-$TS-s342101.log)"; read R2 L2 V2 <<<"$(rate runs/v400-3d/pf-par-$TS-s342202.log)"
 log "batch 3D-A preflight (parallel): s/update $R1 / $R2, load $L1 / $L2 s, val $V1 / $V2 s"
 PLAN=$($P - "$R1" "$R2" "$L1" "$L2" "$V1" "$V2" <<'PY'
