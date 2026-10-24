@@ -363,6 +363,7 @@ def main():
     ap.add_argument('--deadline-epoch', type=float, default=1e18); ap.add_argument('--deadline-total', type=float, default=1e18)
     ap.add_argument('--max-updates', type=int, default=0, help='preflight: stop after this many updates')
     ap.add_argument('--threads', type=int, default=4); ap.add_argument('--gen-workers', type=int, default=8, help='CPU processes for on-the-fly fixtures (panels, cache check); 0 = inline')
+    ap.add_argument('--gen-timeout', type=float, default=1200., help='seconds to wait for the fixture pool before failing (no silent hang)')
     args = ap.parse_args()
     signal.signal(signal.SIGTERM, _sigterm); signal.signal(signal.SIGINT, _sigterm)
     torch.set_num_threads(args.threads)
@@ -378,9 +379,12 @@ def main():
     assert man['data_module_sha256'] == sha_file(d3.__file__), 'cache written by a different data module'
     assert man['hops'] == list(HOPS) and man['beams'] == d3.beams(size), 'cache hops / beams do not match'
     def fixtures(specs):
+        # incident 2026-10-24 (batch 3D-B seed 342202): a 'fork' pool worker deadlocked on a futex inherited from the parent's threads and
+        # the run hung for 5 h before training started. 'spawn' starts clean interpreters (no inherited locks) and the result wait is bounded
+        # by --gen-timeout, so a stuck worker raises instead of hanging. Fixtures are deterministic, so the context does not change any data.
         if args.gen_workers > 0 and len(specs) > 1:
-            with multiprocessing.get_context('fork').Pool(min(args.gen_workers, len(specs))) as pool:
-                return pool.map(_fixture, specs, chunksize=1)
+            with multiprocessing.get_context('spawn').Pool(min(args.gen_workers, len(specs))) as pool:
+                return pool.map_async(_fixture, specs, chunksize=1).get(timeout=args.gen_timeout)
         return [_fixture(sp) for sp in specs]
     check_rows = man['rows'][:2] + man['rows'][-2:]
     panel_specs = [dict(split='VALIDATION', index=1_000_000 + k, size=size, agents=n_ag) for k in range(2 * args.val_scenes)]
