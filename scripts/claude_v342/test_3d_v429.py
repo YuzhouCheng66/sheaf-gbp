@@ -1,6 +1,6 @@
 """Tests for train_3d_v429 / batch 3S-D (Claude, 2026-10-25, before any run). CPU: python test_3d_v429.py --source <sealed>
 A. Defaults (8+8 bits, layouts 8x8x4 / 16x16x1 / 16x16x4 W1-W2) are train_3d_v428 bit-for-bit: state_dict, source, join, logits, loss, grads.
-B. 32x32x1 @ 8+8 (D = 1,024): builds; decoder start (32, 32, 8) with ONE upsampling stage; encoder patch 2 x 2 x 16 compute cells; coverage
+B. 32x32x1 @ 8+8 (D = 1,024): builds; the code grid is folded (space-to-depth 2) into the 16 x 16 start: same schedule and channel plan as the control, pre input width 8; encoder patch 2 x 2 x 16 compute cells; coverage
    mask = 4 x 4 x 32-voxel column known; block-local; logits shape; trunk / head / decoder param counts reported; raw_code_bytes 2,048.
 C. --wire-bits 16,16 at 16x16x1: LEVELS 32767; the wire's precision codebook has 65,535 levels (max relative floor error < 0.04 %) and the
    mean 32,767 levels per side; raw_code_bytes 1,024; the join still picks the max-precision source. --wire-bits 4,4 at 16x16x2 (D = 512):
@@ -41,7 +41,10 @@ for layout, w in (('16x16x1', 2.0), ('8x8x4', 1.0), ('16x16x4', 1.0)):
 print(f'A. v429 defaults == v428 bit-for-bit for 16x16x1 W2, 8x8x4 W1, 16x16x4 W1 (incl. loss and grads) ({time.time()-t0:.0f}s)')
 
 cfg(T9, '32x32x1', 2.0); m = T9.SheafModel3D(R1, 342101).eval()
-assert T9.D == 1024 and m.decoder.start == (32, 32, 8) and len(m.decoder.blocks) == 1 and m.trunk.bs == (2, 2, 16) and m.head.k == (4, 4, 32)
+assert T9.D == 1024 and m.decoder.start == (16, 16, 8) and len(m.decoder.blocks) == 2 and m.decoder.fold == 2 and m.decoder.pre[0].in_channels == 8 and m.trunk.bs == (2, 2, 16) and m.head.k == (4, 4, 32)
+mc = T9.SheafModel3D(R1, 342101); cfg(T9, '16x16x1', 2.0); mctrl = T9.SheafModel3D(R1, 342101); cfg(T9, '32x32x1', 2.0)
+sa, sb = mc.decoder.state_dict(), mctrl.decoder.state_dict(); assert list(sa) == list(sb) and all(sa[k].shape == sb[k].shape for k in sa if k != 'decoder.pre.0.weight' and k != 'pre.0.weight')   # same schedule / channel plan; only pre's input width differs
+assert sa['pre.0.weight'].shape[1] == 8 and sb['pre.0.weight'].shape[1] == 2
 with torch.no_grad():
     mu, q, mask = m.source(own); assert mu.shape == (8, 1024)
     cov = ((own >= 0).reshape(8, 32, 4, 32, 4, 1, 32).any(-1).any(4).any(2)).reshape(8, 1024).float(); assert torch.equal(mask, cov)
@@ -52,7 +55,7 @@ with torch.no_grad():
     f = T9.rollout_max(mu, q, mask, fx['edges'], stages=(8,))[8]; assert f.shape == (8, 2048)
     kl, ol = m.decoder(f); assert kl.shape == ol.shape == (8, 128 * 128 * 32)
 pg = {kk: sum(p.numel() for p in v) for kk, v in m.parameter_groups().items()}
-print(f'B. 32x32x1 @ 8+8: D 1,024, decoder start (32,32,8) with one stage, patch 2x2x16, column mask, block-local, logits ok; params {pg} ({time.time()-t0:.0f}s)')
+print(f'B. 32x32x1 @ 8+8: D 1,024, folded into the 16x16 start (same schedule as the control, pre in 8), patch 2x2x16, column mask, block-local, logits ok; params {pg} ({time.time()-t0:.0f}s)')
 
 cfg(T9, '16x16x1', 2.0, (16, 16)); assert T9.LEVELS == 32767 and T9._v378.Q_BITS == 16
 p = torch.tensor([1e-4, 0.01, 0.5, 2., 3.99], dtype=torch.float64); e = p * 0.3

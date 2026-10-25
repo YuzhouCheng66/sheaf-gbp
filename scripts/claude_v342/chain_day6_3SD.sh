@@ -1,6 +1,7 @@
 #!/bin/bash
-# Day-6 batch 3S-D (Claude; written 2026-10-25 14:12 UTC while 3S-Q runs, before any 3S-D training). Pre-registered in OVERNIGHT_REPORT
-# D8-20. The user (14:1x UTC) approved diagnostic arms whose message exceeds 512 B; the deployment budget is chosen afterwards.
+# Day-6 batch 3S-D (Claude; written 2026-10-25 14:11 UTC while 3S-Q ran, revised 14:36 UTC after code_review_v429_ladder.md M1-M3 and
+# S1-S5, before any 3S-D training). Pre-registered in OVERNIGHT_REPORT D8-20 (revised). The user (about 14:05 UTC) approved diagnostic
+# arms whose message exceeds 512 B; the deployment budget is chosen afterwards.
 # Question (D8-19): what is the ESSENTIAL limit of the code -- the number of coordinates (spatial units), the bits per coordinate, or
 # neither (then the decoder / training)? Every confirmed lever so far was 'more independent spatial units' (3S-C) or 'enough decoder
 # channels' (3S-W / D2); the largest remaining gap is furniture (.30 -> ~.7 needed for the user's K0 >= .95), and one 8-bit scalar per
@@ -9,11 +10,14 @@
 #   L2  --layout 16x16x1 --wire-bits 16,16   D = 256,   1,024 B: same coordinates, 2x the bits each (32,767 mean levels, 65,535 precision levels)
 #   L3  --layout 16x16x2 --wire-bits 4,4     D = 512,   512 B: 2x the coordinates (two vertical layers) at half the bits (7 mean levels)
 #   control: the baseline named by 3S-Q's analysis (16x16x1 @ 8+8, 512 B, d3 W2, 16k updates; its precision / known-weight knobs copied).
-# Decoder d3 W2 for every arm; its upsampling schedule starts at the code grid when that is finer than 16 x 16 (32x32x1: start 32 x 32 x 8,
-# ONE upsampling stage, decoder 1.50 M params instead of 1.83 M -- disclosed; unchanged for the other arms). Trunk / head identical for
-# 16x16x1 arms; the 32x32x1 trunk sees 2 x 2 x 16-cell patches and the 16x16x2 trunk 4 x 4 x 8 (same parameter counts). The source
-# quantiser follows the mean bits (LEVELS = 2^(M-1) - 1). Everything else: v420 data module and cache, seeds 342101 / 342202, 16,000
-# updates, lr 3e-4 cosine, N = 8, panels.
+# Decoder d3 W2 for every arm with the SAME schedule, depth, channel plan and receptive field as the control: a code grid finer than the
+# 16 x 16 start grid is folded into it by space-to-depth (32x32x1 -> 16 x 16 x 1 with 8 channels; only the first convolution's input width
+# grows, +20,736 params; review M3). Trunk / head initial tensors identical for every arm (drawn before the decoder); the 32x32x1 trunk sees
+# 2 x 2 x 16-cell patches (in effect a per-column z-profile encoder, review S7) and the 16x16x2 trunk 4 x 4 x 8 (same parameter counts).
+# The source quantiser follows the mean bits (LEVELS = 2^(M-1) - 1). Disclosed (review S1): at 4+4 bits the precision codebook has only
+# 7 levels inside [1e-4, 4] (everything >= .87 collapses to one level) while the own factor in the K0 belief stays unquantised, so L3 is
+# read mainly at K0 and its R8 is a weaker test of the layout. Everything else: v420 data module and cache, seeds 342101 / 342202,
+# 16,000 updates, lr 3e-4 cosine, N = 8, panels.
 # Pre-registered reading (final VAL, 24 houses, paired by seed, Delta = arm - control; the usual rule per arm):
 #   Delta R8 variable-structure F1 >= +3 pp AND Delta R8 surface F1 >= +1 pp on BOTH seeds => lever; <= -1 / <= -2 on both => worse;
 #   < +1 AND < +2 on both => not better; otherwise ambiguous. Guards: R8 FPR <= control + 0.3 pp; R8 slab recall >= control - 2 pp;
@@ -21,10 +25,13 @@
 #   LADDER READING (pre-registered): L1 lever and L2 not => the essential limit is the number of coordinates (deploy by choosing bits to
 #   fit the budget); L2 lever and L1 not => the quantisation of the code; both levers => both bind (compare sizes); neither => the code
 #   is not the limit at 16k updates: decoder depth / training / data next. L3 vs control reads whether coordinates can be bought with
-#   bits at a fixed 512 B. Mechanism readings: furniture-region F1 and furniture recall (the ladder targets furniture), interior-wall
-#   recall, the probe; bytes per message recorded per arm. The absolute 3S-A criteria and the user's final targets (R8 >= .90, K0 >= .95,
-#   var >= .75) are reported per arm.
-# Next baseline (pre-registered): among the levers (guards passed) the arm with the higher mean R8 variable-structure F1; none => unchanged.
+#   bits at a fixed 512 B. The LADDER reading uses each arm's RAW verdict; ADOPTION as the next baseline needs the raw verdict 'lever' AND
+#   all three guards true (an unreadable guard counts as failed; review M2). Mechanism readings: furniture-region F1 and furniture recall
+#   (the ladder targets furniture), interior-wall recall (diag_*_v429 copies that take D and the wire bits from the checkpoint, review M1);
+#   bytes per message recorded per arm. The absolute 3S-A criteria and the user's final targets (R8 >= .90, K0 >= .95, var >= .75) are
+#   reported per arm.
+# Next baseline (pre-registered): among the ADOPTED arms the one with the higher mean R8 variable-structure F1; none => unchanged (the
+#   16k baseline is re-emitted, since 3S-S needs a 16k control; a 3S-T cycles lever is carried separately in runs/v427-length/analysis.json).
 # Budget: SOLO, after chain_day6_3ST; one lease per run (six runs, ~1 h each at ~0.2 s/update); must run 16,000 updates (preflight; else
 #   INCONCLUSIVE); hard timeouts inside the lease. Writes only under /mnt/datasets (runs/v429-ladder).
 cd /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021 || exit 1
@@ -38,20 +45,20 @@ log(){ echo "$(date -u +%FT%TZ) $*" | tee -a $LOG; }
 log "chain_day6_3SD started pid $$ sha256 $(sha256sum scripts/chain_day6_3SD.sh | cut -c1-16)"
 check_shas(){
   TSHA=$(sha256sum scripts/train_3d_v429.py | cut -d' ' -f1); DSHA=$(sha256sum scripts/mapping_3d_storey_data_v420.py | cut -d' ' -f1); KSHA=$(sha256sum scripts/train_v378.py | cut -d' ' -f1)
-  GSHA=$(sha256sum scripts/diag_storey_v427.py | cut -d' ' -f1); ISHA=$(sha256sum scripts/diag_interior_v427.py | cut -d' ' -f1); VSHA=$(sha256sum scripts/diag_veto_v427.py | cut -d' ' -f1); MSHA=$(sha256sum $CACHE/manifest.json | cut -d' ' -f1)
-  [ "$TSHA" = "65b6bed974c314880460394fd9446b9c1a96a3b49cc89fce6eb592417e132621" ] || { log "ABORT: train_3d_v429.py sha changed ($TSHA)"; exit 2; }
+  GSHA=$(sha256sum scripts/diag_storey_v429.py | cut -d' ' -f1); ISHA=$(sha256sum scripts/diag_interior_v429.py | cut -d' ' -f1); VSHA=$(sha256sum scripts/diag_veto_v429.py | cut -d' ' -f1); MSHA=$(sha256sum $CACHE/manifest.json | cut -d' ' -f1)
+  [ "$TSHA" = "5502fea0041c22ed10c752dd34c188babad875d9c9e84ae2e6b4143ab15a8a0e" ] || { log "ABORT: train_3d_v429.py sha changed ($TSHA)"; exit 2; }
   [ "$DSHA" = "4793a3279ebd9564315500721e548ab9dd0e10d8f192df632c9b8ddf2964b61d" ] || { log "ABORT: mapping_3d_storey_data_v420.py sha changed ($DSHA)"; exit 2; }
   [ "$KSHA" = "db7bcc3528d58624a7ec34863f2be492fbd5aea9b87025239c662678fb875bff" ] || { log "ABORT: train_v378.py (k-bit wire) sha changed ($KSHA)"; exit 2; }
-  [ "$GSHA" = "ca6cd3faead242cb0754daa7f65eb8a0752d963ab61d2bf730354e34eec3b520" ] || { log "ABORT: diag_storey_v427.py sha changed ($GSHA)"; exit 2; }
-  [ "$ISHA" = "27460a321ab3152040ab7041a2ede6d16ff3da7ae2f53d9281a0cf52b3ff9fb9" ] || { log "ABORT: diag_interior_v427.py sha changed ($ISHA)"; exit 2; }
-  [ "$VSHA" = "03d087fc9d76a5e499895f7da15dc97a8377543b559d243a6710e1dd844bfaa3" ] || { log "ABORT: diag_veto_v427.py sha changed ($VSHA)"; exit 2; }
+  [ "$GSHA" = "545a1532da83f520b1bf3b76ccaf385f6b4eef2bea49a921534c7f1cc400890c" ] || { log "ABORT: diag_storey_v429.py sha changed ($GSHA)"; exit 2; }
+  [ "$ISHA" = "1649cb5ee58fa55f99d4714135d867e97fffed82519e5f4c149ae242f0504033" ] || { log "ABORT: diag_interior_v429.py sha changed ($ISHA)"; exit 2; }
+  [ "$VSHA" = "2c4385f8b1a5adeb8072c0dd0cbba8758d7ff2358783495e0ad91802f6d26fc7" ] || { log "ABORT: diag_veto_v429.py sha changed ($VSHA)"; exit 2; }
   [ "$MSHA" = "864b1fe3c711a189daffd86b841a8e39c959c465f4310daa2d982b0155c5452b" ] || { log "ABORT: cache manifest differs from the controls' ($MSHA)"; exit 2; }
 }
 [ -f $CACHE/manifest.json ] || { log "ABORT: v420 cache manifest missing"; exit 2; }
 check_shas
 mkdir $OUT.lock 2>/dev/null || { log "ABORT: chain_day6_3SD already launched (lock exists)"; exit 2; }
 if compgen -G "$OUT/l*-s*" >/dev/null || compgen -G "$OUT/lease_*.json" >/dev/null || [ -e $OUT/analysis.json ]; then log "ABORT: $OUT already has 3S-D history (never overwrite)"; exit 2; fi
-busy(){ pgrep -f "bash scripts/chain_day6_3ST[.]sh" >/dev/null || pgrep -f "bash scripts/chain_day6_3SQ[.]sh" >/dev/null || pgrep -f "bash scripts/chain_day6_3SR[.]sh" >/dev/null || pgrep -f "bash scripts/chain_day6_3SP[.]sh" >/dev/null || pgrep -f "bash scripts/chain_day6_3SL[.]sh" >/dev/null || pgrep -f "bash scripts/chain_day6_3SC[.]sh" >/dev/null || pgrep -f "chain_day6_RS[.]sh" >/dev/null || pgrep -f "gen_3d_cache_v42[01][.]py" >/dev/null || pgrep -f "^$P scripts/train_" >/dev/null || pgrep -f "^$P scripts/diag_" >/dev/null || pgrep -f "^$P scripts/owned_ceiling" >/dev/null || [ -n "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]; }
+busy(){ pgrep -f "bash scripts/chain_day6_3ST[.]sh" >/dev/null || pgrep -f "bash scripts/chain_day6_3SQ[.]sh" >/dev/null || pgrep -f "bash scripts/chain_day6_3SR[.]sh" >/dev/null || pgrep -f "bash scripts/chain_day6_3SP[.]sh" >/dev/null || pgrep -f "bash scripts/chain_day6_3SL[.]sh" >/dev/null || pgrep -f "bash scripts/chain_day6_3SC[.]sh" >/dev/null || pgrep -f "chain_day6_RS[.]sh" >/dev/null || pgrep -f "^$P scripts/train_" >/dev/null || pgrep -f "^$P scripts/diag_" >/dev/null || pgrep -f "^$P scripts/owned_ceiling" >/dev/null || [ -n "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]; }
 while busy; do sleep 120; done
 sleep 60; while busy; do sleep 120; done
 # ---- baseline from the previous batch's pre-registered analysis: label, control directory, run prefix
@@ -113,15 +120,15 @@ log "batch 3S-D training done"
 check_shas
 for run in l1-s342101 l1-s342202 l2-s342101 l2-s342202 l3-s342101 l3-s342202; do      # report-only breakdowns (CPU for the veto)
   if [ -f $OUT/$run/checkpoints/final.pt ]; then
-    timeout -k 30 1800 $P scripts/diag_storey_v427.py --source $S --run $OUT/$run --out $OUT/diag-$run --trainer train_3d_v429 > $OUT/diag-$run.log 2>&1
-    timeout -k 30 1800 $P scripts/diag_interior_v427.py --source $S --run $OUT/$run --trainer train_3d_v429 2>$OUT/diag-interior-$run.err | tail -1 > $OUT/diag-interior-$run.json
-    CUDA_VISIBLE_DEVICES= timeout -k 30 1800 $P scripts/diag_veto_v427.py --source $S --run $OUT/$run --trainer train_3d_v429 --out $OUT/veto-$run.json > $OUT/veto-$run.log 2>&1
+    timeout -k 30 1800 $P scripts/diag_storey_v429.py --source $S --run $OUT/$run --out $OUT/diag-$run --trainer train_3d_v429 > $OUT/diag-$run.log 2>&1
+    timeout -k 30 1800 $P scripts/diag_interior_v429.py --source $S --run $OUT/$run --trainer train_3d_v429 2>$OUT/diag-interior-$run.err | tail -1 > $OUT/diag-interior-$run.json
+    CUDA_VISIBLE_DEVICES= timeout -k 30 1800 $P scripts/diag_veto_v429.py --source $S --run $OUT/$run --trainer train_3d_v429 --out $OUT/veto-$run.json > $OUT/veto-$run.log 2>&1
   fi
 done
 for s in 342101 342202; do
-  [ -f $OUT/diag-control-s$s/diag.json ] || timeout -k 30 1800 $P scripts/diag_storey_v427.py --source $S --run $CTRL/$CP$s --out $OUT/diag-control-s$s --trainer train_3d_v429 > $OUT/diag-control-s$s.log 2>&1
-  [ -s $OUT/diag-interior-control-s$s.json ] || timeout -k 30 1800 $P scripts/diag_interior_v427.py --source $S --run $CTRL/$CP$s --trainer train_3d_v429 2>$OUT/diag-interior-control-s$s.err | tail -1 > $OUT/diag-interior-control-s$s.json
-  [ -s $OUT/veto-control-s$s.json ] || CUDA_VISIBLE_DEVICES= timeout -k 30 1800 $P scripts/diag_veto_v427.py --source $S --run $CTRL/$CP$s --trainer train_3d_v429 --out $OUT/veto-control-s$s.json > $OUT/veto-control-s$s.log 2>&1
+  [ -f $OUT/diag-control-s$s/diag.json ] || timeout -k 30 1800 $P scripts/diag_storey_v429.py --source $S --run $CTRL/$CP$s --out $OUT/diag-control-s$s --trainer train_3d_v429 > $OUT/diag-control-s$s.log 2>&1
+  [ -s $OUT/diag-interior-control-s$s.json ] || timeout -k 30 1800 $P scripts/diag_interior_v429.py --source $S --run $CTRL/$CP$s --trainer train_3d_v429 2>$OUT/diag-interior-control-s$s.err | tail -1 > $OUT/diag-interior-control-s$s.json
+  [ -s $OUT/veto-control-s$s.json ] || CUDA_VISIBLE_DEVICES= timeout -k 30 1800 $P scripts/diag_veto_v429.py --source $S --run $CTRL/$CP$s --trainer train_3d_v429 --out $OUT/veto-control-s$s.json > $OUT/veto-control-s$s.log 2>&1
 done
 RES=$($P - "$CTRL" "$CP" <<'PY'
 import json, math, re, sys, torch
@@ -197,19 +204,19 @@ def compare(arm):
         for key in ("R8_furn_f1", "K0_furn_f1", "R8_obj_recall", "K0_interior", "K8_interior"):
             try: mech[key] = [(round(a[key], 4), round(b[key], 4)) for a, b in rr]
             except Exception: mech[key] = None
-        adopt = v == "lever" and guards.get("fpr_ok") is True and guards.get("k0var_ok") is True
-        return dict(verdict=v if adopt or v != "lever" else "lever, but a guard failed (FPR or K0 var): not adopted", adopt=adopt, deltas=dict(zip(("342101", "342202"), deltas)), guards=guards, mechanism=mech, bytes_per_message=rr[0][0]["raw_code_bytes"], D=rr[0][0]["D"],
+        adopt = v == "lever" and all(guards.get(g) is True for g in ("fpr_ok", "slab_ok", "k0var_ok"))        # review M2: all three guards, n/a = failed
+        return dict(verdict_raw=v, verdict=v if adopt or v != "lever" else "lever, but a guard failed (FPR, slab or K0 var): not adopted", adopt=adopt, deltas=dict(zip(("342101", "342202"), deltas)), guards=guards, mechanism=mech, bytes_per_message=rr[0][0]["raw_code_bytes"], D=rr[0][0]["D"],
                     mean_R8_var=sum(a["R8_var_occ_f1"] for a, _ in rr) / 2)
     except Exception as e:
         return dict(verdict=f"INCONCLUSIVE ({e})")
 res = {arm: compare(arm) for arm in ARMS}
-def is_lever(arm): return res[arm].get("adopt") is True or res[arm].get("verdict") == "lever"
+def is_lever(arm): return res[arm].get("verdict_raw") == "lever"                                            # the ladder reads the raw verdict
 l1, l2 = is_lever("l1"), is_lever("l2")
 ladder = ("the essential limit is the NUMBER OF COORDINATES (deploy by choosing bits to fit the budget)" if l1 and not l2 else
           "the essential limit is the QUANTISATION of the code (bits per coordinate)" if l2 and not l1 else
           "both coordinates and bits bind (compare the sizes)" if l1 and l2 else
           "the code is not the limit at 16k updates: decoder depth / training / data next")
-if any(not isinstance(res[a].get("verdict"), str) or res[a]["verdict"].startswith("INCONCLUSIVE") for a in ("l1", "l2")): ladder = "INCONCLUSIVE (L1 or L2 incomplete)"
+if any("verdict_raw" not in res[a] for a in ("l1", "l2")): ladder = "INCONCLUSIVE (L1 or L2 incomplete)"
 cands = [a for a in ARMS if res[a].get("adopt") is True]
 nb = max(cands, key=lambda a: res[a]["mean_R8_var"]) if cands else None
 nb_dir, nb_prefix = (OUT, f"{nb}-s") if nb else (CTRL, CP)

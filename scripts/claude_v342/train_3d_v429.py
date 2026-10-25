@@ -3,9 +3,10 @@ DIAGNOSTIC arms) = train_3d_v428 + (i) layouts 32x32x1 (D = 1,024: every coordin
 8+8 bits) and 16x16x2 (D = 512: two vertical layers per column, floor zone 0-1.6 m and upper zone); both need --allow-non256;
 (ii) --wire-bits M,Q: the k-bit wire carries M-bit means (2^(M-1)-1 levels per side, also the source quantiser LEVELS) and Q-bit log
 precisions (2^Q-1 levels over [1e-8, 128]); default 8,8 = v428; 16,16 doubles the bits per coordinate (1 KB at D = 256), 4,4 halves
-them (512 B at D = 512); (iii) the decoder schedule starts at the code grid when it is finer than 16 x 16 (32x32x1 -> start 32 x 32 x 8,
-one upsampling stage) instead of interpolating the code down to 16 x 16 -- unchanged for BX, BY <= 16, so every earlier recipe is
-bit-for-bit (test_3d_v429 A). The original docstring follows.
+them (512 B at D = 512); (iii) a code grid finer than the decoder's 16 x 16 start grid is FOLDED into it by space-to-depth (32x32x1
+-> 16 x 16 x 1 with 2 x 2 x 2 = 8 channels), so the decoder's schedule, depth, channel plan and receptive field are exactly the
+control's and only the first convolution's input width changes (review v429 M3); unchanged for BX, BY <= 16, so every earlier recipe
+is bit-for-bit (test_3d_v429 A). The original docstring follows.
 """
 """train_3d_v428 (Claude, 2026-10-25, batch 3S-T) = train_3d_v427 + ONE knob, --init-from CKPT: a WARM START for training cycles under
 separate leases (the 2D line's batches R / S / W / X protocol). The checkpoint's state_dict is loaded strictly (every tensor, same
@@ -187,9 +188,10 @@ class Decoder3D(nn.Module):
     """posterior on the 8x8x4 block grid -> known / occupancy logits on the voxel grid (convolutions end at the compute grid)."""
     def __init__(self, dims):
         super().__init__()
-        self.dims = tuple(dims); comp = tuple(d // SUB for d in dims); self.start = (min(max(16, BX), comp[0]), min(max(16, BY), comp[1]), min(8, comp[2]))   # v429: never below the code grid
+        self.dims = tuple(dims); comp = tuple(d // SUB for d in dims); self.start = (min(16, comp[0]), min(16, comp[1]), min(8, comp[2]))
         c0 = int(round(64 * DECODER_WIDTH))                              # v422: decoder channel multiplier (64 at W = 1)
-        self.pre = nn.Sequential(nn.Conv3d(2, c0, 3, padding=1), nn.SiLU(), nn.Conv3d(c0, c0, 3, padding=1), nn.SiLU())
+        self.fold = max(1, BX // 16); assert BX == BY and BX % 16 == 0 or BX < 16, (BX, BY)   # v429: 32x32 -> fold 2
+        self.pre = nn.Sequential(nn.Conv3d(2 * self.fold ** 2, c0, 3, padding=1), nn.SiLU(), nn.Conv3d(c0, c0, 3, padding=1), nn.SiLU())
         shapes, chans = [], []
         sx, sy, sz = self.start; c = 64
         while (sx, sy, sz) != comp:
@@ -208,6 +210,8 @@ class Decoder3D(nn.Module):
     def forward(self, post):
         b = post.shape[0]
         grid = torch.cat((post[:, :D].reshape(b, 1, BX, BY, BZ), (post[:, D:] / 8.).reshape(b, 1, BX, BY, BZ)), 1)
+        if self.fold > 1:                                                 # v429: space-to-depth in x, y onto the 16 x 16 start grid
+            f = self.fold; grid = grid.reshape(b, 2, BX // f, f, BY // f, f, BZ).permute(0, 1, 3, 5, 2, 4, 6).reshape(b, 2 * f * f, BX // f, BY // f, BZ)
         h = F.interpolate(self.pre(grid), self.start, mode='trilinear', align_corners=False)
         h = self.lift(torch.cat((h, public3(b, *self.start, h.device)), 1))
         for shape, block in zip(self.shapes, self.blocks):
