@@ -1,5 +1,5 @@
 #!/bin/bash
-# Day-6 batch 3S-Q (Claude; written 2026-10-25 07:38 UTC while 3S-L / 3S-P run, before any 3S-Q training). Pre-registered in
+# Day-6 batch 3S-Q (Claude; written 2026-10-25 07:38, revised 08:02 after code_review_v427_knownbce_covq.md M1-M3 and S1-S4, UTC while 3S-L / 3S-P run, before any 3S-Q training). Pre-registered in
 # OVERNIGHT_REPORT D8-13; programme in D8-9 (three independent first-principles analysts, claude_handoff/analysis_20261025/).
 # Question: is the PRECISION SEMANTICS the lever (analyst A, section 5 / 6.1)? The learned per-block precision q is at once the join's source-
 # selection key and the decoder's second channel; measured on 3S-W / 3S-C it does not rank sources by completeness (the max-precision
@@ -19,6 +19,7 @@
 #   Delta R8 surface F1 < +1 pp AND Delta R8 variable-structure F1 < +2 pp on BOTH seeds => not better;
 #   otherwise => ambiguous (the baseline's seeds may be 5-6 pp apart, so a moderate effect lands here; deltas reported either way).
 #   Guards (beside the verdict): R8 FPR <= control + 0.3 pp; R8 slab recall >= control - 2 pp; K0 variable-structure F1 >= control - 2 pp.
+#   A lever whose FPR or K0-var guard fails is recorded as such and does NOT become the next baseline (review S4).
 #   Mechanism reading: the fusion gap R8 - K0 (surface) narrows by >= 3 pp versus the control on both seeds => the gain comes through
 #   fusion, as predicted; a gain with an unchanged gap is not attributable to source selection.
 #   The absolute 3S-A criteria are re-applied for the record. Reported, not judged: Delta K0, furniture-region F1, tolerance-1, fresh,
@@ -176,18 +177,26 @@ try:
         try: guards[name] = all(fn(r) for r in rows.values())
         except Exception as e: guards[name] = f"n/a ({e})"
     try:
-        mech = ("fusion gap narrowed (>= 3 pp on both seeds)" if all((r["arm"]["R8_surface_f1"] - r["arm"]["K0_surface_f1"]) - (r["control"]["R8_surface_f1"] - r["control"]["K0_surface_f1"]) >= .03 for r in rows.values()) else "gain not attributable to source selection (fusion gap not narrowed)") + " " + json.dumps({{s: (round(r["arm"]["R8_surface_f1"] - r["arm"]["K0_surface_f1"], 4), round(r["control"]["R8_surface_f1"] - r["control"]["K0_surface_f1"], 4)) for s, r in rows.items()}})
+        mech = ("fusion gap narrowed (>= 3 pp on both seeds, K0 surface not down > 1 pp)" if all((r["arm"]["R8_surface_f1"] - r["arm"]["K0_surface_f1"]) - (r["control"]["R8_surface_f1"] - r["control"]["K0_surface_f1"]) >= .03 and r["delta"]["K0_surface_f1"] >= -.01 for r in rows.values()) else "gain not attributable to source selection (fusion gap not narrowed, or K0 fell)") + " " + json.dumps({s: (round(r["arm"]["R8_surface_f1"] - r["arm"]["K0_surface_f1"], 4), round(r["control"]["R8_surface_f1"] - r["control"]["K0_surface_f1"], 4)) for s, r in rows.items()})
     except Exception as e:
         mech = f"n/a ({e})"
+except Exception as e:
+    verdict = f"INCONCLUSIVE ({e})"; guards = mech = None
+try:                                                                             # report-only (review S1: never overwrites the verdict)
     g = lambda k: [r["arm"][k] for r in rows.values()]
     structure = min(g("R8_surface_f1")) >= .80 and min(g("K0_surface_f1")) >= .85 and min(g("R8_var_occ_f1")) >= .65 and min(g("K0_var_occ_f1")) >= .70
     furniture = min(g("R8_furn_f1")) >= .50 and min(g("K0_furn_f1")) >= .55
     absolute = ("maps furnished storeys at R1" if structure and furniture else "maps the storey structure, not its furniture (partial)" if structure
                 else "does not with this model" if min(g("R8_surface_f1")) < .70 or min(g("R8_var_occ_f1")) < .50 else "partial")
+except Exception as e:
+    absolute = f"n/a ({e})"
+try:
     fusion_gap = {s: (round(r["arm"]["R8_surface_f1"] - r["arm"]["K0_surface_f1"], 4), round(r["control"]["R8_surface_f1"] - r["control"]["K0_surface_f1"], 4)) for s, r in rows.items()}
 except Exception as e:
-    verdict = f"INCONCLUSIVE ({e})"; guards = mech = absolute = fusion_gap = None
-nb_dir, nb_prefix = (OUT, "a-s") if verdict == "lever" else (CTRL, CP)
+    fusion_gap = f"n/a ({e})"
+adopt = verdict == "lever" and isinstance(guards, dict) and guards.get("fpr_ok") is True and guards.get("k0var_ok") is True    # review S4: pre-registered
+if verdict == "lever" and not adopt: verdict = "lever, but a guard failed (FPR or K0 var): baseline unchanged"
+nb_dir, nb_prefix = (OUT, "a-s") if adopt else (CTRL, CP)
 json.dump(dict(control=CTRL, control_prefix=CP, baseline_recipe={k: rows["342101"]["control"][k] for k in ("decoder", "decoder_width", "blocks", "precision", "known_weight")} if isinstance(rows.get("342101"), dict) else None,
                rows=rows, verdict=verdict, guards=guards, mechanism=mech, absolute_verdict=absolute, fusion_gap_arm_vs_control=fusion_gap, next_baseline_dir=nb_dir, next_baseline_prefix=nb_prefix, code_bytes=512), open(f"{OUT}/analysis.json", "w"), indent=1)
 print(verdict, "| guards", guards, "| mechanism", mech, "| absolute", absolute, "| fusion gap (arm, control)", fusion_gap, "| next baseline", nb_dir, nb_prefix, "|", json.dumps({s: (r["delta"] if isinstance(r, dict) else r) for s, r in rows.items()}))
