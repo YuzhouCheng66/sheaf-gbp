@@ -1,7 +1,7 @@
 #!/bin/bash
 # Day-6 batch 3S-T (Claude; written 2026-10-25 08:36 UTC, revised 08:58 after code_review_v427_length.md, REDESIGNED 11:23 UTC after 3S-P
 # made d3 W2 16x16x1 (D2) the baseline -- its lease holds only ~25k updates, below the single-lease design's 32k floor (review S4) -- before
-# any 3S-T training). Pre-registered in OVERNIGHT_REPORT D8-15 (revised); programme D8-9 (analyst B, 1 / 2 / 5.2: LR-floor-limited, not
+# any 3S-T training; revised again 11:49 UTC after code_review_v428_cycles.md S1-S8). Pre-registered in OVERNIGHT_REPORT D8-15 (revised); programme D8-9 (analyst B, 1 / 2 / 5.2: LR-floor-limited, not
 # plateaued; VAL still rising at the end of every 16k run; 3S-C seed 1 jumped +13 pp in its last quarter; the 2D line needed 57,600 x 3 cycles).
 # ONE variable: the amount of training, delivered as CYCLES (the 2D line's R / S / W / X protocol): cycle 1 trains the baseline's exact recipe
 # for UPD updates (one lease filled: largest multiple of 500 with 1.05 x (load + UPD x rate + 3 x val) <= 6,000 s, cap 96,000, floor 24,000 =
@@ -17,8 +17,12 @@
 #   over 4,708 houses; the next lever is data, not training);
 #   Delta R8 surface F1 < +1 pp AND Delta R8 variable-structure F1 < +2 pp on BOTH seeds => not better (saturated at this recipe);
 #   otherwise => ambiguous.
-#   EARLY STOP (pre-registered): after cycle 1, if Delta(cycle-1 final - control) R8 surface < +1 pp on BOTH seeds, cycle 2 is not run and the
-#   verdict is read on cycle 1 alone (labelled 'cycle 1 only'); otherwise cycle 2 runs and the verdict is read on cycle 2.
+#   EARLY STOP (pre-registered; review S6 aligned it with the 'not better' rule): after cycle 1, if Delta(cycle-1 final - control) R8 surface
+#   < +1 pp AND Delta R8 variable-structure < +2 pp on BOTH seeds, cycle 2 is not run and the verdict is read on cycle 1 alone (labelled
+#   'cycles 1 x UPD'); a deadline-truncated cycle 1 counts as incomplete (no cycle 2, INCONCLUSIVE); otherwise cycle 2 runs and the verdict
+#   is read on cycle 2. Cycle 2 restarts the schedule (200-step warmup, cosine) at peak lr 1e-4 and restarts the data order from the same
+#   seed -- exactly the 2D line's R / S / W / X warm cycles (3e-4 cold, 1e-4 warm, same --seed); cycle-1-vs-control deltas are reported too.
+#   Real budget at the D2 baseline (0.201 s/update): UPD = 27,500, ~1.65 h per run, ~7 h for four runs.
 #   Guards (beside the verdict): R8 FPR <= control + 0.3 pp; R8 slab recall >= control - 2 pp; K0 variable-structure F1 >= control - 2 pp.
 #   A lever whose FPR or K0-var guard fails is recorded as such and does NOT become the next baseline.
 #   Mechanism reading: the fusion gap R8 - K0 (surface) must not widen by more than 2 pp versus the control on EITHER seed; reported: the
@@ -92,9 +96,11 @@ run_seed(){                                                                     
   read RS LS VS <<<"$(rate $OUT/pf-$TS2-c$CYC-s$seed.log)"
   [ "$RS" = "nan" ] && { log "ABORT INCONCLUSIVE (preflight failed, exit $PFX): c$CYC seed $seed"; return 1; }
   if [ -z "$UPD" ]; then                                                       # one count for every run, from the first preflight (review M2)
-    UPD=$($P -c "import math; r=float('$RS'); u=int((6000/1.05-float('$LS')-3*float('$VS'))/r) if math.isfinite(r) and r>0 else 0; print(min(96000,(u//500)*500))"); UPDFROM="c${CYC}s$seed"
+    UPD=$($P -c "import math; r=float('$RS'); u=int((6000/1.05-float('$LS')-3*float('$VS'))/r) if math.isfinite(r) and r>0 else 0; print(min(96000,(u//500)*500))"); UPDFROM="c${CYC}s$seed"; BUD=6000
+  else
+    BUD=6300                                                                   # review S4: later preflights only confirm the fit (the deadline is 6,600 s)
   fi
-  FIT=$($P -c "import math; r=float('$RS'); print(1 if math.isfinite(r) and r>0 and 1.05*(float('$LS')+$UPD*r+3*float('$VS'))<=6000 else 0)")
+  FIT=$($P -c "import math; r=float('$RS'); print(1 if math.isfinite(r) and r>0 and 1.05*(float('$LS')+$UPD*r+3*float('$VS'))<=$BUD else 0)")
   log "batch 3S-T preflight c$CYC seed $seed (exit $PFX): s/update $RS load $LS val $VS -> updates $UPD (from $UPDFROM; cap 96,000; floor 24,000); fits: $FIT"
   [ "$UPD" -ge 24000 ] && [ "$FIT" = "1" ] || { log "ABORT INCONCLUSIVE (budget): c$CYC seed $seed: $UPD updates (floor 24,000) fit=$FIT"; return 1; }
   START=$(date +%s); DE=$((START+6600)); DT=$((START+7150))
@@ -114,15 +120,18 @@ import json, sys
 CTRL, CP = sys.argv[1], sys.argv[2]; ds = []
 for s in ("342101", "342202"):
     try:
-        a = json.load(open(f"runs/v427-length/c1-s{s}/final.json")); c = json.load(open(f"{CTRL}/{CP}{s}/final.json"))
-        ds.append(a["val"]["8"]["surface_f1"] - c["val"]["8"]["surface_f1"])
+        a = json.load(open(f"runs/v427-length/c1-s{s}/final.json")); m = json.load(open(f"runs/v427-length/c1-s{s}/run.json")); c = json.load(open(f"{CTRL}/{CP}{s}/final.json"))
+        if a["updates"] != m["updates"]: raise ValueError("truncated")                      # review S1: a deadline-cut cycle 1 is incomplete
+        ds.append((a["val"]["8"]["surface_f1"] - c["val"]["8"]["surface_f1"], a["val"]["8"]["var_occ_f1"] - c["val"]["8"]["var_occ_f1"]))
     except Exception as e:
         ds.append(None)
-print("stop" if all(d is not None and d < .01 for d in ds) else ("incomplete" if any(d is None for d in ds) else "continue"), [None if d is None else round(d, 4) for d in ds])
+if any(d is None for d in ds): print("incomplete", ds)
+elif all(d[0] < .01 and d[1] < .02 for d in ds): print("stop", [tuple(round(x, 4) for x in d) for d in ds])   # review S6: the 'not better' rule
+else: print("continue", [tuple(round(x, 4) for x in d) for d in ds])
 PY
 )
-log "batch 3S-T cycle-1 read (pre-registered early stop if both seeds < +1 pp R8 surface): $EARLY"
-case "$EARLY" in stop*|incomplete*) log "batch 3S-T: cycle 2 not run ($EARLY)";; *) for seed in 342101 342202; do run_seed 2 $seed; done;; esac
+log "batch 3S-T cycle-1 read (pre-registered early stop if both seeds < +1 pp R8 surface and < +2 pp R8 var): $EARLY"
+case "$EARLY" in continue*) for seed in 342101 342202; do run_seed 2 $seed || break; done;; *) log "batch 3S-T: cycle 2 not run ($EARLY)";; esac
 log "batch 3S-T training done"
 check_shas
 for s in 342101 342202; do                                                      # report-only breakdowns for the FINAL run of each seed and the control
@@ -228,9 +237,10 @@ adopt = verdict == "lever" and isinstance(guards, dict) and guards.get("fpr_ok")
 if verdict == "lever" and not adopt: verdict = "lever, but a guard failed (FPR or K0 var): baseline unchanged"
 nb_dir, nb_prefix = (OUT, "a-s") if adopt else (CTRL, CP)
 nb_updates = (rows["342101"]["arm"]["total_updates"] if adopt else 16000) if isinstance(rows.get("342101"), dict) else None
+nb_cycles = (dict(cycles=rows["342101"]["arm"]["cycles"], updates_per_cycle=rows["342101"]["arm"]["updates"], final_runs={s: ("c2-s" if rows[s]["arm"]["cycles"] == 2 else "c1-s") + s for s in rows}) if adopt else dict(cycles=1, updates_per_cycle=16000)) if isinstance(rows.get("342101"), dict) else None
 try: verdict = f"{verdict} ({verdict_label})"
 except Exception: pass
-json.dump(dict(control=CTRL, control_prefix=CP, next_baseline_updates=nb_updates, baseline_recipe={k: rows["342101"]["control"][k] for k in ("decoder", "decoder_width", "blocks", "precision", "known_weight")} if isinstance(rows.get("342101"), dict) else None,
+json.dump(dict(control=CTRL, control_prefix=CP, next_baseline_updates=nb_updates, next_baseline_cycles=nb_cycles, baseline_recipe={k: rows["342101"]["control"][k] for k in ("decoder", "decoder_width", "blocks", "precision", "known_weight")} if isinstance(rows.get("342101"), dict) else None,
                rows=rows, verdict=verdict, guards=guards, mechanism=mech, absolute_verdict=absolute, fusion_gap_arm_vs_control=fusion_gap, next_baseline_dir=nb_dir, next_baseline_prefix=nb_prefix, code_bytes=512), open(f"{OUT}/analysis.json", "w"), indent=1)
 print(verdict, "| guards", guards, "| mechanism", mech, "| absolute", absolute, "| fusion gap (arm, control)", fusion_gap, "| next baseline", nb_dir, nb_prefix, "|", json.dumps({s: (r["delta"] if isinstance(r, dict) else r) for s, r in rows.items()}))
 PY
