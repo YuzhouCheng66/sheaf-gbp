@@ -1,5 +1,6 @@
 #!/bin/bash
-# Day-6 batch 3S-P (Claude; written 2026-10-25 07:20 UTC while 3S-C seed 2 and then 3S-L run, before any plan-column training).
+# Day-6 batch 3S-P (Claude; written 2026-10-25 07:03 UTC while 3S-C seed 2 ran, revised 07:29 UTC after code_review_v427_plancol.md M1-M2 and
+# S1-S7, before any plan-column training; 3S-L is running).
 # Pre-registered in OVERNIGHT_REPORT D8-10; programme in D8-9 (three independent first-principles analysts, claude_handoff/analysis_20261025/).
 # Question: is the DECODER FAMILY the lever -- the 2.5-D PLAN + COLUMN decoder (analyst C, R1) against the 3-D convolutional decoder?
 # Walls are vertical extrusions of the plan and column profiles are low-dimensional; the 3-D decoder spends 95 % of its MACs redrawing
@@ -12,24 +13,32 @@
 # function of the in-block position in every trained model.
 # Baseline / control (gate on 3S-C's pre-registered verdict, D8-5): if 3S-C found the layout a lever -> layout 16x16x1, control 3S-C
 #   (runs/v423-layout, d3 W1); otherwise -> layout 8x8x4, control 3S-W (runs/v422-decoder, d3 W2).
-# Arms (sequential, each seed under its own inclusive 7,200 s lease):
-#   P2  --decoder plan_column --decoder-width 2.0   (the 2-D line's recipe; PRIMARY: decoder family at its proven width)
-#   P1  --decoder plan_column --decoder-width 1.0   (SECONDARY: same family at the 3-D control's width; P2 - P1 = width within the family)
-#   Disclosed confound of the primary comparison against a W1 control: width and family change together; P1 separates them. (Against the
-#   3S-W control, P2 is single-variable.) Everything else is the control's: v420 data module and cache, seeds, 16,000 updates, lr, N = 8,
-#   panels, trunk / head initial tensors (asserted equal to the control's initial.pt), learned precision, uniform known-BCE.
-# Pre-registered reading (final VAL, 24 houses, paired by seed, Delta = P2 - control):
-#   Delta R8 variable-structure F1 >= +3 pp AND Delta R8 surface F1 >= +1 pp on BOTH seeds => the plan + column decoder is a lever;
-#   Delta R8 surface F1 <= -1 pp on BOTH seeds OR Delta R8 variable-structure F1 <= -2 pp on BOTH seeds => it is worse;
+# Arms (sequential, each seed under its own inclusive 7,200 s lease). The gate took the 16x16x1 branch (3S-C: "the code layout is a lever
+# (confirmed)", 07:10 UTC), so the control is d3 W1 and a plan-column arm at the 2-D line's width W2 would change family AND width at once
+# (review M1). Therefore:
+#   P2  --decoder plan_column --decoder-width 2.0   (the 2-D line's recipe)
+#   D2  --decoder d3          --decoder-width 2.0   (the 3-D decoder at W2: the STACK of the two confirmed levers, width (3S-W) + layout
+#                                                     (3S-C); it is the single-variable control for P2's decoder FAMILY at equal width)
+#   Three paired comparisons: FAMILY = P2 - D2 (one variable: decoder family at W2; PRIMARY); WIDTH@16x16x1 = D2 - 3S-C (one variable:
+#   width; the stack check); RECIPE = P2 - 3S-C (family + width together, disclosed as two variables). Everything else is the control's:
+#   v420 data module and cache, seeds, 16,000 updates, lr, N = 8, panels, trunk / head initial tensors (asserted equal to the control's
+#   initial.pt), learned precision, uniform known-BCE. (Against a 3S-W control -- the other gate branch -- P2 alone is single-variable and
+#   D2 is not run.)
+# Pre-registered reading (final VAL, 24 houses, paired by seed; the same rule for each of the three comparisons, Delta = first - second):
+#   Delta R8 variable-structure F1 >= +3 pp AND Delta R8 surface F1 >= +1 pp on BOTH seeds => lever;
+#   Delta R8 surface F1 <= -1 pp on BOTH seeds OR Delta R8 variable-structure F1 <= -2 pp on BOTH seeds => worse;
 #   Delta R8 surface F1 < +1 pp AND Delta R8 variable-structure F1 < +2 pp on BOTH seeds => not better;
-#   otherwise => ambiguous. Guards (reported beside the verdict): R8 FPR <= control + 0.3 pp; R8 slab recall >= .85 (column readout
-#   failure signal). Mechanism readings: Delta K0 interior-wall recall >= +10 pp on both seeds AND probe interior >= 14/16 on both seeds
-#   => the gain comes with interior walls being placed; otherwise not attributable to that mechanism. P1 vs control and P2 - P1 reported
-#   with the same deltas. The absolute 3S-A criteria are re-applied for the record.
+#   otherwise => ambiguous. The control's two seeds are 5.4 / 6.3 pp apart (R8 surface / var), so "ambiguous" is the likely label for a
+#   moderate effect (review S4); the paired deltas are reported either way.
+#   Guards (reported beside each verdict): R8 FPR <= second arm + 0.3 pp; R8 slab recall >= second arm - 2 pp (column-readout failure
+#   signal; relative, review S1). Mechanism reading for P2: Delta K0 interior-wall recall >= +10 pp vs the second arm on both seeds =>
+#   the gain comes with interior walls being placed; the wall-relocation probe (block 7 of 16, 8 positions, review S2) is reported.
+#   The absolute 3S-A criteria are re-applied to every arm for the record.
 #   Reported, not judged: Delta K0, furniture-region F1, tolerance-1, fresh, the fusion gap, the D8-3 breakdown, the gradient-clip share,
 #   s/update and parameter counts, compression (unchanged: 512 B per message).
-# Pre-registered next step: lever => P2's recipe is the baseline for 3S-R (known-BCE boundary weighting, analyst B) then 3S-Q (coverage
-#   precision, analyst A) then 3S-T (training length); not better / worse / ambiguous => 3S-R and 3S-Q run on the control's recipe.
+# Pre-registered next step: the baseline for 3S-R (known-BCE boundary weighting, analyst B), then 3S-Q (coverage precision, analyst A),
+#   then 3S-T (training length), is the arm among {P2, D2} that is a LEVER against 3S-C on both seeds with the higher mean R8 variable-
+#   structure F1; if neither is a lever against 3S-C, the baseline stays 3S-C.
 # Budget: SOLO, after chain_day6_3SL; must run the control's 16,000 updates (preflight; else INCONCLUSIVE); hard timeouts inside the lease.
 #   Writes only under /mnt/datasets (runs/v427-plancol).
 cd /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021 || exit 1
@@ -63,7 +72,7 @@ V3SC=$($P -c "import json; print(json.load(open('runs/v423-layout/analysis.json'
 case "$V3SC" in "the code layout is a lever"*) LAYOUT=16x16x1; CTRL=runs/v423-layout; CTRLW=1.0;; *) LAYOUT=8x8x4; CTRL=runs/v422-decoder; CTRLW=2.0;; esac
 log "batch 3S-P gate: 3S-C verdict '$V3SC' -> layout $LAYOUT, control $CTRL"
 for s in 342101 342202; do [ -f $CTRL/a-s$s/final.json ] && [ -f $CTRL/a-s$s/checkpoints/initial.pt ] && [ -f $CTRL/diag-interior-a-s$s.json ] || { log "ABORT: control $CTRL/a-s$s (final / initial / diag-interior) missing"; exit 2; }; done
-log "batch 3S-P: GPU free; starting (SOLO, arms P2 then P1, seeds sequential, one lease per run)"
+log "batch 3S-P: GPU free; starting (SOLO, arms P2 then D2, seeds sequential, one lease per run)"
 mkdir -p $OUT
 rate(){ $P - "$1" <<'PY'
 import json, re, sys
@@ -77,9 +86,10 @@ except Exception:
     print("nan 0 0")
 PY
 }
-for arm in "p2 2.0" "p1 1.0"; do
-  set -- $arm; ARM=$1; WIDTH=$2
-  COMMON="--source $S --cache $CACHE --dims 128,128,32 --device cuda --val-per-stratum 8 --gen-workers 8 --layout $LAYOUT --decoder plan_column --decoder-width $WIDTH --precision learned --known-weight uniform"
+ARMS="p2 plan_column 2.0"; [ "$CTRLW" = "1.0" ] && ARMS="$ARMS|d2 d3 2.0"
+IFS='|'; for arm in $ARMS; do IFS=' '
+  set -- $arm; ARM=$1; DEC=$2; WIDTH=$3
+  COMMON="--source $S --cache $CACHE --dims 128,128,32 --device cuda --val-per-stratum 8 --gen-workers 8 --layout $LAYOUT --decoder $DEC --decoder-width $WIDTH --precision learned --known-weight uniform"
   for seed in 342101 342202; do
     check_shas
     while [ -n "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]; do log "3S-P: GPU busy before $ARM seed $seed; waiting"; sleep 120; done
@@ -95,27 +105,27 @@ for arm in "p2 2.0" "p1 1.0"; do
     START=$(date +%s); DE=$((START+6600)); DT=$((START+7150))
     cat > $OUT/lease_$ARM-s$seed.json <<JSON
 {"lease_start_epoch": $START, "train_deadline_epoch": $DE, "total_deadline_epoch": $DT, "inclusive_seconds": 7200, "world": "v420 furnished HouseExpo storeys", "dims": [128, 128, 32], "D": 256, "updates": $UPD, "seed": $seed,
- "arm": "$ARM", "decoder": "plan_column", "decoder_width": $WIDTH, "layout": "$LAYOUT", "preflight": "rate=$RS load=$LS val=$VS", "trainer": "scripts/train_3d_v427.py", "trainer_sha256": "$TSHA", "data_module_sha256": "$DSHA", "kbit_sha256": "$KSHA",
+ "arm": "$ARM", "decoder": "$DEC", "decoder_width": $WIDTH, "layout": "$LAYOUT", "preflight": "rate=$RS load=$LS val=$VS", "trainer": "scripts/train_3d_v427.py", "trainer_sha256": "$TSHA", "data_module_sha256": "$DSHA", "kbit_sha256": "$KSHA",
  "diag_sha256": "$GSHA", "diag_interior_sha256": "$ISHA", "probe_sha256": "$PSHA", "cache": "$CACHE", "cache_manifest_sha256": "$MSHA", "control": "$CTRL/a-s$seed", "control_width": $CTRLW, "gate_3SC_verdict": "$V3SC",
- "expectation": "primary P2 vs control, paired: Delta R8 var >= +3pp and Delta R8 surface >= +1pp on both seeds => plan + column decoder is a lever; Delta R8 surface <= -1pp on both or Delta R8 var <= -2pp on both => worse; Delta R8 surface < +1pp and Delta R8 var < +2pp on both => not better; else ambiguous; guards FPR <= control + 0.3pp, slab recall >= .85; mechanism: Delta K0 interior recall >= +10pp and probe interior >= 14/16 on both seeds; P1 secondary; incomplete => INCONCLUSIVE"}
+ "expectation": "three paired comparisons FAMILY = P2 - D2 (primary), WIDTH = D2 - 3S-C, RECIPE = P2 - 3S-C, same rule each: Delta R8 var >= +3pp and Delta R8 surface >= +1pp on both seeds => lever; Delta R8 surface <= -1pp on both or Delta R8 var <= -2pp on both => worse; Delta R8 surface < +1pp and Delta R8 var < +2pp on both => not better; else ambiguous; guards FPR <= second + 0.3pp, slab recall >= second - 2pp; mechanism P2: Delta K0 interior recall >= +10pp on both seeds; next baseline = lever vs 3S-C with higher mean R8 var among P2 / D2, else 3S-C; incomplete => INCONCLUSIVE"}
 JSON
-    log "batch 3S-P start $ARM seed $seed ($UPD updates, plan_column W $WIDTH, layout $LAYOUT)"
+    log "batch 3S-P start $ARM seed $seed ($UPD updates, $DEC W $WIDTH, layout $LAYOUT)"
     timeout -k 30 $((DT - $(date +%s))) $P scripts/train_3d_v427.py $COMMON --out $OUT/$ARM-s$seed --seed $seed --updates $UPD --val-every $((UPD/4)) --deadline-epoch $DE --deadline-total $DT > $OUT/$ARM-s$seed.log 2>&1
     log "3S-P $ARM seed $seed done (exit $?)"
   done
 done
 log "batch 3S-P training done"
 check_shas
-for run in p2-s342101 p2-s342202 p1-s342101 p1-s342202; do                        # report-only breakdowns (D8-3 protocol) + the probe
+for run in p2-s342101 p2-s342202 d2-s342101 d2-s342202; do                        # report-only breakdowns (D8-3 protocol) + the probe
   if [ -f $OUT/$run/checkpoints/final.pt ]; then
     timeout -k 30 1800 $P scripts/diag_storey_v427.py --source $S --run $OUT/$run --out $OUT/diag-$run --trainer train_3d_v427 > $OUT/diag-$run.log 2>&1
     timeout -k 30 1800 $P scripts/diag_interior_v427.py --source $S --run $OUT/$run --trainer train_3d_v427 2>$OUT/diag-interior-$run.err | tail -1 > $OUT/diag-interior-$run.json
-    CUDA_VISIBLE_DEVICES= timeout -k 30 900 $P scripts/probe_wall_v425.py --source $S --run $OUT/$run --trainer train_3d_v427 --out $OUT/probe-$run.json > $OUT/probe-$run.log 2>&1
+    CUDA_VISIBLE_DEVICES= timeout -k 30 900 $P scripts/probe_wall_v425.py --source $S --run $OUT/$run --trainer train_3d_v427 --block 7 --out $OUT/probe-$run.json > $OUT/probe-$run.log 2>&1
   fi
 done
 for s in 342101 342202; do                                                          # the control's probe (CPU, seconds)
   CT=$([ "$CTRL" = "runs/v423-layout" ] && echo train_3d_v423 || echo train_3d_v422)
-  CUDA_VISIBLE_DEVICES= timeout -k 30 900 $P scripts/probe_wall_v425.py --source $S --run $CTRL/a-s$s --trainer $CT --out $OUT/probe-control-s$s.json > $OUT/probe-control-s$s.log 2>&1
+  CUDA_VISIBLE_DEVICES= timeout -k 30 900 $P scripts/probe_wall_v425.py --source $S --run $CTRL/a-s$s --trainer $CT --block 7 --out $OUT/probe-control-s$s.json > $OUT/probe-control-s$s.log 2>&1
 done
 RES=$($P - "$CTRL" <<'PY'
 import json, math, re, sys, torch
@@ -135,63 +145,85 @@ def load(d):
     for gd in re.findall(r"grad (\{[^}]*\})", logtxt):
         g = json.loads(gd.replace("'", '"')); norms.append(math.sqrt(sum(x * x for x in g.values())))
     r["clip_fraction_logged"] = round(sum(n > 5 for n in norms) / max(1, len(norms)), 4)
-    m2 = re.findall(r"upd(?:50|100) .* (\d+)s\n", logtxt); g = re.search(r" gen (\d+)s", logtxt)
     return r
 def identity(arm_dir, ctrl_dir):
     a = torch.load(f"{arm_dir}/checkpoints/initial.pt", map_location="cpu", weights_only=False)["state_dict"]; c = torch.load(f"{ctrl_dir}/checkpoints/initial.pt", map_location="cpu", weights_only=False)["state_dict"]
     ks = [k for k in c if not k.startswith("decoder.")]
     return all(k in a and torch.equal(a[k], c[k]) for k in ks) and len(ks) > 10
-rows = {}
-for arm in ("p2", "p1"):
-    for s in ("342101", "342202"):
+runs = {}                                                                      # every arm and the control as a row per seed
+def row(d, s, diag_prefix=None, probe_path=None):
+    r = load(d); r.pop("specs_keep", None)
+    try:
+        xi = json.load(open(diag_prefix + f"interior-{s}.json" if diag_prefix else f"{CTRL}/diag-interior-a-s{s}.json"))
+        r["K0_interior"] = xi["K0_interior"]["recall"]; r["K8_interior"] = xi["K8_interior"]["recall"]; r["K0_boundary"] = xi["K0_boundary"]["recall"]
+    except Exception as e:
+        r["K0_interior"] = None; r["interior_err"] = str(e)
+    try:
+        xd = json.load(open((diag_prefix + f"{s}/diag.json") if diag_prefix else f"{CTRL}/diag-a-s{s}/diag.json")); r["R8_slab_recall"] = xd["K8"]["recall_slab"]; r["R8_struct_recall"] = xd["K8"]["recall_struct"]
+    except Exception as e:
+        r["R8_slab_recall"] = None
+    try:
+        pa = json.load(open(probe_path)); r["probe_interior"] = f"{pa['interior']['drawn']}/{pa['interior']['total']}"; r["probe_boundary"] = f"{pa['boundary']['drawn']}/{pa['boundary']['total']}"
+    except Exception as e:
+        r["probe_interior"] = None
+    return r
+for s in ("342101", "342202"):
+    try:
+        runs[f"ctrl-{s}"] = row(f"{CTRL}/a-s{s}", s, None, f"{OUT}/probe-control-s{s}.json")
+    except Exception as e:
+        runs[f"ctrl-{s}"] = f"INCONCLUSIVE ({e})"
+    for arm in ("p2", "d2"):
         try:
-            a = load(f"{OUT}/{arm}-s{s}"); c = load(f"{CTRL}/a-s{s}")
-            assert a["decoder"] == "plan_column" and c["decoder"] == "d3" and a["blocks"] == c["blocks"] and a["precision"] == c["precision"] == "learned" and a["known_weight"] == c["known_weight"] == "uniform", "recipe"
-            assert a["manifest_sha"] == c["manifest_sha"] and a["specs"] == c["specs"], "cache / VAL panel"
-            assert a["params"]["trunk"] == c["params"]["trunk"] and a["params"]["head"] == c["params"]["head"] and identity(f"{OUT}/{arm}-s{s}", f"{CTRL}/a-s{s}"), "trunk / head identity"
-            d = {k: round(a[k] - c[k], 4) for k in a if k in c and isinstance(a[k], float) and isinstance(c[k], float)}
-            extra = {}
-            try:
-                xi = json.load(open(f"{OUT}/diag-interior-{arm}-s{s}.json")); yi = json.load(open(f"{CTRL}/diag-interior-a-s{s}.json"))
-                extra["interior_K0"] = (xi["K0_interior"]["recall"], yi["K0_interior"]["recall"]); extra["interior_K8"] = (xi["K8_interior"]["recall"], yi["K8_interior"]["recall"])
-                extra["delta_K0_interior"] = round(xi["K0_interior"]["recall"] - yi["K0_interior"]["recall"], 4)
-                pa = json.load(open(f"{OUT}/probe-{arm}-s{s}.json")); pc = json.load(open(f"{OUT}/probe-control-s{s}.json"))
-                extra["probe_interior"] = (f"{pa['interior']['drawn']}/{pa['interior']['total']}", f"{pc['interior']['drawn']}/{pc['interior']['total']}"); extra["probe_interior_frac"] = pa["interior"]["drawn"] / pa["interior"]["total"]
-                extra["probe_boundary"] = (f"{pa['boundary']['drawn']}/{pa['boundary']['total']}", f"{pc['boundary']['drawn']}/{pc['boundary']['total']}")
-                xd = json.load(open(f"{OUT}/diag-{arm}-s{s}/diag.json")); extra["R8_slab_recall"] = round(xd["K8"]["recall_slab"], 4); extra["R8_struct_recall"] = (round(xd["K8"]["recall_struct"], 4))
-            except Exception as e:
-                extra["diag"] = f"n/a ({e})"
-            rows[f"{arm}-{s}"] = dict(arm={k: v for k, v in a.items() if k != "specs"}, control={k: v for k, v in c.items() if k != "specs"}, delta=d, **extra)
+            r = row(f"{OUT}/{arm}-s{s}", s, f"{OUT}/diag-{arm}-s", f"{OUT}/probe-{arm}-s{s}.json"); c = runs[f"ctrl-{s}"]
+            assert isinstance(c, dict), "control row missing"
+            assert r["blocks"] == c["blocks"] and r["precision"] == c["precision"] == "learned" and r["known_weight"] == c["known_weight"] == "uniform", "recipe"
+            assert r["manifest_sha"] == c["manifest_sha"] and r["specs"] == c["specs"], "cache / VAL panel"
+            assert r["params"]["trunk"] == c["params"]["trunk"] and r["params"]["head"] == c["params"]["head"] and identity(f"{OUT}/{arm}-s{s}", f"{CTRL}/a-s{s}"), "trunk / head identity"
+            runs[f"{arm}-{s}"] = r
         except Exception as e:
-            rows[f"{arm}-{s}"] = f"INCONCLUSIVE ({e})"
-def verdict_for(arm):
-    rr = [rows.get(f"{arm}-{s}") for s in ("342101", "342202")]
-    if not all(isinstance(r, dict) for r in rr): return f"INCONCLUSIVE ({[r for r in rr if not isinstance(r, dict)]})", None, None
-    ds = [r["delta"]["R8_surface_f1"] for r in rr]; dv = [r["delta"]["R8_var_occ_f1"] for r in rr]
-    if min(dv) >= .03 and min(ds) >= .01: v = "plan + column decoder is a lever"
-    elif max(ds) <= -.01 or max(dv) <= -.02: v = "plan + column decoder is worse"
-    elif max(ds) < .01 and max(dv) < .02: v = "plan + column decoder is not better"
-    else: v = "ambiguous"
-    guards = dict(fpr_ok=all(r["arm"]["R8_unknown_known_fpr"] <= r["control"]["R8_unknown_known_fpr"] + .003 for r in rr), slab_ok=all(r.get("R8_slab_recall", 0) >= .85 for r in rr))
-    mech = all(r.get("delta_K0_interior", -1) >= .10 and r.get("probe_interior_frac", 0) >= 14 / 16 for r in rr)
-    return v, guards, ("interior walls placed (mechanism confirmed)" if mech else "gain not attributable to interior-wall placement")
-v2, g2, m2 = verdict_for("p2"); v1, g1, m1 = verdict_for("p1")
-width = None
-try:
-    width = {s: {k: round(rows[f"p2-{s}"]["arm"][k] - rows[f"p1-{s}"]["arm"][k], 4) for k in ("R8_surface_f1", "R8_var_occ_f1", "K0_surface_f1", "K0_var_occ_f1")} for s in ("342101", "342202")}
-except Exception as e:
-    width = f"n/a ({e})"
-try:
-    g = lambda k: [rows[f"p2-{s}"]["arm"][k] for s in ("342101", "342202")]
-    structure = min(g("R8_surface_f1")) >= .80 and min(g("K0_surface_f1")) >= .85 and min(g("R8_var_occ_f1")) >= .65 and min(g("K0_var_occ_f1")) >= .70
-    furniture = min(g("R8_furn_f1")) >= .50 and min(g("K0_furn_f1")) >= .55
-    absolute = ("maps furnished storeys at R1" if structure and furniture else "maps the storey structure, not its furniture (partial)" if structure
+            runs[f"{arm}-{s}"] = f"INCONCLUSIVE ({e})"
+for k, r in runs.items():
+    if isinstance(r, dict): r.pop("specs", None)
+def compare(first, second):
+    """paired by seed: deltas, verdict, guards, mechanism; None-safe (review S3)"""
+    try:
+        rr = [(runs[f"{first}-{s}"], runs[f"{second}-{s}"]) for s in ("342101", "342202")]
+        if not all(isinstance(a, dict) and isinstance(b, dict) for a, b in rr): return dict(verdict=f"INCONCLUSIVE (missing: {[k for k in (first, second) for s in ('342101','342202') if not isinstance(runs[f'{k}-{s}'], dict)]})")
+        deltas = [{k: round(a[k] - b[k], 4) for k in a if k in b and isinstance(a[k], float) and isinstance(b[k], float) and not k.startswith("probe")} for a, b in rr]
+        ds = [d["R8_surface_f1"] for d in deltas]; dv = [d["R8_var_occ_f1"] for d in deltas]
+        if min(dv) >= .03 and min(ds) >= .01: v = "lever"
+        elif max(ds) <= -.01 or max(dv) <= -.02: v = "worse"
+        elif max(ds) < .01 and max(dv) < .02: v = "not better"
+        else: v = "ambiguous"
+        guards = {}
+        try: guards["fpr_ok"] = all(a["R8_unknown_known_fpr"] <= b["R8_unknown_known_fpr"] + .003 for a, b in rr)
+        except Exception as e: guards["fpr_ok"] = f"n/a ({e})"
+        try: guards["slab_ok"] = all(a["R8_slab_recall"] >= b["R8_slab_recall"] - .02 for a, b in rr)
+        except Exception as e: guards["slab_ok"] = f"n/a ({e})"
+        try: mech = ("interior walls placed (Delta K0 interior >= +10 pp both seeds)" if all(a["K0_interior"] - b["K0_interior"] >= .10 for a, b in rr) else "gain not attributable to interior-wall placement") + f" {[(a['K0_interior'], b['K0_interior']) for a, b in rr]}"
+        except Exception as e: mech = f"n/a ({e})"
+        return dict(verdict=v, deltas=dict(zip(("342101", "342202"), deltas)), guards=guards, mechanism=mech, probes=[(a.get("probe_interior"), b.get("probe_interior")) for a, b in rr])
+    except Exception as e:
+        return dict(verdict=f"INCONCLUSIVE ({e})")
+family = compare("p2", "d2"); width = compare("d2", "ctrl"); recipe = compare("p2", "ctrl")
+def absolute(arm):
+    try:
+        g = lambda k: [runs[f"{arm}-{s}"][k] for s in ("342101", "342202")]
+        structure = min(g("R8_surface_f1")) >= .80 and min(g("K0_surface_f1")) >= .85 and min(g("R8_var_occ_f1")) >= .65 and min(g("K0_var_occ_f1")) >= .70
+        furniture = min(g("R8_furn_f1")) >= .50 and min(g("K0_furn_f1")) >= .55
+        return ("maps furnished storeys at R1" if structure and furniture else "maps the storey structure, not its furniture (partial)" if structure
                 else "does not with this model" if min(g("R8_surface_f1")) < .70 or min(g("R8_var_occ_f1")) < .50 else "partial")
-except Exception as e:
-    absolute = f"n/a ({e})"
-json.dump(dict(control=CTRL, rows=rows, verdict_p2=v2, guards_p2=g2, mechanism_p2=m2, verdict_p1_vs_control=v1, guards_p1=g1, mechanism_p1=m1, width_within_family_p2_minus_p1=width, absolute_verdict_p2=absolute, code_bytes=512),
-          open(f"{OUT}/analysis.json", "w"), indent=1)
-print("P2:", v2, "| guards", g2, "|", m2, "| P1 vs control:", v1, "| width within family:", width, "| absolute:", absolute, "|", json.dumps({k: (r["delta"] if isinstance(r, dict) else r) for k, r in rows.items()}))
+    except Exception as e:
+        return f"n/a ({e})"
+def mean_var(arm):
+    try: return sum(runs[f"{arm}-{s}"]["R8_var_occ_f1"] for s in ("342101", "342202")) / 2
+    except Exception: return -1.
+cands = [arm for arm, cmp in (("p2", recipe), ("d2", width)) if cmp.get("verdict") == "lever"]
+next_baseline = max(cands, key=mean_var) if cands else "ctrl (3S-C)"
+json.dump(dict(control=CTRL, runs=runs, family_P2_minus_D2=family, width_at_16x16x1_D2_minus_ctrl=width, recipe_P2_minus_ctrl=recipe,
+               absolute=dict(p2=absolute("p2"), d2=absolute("d2"), ctrl=absolute("ctrl")), next_baseline_for_3SR=next_baseline, code_bytes=512), open(f"{OUT}/analysis.json", "w"), indent=1)
+print("FAMILY P2-D2:", family.get("verdict"), family.get("guards"), family.get("mechanism"), "| WIDTH D2-ctrl:", width.get("verdict"), width.get("guards"), "| RECIPE P2-ctrl:", recipe.get("verdict"), recipe.get("guards"),
+      "| absolute", dict(p2=absolute("p2"), d2=absolute("d2")), "| next baseline:", next_baseline, "|", json.dumps({k: v.get("deltas") for k, v in (("family", family), ("width", width), ("recipe", recipe))}))
 PY
 )
 log "batch 3S-P analysis: $RES"

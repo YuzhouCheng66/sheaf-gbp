@@ -65,7 +65,7 @@ macs = {'d3': 0, 'pc': 0}
 def hook(name):
     def f(mod, inp, out):
         k = mod.kernel_size[0] * mod.kernel_size[1] * (mod.kernel_size[2] if len(mod.kernel_size) == 3 else 1)
-        macs[name] += mod.in_channels * mod.out_channels * k * out[0].numel()
+        macs[name] += mod.in_channels * k * out[0].numel()                         # out[0].numel() already counts the output channels (review S7)
     return f
 hs = [mod.register_forward_hook(hook('d3')) for mod in m4.decoder.modules() if isinstance(mod, (torch.nn.Conv2d, torch.nn.Conv3d))]
 hs += [mod.register_forward_hook(hook('pc')) for mod in dec.modules() if isinstance(mod, torch.nn.Conv2d)]
