@@ -53,7 +53,7 @@ def main():
 def _safe(job):
     try:
         return _one(job)
-    except Exception as e:                                                   # a house where agents cannot be placed is skipped and listed
+    except ValueError as e:                                                  # only agent placement may skip a house (review v420 S7)
         return dict(spec=job[0], error=repr(e)[:200])
 
 

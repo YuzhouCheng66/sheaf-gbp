@@ -40,7 +40,7 @@ assert not (ras['obj'] & walls2d[:, :, None]).any(), 'furniture inside walls'
 cx, _, cz = ras['cell']
 for p in fx['positions_m']:
     i, j, k = int(p[0] / cx), int(p[1] / cx), int(p[2] / cz)
-    assert occ[i, j, :k + 1][int(W.FLOOR_T / cz) + 1:].sum() == 0, 'agent column must be free from the floor to the sensor'
+    assert occ[i, j, int(W.FLOOR_T / cz):k + 1].sum() == 0, 'agent column must be free from the floor top to the sensor'   # review S8: from z cell 1
 zc = (np.arange(dims[2]) + .5) * cz
 free2 = ~occ[:, :, (zc >= W.FLOOR_T) & (zc < W.FLOOR_T + W.SENSOR_HEIGHT)].astype(bool).any(2)
 lab, _ = ndimage.label(free2); sizes = np.bincount(lab.ravel())[1:]
@@ -54,7 +54,18 @@ for s in (1, 2, 3):
         wl = (r['occ'][:, :, band].astype(bool) & ~r['obj'][:, :, band]).all(2)
         shares.append(r['obj'][:, :, band].any(2).sum() / max(1, (~wl).sum()))
 assert 0.15 <= np.median(shares) <= 0.45, shares
-print(f'A. world deterministic, TEST closed, splits disjoint, sensor exact, furniture outside walls, agents on free columns, free floor connected, slab mask exact; furniture footprint share median {np.median(shares):.3f} ({time.time()-t0:.0f}s)')
+# review M3 / S8: no floating furniture: object voxels in 26-connected components touching neither the floor slab nor a wall (wall
+# cabinets hang on walls) must stay below 0.5 % over the same 12 houses
+float_frac = []
+for s in (1, 2, 3):
+    for i in range(4):
+        r = W.rasterize(W.world_spec('TRAIN', 20 + i, s), dims); support = r['slab'] | (r['occ'].astype(bool) & ~r['obj'] & ~r['slab'])
+        lab3, nl = ndimage.label(r['obj'], structure=np.ones((3, 3, 3), bool))
+        touch = ndimage.binary_dilation(support, structure=np.ones((3, 3, 3), bool)) & r['obj']
+        ok_ids = np.unique(lab3[touch]); fl = r['obj'] & ~np.isin(lab3, ok_ids)
+        float_frac.append(fl.sum() / max(1, r['obj'].sum()))
+assert max(float_frac) < 0.005, float_frac
+print(f'A. world deterministic, TEST closed, splits disjoint, sensor exact, furniture outside walls, agents on free columns, free floor connected, slab mask exact; furniture footprint share median {np.median(shares):.3f}; floating furniture max {max(float_frac):.4f} ({time.time()-t0:.0f}s)')
 
 # ---- B. adapters
 x = torch.randn(2, 3, 8, 6, 4)
@@ -97,11 +108,16 @@ with torch.no_grad():
     T.CHART_M = fx['chart_m'] + 5.; kl2, _ = model.decoder(f8); T.CHART_M = fx['chart_m']
     assert not torch.equal(kl, kl2), 'the chart-scale plane must reach the decoder'
     tgt = T.stream_targets(own, reached); slab = torch.from_numpy(fx['slab'].reshape(-1)); obj = torch.from_numpy(fx['obj'].reshape(-1))
-    rows = T.metrics3d(tgt.clone(), tgt, dims, slab, obj)
+    struct = torch.from_numpy((fx['occ'].astype(bool) & ~fx['obj'] & ~fx['slab']).reshape(-1))
+    rows = T.metrics3d(tgt.clone(), tgt, dims, slab, obj, struct)
+    assert all(r['furn_f1'] is None or abs(r['furn_f1'] - 1) < 1e-9 for r in rows)
+    nofurn = torch.where((tgt == 1) & obj[None], torch.zeros_like(tgt), tgt)           # review M1: a perfect structure-only predictor
+    rn = T.metrics3d(nofurn, tgt, dims, slab, obj, struct)
+    assert all((r['furn_f1'] or 0.) < 0.05 for r in rn), [r['furn_f1'] for r in rn]
     assert all(abs(r['occ_f1'] - 1) < 1e-9 and abs(r['surface_f1'] - 1) < 1e-9 and abs(r['surface_f1_tol1'] - 1) < 1e-9 and abs(r['var_occ_f1'] - 1) < 1e-9 and r['accuracy'] == 1. and r['unknown_known_fpr'] == 0. for r in rows)
     assert all(r['obj_recall'] is None or abs(r['obj_recall'] - 1) < 1e-9 for r in rows)
     slab_pred = torch.where(tgt >= 0, slab.to(torch.int8)[None].expand_as(tgt), torch.full_like(tgt, -1))
-    rs = T.metrics3d(slab_pred, tgt, dims, slab, obj)
+    rs = T.metrics3d(slab_pred, tgt, dims, slab, obj, struct)
     print('    slab-only reference: surface F1 %.3f, variable-structure F1 %.3f' % (np.mean([r['surface_f1'] for r in rs]), np.mean([(r['var_occ_f1'] or 0.) for r in rs])))
     assert all((r['var_occ_f1'] or 0.) < 0.05 for r in rs)
 params = {kk: sum(p.numel() for p in v) for kk, v in model.parameter_groups().items()}

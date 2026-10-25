@@ -9,7 +9,7 @@ Slab changes (the only ones): (i) every convolution runs on the COMPUTE grid NX/
 grid is reached by parameter-free space-to-depth / depth-to-space (the v401 block readout, s = 2 as in batch 3D-B); (ii) the public
 coordinate planes carry a fourth channel L / 25.6 (the chart scale: horizontal cells differ per house -- the 3D counterpart of the 2D
 public-frame conditioning); (iii) the decoder schedule ends at the compute grid's anisotropic shape; (iv) metrics take the scene's own
-slab mask (floor + ceiling) for the variable-structure F1 and report the furniture recall.
+slab mask (floor + ceiling) for the variable-structure F1, the furniture-region F1 (review v420 M1) and the furniture recall.
 """
 import argparse, hashlib, json, math, multiprocessing, os, random, signal, sys, time
 from pathlib import Path
@@ -252,7 +252,7 @@ def predict(decoder, feats):
     return torch.where(known_logit >= 0, (occ_logit >= 0).to(torch.int8), torch.full_like(occ_logit, -1, dtype=torch.int8))
 
 
-METRIC_KEYS = ('occ_f1', 'surface_f1', 'surface_f1_tol1', 'var_occ_f1', 'obj_recall', 'accuracy', 'unknown_known_fpr')
+METRIC_KEYS = ('occ_f1', 'surface_f1', 'surface_f1_tol1', 'var_occ_f1', 'furn_f1', 'obj_recall', 'accuracy', 'unknown_known_fpr')
 
 
 def _f1(a, b):
@@ -261,12 +261,15 @@ def _f1(a, b):
 
 
 @torch.no_grad()
-def metrics3d(pred, target, dims, slab, obj):
+def metrics3d(pred, target, dims, slab, obj, struct):
     """per node, target-known scope: occupied F1; surface F1 (6-nbhd surface of the target; interior predictions ignored); tolerance-1
     surface F1 (v401 review-M1 definition); variable-structure F1 (the scene's floor + ceiling slab removed from both sides); furniture
-    recall (target-occupied furniture voxels predicted occupied); 3-way accuracy; unknown-known FPR. slab, obj: flat bool [V]."""
+    recall (target-occupied furniture voxels predicted occupied); FURNITURE-REGION F1 (review v420 M1: F1 restricted to the voxels that are
+    neither slab nor wall / lintel -- the structure dilated by one voxel, so +-1-voxel wall jitter is not counted as furniture -- where only
+    furniture can be occupied: missing and invented furniture both count); 3-way accuracy; unknown-known FPR. slab, obj, struct: flat bool [V]."""
     rows = []
     surf = surface_of(target, dims)
+    region = ~slab & ~dilate6(struct[None], dims)[0]
     for i in range(pred.shape[0]):
         p, t, s = pred[i], target[i], surf[i]
         known = t >= 0
@@ -282,7 +285,7 @@ def metrics3d(pred, target, dims, slab, obj):
         else:
             tol1 = 0. if (po_any.any() or s.any()) else None
         to_obj = to & obj
-        rows.append(dict(occ_f1=_f1(po, to), surface_f1=_f1(ps, s), surface_f1_tol1=tol1, var_occ_f1=_f1(po & ~slab, to & ~slab),
+        rows.append(dict(occ_f1=_f1(po, to), surface_f1=_f1(ps, s), surface_f1_tol1=tol1, var_occ_f1=_f1(po & ~slab, to & ~slab), furn_f1=_f1(po & region, to & region),
                          obj_recall=(float((po & to_obj).sum()) / float(to_obj.sum())) if to_obj.any() else None,
                          accuracy=float((p[known] == t[known]).float().mean()), unknown_known_fpr=float((p[~known] >= 0).float().mean()) if (~known).any() else None))
     return rows
@@ -304,7 +307,8 @@ def _fixture(spec):
         fx = W.make_fixture(spec['split'], spec['index'], spec['rooms'], tuple(spec['dims']), spec['agents'])
     except ValueError:                                                      # agents cannot be placed: the scene is left out (deterministic)
         return None
-    return dict(spec=fx['spec'], private=fx['private'], reached=fx['reached'], edges=fx['edges'], slab=fx['slab'], obj=fx['obj'], chart_m=fx['chart_m'])
+    return dict(spec=fx['spec'], private=fx['private'], reached=fx['reached'], edges=fx['edges'], slab=fx['slab'], obj=fx['obj'],
+                struct=fx['occ'].astype(bool) & ~fx['obj'] & ~fx['slab'], chart_m=fx['chart_m'])
 
 
 def main():
@@ -342,7 +346,9 @@ def main():
     def panel(fxs):
         fxs = [fx for fx in fxs if fx is not None]
         return [dict(spec=fx['spec'], own_t=torch.from_numpy(fx['private']).to(device), reached_t=torch.from_numpy(fx['reached']).to(device), edges=fx['edges'],
-                     slab=torch.from_numpy(fx['slab'].reshape(-1)).to(device), obj=torch.from_numpy(fx['obj'].reshape(-1)).to(device), chart_m=float(fx['chart_m'])) for fx in fxs]
+                     slab=torch.from_numpy(fx['slab'].reshape(-1)).to(device), obj=torch.from_numpy(fx['obj'].reshape(-1)).to(device),
+                     struct=torch.from_numpy(fx['struct'].reshape(-1)).to(device), chart_m=float(fx['chart_m'])) for fx in fxs]
+    skipped_panels = [sp for sp, fx in zip(val_specs + fresh_specs, gen[len(check):]) if fx is None]          # review v420 S7
     val = panel(gen[len(check):len(check) + len(val_specs)]); fresh = panel(gen[len(check) + len(val_specs):]); del gen
     train = []
     for r in man['rows']:
@@ -358,7 +364,8 @@ def main():
     meta = dict(version=W.VERSION, dims=list(dims), sub=SUB, agents=W.AGENTS, seed=args.seed, D=D, blocks=[BX, BY, BZ], beams=W.BEAMS, kbit_source_sha256=sha_file(HERE / 'train_v378.py'),
                 parameters={k: sum(p.numel() for p in v) for k, v in groups.items()}, total_parameters=sum(p.numel() for p in model.parameters()), initial_weights_sha256=model.weights_hash(),
                 train_scenes=len(train), updates=total, lr=args.lr, cache=dict(dir=str(cache), manifest_sha256=sha_file(cache / 'manifest.json')), args=vars(args),
-                wire='kbit 8+8', fusion='max', readout='posterior_only', bits_per_coordinate_on_wire=16, raw_code_bytes=D * 2)
+                wire='kbit 8+8', fusion='max', readout='posterior_only', bits_per_coordinate_on_wire=16, raw_code_bytes=D * 2,
+                val_scenes=len(val), fresh_scenes=len(fresh), skipped_panel_specs=skipped_panels)
     json.dump(meta, open(out / 'run.json', 'w'), indent=1)
     torch.save(dict(state_dict=model.state_dict(), meta=meta, updates=0), out / 'checkpoints' / 'initial.pt')
 
@@ -377,7 +384,7 @@ def main():
             for k in HOPS:
                 tgt = stream_targets(sc['own_t'], sc['reached_t'][HOPS.index(k)])
                 pred = predict(model.decoder, feats[k])
-                hops[str(k)] = agg(metrics3d(pred, tgt, dims, sc['slab'], sc['obj'])); preds[k] = pred
+                hops[str(k)] = agg(metrics3d(pred, tgt, dims, sc['slab'], sc['obj'], sc['struct'])); preds[k] = pred
             rows.append(dict(spec=sc['spec'], hops=hops, mask_fraction=float(mask.mean()), q_mean=float((q * mask).sum() / mask.sum().clamp_min(1))))
             if si < 2:
                 np.savez_compressed(out / 'validation' / f'{label}-panel-{si}.npz', own=sc['own_t'].cpu().numpy(), mu=mu.cpu().numpy(), q=(q * mask).cpu().numpy(),
@@ -388,7 +395,7 @@ def main():
 
     def fmt(s):
         f3 = lambda v: 'n/a' if v is None else f'{v:.3f}'
-        return ' | '.join(f"R{k}: surf {f3(s[str(k)]['surface_f1'])} tol1 {f3(s[str(k)]['surface_f1_tol1'])} var {f3(s[str(k)]['var_occ_f1'])} obj {f3(s[str(k)]['obj_recall'])} occ {f3(s[str(k)]['occ_f1'])} acc {f3(s[str(k)]['accuracy'])} fpr {f3(s[str(k)]['unknown_known_fpr'])}" for k in HOPS)
+        return ' | '.join(f"R{k}: surf {f3(s[str(k)]['surface_f1'])} tol1 {f3(s[str(k)]['surface_f1_tol1'])} var {f3(s[str(k)]['var_occ_f1'])} furn {f3(s[str(k)]['furn_f1'])} obj {f3(s[str(k)]['obj_recall'])} occ {f3(s[str(k)]['occ_f1'])} acc {f3(s[str(k)]['accuracy'])} fpr {f3(s[str(k)]['unknown_known_fpr'])}" for k in HOPS)
 
     history = []; updates = 0; best = (-1., None); losses = []
     order_rng = np.random.default_rng(args.seed); perm = order_rng.permutation(len(train)); pos = 0

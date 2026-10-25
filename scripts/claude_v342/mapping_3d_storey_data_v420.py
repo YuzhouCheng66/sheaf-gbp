@@ -13,7 +13,11 @@ Geometry (metres, deterministic from (split, index, rooms) through the HouseExpo
     headboards, wardrobes, nightstands, sofas with backs and arms, coffee and dining tables with thin legs, chairs with backs,
     kitchen counters with overhanging wall cabinets, fridges, toilets, bathtubs, sinks, desks, bookshelves with thin shelves, lamps,
     plants, cars, boxes), up to one object attempt per 1.5 m^2 of room box, placed against a room side or free-standing, rejected when it overlaps
-    walls or other objects, comes within 0.6 m of an opening, or splits the remaining free floor (largest component < 95 % of it with a 0.3 m walking margin around the object).
+    walls or other objects, comes within 0.6 m (Euclidean) of an opening of the 512 or 128 raster, or splits the remaining free floor
+    (largest component < 95 % of it with a 0.3 m walking margin around the object); placement and the connectivity rule act inside the
+    house's largest free component; a wall-backed object needs >= 50 % wall within 4 cm behind its back; houses without room boxes get
+    one generic room; parts thinner than a cell keep the cell containing their centre (review v420 M3 / S1-S3 / S10). Agents are placed
+    on the R1 raster at every resolution and are >= 0.5 m apart (else the scene is skipped).
   Occupancy = walls | slabs | lintels | furniture; everything else inside the chart is free. Cell-centre inclusion as in v400.
 Sensing, agents and radio are v400 / v401 unchanged: N = 8 agents on free floor with >= 0.45 m clearance from walls and furniture
 footprints (largest free component), 3 poses jittered +-0.1 m, sensor 1.2 m above the floor top, first-hit rays on a Fibonacci sphere
@@ -164,7 +168,7 @@ ROOM_KINDS = {
 }
 
 
-DENSITY_M2 = 1.5                                                         # one object attempt per 1.5 m^2 of room box (tuned so the footprint share approaches Replica, see D8-0)
+DENSITY_M2 = 1.2                                                         # one object attempt per 1.2 m^2 of room box: footprint share median ~.30 = Replica (D8-1)
 GENERIC_KINDS = ['cabinet', 'box', 'plant', 'bookshelf', 'sofa', 'coffee_table', 'lamp', 'cabinet_tall', 'desk', 'round_table']
 
 
@@ -193,11 +197,19 @@ def world_spec(split, index, rooms=1):
     rng = np.random.default_rng(_seed(world_id + ':geometry'))
     H_w = float(rng.uniform(2.4, 3.0)); h_d = float(rng.uniform(2.0, 2.15))
     # fine 2D raster (512) for placement: free floor, opening mask
-    g512 = v371.rasterize(base, 512); free = g512['walls'] == 0; cell = L / 512
-    near_door = ndimage.binary_dilation(g512["door_mask"], iterations=max(1, int(round(0.6 / cell))))
-    lab, _ = ndimage.label(free); comp0 = int(np.bincount(lab.ravel())[1:].max()) if lab.max() else 0
+    g512 = v371.rasterize(base, 512); free_all = g512['walls'] == 0; cell = L / 512
+    # review v420 S2: Euclidean 0.6 m clearance from the openings of the 512 AND the 128 (R1 lintel) rasters
+    door = g512['door_mask'] | np.kron(v371.rasterize(base, 128)['door_mask'], np.ones((4, 4), bool))
+    near_door = ndimage.distance_transform_edt(~door) * cell < 0.6
+    # review v420 M3 (ii): place furniture, and judge connectivity, inside the largest free component of the house only
+    lab, nlab = ndimage.label(free_all)
+    free = lab == (1 + int(np.argmax(np.bincount(lab.ravel())[1:]))) if nlab else free_all
     taken = np.zeros_like(free)
     objects = []
+    if not room_rects:                                                  # review v420 S10: houses without room boxes get one generic room
+        rr, cc = np.nonzero(free)
+        if len(rr):
+            room_rects = [('Generic', (cc.min() * cell, rr.min() * cell, (cc.max() + 1) * cell, (rr.max() + 1) * cell))]
     for cat, rect_box in room_rects:
         # HouseExpo room boxes include wall thickness: use the tight bounding box of the free fine cells inside the room box
         c0b, r0b = max(0, int(math.floor(rect_box[0] / cell))), max(0, int(math.floor(rect_box[1] / cell)))
@@ -207,7 +219,7 @@ def world_spec(split, index, rooms=1):
             continue
         rows = np.nonzero(sub.any(1))[0]; cols = np.nonzero(sub.any(0))[0]
         rect = ((c0b + cols[0]) * cell, (r0b + rows[0]) * cell, (c0b + cols[-1] + 1) * cell, (r0b + rows[-1] + 1) * cell)
-        kinds = ROOM_KINDS.get(cat, ['box', 'plant'])
+        kinds = ROOM_KINDS.get(cat, GENERIC_KINDS if cat == 'Generic' else ['box', 'plant'])
         area = max(0., (rect[2] - rect[0]) * (rect[3] - rect[1]))
         n = int(min(len(kinds) + 14, max(1, rng.poisson(area / DENSITY_M2))))
         # the room's own kinds first, then a mix (30 % generic household objects: HouseExpo room labels are sometimes coarse)
@@ -258,6 +270,12 @@ def world_spec(split, index, rooms=1):
                         ok = True; break
                 if not ok or taken[win].any() or near_door[win].any():
                     continue
+                if against:                                             # review v420 M3 (iii): the back must actually touch a wall
+                    back = {'x0': np.s_[r0:r1, max(0, c0 - 2):c0], 'x1': np.s_[r0:r1, c1:min(512, c1 + 2)],
+                            'y0': np.s_[max(0, r0 - 2):r0, c0:c1], 'y1': np.s_[r1:min(512, r1 + 2), c0:c1]}[side]
+                    strip = free_all[back]
+                    if strip.size == 0 or (~strip).mean() < 0.5:
+                        continue
                 if dx or dy:
                     prims = [_shift(p, dx, dy) for p in prims]
                 # connectivity: with this object (and a 0.3 m walking margin around it) the remaining free floor must stay one piece up
@@ -276,6 +294,11 @@ def world_spec(split, index, rooms=1):
 
 def _cells(size_m, n):
     return size_m / n
+
+
+def _cell_of(v, c, n):
+    m = np.zeros(n, bool); m[min(n - 1, max(0, int(v // c)))] = True
+    return m
 
 
 def rasterize(spec, dims):
@@ -298,18 +321,18 @@ def rasterize(spec, dims):
             if p[0] == 'box':
                 _, x0, y0, z0, x1, y1, z1 = p
                 ix = (xc >= x0) & (xc < x1); iy = (yc >= y0) & (yc < y1); iz = (zc >= FLOOR_T + z0) & (zc < FLOOR_T + z1)
-                if not (ix.any() and iy.any() and iz.any()):                 # thin parts thinner than a cell: keep the nearest cell
-                    ix = ix | (np.abs(xc - (x0 + x1) / 2) <= cx / 2) & (xc >= x0 - cx / 2) & (xc < x1 + cx / 2)
-                    iy = iy | (np.abs(yc - (y0 + y1) / 2) <= cx / 2) & (yc >= y0 - cx / 2) & (yc < y1 + cx / 2)
-                    iz = iz | (np.abs(zc - FLOOR_T - (z0 + z1) / 2) <= cz / 2) & (zc >= FLOOR_T + z0 - cz / 2) & (zc < FLOOR_T + z1 + cz / 2)
+                # parts thinner than a cell (legs, shelves, table tops): per axis, keep the cell that contains the part's centre
+                ix = ix if ix.any() else _cell_of((x0 + x1) / 2, cx, NX)
+                iy = iy if iy.any() else _cell_of((y0 + y1) / 2, cx, NY)
+                iz = iz if iz.any() else _cell_of(FLOOR_T + (z0 + z1) / 2, cz, NZ)
                 obj[np.ix_(ix, iy, iz)] = True
             else:
                 _, ccx, ccy, r, z0, z1 = p
-                rr = max(r, cx / 2)
-                m2 = (xc[:, None] - ccx) ** 2 + (yc[None, :] - ccy) ** 2 <= rr ** 2
+                m2 = (xc[:, None] - ccx) ** 2 + (yc[None, :] - ccy) ** 2 <= r ** 2
+                if not m2.any():                                         # review v420 M3 (i): a pole thinner than a cell keeps its own cell
+                    m2[_cell_of(ccx, cx, NX), _cell_of(ccy, cx, NY)] = True
                 iz = (zc >= FLOOR_T + z0) & (zc < FLOOR_T + z1)
-                if not iz.any():
-                    iz = np.abs(zc - FLOOR_T - (z0 + z1) / 2) <= cz / 2
+                iz = iz if iz.any() else _cell_of(FLOOR_T + (z0 + z1) / 2, cz, NZ)
                 obj |= m2[:, :, None] & iz[None, None, :]
     obj &= ~walls2d[:, :, None]
     occ |= obj
@@ -358,7 +381,7 @@ def agent_positions(spec, occ_r, cell, agents, rng):
     if len(cand) < agents:
         raise ValueError('not enough free floor with clearance')
     order = rng.permutation(len(cand))
-    for min_sep in (1.0, 0.5, 0.):
+    for min_sep in (1.0, 0.5):                                       # review v420 S1: never closer than 0.5 m (else the scene is skipped)
         pts = []
         for i in order:
             p = np.array([(cand[i][0] + .5) * cx, (cand[i][1] + .5) * cx])
@@ -409,7 +432,9 @@ def make_fixture(split, index, rooms=1, dims=DIMS['R1'], agents=AGENTS):
     spec = world_spec(split, index, rooms)
     r = rasterize(spec, tuple(dims)); occ = r['occ']; cell = r['cell']
     rng = np.random.default_rng(_seed(spec['world_id'] + f':poses:{agents}'))
-    centres = agent_positions(spec, occ.astype(bool), cell, agents, rng)
+    # review v420 S3: agents are placed on the R1 reference raster at every resolution (identical positions for paired R1 / R2 studies)
+    ref = r if tuple(dims) == DIMS['R1'] else rasterize(spec, DIMS['R1'])
+    centres = agent_positions(spec, ref['occ'].astype(bool), ref['cell'], agents, rng)
     jitter = rng.uniform(-.1, .1, (POSES, agents, 3)); jitter[:, :, 2] = 0.
     trajectory = centres[None] + jitter
     rays = fibonacci_sphere(BEAMS)
