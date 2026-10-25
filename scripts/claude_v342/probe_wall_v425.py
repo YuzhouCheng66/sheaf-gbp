@@ -11,7 +11,7 @@ import argparse, importlib, json, os, sys
 from pathlib import Path
 import numpy as np, torch
 ap = argparse.ArgumentParser(); ap.add_argument('--source', required=True); ap.add_argument('--run', required=True); ap.add_argument('--out', required=True)
-ap.add_argument('--trainer', default='train_3d_v425'); ap.add_argument('--block', type=int, default=3); ap.add_argument('--threads', type=int, default=4)
+ap.add_argument('--trainer', default='train_3d_v427'); ap.add_argument('--block', type=int, default=3); ap.add_argument('--threads', type=int, default=4)
 args = ap.parse_args()
 sys.path.insert(0, args.source); sys.path.insert(0, os.path.join(args.source, 'exploration_grid')); sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 torch.set_num_threads(args.threads)
@@ -20,6 +20,8 @@ ck = torch.load(Path(args.run) / 'checkpoints' / 'final.pt', map_location='cpu',
 if hasattr(T, 'DECODER_WIDTH'): T.DECODER_WIDTH = meta.get('decoder_width', 1.0)
 if hasattr(T, 'LAYOUTS'): T.BX, T.BY, T.BZ = meta.get('blocks', [8, 8, 4]); T.D = T.BX * T.BY * T.BZ
 if hasattr(T, 'DECODER'): T.DECODER = meta.get('decoder', 'd3')
+if hasattr(T, 'PRECISION'): T.PRECISION = meta.get('precision', 'learned')
+if hasattr(T, 'KNOWN_WEIGHT'): T.KNOWN_WEIGHT = meta.get('known_weight', 'uniform')
 assert list(meta.get('blocks', [8, 8, 4])) == [getattr(T, 'BX', 8), getattr(T, 'BY', 8), getattr(T, 'BZ', 4)]
 dims = (128, 128, 32); NX, NY, NZ = dims; T.CHART_M = 12.8
 model = T.SheafModel3D(dims, meta['seed']); model.load_state_dict(ck['state_dict']); model.eval()
