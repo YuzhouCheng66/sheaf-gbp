@@ -1,0 +1,45 @@
+# Evidence pack: 3D furnished-storey Sheaf-GBP mapping, 2026-10-25 (for the first-principles analysts)
+
+## The system (fixed by the user; not negotiable)
+- Sheaf-GBP: each of N = 8 agents encodes ITS OWN ternary occupancy map (unknown / free / occupied) into a code of D = 256 Gaussian variables: a mean mu_d in [-1, 1] (tanh, hard 8-bit, 255 levels) and a diagonal precision q_d in [1e-4, 4] (x coverage mask: q = 0 where the agent saw nothing in block d). One (mu, q) pair per PUBLIC block of a fixed grid over the chart (8x8x4 blocks over L x L x 3.2 m; L = house-fitted chart side 8-20 m; so a block is L/8 x L/8 x 0.8 m = 16 x 16 x 8 voxels at R1).
+- Encoder is strictly block-local: block d's code depends only on the voxels of block d (plus public coordinates and the chart scale L/25.6).
+- Wire: 8 + 8 bits per coordinate (k-bit quantised precision and information vector) = 512 B per message. Compression accounting: 2-bit raw own map 128 KB (256x), gzip of the own map median 2,437 B (4.76x).
+- Fusion: per-coordinate MAX-PRECISION selection (lattice join: for each d, take the (p, eta) of the source with the largest precision) over 8 synchronous rounds on the radio minimum-spanning forest (8 m radio). Exact under loops and repeats. Decoder reads ONLY the fused posterior (mu_post = eta/p, log var = -log p), as a 2-channel 8x8x4 grid, plus public coordinate planes (x, y, z in [-1, 1], L/25.6).
+- Decoder: 3D CNN on the compute grid 64x64x16 (voxels reached by a parameter-free depth-to-space, s = 2), ends with a 1x1 conv emitting 2 x 8 logits per compute cell (known, occupied for the 8 sub-voxels). Channels at W = 1: pre 64, lift 64, two upsampling stages 48 / 36, output 36 -> 16. Decoder params 468k (W = 1), 1.83 M (W = 2). Trunk (encoder) 610k, head 17k.
+- Loss: known BCE + occupancy BCE on target-known voxels with weight 1 + 4 x [surface voxel]; stream targets per hop k in {0, 1, 2, 4, 8}: target_k = union (max) of the own maps of the agents reached within k hops; weights .5 / .125 x 4.
+- Training: 4,708 TRAIN houses (HouseExpo plans, each a different furnished storey), one scene (8 agents, all 5 hops) per update, AdamW lr 3e-4, 200-step warmup, cosine to 5 %, 16,000 updates (about 3.4 passes), grad clip 5 (never engaged), batch 1 scene, ~0.12 s/update at W = 1 on an RTX 5090, ~0.22 at W = 2. Budget rule: one 7,200 s lease per run; a run may warm-start from a previous run's final checkpoint under a NEW lease with a fresh schedule ("cycles", as the 2D line did with 3 cycles).
+- Metrics on the target-known scope, VAL = 24 HouseExpo VALIDATION houses (8 per 1/2/3-room stratum): surface F1 (6-neighbourhood surface voxels of the target), variable-structure F1 ("var": floor and ceiling slabs removed -- walls, lintels, furniture), furniture-region F1 (voxels neither slab nor within 1 voxel of a wall), tolerance-1 surface F1, unknown-known FPR. The 2D line used wall F1 at 128^2.
+
+## The world (v420): one furnished HouseExpo storey per scene
+- Walls = complement of the HouseExpo free polygon, extruded floor-to-ceiling; floor and ceiling slabs 0.1 m; ceiling height U(2.4, 3.0); door lintels above 2.0-2.15 m. Furniture: parametric library by room type (beds, wardrobes, sofas, tables with 5 cm legs, chairs, kitchen counters with wall-hung cupboards (overhangs), fridges, toilets, bathtubs, desks, bookshelves with thin boards, boxes); footprint share of the floor median .30 (Replica scans: .30). Furniture is .18 of the R8 target SURFACE; slabs are about .41 of it; walls + lintels about .41.
+- Grid R1 = 128 x 128 x 32 voxels: horizontal cell L/128 = 6-16 cm, vertical 10 cm.
+- Sensor: exact spherical first-hit rays (65,536 beams, 5 m range) from 1.2 m height, 3 jittered poses; an agent knows 17-52 % of the volume (median ~.3). 8 agents placed on free floor >= 0.5 m apart.
+- References on the VAL panel (from the data alone, no model): slab-only predictor K0 / R8 surface .625 / .585, var 0; a PERFECT structure-only mapper (target with all furniture set free) K0 / R8 surface .915 / .900, var .813 / .814, furniture 0.
+
+## Results so far (VAL, both seeds unless stated)
+| batch | one variable vs 3S-A | K0 surface | K0 var | R8 surface | R8 var | R8 furn | R8 tol1 | FPR |
+|---|---|---|---|---|---|---|---|---|
+| 3S-A (v420, 8x8x4, W1, 16k upd) | baseline | .685 / .681 | .436 / .433 | .636 / .631 | .382 / .398 | .170 / .172 | .774 / .784 | .042 / .040 |
+| 3S-W (W = 2 decoder, 1.83 M decoder params) | decoder width | .733 / .738 | .534 / .546 | .665 / .655 | .462 / .461 | .204 / .201 | .808 / .800 | .036 / .037 |
+| 3S-C (16x16x1 layout, W1) | code layout | running since 06:07 UTC (0.10 s/update), result ~07:30 UTC | | | | | | |
+| 3S-L ceiling (free codes) | representation bound | queued after 3S-C | | | | | | |
+
+3S-W verdict (pre-registered, paired by seed): decoder width IS a lever: Delta R8 var +8.0 / +6.3 pp, Delta R8 surface +2.9 / +2.4 pp, Delta K0 var +9.8 / +11.3 pp; absolute criteria still fail. Wall recall K0 .49 -> .64 / .65; INTERIOR walls K0 .095 -> .288, .121 -> .286 (tripled), boundary .51 -> .67; R8 interior .092 -> .346, .246 -> .431. Grad clipping engaged in 0 % / 0.6 % of logged updates. The VAL curve of 3S-W was still rising at the end (K0 var +2 pp over the last 4k updates at LR ~0).
+Fusion gap R8 - K0 (surface): -4.9 / -5.0 pp in 3S-A, -6.8 / -8.3 pp in 3S-W. (2D line: about -2 pp; 3D-A regular world: R8 .916.)
+Fresh panel (another 24 VAL houses) is a little HIGHER than VAL in every batch (3S-A R8 .662 / .652).
+
+## Diagnostics (post hoc, report-only)
+1. TRAIN-vs-VAL gap (same checkpoint on 24 trained houses vs the 24 VAL houses): 3S-A seeds +1.6 / +2.5 pp R8 surface, +2.3 / +3.1 pp R8 var; 3S-W seed 1 +2.1 / +2.8 pp. => UNDER-FITTING, not a data-quantity problem (the 2D line at 600 houses had a +15 pp gap).
+2. Recall by target class, 3S-A K0 / R8: slabs .905 / .923; walls + lintels .486 / .390 (.49 / .44 seed 2); furniture .217 / .213. Wall recall by height at K0: 0-0.3 m .37, 0.3-0.9 .40, 0.9-1.5 .47, 1.5-2.1 .53, 2.1-3.2 .53 -- low even above all furniture.
+3. INTERIOR walls (a wall voxel with known-free voxels within 4 cells on BOTH sides in its plane: separates two observed free spaces; only the code's content can place it) vs BOUNDARY walls (where the observed region ends; the known/unknown outline implies them): interior recall K0 .095 / .121, R8 .092 / .246; boundary .513 / .515 (K0), .513 / .526 (R8). Interior walls are .29 of the R8 wall voxels, .06 at K0. The slices show it plainly: the outline of the known region is drawn; the partitions between rooms are missed (cyan), furniture mostly missed.
+4. False positives: 41-44 % within 1 voxel of walls/slabs (boundary jitter), 56-59 % farther away (invented furniture, walls displaced >= 2 voxels, jitter around real furniture). Occupied precision K0 .75-.76.
+5. Error is nearly independent of the house size L (corr -.19 / -.10) and only weakly of the room count (R8 surface .67 / .64 / .60 for 1 / 2 / 3 rooms).
+6. Training curves: 3S-A VAL R8 surface .57 -> .62 -> .63 -> .64 at 4k / 8k / 12k / 16k updates with train loss .47 -> .34 (then flat, LR already at 5 %); 3S-W K0 var .335 -> .429 -> .512 -> .534, still +2 pp over the last 4k with LR ~0. Grad clipping never engaged. Code statistics: mask fraction (evidence-bearing coordinates per agent) .17-.52; q mean ~1.0-1.7 of max 4; |mu| mean ~.4-.6.
+7. 2D prior evidence on HouseExpo at 128^2 (NO furniture): the tuned 2D recipe (64 coords = 8x8 blocks, wide decoder x2 with 2.5 M params, public-frame conditioning, 57,600 updates x 3 cycles) reaches K0 .93, R8 .915. The 2D representation ceiling (free codes, D4-6 protocol, on a fixed 20 m chart, 4,000 steps): 16x16x1 .918, 8x8x1 .694, 4x4x4 (four scalars per coarser block) .623 -- what matters is how many independent spatial units the code covers, not the total dimension. House-fitted charts (blocks 1-2.5 m instead of 2.5 m) were a major part of the 2D gain.
+8. 3D-A (synthetic 4-storey cube buildings, regular corridor + rooms, no furniture, 64^3, same code/decoder family): R8 surface .916 / .927; 3D-B at 128^3 with the s = 2 block readout: .890 / .887.
+9. Compute: at W = 1, 16k updates take ~2,000 s; at W = 2 ~3,600 s; a lease is 7,200 s inclusive, so one lease holds at most ~48k updates at W = 1 or ~26k at W = 2 (minus ~10 min load + val). Cycles (warm start, fresh cosine) are allowed across leases.
+
+## What the user wants
+- Primary goal: F1 (surface / variable-structure) on furnished storeys at R1, then R2 (256x256x64). Secondary: compression (512 B per message is the budget; D = 256 is fixed "for now"; the user must agree before D changes).
+- Rules: one variable per batch versus a stated control; two seeds (342101, 342202) must both pass a pre-registered criterion; independent review before launch; honest reporting.
+- Process (user, 05:40 UTC): after localising the problem, launch the experiment most likely to break through F1; after each training round, several agents analyse from first principles the most likely breakthrough and implement it.

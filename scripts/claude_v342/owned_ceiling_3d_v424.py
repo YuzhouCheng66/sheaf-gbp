@@ -7,8 +7,12 @@ train_3d_v424 (--decoder-width W, --layout); fusion is the deployed max-precisio
   VAL   (the 24-house criterion panel): decoder frozen; each agent's code fitted to ITS OWN observation only (K0 loss, --fit-steps Adam
         steps); unions composed with the deployed join; scored at K0 and R8 with train_3d_v424.metrics3d against the actual targets, which
         are never fitted.
-Reads: what a code of this layout / width CAN carry when the encoder is ideal. It bounds every block-local encoder of this layout; it is
-not reachable in deployment (the fit sees the decoder). Layout 16x16x4 (D = 1,024) is diagnostic only (--allow-non256).
+Reads: what a code of this layout CAN carry through THIS decoder family when the encoder is ideal (review v424 M3): it bounds block-local
+encoders paired with this decoder at this budget (decoder trained on --train-indices houses), and is itself a LOWER bound on the true
+representation ceiling (free codes may under-fit: the TRAIN-fitted vs VAL-own-fitted gap and the validity gate in chain_day6_3SL.sh read
+that). Not reachable in deployment (the fit sees the decoder). Codes keep a CONSTANT learning rate (review M1: one scene per step means a
+code is visited only steps / scenes times; a cosine on the codes capped |mu| at ~.4); the decoder follows the cosine. Layout 16x16x4
+(D = 1,024) is diagnostic only (--allow-non256).
 python owned_ceiling_3d_v424.py --source <sealed> --out DIR --layout 8x8x4 --decoder-width 1.0 --device cuda
 """
 import argparse, json, multiprocessing, os, sys, time
@@ -19,7 +23,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument('--source', required=True); ap.add_argument('--out', required=True)
 ap.add_argument('--layout', default='8x8x4'); ap.add_argument('--decoder-width', type=float, default=1.0); ap.add_argument('--allow-non256', action='store_true')
 ap.add_argument('--train-indices', default='0-63'); ap.add_argument('--val-indices', default='0-7'); ap.add_argument('--rooms', default='1,2,3')
-ap.add_argument('--steps', type=int, default=8000); ap.add_argument('--lr', type=float, default=1e-3); ap.add_argument('--code-lr', type=float, default=2e-2)
+ap.add_argument('--steps', type=int, default=16000); ap.add_argument('--lr', type=float, default=1e-3); ap.add_argument('--code-lr', type=float, default=5e-2)
 ap.add_argument('--fit-steps', type=int, default=300); ap.add_argument('--fit-lr', type=float, default=3e-2); ap.add_argument('--union-code-grad', action='store_true')
 ap.add_argument('--time-cap', type=float, default=2400.); ap.add_argument('--seed', type=int, default=342101); ap.add_argument('--device', default='cuda')
 ap.add_argument('--workers', type=int, default=8); ap.add_argument('--gen-timeout', type=float, default=3600.); ap.add_argument('--train-eval', type=int, default=12)
@@ -79,7 +83,8 @@ if __name__ == '__main__':
     n_dec = sum(p.numel() for p in decoder.parameters())
     codes = [(torch.zeros((sc['own'].shape[0], T.D), device=dev, requires_grad=True), torch.zeros((sc['own'].shape[0], T.D), device=dev, requires_grad=True)) for sc in train]
     opt = torch.optim.Adam([dict(params=decoder.parameters(), lr=args.lr), dict(params=[z for pair in codes for z in pair], lr=args.code_lr)])
-    sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, args.steps, eta_min=args.lr * .05)
+    import math
+    sched = torch.optim.lr_scheduler.LambdaLR(opt, [lambda u: .05 + .95 * .5 * (1 + math.cos(math.pi * min(u, args.steps) / args.steps)), lambda u: 1.])   # decoder cosine, codes constant (review M1)
     log = []; t_train = time.time(); order = np.random.permutation(len(train)); pos = 0; losses = []
     for step in range(args.steps):
         if pos >= len(order):
@@ -117,27 +122,35 @@ if __name__ == '__main__':
         T.CHART_M = sc['chart_m']; n = sc['own'].shape[0]
         z_mu = torch.zeros((n, T.D), device=dev, requires_grad=True); z_q = torch.zeros((n, T.D), device=dev, requires_grad=True)
         o = torch.optim.Adam([z_mu, z_q], lr=args.fit_lr); tgt0 = T.stream_targets(sc['own'], sc['reached'][0])
-        for _ in range(args.fit_steps):
+        fit_curve = []
+        for it in range(args.fit_steps):
             o.zero_grad(set_to_none=True)
             mu, q, mask = source(z_mu, z_q, sc['mask'])
             l, _, _ = T.stage_loss(decoder, T.rollout_max(mu, q, mask, sc['edges'], stages=(0,))[0], tgt0, dims); l.backward(); o.step()
+            if (it + 1) % 100 == 0 or it + 1 == args.fit_steps:
+                fit_curve.append((it + 1, round(float(l.detach()), 4)))                                   # review S3: convergence of the fit
         with torch.no_grad():
             mu, q, mask = source(z_mu, z_q, sc['mask'])
         res, preds = score(decoder, sc, mu, q, dims)
-        val_rows.append(dict(spec=sc['spec'], fit_loss=float(l.detach()), mask_fraction=float(mask.mean()), q_mean=float((q * mask).sum() / mask.sum().clamp_min(1)), **res))
-        print(f"[ceil] VAL r{sc['spec']['rooms']} i{sc['spec']['index']} | K0 surf {res['K0']['surface_f1']:.3f} var {res['K0']['var_occ_f1']:.3f} furn {res['K0']['furn_f1']:.3f} | "
-              f"R8 surf {res['K8']['surface_f1']:.3f} var {res['K8']['var_occ_f1']:.3f} furn {res['K8']['furn_f1']:.3f} fpr {res['K8']['unknown_known_fpr']:.3f} | fit {float(l):.3f} {time.time()-t0:.0f}s", flush=True)
+        val_rows.append(dict(spec=sc['spec'], fit_loss=float(l.detach()), fit_curve=fit_curve, mu_abs_max=float(mu.abs().max()), mask_fraction=float(mask.mean()), q_mean=float((q * mask).sum() / mask.sum().clamp_min(1)), **res))
+        f3 = lambda v: 'n/a' if v is None else f'{v:.3f}'                                                   # review S4: None-safe
+        print(f"[ceil] VAL r{sc['spec']['rooms']} i{sc['spec']['index']} | K0 surf {f3(res['K0']['surface_f1'])} var {f3(res['K0']['var_occ_f1'])} furn {f3(res['K0']['furn_f1'])} | "
+              f"R8 surf {f3(res['K8']['surface_f1'])} var {f3(res['K8']['var_occ_f1'])} furn {f3(res['K8']['furn_f1'])} fpr {f3(res['K8']['unknown_known_fpr'])} | fit {fit_curve} {time.time()-t0:.0f}s", flush=True)
         if vi < 2:
             np.savez_compressed(out / f'val-panel-{vi}.npz', own=sc['own'].cpu().numpy(), mu=mu.cpu().numpy(), q=(q * mask).cpu().numpy(),
                                 **{f'pred_k{k}': preds[k].cpu().numpy().reshape(-1, *dims) for k in (0, 8)})
 
     def summarize(rows):
         return {h: {m: (float(np.mean([r[h][m] for r in rows if r[h][m] is not None])) if any(r[h][m] is not None for r in rows) else None) for m in VAL_KEYS} for h in ('K0', 'K8')}
+    with torch.no_grad():
+        mu_max_train = float(max(source(z[0], z[1], sc['mask'])[0].abs().max() for z, sc in zip(codes, train)))
     report = dict(args=vars(args), layout=args.layout, D=T.D, decoder_width=args.decoder_width, decoder_parameters=n_dec, steps_done=steps_done, train_scenes=len(train), val_scenes=len(val),
+                  train_mu_abs_max=mu_max_train, complete=(steps_done == args.steps),
                   train_log=log, train_summary=summarize(train_rows), val_summary=summarize(val_rows), val_rows=val_rows, fit_seconds=round(time.time() - t_fit), seconds=round(time.time() - t0))
     torch.save(dict(state_dict=decoder.state_dict(), args=vars(args)), out / 'decoder.pt')
     json.dump(report, open(out / 'report.json', 'w'), indent=1)
     for name, s in (('TRAIN(fitted codes)', report['train_summary']), ('VAL(own-fitted)', report['val_summary'])):
         for h in ('K0', 'K8'):
-            m = s[h]; print(f"[ceil] {name} {h}: surf {m['surface_f1']:.3f} var {m['var_occ_f1']:.3f} furn {m['furn_f1']:.3f} tol1 {m['surface_f1_tol1']:.3f} fpr {m['unknown_known_fpr']:.3f}", flush=True)
+            m = s[h]; f3 = lambda v: 'n/a' if v is None else f'{v:.3f}'
+            print(f"[ceil] {name} {h}: surf {f3(m['surface_f1'])} var {f3(m['var_occ_f1'])} furn {f3(m['furn_f1'])} tol1 {f3(m['surface_f1_tol1'])} fpr {f3(m['unknown_known_fpr'])}", flush=True)
     print(f'[ceil] done {time.time()-t0:.0f}s', flush=True)
