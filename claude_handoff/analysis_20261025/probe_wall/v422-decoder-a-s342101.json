@@ -1,0 +1,332 @@
+{
+ "interior": {
+  "drawn": 11,
+  "total": 16,
+  "rows": [
+   {
+    "j": 48,
+    "drawn": false,
+    "peak": 14,
+    "peak_frac": 0.042,
+    "frac_at_j": 0.009,
+    "mu_z0": 0.402,
+    "q_z0": 3.425
+   },
+   {
+    "j": 49,
+    "drawn": false,
+    "peak": 50,
+    "peak_frac": 0.364,
+    "frac_at_j": 0.071,
+    "mu_z0": 0.291,
+    "q_z0": 3.488
+   },
+   {
+    "j": 50,
+    "drawn": true,
+    "peak": 50,
+    "peak_frac": 0.774,
+    "frac_at_j": 0.774,
+    "mu_z0": 0.213,
+    "q_z0": 3.556
+   },
+   {
+    "j": 51,
+    "drawn": true,
+    "peak": 50,
+    "peak_frac": 0.802,
+    "frac_at_j": 0.721,
+    "mu_z0": 0.213,
+    "q_z0": 3.564
+   },
+   {
+    "j": 52,
+    "drawn": true,
+    "peak": 51,
+    "peak_frac": 0.848,
+    "frac_at_j": 0.666,
+    "mu_z0": 0.118,
+    "q_z0": 3.435
+   },
+   {
+    "j": 53,
+    "drawn": true,
+    "peak": 52,
+    "peak_frac": 0.756,
+    "frac_at_j": 0.732,
+    "mu_z0": 0.047,
+    "q_z0": 3.32
+   },
+   {
+    "j": 54,
+    "drawn": true,
+    "peak": 56,
+    "peak_frac": 0.816,
+    "frac_at_j": 0.203,
+    "mu_z0": -0.047,
+    "q_z0": 3.163
+   },
+   {
+    "j": 55,
+    "drawn": true,
+    "peak": 56,
+    "peak_frac": 0.894,
+    "frac_at_j": 0.228,
+    "mu_z0": -0.039,
+    "q_z0": 2.945
+   },
+   {
+    "j": 56,
+    "drawn": true,
+    "peak": 57,
+    "peak_frac": 0.957,
+    "frac_at_j": 0.8,
+    "mu_z0": -0.039,
+    "q_z0": 2.486
+   },
+   {
+    "j": 57,
+    "drawn": true,
+    "peak": 57,
+    "peak_frac": 0.806,
+    "frac_at_j": 0.806,
+    "mu_z0": 0.039,
+    "q_z0": 2.005
+   },
+   {
+    "j": 58,
+    "drawn": false,
+    "peak": 60,
+    "peak_frac": 0.537,
+    "frac_at_j": 0.152,
+    "mu_z0": 0.189,
+    "q_z0": 1.38
+   },
+   {
+    "j": 59,
+    "drawn": true,
+    "peak": 60,
+    "peak_frac": 0.602,
+    "frac_at_j": 0.149,
+    "mu_z0": 0.276,
+    "q_z0": 1.401
+   },
+   {
+    "j": 60,
+    "drawn": true,
+    "peak": 61,
+    "peak_frac": 0.581,
+    "frac_at_j": 0.453,
+    "mu_z0": 0.378,
+    "q_z0": 1.52
+   },
+   {
+    "j": 61,
+    "drawn": true,
+    "peak": 62,
+    "peak_frac": 0.519,
+    "frac_at_j": 0.492,
+    "mu_z0": 0.465,
+    "q_z0": 1.588
+   },
+   {
+    "j": 62,
+    "drawn": false,
+    "peak": 62,
+    "peak_frac": 0.26,
+    "frac_at_j": 0.26,
+    "mu_z0": 0.559,
+    "q_z0": 1.757
+   },
+   {
+    "j": 63,
+    "drawn": false,
+    "peak": 14,
+    "peak_frac": 0.042,
+    "frac_at_j": 0.0,
+    "mu_z0": 0.63,
+    "q_z0": 2.056
+   }
+  ]
+ },
+ "boundary": {
+  "drawn": 16,
+  "total": 16,
+  "rows": [
+   {
+    "j": 48,
+    "drawn": true,
+    "peak": 48,
+    "peak_frac": 0.964,
+    "frac_at_j": 0.964,
+    "mu_z0": -0.858,
+    "q_z0": 0.005
+   },
+   {
+    "j": 49,
+    "drawn": true,
+    "peak": 49,
+    "peak_frac": 0.928,
+    "frac_at_j": 0.928,
+    "mu_z0": -0.748,
+    "q_z0": 0.056
+   },
+   {
+    "j": 50,
+    "drawn": true,
+    "peak": 50,
+    "peak_frac": 0.933,
+    "frac_at_j": 0.933,
+    "mu_z0": -0.661,
+    "q_z0": 0.158
+   },
+   {
+    "j": 51,
+    "drawn": true,
+    "peak": 51,
+    "peak_frac": 0.967,
+    "frac_at_j": 0.967,
+    "mu_z0": -0.559,
+    "q_z0": 0.298
+   },
+   {
+    "j": 52,
+    "drawn": true,
+    "peak": 52,
+    "peak_frac": 0.909,
+    "frac_at_j": 0.909,
+    "mu_z0": -0.465,
+    "q_z0": 0.547
+   },
+   {
+    "j": 53,
+    "drawn": true,
+    "peak": 53,
+    "peak_frac": 0.952,
+    "frac_at_j": 0.952,
+    "mu_z0": -0.37,
+    "q_z0": 0.628
+   },
+   {
+    "j": 54,
+    "drawn": true,
+    "peak": 54,
+    "peak_frac": 0.973,
+    "frac_at_j": 0.973,
+    "mu_z0": -0.252,
+    "q_z0": 0.826
+   },
+   {
+    "j": 55,
+    "drawn": true,
+    "peak": 55,
+    "peak_frac": 0.978,
+    "frac_at_j": 0.978,
+    "mu_z0": -0.134,
+    "q_z0": 0.745
+   },
+   {
+    "j": 56,
+    "drawn": true,
+    "peak": 56,
+    "peak_frac": 0.978,
+    "frac_at_j": 0.978,
+    "mu_z0": -0.016,
+    "q_z0": 0.761
+   },
+   {
+    "j": 57,
+    "drawn": true,
+    "peak": 57,
+    "peak_frac": 0.984,
+    "frac_at_j": 0.984,
+    "mu_z0": 0.094,
+    "q_z0": 0.897
+   },
+   {
+    "j": 58,
+    "drawn": true,
+    "peak": 58,
+    "peak_frac": 0.971,
+    "frac_at_j": 0.971,
+    "mu_z0": 0.205,
+    "q_z0": 0.843
+   },
+   {
+    "j": 59,
+    "drawn": true,
+    "peak": 59,
+    "peak_frac": 0.957,
+    "frac_at_j": 0.957,
+    "mu_z0": 0.291,
+    "q_z0": 1.048
+   },
+   {
+    "j": 60,
+    "drawn": true,
+    "peak": 60,
+    "peak_frac": 0.897,
+    "frac_at_j": 0.897,
+    "mu_z0": 0.37,
+    "q_z0": 1.251
+   },
+   {
+    "j": 61,
+    "drawn": true,
+    "peak": 61,
+    "peak_frac": 0.856,
+    "frac_at_j": 0.856,
+    "mu_z0": 0.449,
+    "q_z0": 1.431
+   },
+   {
+    "j": 62,
+    "drawn": true,
+    "peak": 63,
+    "peak_frac": 0.896,
+    "frac_at_j": 0.686,
+    "mu_z0": 0.535,
+    "q_z0": 1.604
+   },
+   {
+    "j": 63,
+    "drawn": true,
+    "peak": 63,
+    "peak_frac": 0.975,
+    "frac_at_j": 0.975,
+    "mu_z0": 0.63,
+    "q_z0": 2.056
+   }
+  ]
+ },
+ "meta": {
+  "run": "runs/v422-decoder/a-s342101",
+  "seed": 342101,
+  "blocks": [
+   8,
+   8,
+   4
+  ],
+  "decoder_width": 2.0,
+  "decoder": "d3",
+  "block": 3,
+  "positions": [
+   48,
+   49,
+   50,
+   51,
+   52,
+   53,
+   54,
+   55,
+   56,
+   57,
+   58,
+   59,
+   60,
+   61,
+   62,
+   63
+  ]
+ }
+}
