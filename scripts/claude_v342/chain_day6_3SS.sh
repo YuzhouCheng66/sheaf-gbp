@@ -1,10 +1,13 @@
 #!/bin/bash
-# Day-6 batch 3S-S (Claude; written 2026-10-25 14:25 UTC while 3S-Q runs and the full-TRAIN cache generates, before any 3S-S training).
-# Pre-registered in OVERNIGHT_REPORT D8-21; direction D8-19 (user: if data quantity is the next lever, raise it).
+# Day-6 batch 3S-S (Claude; written 2026-10-25 14:24 UTC while 3S-Q ran and the full-TRAIN cache generated, revised 14:45 UTC after
+# code_review_v430_data.md S1-S7, before any 3S-S training). Pre-registered in OVERNIGHT_REPORT D8-21; direction D8-19 (user: if data
+# quantity is the next lever, raise it). Operational precondition (review M1): chain_day6_3SD.sh must stay alive under that name with
+# OUT=runs/v429-ladder until it writes its analysis (this chain's wait and gate depend on it).
 # ONE variable: the TRAIN set. Control = the baseline's 16,000-update run on the 4,708-house cache (cache3d-v420/train-r1-k1600, 1,600
 # houses per stratum); arm = the SAME recipe (decoder, width, layout, wire bits, precision, known-weight, lr, 16,000 updates, seeds) on the
-# FULL-TRAIN cache cache3d-v420/train-r1-k5383 (5,383 houses per stratum = the smallest stratum; ~16,149 houses after the usual ~4 %
-# placement skips), loaded lazily (train_3d_v430 --cache-lazy: bit-for-bit an eager run, test_3d_v430 B). At equal updates the arm sees
+# FULL-TRAIN cache cache3d-v420/train-r1-k5383 (5,383 houses per stratum = the smallest stratum, i.e. 16,149 of the 20,366 TRAIN houses,
+# stratum-balanced; ~15,800 scenes after the usual placement skips, review S4), loaded lazily (train_3d_v430 --cache-lazy: bit-for-bit an
+# eager run, test_3d_v430 B). At equal updates the arm sees
 # each house ~1 time instead of ~3.4: the batch measures DIVERSITY at equal compute; the interaction with training length is for a later
 # cycles batch. The baseline is read at run time from 3S-D's analysis (runs/v429-ladder/analysis.json: next_baseline_dir / prefix).
 # The data order differs by construction (a different manifest); trunk / head / decoder initial tensors are asserted equal to the control's.
@@ -36,13 +39,13 @@ log(){ echo "$(date -u +%FT%TZ) $*" | tee -a $LOG; }
 log "chain_day6_3SS started pid $$ sha256 $(sha256sum scripts/chain_day6_3SS.sh | cut -c1-16)"
 check_shas(){
   TSHA=$(sha256sum scripts/train_3d_v430.py | cut -d' ' -f1); DSHA=$(sha256sum scripts/mapping_3d_storey_data_v420.py | cut -d' ' -f1); KSHA=$(sha256sum scripts/train_v378.py | cut -d' ' -f1)
-  GSHA=$(sha256sum scripts/diag_storey_v427.py | cut -d' ' -f1); ISHA=$(sha256sum scripts/diag_interior_v427.py | cut -d' ' -f1); VSHA=$(sha256sum scripts/diag_veto_v427.py | cut -d' ' -f1); MSHA=$(sha256sum $CACHE/manifest.json | cut -d' ' -f1)
-  [ "$TSHA" = "a865549855b1cbbdf8b3fb20e7f9a7778cee82c6e6452d661e6dd2675ffe9e8a" ] || { log "ABORT: train_3d_v430.py sha changed ($TSHA)"; exit 2; }
+  GSHA=$(sha256sum scripts/diag_storey_v429.py | cut -d' ' -f1); ISHA=$(sha256sum scripts/diag_interior_v429.py | cut -d' ' -f1); VSHA=$(sha256sum scripts/diag_veto_v429.py | cut -d' ' -f1); MSHA=$(sha256sum $CACHE/manifest.json | cut -d' ' -f1)
+  [ "$TSHA" = "d862da289ca7289a8e215a765e78539477b3d7eb1fb08b4b0354038fd1291391" ] || { log "ABORT: train_3d_v430.py sha changed ($TSHA)"; exit 2; }
   [ "$DSHA" = "4793a3279ebd9564315500721e548ab9dd0e10d8f192df632c9b8ddf2964b61d" ] || { log "ABORT: mapping_3d_storey_data_v420.py sha changed ($DSHA)"; exit 2; }
   [ "$KSHA" = "db7bcc3528d58624a7ec34863f2be492fbd5aea9b87025239c662678fb875bff" ] || { log "ABORT: train_v378.py (k-bit wire) sha changed ($KSHA)"; exit 2; }
-  [ "$GSHA" = "ca6cd3faead242cb0754daa7f65eb8a0752d963ab61d2bf730354e34eec3b520" ] || { log "ABORT: diag_storey_v427.py sha changed ($GSHA)"; exit 2; }
-  [ "$ISHA" = "27460a321ab3152040ab7041a2ede6d16ff3da7ae2f53d9281a0cf52b3ff9fb9" ] || { log "ABORT: diag_interior_v427.py sha changed ($ISHA)"; exit 2; }
-  [ "$VSHA" = "03d087fc9d76a5e499895f7da15dc97a8377543b559d243a6710e1dd844bfaa3" ] || { log "ABORT: diag_veto_v427.py sha changed ($VSHA)"; exit 2; }
+  [ "$GSHA" = "545a1532da83f520b1bf3b76ccaf385f6b4eef2bea49a921534c7f1cc400890c" ] || { log "ABORT: diag_storey_v429.py sha changed ($GSHA)"; exit 2; }
+  [ "$ISHA" = "1649cb5ee58fa55f99d4714135d867e97fffed82519e5f4c149ae242f0504033" ] || { log "ABORT: diag_interior_v429.py sha changed ($ISHA)"; exit 2; }
+  [ "$VSHA" = "2c4385f8b1a5adeb8072c0dd0cbba8758d7ff2358783495e0ad91802f6d26fc7" ] || { log "ABORT: diag_veto_v429.py sha changed ($VSHA)"; exit 2; }
   [ "$MSHA" = "864b1fe3c711a189daffd86b841a8e39c959c465f4310daa2d982b0155c5452b" ] || { log "ABORT: cache manifest differs from the controls' ($MSHA)"; exit 2; }
 }
 [ -f $CACHE/manifest.json ] || { log "ABORT: v420 cache manifest missing"; exit 2; }
@@ -64,7 +67,7 @@ PY
 )"
 [ -n "$CTRL" ] && [ -d "$CTRL" ] && [ -n "$CP" ] || { log "ABORT: baseline '$BASE' -> control '$CTRL' prefix '$CP' not usable"; exit 2; }
 for s in 342101 342202; do [ -f $CTRL/$CP$s/final.json ] && [ -f $CTRL/$CP$s/checkpoints/initial.pt ] || { log "ABORT: control $CTRL/$CP$s (final / initial) missing"; exit 2; }; done
-read DEC WID LAY PREC KW WB <<<"$($P -c "import json; m=json.load(open('$CTRL/${CP}342101/run.json')); print(m.get('decoder','d3'), m.get('decoder_width',1.0), m.get('layout', 'x'.join(str(v) for v in m['blocks'])), m.get('precision','learned'), m.get('known_weight','uniform'), ','.join(str(b) for b in m.get('wire_bits', [8, 8])))")"
+read DEC WID LAY PREC KW WB LR DD CB <<<"$($P -c "import json; m=json.load(open('$CTRL/${CP}342101/run.json')); print(m.get('decoder','d3'), m.get('decoder_width',1.0), m.get('layout', 'x'.join(str(v) for v in m['blocks'])), m.get('precision','learned'), m.get('known_weight','uniform'), ','.join(str(b) for b in m.get('wire_bits', [8, 8])), m['lr'], m['D'], m.get('raw_code_bytes', 512))")"
 $P -c "import json,sys; m=json.load(open('$BIG/manifest.json')); c=json.load(open('$CACHE/manifest.json')); sys.exit(0 if m['version']==420 and m['dims']==[128,128,32] and m['per_stratum']==5383 and m['scenes']>=15000 and m['data_module_sha256']==c['data_module_sha256'] else 1)" || { log "ABORT: full-TRAIN cache $BIG missing or invalid"; exit 2; }
 BSHA=$(sha256sum $BIG/manifest.json | cut -d' ' -f1)
 $P -c "import json,sys; m=json.load(open('$CTRL/${CP}342101/run.json')); sys.exit(0 if m['cache']['dir'].rstrip('/').endswith('train-r1-k1600') and m['updates']==16000 else 1)" || { log "ABORT: the control must be a 16k run on the 4,708-house cache"; exit 2; }
@@ -82,7 +85,7 @@ except Exception:
     print("nan 0 0")
 PY
 }
-COMMON="--source $S --cache $BIG --cache-lazy --dims 128,128,32 --device cuda --val-per-stratum 8 --gen-workers 8 --layout $LAY --allow-non256 --wire-bits $WB --decoder $DEC --decoder-width $WID --precision $PREC --known-weight $KW"
+COMMON="--source $S --cache $BIG --cache-lazy --dims 128,128,32 --device cuda --val-per-stratum 8 --gen-workers 8 --layout $LAY --allow-non256 --wire-bits $WB --decoder $DEC --decoder-width $WID --precision $PREC --known-weight $KW --lr $LR"
 for seed in 342101 342202; do
   check_shas
   while [ -n "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]; do log "3S-S: GPU busy before seed $seed; waiting"; sleep 120; done
@@ -97,7 +100,7 @@ for seed in 342101 342202; do
   UPD=16000
   START=$(date +%s); DE=$((START+6600)); DT=$((START+7150))
   cat > $OUT/lease_s$seed.json <<JSON
-{"lease_start_epoch": $START, "train_deadline_epoch": $DE, "total_deadline_epoch": $DT, "inclusive_seconds": 7200, "world": "v420 furnished HouseExpo storeys", "dims": [128, 128, 32], "D": 256, "updates": $UPD, "seed": $seed,
+{"lease_start_epoch": $START, "train_deadline_epoch": $DE, "total_deadline_epoch": $DT, "inclusive_seconds": 7200, "world": "v420 furnished HouseExpo storeys", "dims": [128, 128, 32], "D": $DD, "code_bytes": $CB, "lr": $LR, "updates": $UPD, "seed": $seed,
  "batch": "3S-S", "variable": "TRAIN cache 4,708 -> full (lazy)", "arm_cache": "$BIG", "arm_cache_manifest_sha256": "$BSHA", "wire_bits": "$WB", "baseline": "$BASE", "baseline_recipe": {"decoder": "$DEC", "decoder_width": $WID, "layout": "$LAY", "precision": "$PREC", "known_weight": "$KW"}, "preflight": "rate=$RS load=$LS val=$VS",
  "trainer": "scripts/train_3d_v430.py", "trainer_sha256": "$TSHA", "data_module_sha256": "$DSHA", "kbit_sha256": "$KSHA", "diag_sha256": "$GSHA", "diag_interior_sha256": "$ISHA", "diag_veto_sha256": "$VSHA", "cache": "$CACHE", "cache_manifest_sha256": "$MSHA", "control": "$CTRL/$CP$seed",
  "expectation": "paired vs control: Delta R8 var >= +3pp and Delta R8 surface >= +1pp on both seeds => lever; Delta R8 surface <= -1pp on both or Delta R8 var <= -2pp on both => worse; Delta R8 surface < +1pp and Delta R8 var < +2pp on both => not better; else ambiguous; guards FPR <= control + 0.3pp, slab recall >= control - 2pp, K0 var >= control - 2pp; mechanism: TRAIN-vs-VAL gap not widened; fresh panel reported; incomplete => INCONCLUSIVE"}
@@ -110,13 +113,13 @@ log "batch 3S-S training done"
 check_shas
 for s in 342101 342202; do                                                      # report-only breakdowns for the arm and the control (CPU for the veto)
   if [ -f $OUT/a-s$s/checkpoints/final.pt ]; then
-    timeout -k 30 1800 $P scripts/diag_storey_v427.py --source $S --run $OUT/a-s$s --out $OUT/diag-a-s$s --trainer train_3d_v430 > $OUT/diag-a-s$s.log 2>&1
-    timeout -k 30 1800 $P scripts/diag_interior_v427.py --source $S --run $OUT/a-s$s --trainer train_3d_v430 2>$OUT/diag-interior-a-s$s.err | tail -1 > $OUT/diag-interior-a-s$s.json
-    CUDA_VISIBLE_DEVICES= timeout -k 30 1800 $P scripts/diag_veto_v427.py --source $S --run $OUT/a-s$s --trainer train_3d_v430 --out $OUT/veto-a-s$s.json > $OUT/veto-a-s$s.log 2>&1
+    timeout -k 30 1800 $P scripts/diag_storey_v429.py --source $S --run $OUT/a-s$s --out $OUT/diag-a-s$s --trainer train_3d_v430 > $OUT/diag-a-s$s.log 2>&1
+    timeout -k 30 1800 $P scripts/diag_interior_v429.py --source $S --run $OUT/a-s$s --trainer train_3d_v430 2>$OUT/diag-interior-a-s$s.err | tail -1 > $OUT/diag-interior-a-s$s.json
+    CUDA_VISIBLE_DEVICES= timeout -k 30 1800 $P scripts/diag_veto_v429.py --source $S --run $OUT/a-s$s --trainer train_3d_v430 --out $OUT/veto-a-s$s.json > $OUT/veto-a-s$s.log 2>&1
   fi
-  [ -f $OUT/diag-control-s$s/diag.json ] || timeout -k 30 1800 $P scripts/diag_storey_v427.py --source $S --run $CTRL/$CP$s --out $OUT/diag-control-s$s --trainer train_3d_v430 > $OUT/diag-control-s$s.log 2>&1
-  [ -s $OUT/diag-interior-control-s$s.json ] || timeout -k 30 1800 $P scripts/diag_interior_v427.py --source $S --run $CTRL/$CP$s --trainer train_3d_v430 2>$OUT/diag-interior-control-s$s.err | tail -1 > $OUT/diag-interior-control-s$s.json
-  [ -s $OUT/veto-control-s$s.json ] || CUDA_VISIBLE_DEVICES= timeout -k 30 1800 $P scripts/diag_veto_v427.py --source $S --run $CTRL/$CP$s --trainer train_3d_v430 --out $OUT/veto-control-s$s.json > $OUT/veto-control-s$s.log 2>&1
+  [ -f $OUT/diag-control-s$s/diag.json ] || timeout -k 30 1800 $P scripts/diag_storey_v429.py --source $S --run $CTRL/$CP$s --out $OUT/diag-control-s$s --trainer train_3d_v430 > $OUT/diag-control-s$s.log 2>&1
+  [ -s $OUT/diag-interior-control-s$s.json ] || timeout -k 30 1800 $P scripts/diag_interior_v429.py --source $S --run $CTRL/$CP$s --trainer train_3d_v430 2>$OUT/diag-interior-control-s$s.err | tail -1 > $OUT/diag-interior-control-s$s.json
+  [ -s $OUT/veto-control-s$s.json ] || CUDA_VISIBLE_DEVICES= timeout -k 30 1800 $P scripts/diag_veto_v429.py --source $S --run $CTRL/$CP$s --trainer train_3d_v430 --out $OUT/veto-control-s$s.json > $OUT/veto-control-s$s.log 2>&1
 done
 RES=$($P - "$CTRL" "$CP" <<'PY'
 import json, math, re, sys, torch
@@ -198,8 +201,14 @@ except Exception as e:
 adopt = verdict == "lever" and isinstance(guards, dict) and guards.get("fpr_ok") is True and guards.get("k0var_ok") is True    # review S4: pre-registered
 if verdict == "lever" and not adopt: verdict = "lever, but a guard failed (FPR or K0 var): baseline unchanged"
 nb_dir, nb_prefix = (OUT, "a-s") if adopt else (CTRL, CP)
+nb_cache = (rows["342101"]["arm"]["cache_dir"] if adopt else rows["342101"]["control"]["cache_dir"]) if isinstance(rows.get("342101"), dict) else None   # review S6
+try:
+    g = lambda k: [r["arm"][k] for r in rows.values()]
+    final_targets_met = min(g("R8_surface_f1")) >= .90 and min(g("K0_surface_f1")) >= .95 and min(g("R8_var_occ_f1")) >= .75           # review S7
+except Exception:
+    final_targets_met = None
 json.dump(dict(control=CTRL, control_prefix=CP, baseline_recipe={k: rows["342101"]["control"][k] for k in ("decoder", "decoder_width", "blocks", "precision", "known_weight")} if isinstance(rows.get("342101"), dict) else None,
-               rows=rows, verdict=verdict, guards=guards, mechanism=mech, absolute_verdict=absolute, fusion_gap_arm_vs_control=fusion_gap, next_baseline_dir=nb_dir, next_baseline_prefix=nb_prefix, code_bytes=512), open(f"{OUT}/analysis.json", "w"), indent=1)
+               rows=rows, verdict=verdict, guards=guards, mechanism=mech, absolute_verdict=absolute, user_final_targets_met=final_targets_met, fusion_gap_arm_vs_control=fusion_gap, next_baseline_dir=nb_dir, next_baseline_prefix=nb_prefix, next_baseline_cache=nb_cache, next_baseline_cache_lazy=bool(adopt)), open(f"{OUT}/analysis.json", "w"), indent=1)
 print(verdict, "| guards", guards, "| mechanism", mech, "| absolute", absolute, "| fusion gap (arm, control)", fusion_gap, "| next baseline", nb_dir, nb_prefix, "|", json.dumps({s: (r["delta"] if isinstance(r, dict) else r) for s, r in rows.items()}))
 PY
 )
