@@ -1,11 +1,14 @@
 #!/bin/bash
-# Day-6 batch 3S-T (Claude; written 2026-10-25 08:35 UTC while 3S-P runs, before any 3S-T training). Pre-registered in OVERNIGHT_REPORT
+# Day-6 batch 3S-T (Claude; written 2026-10-25 08:35 UTC while 3S-P ran, revised 08:58 UTC after code_review_v427_length.md M1-M2 and
+# S2-S5, before any 3S-T training). Pre-registered in OVERNIGHT_REPORT
 # D8-15; programme in D8-9 (analyst B, 1 / 2 / 5.2: the 3D runs are LR-floor-limited, not plateaued: the loss drop per unit of LR integral
 # stays constant to the end of the cosine; VAL K0 var still rose +2 pp in the last 4k updates of 3S-W; 3S-C seed 1 jumped +13 pp between
 # 12k and 16k; the 2D line needed 57,600 x 3 cycles; 16,000 updates is ~3.4 passes over 4,708 houses).
 # ONE variable: the number of updates. The arm trains the baseline's exact recipe for UPD updates under ONE inclusive 7,200 s lease --
 # UPD = the largest multiple of 500 with 1.05 x (load + UPD x rate + 3 x val) <= 6,000 s, capped at 96,000 (6x the control; the plan +
-# column decoder measured 0.040 s/update at the 3S-P preflight, so a lease holds ~140k and the cap binds); below
+# column decoder's finished P2 run did 16,000 updates in 859 s = 0.054 s/update, so a lease holds ~100k and the cap binds). UPD is
+# computed ONCE from seed 342101's preflight (1,100 updates, rate over the 100 -> 1,100 window, +-2 %) and reused for seed 342202, whose
+# preflight only confirms the fit (review M1-M2); below
 # 32,000 (2x) the seed is INCONCLUSIVE (budget). Same cosine schedule shape (200-step warmup, cosine to 5 %) stretched to UPD; VAL every
 # UPD / 4. Control = the baseline's own 16,000-update run (same recipe, seeds, initial tensors, data order for the first 16k updates).
 # The BASELINE is read at run time from 3S-Q's analysis (runs/v427-covq/analysis.json: next_baseline_dir / next_baseline_prefix).
@@ -69,10 +72,10 @@ rate(){ $P - "$1" <<'PY'
 import json, re, sys
 try:
     log = open(sys.argv[1]).read()
-    g = re.search(r' gen (\d+)s', log); t = [int(m) for m in re.findall(r'upd(?:50|100) .* (\d+)s\n', log)]
+    g = re.search(r' gen (\d+)s', log); t = [int(m) for m in re.findall(r'upd(?:100|1100) .* (\d+)s\n', log)]
     h = json.load(open(sys.argv[1].replace('.log', '') + '/history.json'))
     val = max(30., float(h[0]['seconds']) - (t[-1] - int(g.group(1)))) if h else 60.
-    print(f"{(t[1]-t[0])/50:.4f} {g.group(1)} {val:.0f}" if len(t) >= 2 and g else "nan 0 0")
+    print(f"{(t[1]-t[0])/1000:.4f} {g.group(1)} {val:.0f}" if len(t) >= 2 and g else "nan 0 0")
 except Exception:
     print("nan 0 0")
 PY
@@ -82,17 +85,20 @@ for seed in 342101 342202; do
   check_shas
   while [ -n "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]; do log "3S-T: GPU busy before seed $seed; waiting"; sleep 120; done
   TS2=$(date -u +%H%M%S)
-  timeout -k 60 1800 $P scripts/train_3d_v427.py $COMMON --out $OUT/pf-$TS2-s$seed --seed $seed --updates 16000 --max-updates 100 --val-every 100 --deadline-total 0 > $OUT/pf-$TS2-s$seed.log 2>&1
+  timeout -k 60 1800 $P scripts/train_3d_v427.py $COMMON --out $OUT/pf-$TS2-s$seed --seed $seed --updates 16000 --max-updates 1100 --val-every 1100 --deadline-total 0 > $OUT/pf-$TS2-s$seed.log 2>&1
   PFX=$?
   read RS LS VS <<<"$(rate $OUT/pf-$TS2-s$seed.log)"
   [ "$RS" = "nan" ] && { log "ABORT INCONCLUSIVE (preflight failed, exit $PFX): seed $seed"; continue; }
-  UPD=$($P -c "import math; r=float('$RS'); u=int((6000/1.05-float('$LS')-3*float('$VS'))/r) if math.isfinite(r) and r>0 else 0; print(min(96000,(u//500)*500))")
-  log "batch 3S-T preflight seed $seed (exit $PFX): s/update $RS load $LS val $VS -> updates that fit one lease: $UPD (cap 96,000; floor 32,000)"
-  [ "$UPD" -ge 32000 ] || { log "ABORT INCONCLUSIVE (budget): seed $seed fits only $UPD updates (< 32,000 = 2x the control)"; continue; }
+  if [ -z "$UPD" ]; then                                                       # review M2: one count for both seeds, from the first preflight
+    UPD=$($P -c "import math; r=float('$RS'); u=int((6000/1.05-float('$LS')-3*float('$VS'))/r) if math.isfinite(r) and r>0 else 0; print(min(96000,(u//500)*500))"); UPDFROM=$seed
+  fi
+  FIT=$($P -c "import math; r=float('$RS'); print(1 if math.isfinite(r) and r>0 and 1.05*(float('$LS')+$UPD*r+3*float('$VS'))<=6000 else 0)")
+  log "batch 3S-T preflight seed $seed (exit $PFX): s/update $RS load $LS val $VS -> updates $UPD (from seed $UPDFROM; cap 96,000; floor 32,000); fits: $FIT"
+  [ "$UPD" -ge 32000 ] && [ "$FIT" = "1" ] || { log "ABORT INCONCLUSIVE (budget): seed $seed: $UPD updates (floor 32,000) fit=$FIT"; continue; }
   START=$(date +%s); DE=$((START+6600)); DT=$((START+7150))
   cat > $OUT/lease_s$seed.json <<JSON
 {"lease_start_epoch": $START, "train_deadline_epoch": $DE, "total_deadline_epoch": $DT, "inclusive_seconds": 7200, "world": "v420 furnished HouseExpo storeys", "dims": [128, 128, 32], "D": 256, "updates": $UPD, "seed": $seed,
- "batch": "3S-T", "variable": "--updates $UPD (training length; control 16,000)", "baseline": "$BASE", "baseline_recipe": {"decoder": "$DEC", "decoder_width": $WID, "layout": "$LAY", "precision": "$PREC", "known_weight": "$KW"}, "preflight": "rate=$RS load=$LS val=$VS",
+ "batch": "3S-T", "variable": "--updates $UPD (training length; control 16,000)", "updates_from_seed": "$UPDFROM", "baseline": "$BASE", "baseline_recipe": {"decoder": "$DEC", "decoder_width": $WID, "layout": "$LAY", "precision": "$PREC", "known_weight": "$KW"}, "preflight": "rate=$RS load=$LS val=$VS",
  "trainer": "scripts/train_3d_v427.py", "trainer_sha256": "$TSHA", "data_module_sha256": "$DSHA", "kbit_sha256": "$KSHA", "diag_sha256": "$GSHA", "diag_interior_sha256": "$ISHA", "diag_veto_sha256": "$VSHA", "cache": "$CACHE", "cache_manifest_sha256": "$MSHA", "control": "$CTRL/$CP$seed",
  "expectation": "paired vs control: Delta R8 var >= +3pp and Delta R8 surface >= +2pp on both seeds => lever; Delta R8 surface <= -1pp on both or Delta R8 var <= -2pp on both => worse; Delta R8 surface < +1pp and Delta R8 var < +2pp on both => not better; else ambiguous; guards FPR <= control + 0.3pp, slab recall >= control - 2pp, K0 var >= control - 2pp; thresholds: lever if Delta R8 var >= +3pp and Delta R8 surface >= +2pp on both seeds; mechanism: fusion gap must not widen by > 2pp on both seeds; incomplete => INCONCLUSIVE"}
 JSON
@@ -127,7 +133,7 @@ def load(d, expect=None):
     r = {f"{h}_{k}": round(v[h2][k], 4) for h, h2 in (("K0", "0"), ("R8", "8")) for k in KEYS if v[h2][k] is not None}
     r.update(fresh_R8_surface_f1=round(fr["8"]["surface_f1"], 4) if fr else None, fresh_R8_var_occ_f1=round(fr["8"]["var_occ_f1"], 4) if fr else None,
              fresh_R8_furn_f1=round(fr["8"]["furn_f1"], 4) if fr and fr["8"]["furn_f1"] is not None else None, updates=f["updates"], blocks=m["blocks"], decoder=m.get("decoder", "d3"),
-             decoder_width=m.get("decoder_width", 1.0), precision=m.get("precision", "learned"), known_weight=m.get("known_weight", "uniform"), manifest_sha=m["cache"]["manifest_sha256"], params=m["parameters"],
+             decoder_width=m.get("decoder_width", 1.0), precision=m.get("precision", "learned"), known_weight=m.get("known_weight", "uniform"), manifest_sha=m["cache"]["manifest_sha256"], params=m["parameters"], lr=m["lr"],
              specs=[json.dumps(x["spec"], sort_keys=True) for x in json.load(open(f"{d}/validation/final-val.json"))["rows"]], seconds=round(f["seconds"]), trajectory=traj)
     logtxt = open(f"{d}.log").read(); norms = []
     for gd in re.findall(r"grad (\{[^}]*\})", logtxt):
@@ -153,7 +159,7 @@ for s in ("342101", "342202"):
     try:
         a = extras(load(f"{OUT}/a-s{s}"), f"{OUT}/diag-a-s{s}", f"{OUT}/diag-interior-a-s{s}.json", f"{OUT}/veto-a-s{s}.json")
         c = extras(load(f"{CTRL}/{CP}{s}", 16000), f"{OUT}/diag-control-s{s}", f"{OUT}/diag-interior-control-s{s}.json", f"{OUT}/veto-control-s{s}.json")
-        assert a["precision"] == c["precision"] and a["known_weight"] == c["known_weight"] and a["updates"] >= 32000 and c["updates"] == 16000, "recipe / updates"
+        assert a["precision"] == c["precision"] and a["known_weight"] == c["known_weight"] and a["updates"] >= 32000 and c["updates"] == 16000 and a["lr"] == c["lr"], "recipe / updates / lr"
         assert a["blocks"] == c["blocks"] and a["decoder"] == c["decoder"] and a["decoder_width"] == c["decoder_width"], "recipe"
         assert a["manifest_sha"] == c["manifest_sha"] and a["specs"] == c["specs"], "cache / VAL panel"
         assert a["params"] == c["params"] and identity(f"{OUT}/a-s{s}", f"{CTRL}/{CP}{s}"), "identity (params, initial tensors)"
@@ -164,6 +170,7 @@ for s in ("342101", "342202"):
         rows[s] = f"INCONCLUSIVE ({e})"
 try:
     if not all(isinstance(r, dict) for r in rows.values()): raise KeyError("incomplete seeds")
+    if len({r["arm"]["updates"] for r in rows.values()}) != 1: raise ValueError("the two seeds trained for different counts")
     d = lambda k: [r["delta"][k] for r in rows.values()]
     if min(d("R8_var_occ_f1")) >= .03 and min(d("R8_surface_f1")) >= .02: verdict = "lever"
     elif max(d("R8_surface_f1")) <= -.01 or max(d("R8_var_occ_f1")) <= -.02: verdict = "worse"
@@ -194,7 +201,8 @@ except Exception as e:
 adopt = verdict == "lever" and isinstance(guards, dict) and guards.get("fpr_ok") is True and guards.get("k0var_ok") is True    # review S4: pre-registered
 if verdict == "lever" and not adopt: verdict = "lever, but a guard failed (FPR or K0 var): baseline unchanged"
 nb_dir, nb_prefix = (OUT, "a-s") if adopt else (CTRL, CP)
-json.dump(dict(control=CTRL, control_prefix=CP, baseline_recipe={k: rows["342101"]["control"][k] for k in ("decoder", "decoder_width", "blocks", "precision", "known_weight")} if isinstance(rows.get("342101"), dict) else None,
+nb_updates = (rows["342101"]["arm"]["updates"] if adopt else 16000) if isinstance(rows.get("342101"), dict) else None
+json.dump(dict(control=CTRL, control_prefix=CP, next_baseline_updates=nb_updates, baseline_recipe={k: rows["342101"]["control"][k] for k in ("decoder", "decoder_width", "blocks", "precision", "known_weight")} if isinstance(rows.get("342101"), dict) else None,
                rows=rows, verdict=verdict, guards=guards, mechanism=mech, absolute_verdict=absolute, fusion_gap_arm_vs_control=fusion_gap, next_baseline_dir=nb_dir, next_baseline_prefix=nb_prefix, code_bytes=512), open(f"{OUT}/analysis.json", "w"), indent=1)
 print(verdict, "| guards", guards, "| mechanism", mech, "| absolute", absolute, "| fusion gap (arm, control)", fusion_gap, "| next baseline", nb_dir, nb_prefix, "|", json.dumps({s: (r["delta"] if isinstance(r, dict) else r) for s, r in rows.items()}))
 PY
