@@ -12,7 +12,7 @@ OUT=runs/v431-decision
 LOG=runs/chain_day3.log
 log(){ echo "$(date -u +%FT%TZ) $*" | tee -a $LOG; }
 ESHA=$(sha256sum scripts/eval_decision_v431.py | cut -d' ' -f1); TSHA=$(sha256sum scripts/train_3d_v431.py | cut -d' ' -f1); ASHA=$(sha256sum scripts/analyse_3SDR.py | cut -d' ' -f1)
-[ "$ESHA" = "e39d4aa7e46f945f2ee8f463e00ac6f10eddb16969b453b904bbc9d35598c787" ] && [ "$TSHA" = "9097801fe7b32ec5bb6b6085f1b3c9c79a6249f2e9b82af6f359a92615b966c0" ] && [ "$ASHA" = "b7fa4343e5fe193a309b52f1b4471fb020c2dc618e1561f0215970ea844197b4" ] || { log "ABORT batch 3S-DR: script sha changed ($ESHA $TSHA $ASHA)"; exit 2; }
+[ "$ESHA" = "ef1275f158e10694b50e3deb9f8fa7d31c933cd62c341460c8a52171b39f5544" ] && [ "$TSHA" = "9097801fe7b32ec5bb6b6085f1b3c9c79a6249f2e9b82af6f359a92615b966c0" ] && [ "$ASHA" = "b7fa4343e5fe193a309b52f1b4471fb020c2dc618e1561f0215970ea844197b4" ] || { log "ABORT batch 3S-DR: script sha changed ($ESHA $TSHA $ASHA)"; exit 2; }
 mkdir $OUT.lock 2>/dev/null || { log "ABORT batch 3S-DR: already launched (lock exists)"; exit 2; }
 trap 'rmdir $OUT.lock 2>/dev/null' EXIT
 [ -e $OUT/analysis.json ] && { log "ABORT batch 3S-DR: $OUT already has an analysis (never overwrite)"; exit 2; }
@@ -22,5 +22,6 @@ for s in 342101 342202; do
   [ -f $OUT/c2-s$s.json ] || nice -n 19 timeout 7200 $P scripts/eval_decision_v431.py --source $S --run runs/v429-stack/c2-s$s --out $OUT/c2-s$s.json --device cpu --threads 4 --workers 4 --train-sweep --cache $CACHE > $OUT/c2-s$s.log 2>&1
   log "batch 3S-DR seed $s done (exit $?)"
 done
-$P scripts/analyse_3SDR.py $OUT/c2-s342101.json $OUT/c2-s342202.json > $OUT/analysis.json 2> $OUT/analysis.err
+[ -f $OUT/c2-s342101.json ] && [ -f $OUT/c2-s342202.json ] || { log "ABORT batch 3S-DR: a seed produced no result (see $OUT/c2-s*.log)"; exit 2; }
+$P scripts/analyse_3SDR.py $OUT/c2-s342101.json $OUT/c2-s342202.json > $OUT/analysis.tmp 2> $OUT/analysis.err && mv $OUT/analysis.tmp $OUT/analysis.json
 log "batch 3S-DR analysis: $($P -c "import json; a=json.load(open('$OUT/analysis.json')); f=a['fresh']['calibrated']; print(a['verdict'], '| guards', f['guards'], '| fresh deltas', f['deltas'], '| mechanism', a['mechanism'])" 2>&1 | tail -c 1500)"

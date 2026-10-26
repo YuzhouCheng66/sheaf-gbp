@@ -1,5 +1,5 @@
 #!/bin/bash
-# Day-6 batch 3S-Z2 (Claude; written 2026-10-26 20:11 UTC while 3S-Z trains, before its result). Pre-registered in OVERNIGHT_REPORT D8-32.
+# Day-6 batch 3S-Z2 (Claude; written 2026-10-26 20:20 UTC while 3S-Z trains, before its result). Pre-registered in OVERNIGHT_REPORT D8-32.
 # Runs ONLY IF 3S-Z adopted the 64x64x1 rung (runs/v431-rung/analysis.json: next_baseline_arm == "z1"); otherwise it logs and exits.
 # Question: does the 64x64x1 rung (D 4,096, 8 KB per message at 8+8; the user approved 8 KB diagnostic messages 2026-10-26 14:27 UTC)
 # keep its gain under the two-cycle protocol, i.e. stacked on the current best recipe? ONE variable vs the two-cycle stack (3S-X,
@@ -141,7 +141,7 @@ for s in 342101 342202; do                                                      
   [ -f $OUT/diag-control-s$s/diag.json ] || timeout -k 30 1800 $P scripts/diag_storey_v429.py --source $S --run $CTRL/$CP$s --out $OUT/diag-control-s$s --trainer train_3d_v430 > $OUT/diag-control-s$s.log 2>&1
   [ -s $OUT/diag-interior-control-s$s.json ] || timeout -k 30 1800 $P scripts/diag_interior_v429.py --source $S --run $CTRL/$CP$s --trainer train_3d_v430 2>$OUT/diag-interior-control-s$s.err | tail -1 > $OUT/diag-interior-control-s$s.json
   [ -s $OUT/veto-control-s$s.json ] || CUDA_VISIBLE_DEVICES= timeout -k 30 1800 $P scripts/diag_veto_v429.py --source $S --run $CTRL/$CP$s --trainer train_3d_v430 --out $OUT/veto-control-s$s.json > $OUT/veto-control-s$s.log 2>&1
-  if [ "$(sha256sum scripts/eval_decision_v431.py | cut -d' ' -f1)" = "e39d4aa7e46f945f2ee8f463e00ac6f10eddb16969b453b904bbc9d35598c787" ]; then          # review v431-stack M2: pinned here, not in check_shas
+  if [ "$(sha256sum scripts/eval_decision_v431.py | cut -d' ' -f1)" = "ef1275f158e10694b50e3deb9f8fa7d31c933cd62c341460c8a52171b39f5544" ]; then          # review v431-stack M2: pinned here, not in check_shas
     [ -f $OUT/a-s$s/checkpoints/final.pt ] && [ ! -f $OUT/decision-a-s$s.json ] && timeout -k 30 1800 $P scripts/eval_decision_v431.py --source $S --run $OUT/a-s$s --out $OUT/decision-a-s$s.json --device cuda > $OUT/decision-a-s$s.log 2>&1
     [ -f $OUT/decision-control-s$s.json ] || timeout -k 30 1800 $P scripts/eval_decision_v431.py --source $S --run $CTRL/$CP$s --out $OUT/decision-control-s$s.json --device cuda > $OUT/decision-control-s$s.log 2>&1
   else log "3S-Z2: eval_decision_v431.py sha changed: calibrated re-scoring of seed $s skipped (the calibrated verdict will be n/a)"; fi

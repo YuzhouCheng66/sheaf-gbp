@@ -108,7 +108,7 @@ def main():
                 own = torch.from_numpy(fx['private']).to(dev); reached = torch.from_numpy(fx['reached']).to(dev)
                 slab = torch.from_numpy(fx['slab'].reshape(-1)).to(dev); obj = torch.from_numpy(fx['obj'].reshape(-1)).to(dev); struct = torch.from_numpy(fx['struct'].reshape(-1)).to(dev)
                 mu, q, mask = model.source(own); feats = T.rollout_max(mu, q, mask, fx['edges'])
-                row = dict(spec=sp, chart_m=float(fx['chart_m']))
+                row = dict(spec=fx['spec'], chart_m=float(fx['chart_m']))           # the fixture's spec (adds 'version'), as the trainer stores it
                 for k in (0, 8):
                     tgt = T.stream_targets(own, reached[T.HOPS.index(k)]); kl, ol = model.decoder(feats[k])
                     base = decide(kl, ol, 'v420'); assert torch.equal(base, T.predict(model.decoder, feats[k])), 'v420 rule != trainer predict'
