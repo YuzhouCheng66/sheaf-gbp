@@ -1,5 +1,5 @@
 #!/bin/bash
-# Day-6 batch 3S-Z2 (Claude; written 2026-10-26 20:00 UTC while 3S-Z trains, before its result). Pre-registered in OVERNIGHT_REPORT D8-32.
+# Day-6 batch 3S-Z2 (Claude; written 2026-10-26 20:11 UTC while 3S-Z trains, before its result). Pre-registered in OVERNIGHT_REPORT D8-32.
 # Runs ONLY IF 3S-Z adopted the 64x64x1 rung (runs/v431-rung/analysis.json: next_baseline_arm == "z1"); otherwise it logs and exits.
 # Question: does the 64x64x1 rung (D 4,096, 8 KB per message at 8+8; the user approved 8 KB diagnostic messages 2026-10-26 14:27 UTC)
 # keep its gain under the two-cycle protocol, i.e. stacked on the current best recipe? ONE variable vs the two-cycle stack (3S-X,
@@ -21,6 +21,7 @@
 # Budget: SOLO, after chain_day6_3SZ; one lease per run (4 runs, ~1.6 h each at ~0.206 s/update); hard timeouts inside each lease.
 #   Writes only under /mnt/datasets (runs/v431-stack).
 cd /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021 || exit 1
+APPROVED="$1"; [ -n "$APPROVED" ] || { echo "usage: chain_day6_3SZ2.sh <user approval reference for 8 KB diagnostic messages>"; exit 2; }
 export HOUSEEXPO_JSON_DIR=/mnt/datasets/yuzhou-sheaf-gbp-research/houseexpo-v365/json HOUSEEXPO_INDEX=/mnt/datasets/yuzhou-sheaf-gbp-research/houseexpo-v365/houseexpo_index_v365.json
 P=/home/yuzhou/anaconda3/envs/jax-gpu/bin/python
 S=/home/yuzhou/Desktop/sheaf-gbp/v299-multiscale-v310-5090/source
@@ -32,11 +33,10 @@ LOG=runs/chain_day3.log
 log(){ echo "$(date -u +%FT%TZ) $*" | tee -a $LOG; }
 log "chain_day6_3SZ2 started pid $$ sha256 $(sha256sum scripts/chain_day6_3SZ2.sh | cut -c1-16)"
 check_shas(){
-  TSHA=$(sha256sum scripts/train_3d_v431.py | cut -d' ' -f1); CSHA=$(sha256sum scripts/train_3d_v430.py | cut -d' ' -f1); ESHA=$(sha256sum scripts/eval_decision_v431.py | cut -d' ' -f1); DSHA=$(sha256sum scripts/mapping_3d_storey_data_v420.py | cut -d' ' -f1); KSHA=$(sha256sum scripts/train_v378.py | cut -d' ' -f1)
+  TSHA=$(sha256sum scripts/train_3d_v431.py | cut -d' ' -f1); CSHA=$(sha256sum scripts/train_3d_v430.py | cut -d' ' -f1); DSHA=$(sha256sum scripts/mapping_3d_storey_data_v420.py | cut -d' ' -f1); KSHA=$(sha256sum scripts/train_v378.py | cut -d' ' -f1)
   GSHA=$(sha256sum scripts/diag_storey_v429.py | cut -d' ' -f1); ISHA=$(sha256sum scripts/diag_interior_v429.py | cut -d' ' -f1); VSHA=$(sha256sum scripts/diag_veto_v429.py | cut -d' ' -f1); MSHA=$(sha256sum $CACHE/manifest.json | cut -d' ' -f1)
   [ "$TSHA" = "9097801fe7b32ec5bb6b6085f1b3c9c79a6249f2e9b82af6f359a92615b966c0" ] || { log "ABORT: train_3d_v431.py sha changed ($TSHA)"; exit 2; }
   [ "$CSHA" = "d862da289ca7289a8e215a765e78539477b3d7eb1fb08b4b0354038fd1291391" ] || { log "ABORT: train_3d_v430.py (control diag) sha changed ($CSHA)"; exit 2; }
-  [ "$ESHA" = "c7ed51da25d19ce77e4197d39e882b6cdb845cac3bb4e1f4c0533471868ee6b9" ] || { log "ABORT: eval_decision_v431.py sha changed ($ESHA)"; exit 2; }
   [ "$DSHA" = "4793a3279ebd9564315500721e548ab9dd0e10d8f192df632c9b8ddf2964b61d" ] || { log "ABORT: mapping_3d_storey_data_v420.py sha changed ($DSHA)"; exit 2; }
   [ "$KSHA" = "db7bcc3528d58624a7ec34863f2be492fbd5aea9b87025239c662678fb875bff" ] || { log "ABORT: train_v378.py (k-bit wire) sha changed ($KSHA)"; exit 2; }
   [ "$GSHA" = "545a1532da83f520b1bf3b76ccaf385f6b4eef2bea49a921534c7f1cc400890c" ] || { log "ABORT: diag_storey_v429.py sha changed ($GSHA)"; exit 2; }
@@ -104,9 +104,9 @@ run_seed(){                                                                     
   START=$(date +%s); DE=$((START+6600)); DT=$((START+7150))
   cat > $OUT/lease_c$CYC-s$seed.json <<JSON
 {"lease_start_epoch": $START, "train_deadline_epoch": $DE, "total_deadline_epoch": $DT, "inclusive_seconds": 7200, "world": "v420 furnished HouseExpo storeys", "dims": [128, 128, 32], "D": $DD, "code_bytes": $CB, "updates": $UPD, "seed": $seed, "cycle": $CYC,
- "batch": "3S-Z2", "variable": "layout $CLAY -> $LAY (8 KB, user-approved diagnostic 2026-10-26T14:27Z) on the stack recipe, two cycles of $UPD as the control", "wire_bits": "$WB", "warm_start": "$INIT", "updates_from": "$UPDFROM", "baseline": "$BASE", "baseline_recipe": {"decoder": "$DEC", "decoder_width": $WID, "layout": "$LAY", "precision": "$PREC", "known_weight": "$KW"}, "preflight": "rate=$RS load=$LS val=$VS",
+ "batch": "3S-Z2", "variable": "layout $CLAY -> $LAY (8 KB diagnostic messages) on the stack recipe, two cycles of $UPD as the control", "user_approval": "$APPROVED", "wire_bits": "$WB", "warm_start": "$INIT", "updates_from": "$UPDFROM", "baseline": "$BASE", "baseline_recipe": {"decoder": "$DEC", "decoder_width": $WID, "layout": "$LAY", "precision": "$PREC", "known_weight": "$KW"}, "preflight": "rate=$RS load=$LS val=$VS",
  "trainer": "scripts/train_3d_v431.py", "trainer_sha256": "$TSHA", "data_module_sha256": "$DSHA", "kbit_sha256": "$KSHA", "diag_sha256": "$GSHA", "diag_interior_sha256": "$ISHA", "diag_veto_sha256": "$VSHA", "cache": "$ACACHE", "cache_manifest_sha256": "$AMSHA", "cache_lazy": "$LAZY", "control": "$CTRL/$CP$seed",
- "expectation": "64x64x1 vs the stack (cycle-2 final, or cycle 1 alone on early stop): Delta R8 var >= +3pp and Delta R8 surface >= +2pp on both seeds => lever; Delta R8 surface <= -1pp on both or Delta R8 var <= -2pp on both => worse; Delta R8 surface < +1pp and Delta R8 var < +2pp on both => not better; else ambiguous; early stop after cycle 1 if Delta R8 surface < +1pp on both seeds; guards FPR <= control + 0.3pp, slab recall >= control - 2pp, K0 var >= control - 2pp; mechanism: fusion gap must not widen by > 2pp on either seed; incomplete => INCONCLUSIVE"}
+ "expectation": "64x64x1 vs the stack (cycle-2 final; no early stop; a missing cycle 2 => INCONCLUSIVE): Delta R8 var >= +3pp and Delta R8 surface >= +2pp on both seeds => lever; Delta R8 surface <= -1pp on both or Delta R8 var <= -2pp on both => worse; Delta R8 surface < +1pp and Delta R8 var < +2pp on both => not better; else ambiguous; the same reading under the calibrated decision rule governs if batch 3S-DR adopted it (D8-32); guards FPR <= control + 0.3pp, slab recall >= control - 2pp, K0 var >= control - 2pp; mechanism: fusion gap must not widen by > 2pp on either seed; incomplete => INCONCLUSIVE"}
 JSON
   log "batch 3S-Z2 start c$CYC seed $seed ($UPD updates, $DEC W $WID $LAY $PREC $KW, cycle $CYC: $INIT)"
   timeout -k 30 $((DT - $(date +%s))) $P scripts/train_3d_v431.py $COMMON $INIT --out $OUT/c$CYC-s$seed --seed $seed --updates $UPD --val-every $((UPD/4)) --deadline-epoch $DE --deadline-total $DT > $OUT/c$CYC-s$seed.log 2>&1
@@ -141,8 +141,10 @@ for s in 342101 342202; do                                                      
   [ -f $OUT/diag-control-s$s/diag.json ] || timeout -k 30 1800 $P scripts/diag_storey_v429.py --source $S --run $CTRL/$CP$s --out $OUT/diag-control-s$s --trainer train_3d_v430 > $OUT/diag-control-s$s.log 2>&1
   [ -s $OUT/diag-interior-control-s$s.json ] || timeout -k 30 1800 $P scripts/diag_interior_v429.py --source $S --run $CTRL/$CP$s --trainer train_3d_v430 2>$OUT/diag-interior-control-s$s.err | tail -1 > $OUT/diag-interior-control-s$s.json
   [ -s $OUT/veto-control-s$s.json ] || CUDA_VISIBLE_DEVICES= timeout -k 30 1800 $P scripts/diag_veto_v429.py --source $S --run $CTRL/$CP$s --trainer train_3d_v430 --out $OUT/veto-control-s$s.json > $OUT/veto-control-s$s.log 2>&1
-  [ -f $OUT/a-s$s/checkpoints/final.pt ] && [ ! -f $OUT/decision-a-s$s.json ] && timeout -k 30 1800 $P scripts/eval_decision_v431.py --source $S --run $OUT/a-s$s --out $OUT/decision-a-s$s.json --device cuda > $OUT/decision-a-s$s.log 2>&1
-  [ -f $OUT/decision-control-s$s.json ] || timeout -k 30 1800 $P scripts/eval_decision_v431.py --source $S --run $CTRL/$CP$s --out $OUT/decision-control-s$s.json --device cuda > $OUT/decision-control-s$s.log 2>&1
+  if [ "$(sha256sum scripts/eval_decision_v431.py | cut -d' ' -f1)" = "e39d4aa7e46f945f2ee8f463e00ac6f10eddb16969b453b904bbc9d35598c787" ]; then          # review v431-stack M2: pinned here, not in check_shas
+    [ -f $OUT/a-s$s/checkpoints/final.pt ] && [ ! -f $OUT/decision-a-s$s.json ] && timeout -k 30 1800 $P scripts/eval_decision_v431.py --source $S --run $OUT/a-s$s --out $OUT/decision-a-s$s.json --device cuda > $OUT/decision-a-s$s.log 2>&1
+    [ -f $OUT/decision-control-s$s.json ] || timeout -k 30 1800 $P scripts/eval_decision_v431.py --source $S --run $CTRL/$CP$s --out $OUT/decision-control-s$s.json --device cuda > $OUT/decision-control-s$s.log 2>&1
+  else log "3S-Z2: eval_decision_v431.py sha changed: calibrated re-scoring of seed $s skipped (the calibrated verdict will be n/a)"; fi
 done
 RES=$($P - "$CTRL" "$CP" <<'PY'
 import json, math, re, sys, torch
@@ -202,7 +204,9 @@ for s in ("342101", "342202"):
         a["control_cycle1"] = {k: cc1[k] for k in ("R8_surface_f1", "R8_var_occ_f1", "K0_surface_f1", "K0_var_occ_f1")}
         assert a["blocks"] == [64, 64, 1] and c["blocks"] == [32, 32, 1] and a["cache_dir"] == c["cache_dir"] and a["manifest_sha"] == c["manifest_sha"], "the only variable is the layout"
         assert a["specs"] == c["specs"], "VAL panel"
-        a["encoder_init_equal_to_control"] = identity_enc(f"{OUT}/c1-s{s}", f"{CTRL}/c1-s{s}")       # disclosed, not asserted (the decoder's first conv is wider)
+        assert a["params"]["trunk"] == c["params"]["trunk"] and a["params"]["head"] == c["params"]["head"], "encoder / head parameter counts (review S3: only the decoder's first conv differs)"
+        try: a["encoder_init_equal_to_control"] = identity_enc(f"{OUT}/c1-s{s}", f"{CTRL}/c1-s{s}")   # disclosed, not asserted (review S2: never fails a seed)
+        except Exception as e: a["encoder_init_equal_to_control"] = f"n/a ({e})"
         try:
             for tag, r in (("a", a), ("control", c)):
                 dj = json.load(open(f"{OUT}/decision-{tag}-s{s}.json"))
@@ -233,7 +237,7 @@ try:
         es = all(r["arm"]["cycle1"]["R8_surface_f1"] - r["arm"]["control_cycle1"]["R8_surface_f1"] < .01 and r["arm"]["cycle1"]["R8_var_occ_f1"] - r["arm"]["control_cycle1"]["R8_var_occ_f1"] < .02 for r in rows.values())
         verdict = "INCONCLUSIVE (cycle 2 missing)"                                           # review M1 (3S-Y): no early-stop reading
     guards = {}
-    for name, fn in (("fpr_ok", lambda r: r["arm"]["R8_unknown_known_fpr"] <= r["control"]["R8_unknown_known_fpr"] + .003), ("slab_ok", lambda r: r["arm"]["R8_slab_recall"] >= r["control"]["R8_slab_recall"] - .02), ("k0var_ok", lambda r: r["delta"]["K0_var_occ_f1"] >= -.02)):
+    for name, fn in (("fpr_ok", lambda r: r["arm"]["R8_unknown_known_fpr"] <= r["control"]["R8_unknown_known_fpr"] + .003), ("slab_ok", lambda r: (r["arm"]["R8_slab_recall"] if r["arm"].get("R8_slab_recall") is not None else r["arm"]["v420_val_R8_slab_recall"]) >= (r["control"]["R8_slab_recall"] if r["control"].get("R8_slab_recall") is not None else r["control"]["v420_val_R8_slab_recall"]) - .02), ("k0var_ok", lambda r: r["delta"]["K0_var_occ_f1"] >= -.02)):
         try: guards[name] = all(fn(r) for r in rows.values())
         except Exception as e: guards[name] = f"n/a ({e})"
     try:
@@ -254,7 +258,27 @@ try:
     fusion_gap = {s: (round(r["arm"]["R8_surface_f1"] - r["arm"]["K0_surface_f1"], 4), round(r["control"]["R8_surface_f1"] - r["control"]["K0_surface_f1"], 4)) for s, r in rows.items()}
 except Exception as e:
     fusion_gap = f"n/a ({e})"
-adopt = verdict == "lever" and isinstance(guards, dict) and all(guards.get(g) is True for g in ("fpr_ok", "slab_ok", "k0var_ok"))   # review S5: all three guards
+adopt_v420 = verdict == "lever" and isinstance(guards, dict) and all(guards.get(g) is True for g in ("fpr_ok", "slab_ok", "k0var_ok"))   # review S5: all three guards
+verdict_v420 = verdict
+try:                                                                             # review v431-stack M1: the same reading under the calibrated rule (VAL)
+    if not all(isinstance(r, dict) for r in rows.values()): raise KeyError("incomplete seeds")
+    if rows["342101"]["arm"]["cycles"] != 2: raise ValueError("cycle 2 missing")
+    dc = lambda k: [r["arm"][f"calibrated_val_{k}"] - r["control"][f"calibrated_val_{k}"] for r in rows.values()]
+    sv, vv = dc("R8_surface_f1"), dc("R8_var_occ_f1")
+    verdict_cal = "lever" if min(vv) >= .03 and min(sv) >= .02 else "worse" if max(sv) <= -.01 or max(vv) <= -.02 else "not better" if max(sv) < .01 and max(vv) < .02 else "ambiguous"
+    guards_cal = dict(fpr_ok=all(r["arm"]["calibrated_val_R8_unknown_known_fpr"] <= r["control"]["calibrated_val_R8_unknown_known_fpr"] + .003 for r in rows.values()),
+                      slab_ok=all(r["arm"]["calibrated_val_R8_slab_recall"] >= r["control"]["calibrated_val_R8_slab_recall"] - .02 for r in rows.values()),
+                      k0var_ok=all(r["arm"]["calibrated_val_K0_var_occ_f1"] >= r["control"]["calibrated_val_K0_var_occ_f1"] - .02 for r in rows.values()))
+    deltas_cal = {s: dict(R8_surface=round(x, 4), R8_var=round(y, 4)) for s, x, y in zip(rows, sv, vv)}
+except Exception as e:
+    verdict_cal, guards_cal, deltas_cal = f"INCONCLUSIVE ({e})", None, None
+adopt_cal = verdict_cal == "lever" and isinstance(guards_cal, dict) and all(v is True for v in guards_cal.values())
+try:
+    governing = "calibrated" if json.load(open("runs/v431-decision/analysis.json"))["adopt_calibrated"] is True else "v420"
+except Exception:
+    governing = "undetermined"
+adopt = adopt_cal if governing == "calibrated" else adopt_v420 if governing == "v420" else (adopt_v420 and adopt_cal)   # undetermined: both rules must adopt, else the control stays
+verdict = verdict_cal if governing == "calibrated" else verdict_v420 if governing == "v420" else (verdict_v420 if verdict_v420 == verdict_cal else f"rules disagree (v420: {verdict_v420}; calibrated: {verdict_cal})")
 if verdict == "lever" and not adopt: verdict = "lever, but a guard failed (FPR, slab or K0 var): baseline unchanged"
 nb_dir, nb_prefix = (OUT, "a-s") if adopt else (CTRL, CP)
 nb_updates = (rows["342101"]["arm"]["total_updates"] if adopt else 2 * rows["342101"]["control"]["updates"]) if isinstance(rows.get("342101"), dict) else None     # review S1: the control is a two-cycle run
@@ -263,8 +287,8 @@ try: verdict = f"{verdict} ({verdict_label})"
 except Exception: pass
 nb_recipe = (dict({k: rows["342101"]["arm"][k] for k in ("decoder", "decoder_width", "blocks", "wire_bits", "precision", "known_weight", "cache_dir")}, cache_lazy=False) if adopt else dict({k: rows["342101"]["control"][k] for k in ("decoder", "decoder_width", "blocks", "wire_bits", "precision", "known_weight", "cache_dir")}, cache_lazy=False)) if isinstance(rows.get("342101"), dict) else None   # review S5
 json.dump(dict(control=CTRL, control_prefix=CP, next_baseline_updates=nb_updates, next_baseline_cycles=nb_cycles, next_baseline_recipe=nb_recipe, baseline_recipe={k: rows["342101"]["control"][k] for k in ("decoder", "decoder_width", "blocks", "precision", "known_weight")} if isinstance(rows.get("342101"), dict) else None,
-               rows=rows, verdict=verdict, guards=guards, mechanism=mech, absolute_verdict=absolute, fusion_gap_arm_vs_control=fusion_gap, next_baseline_dir=nb_dir, next_baseline_prefix=nb_prefix, code_bytes=(rows["342101"]["arm"]["raw_code_bytes"] if adopt else rows["342101"]["control"]["raw_code_bytes"]) if isinstance(rows.get("342101"), dict) else None), open(f"{OUT}/analysis.json", "w"), indent=1)
-print(verdict, "| guards", guards, "| mechanism", mech, "| absolute", absolute, "| fusion gap (arm, control)", fusion_gap, "| next baseline", nb_dir, nb_prefix, "|", json.dumps({s: (r["delta"] if isinstance(r, dict) else r) for s, r in rows.items()}))
+               rows=rows, verdict=verdict, governing_rule=governing, verdict_v420=verdict_v420, verdict_calibrated=verdict_cal, guards_calibrated=guards_cal, deltas_calibrated=deltas_cal, guards=guards, mechanism=mech, absolute_verdict=absolute, fusion_gap_arm_vs_control=fusion_gap, next_baseline_dir=nb_dir, next_baseline_prefix=nb_prefix, code_bytes=(rows["342101"]["arm"]["raw_code_bytes"] if adopt else rows["342101"]["control"]["raw_code_bytes"]) if isinstance(rows.get("342101"), dict) else None), open(f"{OUT}/analysis.json", "w"), indent=1)
+print(verdict, f"[rule {governing}; v420: {verdict_v420}; calibrated: {verdict_cal} {guards_cal}]", "| guards", guards, "| mechanism", mech, "| absolute", absolute, "| fusion gap (arm, control)", fusion_gap, "| next baseline", nb_dir, nb_prefix, "|", json.dumps({s: (r["delta"] if isinstance(r, dict) else r) for s, r in rows.items()}))
 PY
 )
 log "batch 3S-Z2 analysis: $RES"
