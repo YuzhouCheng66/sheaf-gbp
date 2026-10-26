@@ -1,5 +1,6 @@
 #!/bin/bash
-# Day-6 batch 3S-Y (Claude; written 2026-10-26 12:46 UTC right after 3S-X, before any 3S-Y training). Pre-registered in OVERNIGHT_REPORT
+# Day-6 batch 3S-Y (Claude; written 2026-10-26 12:44 UTC right after 3S-X, revised 12:54 UTC after code_review_v430_stackdata.md M1 and
+# S1-S5, before any 3S-Y training). Pre-registered in OVERNIGHT_REPORT
 # D8-28. Question: does DATA QUANTITY become a lever once training saturates? 3S-S (D8-26) found the full-TRAIN cache not better at equal
 # 16k updates (each house seen ~1x vs ~3.4x); 3S-X's cycle-2 curve is flat on 4,708 houses (~11 passes). This batch holds the stack recipe
 # fixed -- 32x32x1 @ 8+8, d3 W2, learned precision, uniform known-BCE, the two-cycle protocol (2 x 25,500 at lr 3e-4 then warm-started
@@ -11,7 +12,8 @@
 #   Delta R8 variable-structure F1 >= +3 pp AND Delta R8 surface F1 >= +2 pp on BOTH seeds => data is a lever at saturation (new baseline);
 #   Delta R8 surface F1 <= -1 pp on BOTH seeds OR Delta R8 variable-structure F1 <= -2 pp on BOTH seeds => worse (fewer passes hurt);
 #   Delta R8 surface F1 < +1 pp AND Delta R8 variable-structure F1 < +2 pp on BOTH seeds => not better (data is not the limit here either);
-#   otherwise => ambiguous. Early stop after cycle 1 vs the CONTROL's cycle 1 as in 3S-X.
+#   otherwise => ambiguous. NO early stop (review M1): the hypothesis predicts equality at cycle 1 and a gain only in the saturated
+#   cycle 2, so cycle 2 always runs once cycle 1 is complete; a missing cycle 2 is INCONCLUSIVE. The cycle-1 comparison is reported.
 #   Guards: R8 FPR <= control + 0.3 pp; R8 slab recall >= control - 2 pp; K0 variable-structure F1 >= control - 2 pp; a lever whose guard
 #   fails is not adopted. Mechanism readings: the fresh panel (generalisation), furniture-region F1, the fusion gap (must not widen by > 2
 #   pp on either seed); the user's final targets evaluated per seed. Bytes per message recorded (2,048).
@@ -42,6 +44,7 @@ check_shas(){
 [ -f $CACHE/manifest.json ] || { log "ABORT: v420 cache manifest missing"; exit 2; }
 check_shas
 mkdir $OUT.lock 2>/dev/null || { log "ABORT: chain_day6_3SY already launched (lock exists)"; exit 2; }
+trap 'rmdir $OUT.lock 2>/dev/null' EXIT                                        # review S2: a gate abort or a finished chain leaves no stale lock
 if compgen -G "$OUT/a-s*" >/dev/null || compgen -G "$OUT/lease_*.json" >/dev/null || [ -e $OUT/analysis.json ]; then log "ABORT: $OUT already has 3S-Y history (never overwrite)"; exit 2; fi
 busy(){ pgrep -f "bash scripts/chain_day6_3SX[.]sh" >/dev/null || pgrep -f "bash scripts/chain_day6_3SS[.]sh" >/dev/null || pgrep -f "bash scripts/chain_day6_3SD[.]sh" >/dev/null || pgrep -f "bash scripts/chain_day6_3ST[.]sh" >/dev/null || pgrep -f "bash scripts/chain_day6_3SQ[.]sh" >/dev/null || pgrep -f "bash scripts/chain_day6_3SR[.]sh" >/dev/null || pgrep -f "bash scripts/chain_day6_3SP[.]sh" >/dev/null || pgrep -f "bash scripts/chain_day6_3SL[.]sh" >/dev/null || pgrep -f "bash scripts/chain_day6_3SC[.]sh" >/dev/null || pgrep -f "chain_day6_RS[.]sh" >/dev/null || pgrep -f "^$P scripts/train_" >/dev/null || pgrep -f "^$P scripts/diag_" >/dev/null || pgrep -f "^$P scripts/owned_ceiling" >/dev/null || [ -n "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]; }
 while busy; do sleep 120; done
@@ -61,6 +64,7 @@ PY
 ACACHE=$BIG; LAZY="--cache-lazy"
 $P -c "import json,sys; m=json.load(open('$BIG/manifest.json')); c=json.load(open('$RDIR/${RP}342101/run.json')); sys.exit(0 if m['version']==420 and m['dims']==[128,128,32] and m['per_stratum']==5383 and m['scenes']>=15000 and c['cache']['dir'].rstrip('/').endswith('train-r1-k1600') else 1)" || { log "ABORT: full-TRAIN cache $BIG invalid or the control is not a k1600 run"; exit 2; }
 AMSHA=$(sha256sum $ACACHE/manifest.json | cut -d' ' -f1)
+[ "$AMSHA" = "ab3360905fcf9f7963b819d52921e466d5b640b3552fec50559dd837740830a0" ] || { log "ABORT: full-TRAIN cache manifest sha changed ($AMSHA)"; rmdir $OUT.lock 2>/dev/null; exit 2; }   # review S1: pinned
 read DD CB <<<"$($P -c "import json; m=json.load(open('$RDIR/${RP}342101/run.json')); print(m['D'], m.get('raw_code_bytes', 512))")"
 CTRL=$CTRL1; CP=c2-s
 for s in 342101 342202; do [ -f $CTRL/c2-s$s/final.json ] && [ -f $CTRL/c1-s$s/checkpoints/initial.pt ] && [ -f $CTRL/c1-s$s/final.json ] || { log "ABORT: control $CTRL/c{1,2}-s$s (final / initial) missing"; exit 2; }; done
@@ -103,7 +107,7 @@ run_seed(){                                                                     
  "trainer": "scripts/train_3d_v430.py", "trainer_sha256": "$TSHA", "data_module_sha256": "$DSHA", "kbit_sha256": "$KSHA", "diag_sha256": "$GSHA", "diag_interior_sha256": "$ISHA", "diag_veto_sha256": "$VSHA", "cache": "$ACACHE", "cache_manifest_sha256": "$AMSHA", "cache_lazy": "$LAZY", "control": "$CTRL/$CP$seed",
  "expectation": "full cache vs the stack (cycle-2 final, or cycle 1 alone on early stop): Delta R8 var >= +3pp and Delta R8 surface >= +2pp on both seeds => lever; Delta R8 surface <= -1pp on both or Delta R8 var <= -2pp on both => worse; Delta R8 surface < +1pp and Delta R8 var < +2pp on both => not better; else ambiguous; early stop after cycle 1 if Delta R8 surface < +1pp on both seeds; guards FPR <= control + 0.3pp, slab recall >= control - 2pp, K0 var >= control - 2pp; mechanism: fusion gap must not widen by > 2pp on either seed; incomplete => INCONCLUSIVE"}
 JSON
-  log "batch 3S-Y start c$CYC seed $seed ($UPD updates, $DEC W $WID $LAY $PREC $KW${INIT:+, warm start lr 1e-4})"
+  log "batch 3S-Y start c$CYC seed $seed ($UPD updates, $DEC W $WID $LAY $PREC $KW, cycle $CYC: $INIT)"
   timeout -k 30 $((DT - $(date +%s))) $P scripts/train_3d_v430.py $COMMON $INIT --out $OUT/c$CYC-s$seed --seed $seed --updates $UPD --val-every $((UPD/4)) --deadline-epoch $DE --deadline-total $DT > $OUT/c$CYC-s$seed.log 2>&1
   log "3S-Y c$CYC seed $seed done (exit $?)"
 }
@@ -119,11 +123,10 @@ for s in ("342101", "342202"):
     except Exception as e:
         ds.append(None)
 if any(d is None for d in ds): print("incomplete", ds)
-elif all(d[0] < .01 and d[1] < .02 for d in ds): print("stop", [tuple(round(x, 4) for x in d) for d in ds])   # review S6: the 'not better' rule
-else: print("continue", [tuple(round(x, 4) for x in d) for d in ds])
+else: print("continue", [tuple(round(x, 4) for x in d) for d in ds])                                           # review M1 (3S-Y): no early stop
 PY
 )
-log "batch 3S-Y cycle-1 read vs the control's cycle 1 (pre-registered early stop if both seeds < +1 pp R8 surface and < +2 pp R8 var): $EARLY"
+log "batch 3S-Y cycle-1 read vs the control's cycle 1 (reported only; cycle 2 always runs when cycle 1 is complete): $EARLY"
 case "$EARLY" in continue*) for seed in 342101 342202; do run_seed 2 $seed || break; done;; *) log "batch 3S-Y: cycle 2 not run ($EARLY)";; esac
 log "batch 3S-Y training done"
 check_shas
@@ -209,7 +212,7 @@ try:
     else: verdict = "ambiguous"
     if rows["342101"]["arm"]["cycles"] == 1:                                           # review M2: no cycle 2 -> never compare cycle 1 with the control's cycle 2
         es = all(r["arm"]["cycle1"]["R8_surface_f1"] - r["arm"]["control_cycle1"]["R8_surface_f1"] < .01 and r["arm"]["cycle1"]["R8_var_occ_f1"] - r["arm"]["control_cycle1"]["R8_var_occ_f1"] < .02 for r in rows.values())
-        verdict = "not better (early stop after cycle 1 vs the control's cycle 1)" if es else "INCONCLUSIVE (cycle 2 missing)"
+        verdict = "INCONCLUSIVE (cycle 2 missing)"                                           # review M1 (3S-Y): no early-stop reading
     guards = {}
     for name, fn in (("fpr_ok", lambda r: r["arm"]["R8_unknown_known_fpr"] <= r["control"]["R8_unknown_known_fpr"] + .003), ("slab_ok", lambda r: r["arm"]["R8_slab_recall"] >= r["control"]["R8_slab_recall"] - .02), ("k0var_ok", lambda r: r["delta"]["K0_var_occ_f1"] >= -.02)):
         try: guards[name] = all(fn(r) for r in rows.values())
@@ -239,7 +242,7 @@ nb_updates = (rows["342101"]["arm"]["total_updates"] if adopt else 2 * rows["342
 nb_cycles = (dict(cycles=rows["342101"]["arm"]["cycles"], updates_per_cycle=rows["342101"]["arm"]["updates"], final_runs={s: ("c2-s" if rows[s]["arm"]["cycles"] == 2 else "c1-s") + s for s in rows}) if adopt else dict(cycles=2, updates_per_cycle=rows["342101"]["control"]["updates"], final_runs={s: "c2-s" + s for s in rows})) if isinstance(rows.get("342101"), dict) else None
 try: verdict = f"{verdict} ({verdict_label})"
 except Exception: pass
-nb_recipe = ({k: rows["342101"]["arm"][k] for k in ("decoder", "decoder_width", "blocks", "wire_bits", "precision", "known_weight", "cache_dir")} if adopt else {k: rows["342101"]["control"][k] for k in ("decoder", "decoder_width", "blocks", "wire_bits", "precision", "known_weight", "cache_dir")}) if isinstance(rows.get("342101"), dict) else None
+nb_recipe = (dict({k: rows["342101"]["arm"][k] for k in ("decoder", "decoder_width", "blocks", "wire_bits", "precision", "known_weight", "cache_dir")}, cache_lazy=True) if adopt else dict({k: rows["342101"]["control"][k] for k in ("decoder", "decoder_width", "blocks", "wire_bits", "precision", "known_weight", "cache_dir")}, cache_lazy=False)) if isinstance(rows.get("342101"), dict) else None   # review S5
 json.dump(dict(control=CTRL, control_prefix=CP, next_baseline_updates=nb_updates, next_baseline_cycles=nb_cycles, next_baseline_recipe=nb_recipe, baseline_recipe={k: rows["342101"]["control"][k] for k in ("decoder", "decoder_width", "blocks", "precision", "known_weight")} if isinstance(rows.get("342101"), dict) else None,
                rows=rows, verdict=verdict, guards=guards, mechanism=mech, absolute_verdict=absolute, fusion_gap_arm_vs_control=fusion_gap, next_baseline_dir=nb_dir, next_baseline_prefix=nb_prefix, code_bytes=(rows["342101"]["arm"]["raw_code_bytes"] if adopt else rows["342101"]["control"]["raw_code_bytes"]) if isinstance(rows.get("342101"), dict) else None), open(f"{OUT}/analysis.json", "w"), indent=1)
 print(verdict, "| guards", guards, "| mechanism", mech, "| absolute", absolute, "| fusion gap (arm, control)", fusion_gap, "| next baseline", nb_dir, nb_prefix, "|", json.dumps({s: (r["delta"] if isinstance(r, dict) else r) for s, r in rows.items()}))
