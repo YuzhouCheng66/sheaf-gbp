@@ -1,0 +1,62 @@
+[
+ {
+  "house": "r1_i0",
+  "rooms": 1,
+  "index": 0,
+  "chart_m": 14.0,
+  "n_objects": 36,
+  "R8": 0.9017,
+  "K0": 0.9168,
+  "gz_kb": 155
+ },
+ {
+  "house": "r1_i1",
+  "rooms": 1,
+  "index": 1,
+  "chart_m": 12.0,
+  "n_objects": 65,
+  "R8": 0.9043,
+  "K0": 0.918,
+  "gz_kb": 279
+ },
+ {
+  "house": "r2_i0",
+  "rooms": 2,
+  "index": 0,
+  "chart_m": 19.0,
+  "n_objects": 51,
+  "R8": 0.9326,
+  "K0": 0.9403,
+  "gz_kb": 125
+ },
+ {
+  "house": "r2_i1",
+  "rooms": 2,
+  "index": 1,
+  "chart_m": 16.0,
+  "n_objects": 78,
+  "R8": 0.8649,
+  "K0": 0.8762,
+  "gz_kb": 236
+ },
+ {
+  "house": "r3_i0",
+  "rooms": 3,
+  "index": 0,
+  "chart_m": 15.0,
+  "n_objects": 94,
+  "R8": 0.9175,
+  "K0": 0.9364,
+  "gz_kb": 200
+ },
+ {
+  "house": "r3_i1",
+  "rooms": 3,
+  "index": 1,
+  "chart_m": 15.0,
+  "n_objects": 86,
+  "R8": 0.8671,
+  "K0": 0.9174,
+  "gz_kb": 176
+ }
+]

@@ -1,0 +1,439 @@
+<title>Sheaf-GBP 3D Mapping Demo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600&display=swap">
+<style>
+  /* Layout: the 2D demo's journal figure, extended to 3D. Panel a (an orbitable 3D view) on the left with status, legend and the
+     round-by-round charts (d) under it; rows b and c of eight agent plan views on the right. Controls sit in a quiet bar under the title. */
+  :root {
+    --bg: #ffffff; --fg: #1f1f1f; --muted: #6b6b6b; --faint: #9a9a9a; --rule: #cfcfcf; --panel: #ffffff;
+    --accent: #3B6FB6; --accent-ink: #ffffff; --control-bg: #f4f4f2; --control-border: #d6d6d2; --view-bg: #f7f7f5;
+    --map-unknown: #e6e6e6; --map-free: #ffffff; --h-low: #e4dccb; --h-high: #27313d;
+    --cls-floor: #d9d3c5; --cls-wall: #5a6573; --cls-furn: #c4843a;
+    --err-ok: #b8bdc4; --err-fp: #d1495b; --err-fn: #2f6fd0; --err-out: #e8e2ea;
+    --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --sans: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg: #15171a; --fg: #ececec; --muted: #a3a8ae; --faint: #7c8187; --rule: #3b4046; --panel: #15171a;
+    --accent: #7FA6E0; --accent-ink: #0f1115; --control-bg: #1f2227; --control-border: #3b4046; --view-bg: #1b1e22;
+    --map-unknown: #2b2f35; --map-free: #15171a; --h-low: #5d5546; --h-high: #e3e8ee;
+    --cls-floor: #6a655b; --cls-wall: #aeb8c4; --cls-furn: #dc9c4c;
+    --err-ok: #7d838b; --err-fp: #e2667a; --err-fn: #6aa0ee; --err-out: #4a4550; color-scheme: dark } }
+  :root[data-theme="dark"] {
+    --bg: #15171a; --fg: #ececec; --muted: #a3a8ae; --faint: #7c8187; --rule: #3b4046; --panel: #15171a;
+    --accent: #7FA6E0; --accent-ink: #0f1115; --control-bg: #1f2227; --control-border: #3b4046; --view-bg: #1b1e22;
+    --map-unknown: #2b2f35; --map-free: #15171a; --h-low: #5d5546; --h-high: #e3e8ee;
+    --cls-floor: #6a655b; --cls-wall: #aeb8c4; --cls-furn: #dc9c4c;
+    --err-ok: #7d838b; --err-fp: #e2667a; --err-fn: #6aa0ee; --err-out: #4a4550; color-scheme: dark }
+  body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 13px; line-height: 1.45;
+         padding-block: 20px 32px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .wrap { max-width: 1480px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: 24px; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+  .sub { color: var(--muted); max-width: 92ch; margin: 4px 0 0; }
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 10px 12px; border: 1px solid var(--control-border); background: var(--control-bg); border-radius: 4px; }
+  .controls label { display: flex; align-items: center; gap: 6px; color: var(--muted); }
+  .controls select, .controls button { font: inherit; font-size: 13px; color: var(--fg); background: var(--panel); border: 1px solid var(--control-border); border-radius: 3px; padding: 5px 9px; }
+  .controls button { cursor: pointer; }
+  .controls button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); min-width: 72px; }
+  .controls button:focus-visible, .controls select:focus-visible, .controls input:focus-visible, .tile canvas:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .controls .step { display: flex; align-items: center; gap: 8px; flex: 1 1 200px; min-width: 0; }
+  .controls input[type=range] { flex: 1; min-width: 100px; accent-color: var(--accent); }
+  .controls input[type=checkbox] { accent-color: var(--accent); }
+  .readout { font-variant-numeric: tabular-nums; color: var(--fg); min-width: 6ch; }
+  .msg { color: var(--muted); }
+  .figure { display: grid; grid-template-columns: minmax(300px, 560px) minmax(0, 1fr); gap: 18px 28px; align-items: start; }
+  .left { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .panel-label { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+  .panel-label b { font-size: 15px; }
+  .panel-label span { font-size: 13px; }
+  canvas { display: block; max-width: 100%; }
+  #view { position: relative; width: 100%; aspect-ratio: 1; border: 1px solid var(--rule); background: var(--view-bg); touch-action: none; }
+  #view canvas { width: 100% !important; height: 100% !important; }
+  #viewcap { position: absolute; left: 10px; top: 8px; font-size: 12px; color: var(--muted); pointer-events: none; font-variant-numeric: tabular-nums; }
+  #viewhint { position: absolute; right: 10px; bottom: 8px; font-size: 11px; color: var(--faint); pointer-events: none; }
+  .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 14px; }
+  .tile { min-width: 0; }
+  .tile .name { font-weight: 700; font-size: 13px; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 6px; }
+  .tile .name em { font-style: normal; font-weight: 400; color: var(--muted); font-size: 11px; }
+  .tile canvas { width: 100%; aspect-ratio: 1; border: 1px solid var(--rule); background: var(--map-unknown); image-rendering: pixelated; image-rendering: crisp-edges; cursor: pointer; }
+  .tile.sel canvas { border-color: var(--fg); box-shadow: 0 0 0 1px var(--fg); }
+  .tile .under { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 4px; font-size: 11px; color: var(--muted); margin-top: 3px; font-variant-numeric: tabular-nums; line-height: 1.3; }
+  .right { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+  .status { font-variant-numeric: tabular-nums; color: var(--fg); display: flex; flex-direction: column; gap: 3px; }
+  .status .row { display: flex; flex-wrap: wrap; gap: 2px 16px; }
+  .status .k { color: var(--muted); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; color: var(--muted); font-size: 12px; }
+  .legend i { display: inline-block; width: 14px; height: 11px; border: 1px solid var(--rule); vertical-align: -1px; margin-right: 5px; }
+  .legend .ramp { width: 46px; background: linear-gradient(90deg, var(--h-low), var(--h-high)); }
+  .charts { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  .charts canvas { width: 100%; height: 150px; }
+  .charts .cap { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .notes { color: var(--muted); font-size: 12px; max-width: 92ch; display: flex; flex-direction: column; gap: 4px; border-top: 1px solid var(--rule); padding-top: 10px; }
+  @media (max-width: 960px) { .figure { grid-template-columns: 1fr; } }
+  @media (max-width: 600px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <div>
+    <h1>Sheaf-GBP multi-agent mapping in 3D</h1>
+    <p class="sub" id="sub">Eight agents scan a furnished single-storey house (HouseExpo plan, 128 &times; 128 &times; 32 voxels). Each agent compresses what it saw into 1,024 Gaussian means and precisions, 2,048 bytes per message, and passes it along a radio tree. After each round of Sheaf-GBP fusion every agent decodes the whole storey from its fused posterior. Model: the current best run (batch 3S-X, seed 342101) with the loss-matched decision rule.</p>
+  </div>
+
+  <div class="controls" role="group" aria-label="Demo controls">
+    <label>House <select id="house"></select></label>
+    <label>Panel a <select id="mode">
+      <option value="fused">fused map of the agent</option>
+      <option value="own">agent's own observation</option>
+      <option value="gt">ground truth</option>
+    </select></label>
+    <label>Agent <select id="agent"></select></label>
+    <label><input type="checkbox" id="errors"> mark errors</label>
+    <button id="play" type="button" class="primary">Play rounds</button>
+    <div class="step">
+      <input type="range" id="round" min="0" max="4" value="4" aria-label="Message round">
+      <span class="readout" id="roundout">round 8</span>
+    </div>
+    <label>Cut at <input type="range" id="cut" min="5" max="32" value="22" aria-label="Cut height" style="width:96px"><span class="readout" id="cutout">2.2 m</span></label>
+    <span class="msg" id="msg"></span>
+  </div>
+
+  <div class="figure">
+    <div class="left">
+      <div>
+        <div class="panel-label"><b>a</b><span id="alabel">3D view</span></div>
+        <div id="view"><span id="viewcap"></span><span id="viewhint">drag to rotate &middot; scroll or pinch to zoom &middot; right-drag to pan</span></div>
+      </div>
+      <div class="status" id="status"></div>
+      <div class="legend" id="legend"></div>
+      <div>
+        <div class="panel-label"><b>d</b><span>Mean over the eight agents, by message round</span></div>
+        <div class="charts">
+          <div><canvas id="chartCov" width="1000" height="300"></canvas><div class="cap">coverage: share of the storey's true occupied voxels (walls, slabs, furniture) that the agent's map contains; decoded fused map (black) and the agent's own observation (grey)</div></div>
+          <div><canvas id="chartF1" width="1000" height="300"></canvas><div class="cap">surface F1 of the decoded map against everything the agent has received so far: loss-matched decision rule (black) and the original 0.5 threshold (grey). Round 0 is each agent's own code alone. The target grows every round, so F1 can dip slightly while coverage rises.</div></div>
+          <div><canvas id="chartKB" width="1000" height="300"></canvas><div class="cap">bytes sent over the whole radio tree so far (every link carries one 2,048-byte message each way per round)</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="right">
+      <div>
+        <div class="panel-label"><b>b</b><span>Own observation (plan view: highest occupied voxel below the cut)</span></div>
+        <div class="tiles" id="rowb"></div>
+      </div>
+      <div>
+        <div class="panel-label"><b>c</b><span id="clabel">Map decoded from the fused Sheaf-GBP posterior</span></div>
+        <div class="tiles" id="rowc"></div>
+      </div>
+      <div class="notes">
+        <span>F1 counts surface voxels exactly (no tolerance) against the union of observations that have reached the agent; furniture F1 scores the space outside walls and slabs. "Sources k/8" is how many agents' codes have reached this agent, directly or relayed.</span>
+        <span>Houses: the first two validation houses of each room count, not chosen by result. Validation houses are never trained on.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(() => {
+  const COLORS = ['#3B6FB6', '#D1495B', '#2A9D8F', '#E9A23B', '#8E6BB8', '#5CB5E1', '#C76A2F', '#6AA84F'];
+  const NX = 128, NY = 128, NZ = 32, V = NX * NY * NZ;
+  const $ = (id) => document.getElementById(id);
+  const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const rgb = (hex) => [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)];
+  const houseSel = $('house'), modeSel = $('mode'), agentSel = $('agent'), errBox = $('errors'), roundIn = $('round'), cutIn = $('cut'), playBtn = $('play'), msg = $('msg');
+  const fmt = (v) => v == null ? 'n/a' : v.toFixed(3).replace(/^0/, '');
+  for (let a = 0; a < 8; a++) { const o = document.createElement('option'); o.value = a; o.textContent = `A${a + 1}`; agentSel.appendChild(o); }
+
+  // ---- tiles
+  const rowb = $('rowb'), rowc = $('rowc'); const tilesB = [], tilesC = [];
+  for (let a = 0; a < 8; a++) {
+    for (const [row, arr, kind] of [[rowb, tilesB, 'own'], [rowc, tilesC, 'fused']]) {
+      const d = document.createElement('div'); d.className = 'tile';
+      d.innerHTML = `<div class="name" style="color:${COLORS[a]}">A${a + 1}<em></em></div><canvas width="256" height="256" tabindex="0" aria-label="agent ${a + 1} ${kind === 'own' ? 'own observation' : 'fused map'}; show in panel a"></canvas><div class="under"><span class="u1"></span><span class="u2"></span></div>`;
+      const pick = () => { agentSel.value = a; modeSel.value = kind; save(); renderAll(); };
+      d.querySelector('canvas').addEventListener('click', pick);
+      d.querySelector('canvas').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+      row.appendChild(d); arr.push({ el: d, canvas: d.querySelector('canvas'), u1: d.querySelector('.u1'), u2: d.querySelector('.u2'), em: d.querySelector('em') });
+    }
+  }
+
+  // ---- data
+  const cache = new Map(); let H = null;                       // current house: { meta, bin }
+  async function gunzip(b64) {
+    const raw = atob(b64); const bytes = new Uint8Array(raw.length); for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+    if (typeof DecompressionStream === 'undefined') throw new Error('this browser cannot decompress gzip streams');
+    const ds = new DecompressionStream('gzip'); return new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(ds)).arrayBuffer());
+  }
+  async function load(name) {
+    if (cache.has(name)) return cache.get(name);
+    msg.textContent = 'Loading house\u2026';
+    const meta = await fetch(`data/house_${name}.json`).then(r => { if (!r.ok) throw new Error(`missing house_${name}.json`); return r.json(); });
+    const bin = await gunzip(meta.bin_gz_b64); delete meta.bin_gz_b64;
+    if (bin.length !== meta.bin_bytes) throw new Error('map data is corrupted');
+    const h = { meta, bin }; cache.set(name, h); msg.textContent = ''; return h;
+  }
+  const off = (name) => H.meta.offsets[name][0];
+  const bit = (o, i) => (H.bin[o + (i >> 3)] >> (7 - (i & 7))) & 1;
+  const HOPS = [0, 1, 2, 4, 8];
+  const hopOf = () => (H ? H.meta.hops : HOPS)[+roundIn.value];
+  const cutZ = () => +cutIn.value;
+
+  // ---- plan views (b, c)
+  const scratch = document.createElement('canvas'); scratch.width = NX; scratch.height = NY; const sctx = scratch.getContext('2d');
+  function ramp(t, lo, hi) { return [lo[0] + (hi[0] - lo[0]) * t, lo[1] + (hi[1] - lo[1]) * t, lo[2] + (hi[2] - lo[2]) * t]; }
+  function plan(canvas, knownName, occName, agentIdx) {
+    const img = sctx.createImageData(NX, NY), d = img.data, cz = cutZ();
+    const lo = rgb(css('--h-low')), hi = rgb(css('--h-high')), unk = rgb(css('--map-unknown')), free = rgb(css('--map-free'));
+    const ko = knownName ? off(knownName) : -1, oo = off(occName);
+    for (let x = 0; x < NX; x++) for (let y = 0; y < NY; y++) {
+      const base = (x * NY + y) * NZ; let top = -1, known = ko < 0;
+      for (let z = cz - 1; z >= 0; z--) { const i = base + z; if (bit(oo, i)) { top = z; break; } if (!known && bit(ko, i)) known = true; }
+      const c = top >= 0 ? ramp(top / (NZ - 1), lo, hi) : known ? free : unk;
+      const p = ((NY - 1 - y) * NX + x) * 4; d[p] = c[0]; d[p + 1] = c[1]; d[p + 2] = c[2]; d[p + 3] = 255;
+    }
+    sctx.putImageData(img, 0, 0);
+    const [x0, x1, y0, y1] = houseBox(), side = Math.min(NX, Math.max(x1 - x0, y1 - y0) + 9);     // crop to the house (square, 4-voxel margin)
+    const sx = Math.max(0, Math.min(NX - side, Math.round((x0 + x1 - side) / 2))), sy = Math.max(0, Math.min(NY - side, Math.round((2 * NY - 2 - y0 - y1 - side) / 2)));
+    const S = canvas.width, f = S / side, ctx = canvas.getContext('2d'); ctx.imageSmoothingEnabled = false; ctx.clearRect(0, 0, S, S); ctx.drawImage(scratch, sx, sy, side, side, 0, 0, S, S);
+    if (agentIdx != null) {
+      const [px, py] = H.meta.positions_m[agentIdx], cx = H.meta.cell_m[0], cy = H.meta.cell_m[1];
+      ctx.fillStyle = COLORS[agentIdx]; ctx.strokeStyle = css('--bg'); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc((px / cx - sx) * f, (NY - py / cy - sy) * f, 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    }
+  }
+  function renderTiles() {
+    const k = hopOf(), m = H.meta, hi = m.hops.indexOf(k);
+    for (let a = 0; a < 8; a++) {
+      plan(tilesB[a].canvas, `own_known_${a}`, `own_occ_${a}`, a);
+      const cov = coverage();
+      tilesB[a].u1.textContent = `seen ${(100 * m.known_fraction[a]).toFixed(1)} %`; tilesB[a].u2.textContent = `covers ${(100 * cov.own[a]).toFixed(0)} %`;
+      plan(tilesC[a].canvas, `pred_${k}_known_${a}`, `pred_${k}_occ_${a}`, a);
+      const r = m.metrics[String(k)][a]; const src = m.reached[hi][a].reduce((s, v) => s + v, 0);
+      tilesC[a].u1.textContent = `F1 ${fmt(r.surface_f1)} \u00b7 ${src}/8 src`; tilesC[a].u2.textContent = `covers ${(100 * cov.fused[k][a]).toFixed(0)} %`;
+      const sel = +agentSel.value === a;
+      tilesB[a].el.classList.toggle('sel', sel && modeSel.value === 'own'); tilesC[a].el.classList.toggle('sel', sel && modeSel.value === 'fused');
+    }
+    $('clabel').textContent = `Map decoded from the fused Sheaf-GBP posterior after round ${k}`;
+  }
+
+  // ---- 3D view (a)
+  const view = $('view');
+  const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  view.insertBefore(renderer.domElement, view.firstChild);
+  const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 400);
+  const controls = new THREE.OrbitControls(camera, renderer.domElement); controls.enableDamping = true; controls.dampingFactor = 0.12; controls.maxPolarAngle = Math.PI * 0.495;
+  let mesh = null, agentGroup = null, lastHouse = null;
+  const FACES = [   // dx, dy, dz (grid), shade, quad corners in unit-cube grid coordinates
+    [1, 0, 0, .80, [[1, 0, 0], [1, 1, 0], [1, 1, 1], [1, 0, 1]]], [-1, 0, 0, .80, [[0, 0, 0], [0, 0, 1], [0, 1, 1], [0, 1, 0]]],
+    [0, 1, 0, .68, [[0, 1, 0], [0, 1, 1], [1, 1, 1], [1, 1, 0]]], [0, -1, 0, .68, [[0, 0, 0], [1, 0, 0], [1, 0, 1], [0, 0, 1]]],
+    [0, 0, 1, 1.0, [[0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1]]], [0, 0, -1, .5, [[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 0, 0]]]];
+  function size() { const w = view.clientWidth; renderer.setSize(w, w, false); camera.aspect = 1; camera.updateProjectionMatrix(); }
+  new ResizeObserver(size).observe(view);
+  function buildMesh(drawn, colorOf) {
+    const cz = cutZ(), [cx, cy, czm] = H.meta.cell_m; const pos = [], col = [], idx = []; let nv = 0;
+    for (let x = 0; x < NX; x++) for (let y = 0; y < NY; y++) for (let z = 0; z < cz; z++) {
+      const i = (x * NY + y) * NZ + z; if (!drawn[i]) continue; const c = colorOf(i, z);
+      for (const [dx, dy, dz, sh, quad] of FACES) {
+        const X = x + dx, Y = y + dy, Z = z + dz;
+        if (X >= 0 && X < NX && Y >= 0 && Y < NY && Z >= 0 && Z < cz && drawn[(X * NY + Y) * NZ + Z]) continue;
+        for (const [qx, qy, qz] of quad) { pos.push((x + qx) * cx, (z + qz) * czm, -(y + qy) * cy); col.push(c[0] * sh / 255, c[1] * sh / 255, c[2] * sh / 255); }
+        idx.push(nv, nv + 1, nv + 2, nv, nv + 2, nv + 3); nv += 4;
+      }
+    }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+    g.setIndex(nv > 65535 ? new THREE.Uint32BufferAttribute(idx, 1) : new THREE.Uint16BufferAttribute(idx, 1));
+    return new THREE.Mesh(g, new THREE.MeshBasicMaterial({ vertexColors: true }));
+  }
+  function unpack(name) { const o = off(name), a = new Uint8Array(V); for (let i = 0; i < V; i++) a[i] = bit(o, i); return a; }
+  function dilate6(m) {
+    const out = new Uint8Array(V);
+    for (let x = 0; x < NX; x++) for (let y = 0; y < NY; y++) for (let z = 0; z < NZ; z++) {
+      const i = (x * NY + y) * NZ + z; if (!m[i]) continue; out[i] = 1;
+      if (x > 0) out[i - NY * NZ] = 1; if (x < NX - 1) out[i + NY * NZ] = 1; if (y > 0) out[i - NZ] = 1; if (y < NY - 1) out[i + NZ] = 1; if (z > 0) out[i - 1] = 1; if (z < NZ - 1) out[i + 1] = 1;
+    }
+    return out;
+  }
+  function gtShells() {                                         // the raster is solid outside the house: keep what borders free space
+    if (H.shells) return H.shells;
+    const occ = unpack('gt_occ'), free = new Uint8Array(V); for (let i = 0; i < V; i++) free[i] = occ[i] ? 0 : 1;
+    const near1 = dilate6(free), near2 = dilate6(near1), surf = new Uint8Array(V), shell = new Uint8Array(V);
+    for (let i = 0; i < V; i++) { surf[i] = occ[i] & near1[i]; shell[i] = occ[i] & near2[i]; }
+    return (H.shells = { surf, shell });
+  }
+  function houseBox() {                                         // grid bounding box of the true surfaces, in voxels
+    if (H.box) return H.box;
+    const s = gtShells().surf; let x0 = NX, x1 = 0, y0 = NY, y1 = 0;
+    for (let x = 0; x < NX; x++) for (let y = 0; y < NY; y++) { const b = (x * NY + y) * NZ; for (let z = 1; z < NZ - 6; z++) if (s[b + z]) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; break; } }
+    return (H.box = x1 >= x0 ? [x0, x1, y0, y1] : [0, NX - 1, 0, NY - 1]);
+  }
+  function render3d() {
+    const m = H.meta, mode = modeSel.value, a = +agentSel.value, k = hopOf(), hi = m.hops.indexOf(k), errs = errBox.checked && mode === 'fused';
+    const lo = rgb(css('--h-low')), hiC = rgb(css('--h-high'));
+    const heightColor = (i, z) => ramp(z / (NZ - 1), lo, hiC);
+    let drawn, colorOf, cap;
+    if (mode === 'gt') {
+      drawn = gtShells().shell; const slab = unpack('gt_slab'), obj = unpack('gt_obj');
+      const cf = rgb(css('--cls-floor')), cw = rgb(css('--cls-wall')), co = rgb(css('--cls-furn'));
+      colorOf = (i) => slab[i] ? cf : obj[i] ? co : cw; cap = `ground truth \u00b7 ${m.n_objects} furniture objects`;
+    } else if (mode === 'own') {
+      drawn = unpack(`own_occ_${a}`); colorOf = heightColor; cap = `A${a + 1} own observation \u00b7 ${(100 * m.known_fraction[a]).toFixed(1)} % of voxels observed`;
+    } else {
+      const pred = unpack(`pred_${k}_occ_${a}`); const r = m.metrics[String(k)][a];
+      cap = `A${a + 1} fused map after round ${k} \u00b7 surface F1 ${fmt(r.surface_f1)} \u00b7 furniture F1 ${fmt(r.furn_f1)}`;
+      if (!errs) { drawn = pred; colorOf = heightColor; }
+      else {                                                    // target = union of the own maps of the agents that have reached A(a) by round k
+        const tOcc = new Uint8Array(V), tKnown = new Uint8Array(V);
+        for (let b = 0; b < 8; b++) if (m.reached[hi][a][b]) { const ok = unpack(`own_known_${b}`), oo = unpack(`own_occ_${b}`); for (let i = 0; i < V; i++) { tKnown[i] |= ok[i]; tOcc[i] |= oo[i]; } }
+        drawn = new Uint8Array(V); for (let i = 0; i < V; i++) drawn[i] = pred[i] | tOcc[i];
+        const ok = rgb(css('--err-ok')), fp = rgb(css('--err-fp')), fn = rgb(css('--err-fn')), out = rgb(css('--err-out'));
+        colorOf = (i) => pred[i] ? (tOcc[i] ? ok : tKnown[i] ? fp : out) : fn;
+        cap += ' \u00b7 errors marked against what the agent has received';
+      }
+    }
+    if (mesh) { scene.remove(mesh); mesh.geometry.dispose(); mesh.material.dispose(); }
+    mesh = buildMesh(drawn, colorOf); scene.add(mesh);
+    // agents and radio links
+    if (agentGroup) { scene.remove(agentGroup); agentGroup.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) o.material.dispose(); }); }
+    agentGroup = new THREE.Group(); const P = m.positions_m.map(([x, y, z]) => new THREE.Vector3(x, z, -y));
+    const linkMat = new THREE.LineBasicMaterial({ color: new THREE.Color(css('--faint')) });
+    for (const [i, j] of m.edges) { const g = new THREE.BufferGeometry().setFromPoints([P[i], P[j]]); agentGroup.add(new THREE.Line(g, linkMat)); }
+    P.forEach((p, i) => {
+      const s = new THREE.Mesh(new THREE.SphereGeometry(i === a && mode !== 'gt' ? 0.26 : 0.17, 16, 12), new THREE.MeshBasicMaterial({ color: new THREE.Color(COLORS[i]) }));
+      s.position.copy(p); agentGroup.add(s);
+    });
+    scene.add(agentGroup);
+    scene.background = new THREE.Color(css('--view-bg'));
+    if (lastHouse !== m.house) {                               // frame the house (not the whole chart) once per house; keep the user's camera otherwise
+      const [x0, x1, y0, y1] = houseBox(), [gx, gy] = m.cell_m, cxm = (x0 + x1 + 1) / 2 * gx, cym = (y0 + y1 + 1) / 2 * gy, E = Math.max((x1 - x0 + 1) * gx, (y1 - y0 + 1) * gy);
+      controls.target.set(cxm, 0.6, -cym); camera.position.set(cxm - 0.1 * E, 1.2 * E, -cym + 1.15 * E); controls.update(); lastHouse = m.house;
+    }
+    $('viewcap').textContent = cap;
+    $('alabel').textContent = mode === 'gt' ? 'Ground truth: floor slab, walls and furniture' : mode === 'own' ? `What agent A${a + 1} has observed itself` : `What agent A${a + 1} decodes after round ${k}`;
+    legend(mode, errs);
+  }
+  (function loop() { controls.update(); renderer.render(scene, camera); requestAnimationFrame(loop); })();
+
+  function legend(mode, errs) {
+    const L = $('legend'); const items = [];
+    if (mode === 'gt') items.push(['--cls-floor', 'floor slab'], ['--cls-wall', 'walls and lintels'], ['--cls-furn', 'furniture']);
+    else if (errs) items.push(['--err-ok', 'correct'], ['--err-fp', 'invented (target says free)'], ['--err-fn', 'missed'], ['--err-out', 'outside what was received (not scored)']);
+    else items.push(['ramp', 'occupied, coloured by height (floor \u2192 ceiling)']);
+    items.push(['--map-unknown', 'unknown (plan views)'], ['--map-free', 'free (plan views)']);
+    L.innerHTML = items.map(([v, t]) => v === 'ramp' ? `<span><i class="ramp"></i>${t}</span>` : `<span><i style="background: var(${v})"></i>${t}</span>`).join('');
+  }
+
+  // ---- status and charts (d)
+  function status() {
+    const m = H.meta, k = hopOf(), c = m.means[`calibrated_${k}`], o = m.means[`v420_${k}`], L = m.chart_m;
+    const [cx, , cz] = m.cell_m;
+    $('status').innerHTML = `
+      <div class="row"><span><span class="k">House</span> ${m.rooms} room${m.rooms > 1 ? 's' : ''}, plan ${m.index + 1}</span><span>${L.toFixed(1)} m \u00d7 ${L.toFixed(1)} m \u00d7 3.2 m</span><span><span class="k">voxel</span> ${(100 * cx).toFixed(1)} \u00d7 ${(100 * cx).toFixed(1)} \u00d7 ${(100 * cz).toFixed(0)} cm</span><span>${m.n_objects} furniture objects</span></div>
+      <div class="row"><span><span class="k">After round ${k}, mean of 8 agents:</span> surface F1 <b>${fmt(c.surface_f1)}</b></span><span>variable structure ${fmt(c.var_occ_f1)}</span><span>furniture ${fmt(c.furn_f1)}</span><span>within one voxel ${fmt(c.surface_f1_tol1)}</span><span class="k">(0.5 threshold: ${fmt(o.surface_f1)})</span></div>
+      <div class="row"><span><span class="k">Message</span> ${m.D.toLocaleString()} coordinates \u00d7 (${m.wire_bits[0]}-bit mean + ${m.wire_bits[1]}-bit precision) = ${m.message_bytes.toLocaleString()} B</span><span><span class="k">own map</span> ${(m.own_map_2bit_bytes / 1024).toFixed(0)} KB at 2 bits per voxel (${Math.round(m.own_map_2bit_bytes / m.message_bytes)}\u00d7 the message), ${(m.own_map_gzip_bytes / 1024).toFixed(1)} KB gzipped (A1)</span></div>`;
+    chartCov(); chartF1(); chartKB();
+  }
+  function axes(ctx, W, Hh, padL, padB, xs, xl, yticks, yl) {
+    ctx.strokeStyle = css('--rule'); ctx.fillStyle = css('--muted'); ctx.lineWidth = 1.5; ctx.font = `22px ${css('--sans')}`;
+    ctx.beginPath(); ctx.moveTo(padL, 10); ctx.lineTo(padL, Hh - padB); ctx.lineTo(W - 10, Hh - padB); ctx.stroke();
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top'; xs.forEach((x, i) => ctx.fillText(xl[i], x, Hh - padB + 8));
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; yticks.forEach(([y, t]) => { ctx.fillText(t, padL - 8, y); ctx.strokeStyle = css('--rule'); ctx.globalAlpha = .45; ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - 10, y); ctx.stroke(); ctx.globalAlpha = 1; });
+    if (yl) { ctx.save(); ctx.translate(18, (Hh - padB) / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.fillText(yl, 0, 0); ctx.restore(); }
+  }
+  function chartF1() {
+    const cv = $('chartF1'), ctx = cv.getContext('2d'), W = cv.width, Hh = cv.height, padL = 92, padB = 44, m = H.meta;
+    ctx.clearRect(0, 0, W, Hh);
+    const ys = m.hops.flatMap(k => [m.means[`calibrated_${k}`].surface_f1, m.means[`v420_${k}`].surface_f1]);
+    const lo = Math.floor((Math.min(...ys) - .01) * 50) / 50, hi = Math.ceil((Math.max(...ys) + .01) * 50) / 50;
+    const X = (k) => padL + (W - padL - 30) * k / 8, Y = (v) => 10 + (Hh - padB - 20) * (hi - v) / (hi - lo);
+    const ticks = []; for (let v = lo; v <= hi + 1e-9; v += (hi - lo) / 4) ticks.push([Y(v), v.toFixed(2).replace(/^0/, '')]);
+    axes(ctx, W, Hh, padL, padB, [0, 1, 2, 4, 8].map(X), ['0', '1', '2', '4', '8'], ticks, 'F1');
+    for (const [rule, color, w] of [['v420', css('--faint'), 3], ['calibrated', css('--fg'), 4]]) {
+      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = w; ctx.beginPath();
+      m.hops.forEach((k, i) => { const p = [X(k), Y(m.means[`${rule}_${k}`].surface_f1)]; i ? ctx.lineTo(...p) : ctx.moveTo(...p); }); ctx.stroke();
+      m.hops.forEach((k) => { ctx.beginPath(); ctx.arc(X(k), Y(m.means[`${rule}_${k}`].surface_f1), k === hopOf() ? 9 : 5, 0, Math.PI * 2); ctx.fill(); });
+    }
+    ctx.fillStyle = css('--muted'); ctx.textAlign = 'right'; ctx.textBaseline = 'bottom'; ctx.fillText('message round', W - 12, Hh - padB - 6);
+  }
+  const POP = new Uint8Array(256); for (let i = 0; i < 256; i++) { let c = 0, v = i; while (v) { c += v & 1; v >>= 1; } POP[i] = c; }
+  function packBits(arr) { const out = new Uint8Array(V >> 3); for (let i = 0; i < V; i++) if (arr[i]) out[i >> 3] |= 128 >> (i & 7); return out; }
+  function andCountPacked(packed, name) { const o = off(name); let c = 0; for (let i = 0; i < packed.length; i++) c += POP[packed[i] & H.bin[o + i]]; return c; }
+  function coverage() {                                         // share of the true surface voxels present in a map, per agent (cached per house)
+    if (H.cov) return H.cov;
+    const surf = gtShells().surf, packed = packBits(surf); let total = 0; for (let i = 0; i < V; i++) total += surf[i];
+    const own = [], fused = {};
+    for (let a = 0; a < 8; a++) own.push(andCountPacked(packed, `own_occ_${a}`) / total);
+    for (const k of H.meta.hops) { fused[k] = []; for (let a = 0; a < 8; a++) fused[k].push(andCountPacked(packed, `pred_${k}_occ_${a}`) / total); }
+    return (H.cov = { own, fused });
+  }
+  function chartCov() {
+    const cv = $('chartCov'), ctx = cv.getContext('2d'), W = cv.width, Hh = cv.height, padL = 92, padB = 44, m = H.meta, cov = coverage();
+    ctx.clearRect(0, 0, W, Hh);
+    const mean = (v) => v.reduce((s, x) => s + x, 0) / v.length;
+    const X = (k) => padL + (W - padL - 30) * k / 8, Y = (v) => 10 + (Hh - padB - 20) * (1 - v);
+    axes(ctx, W, Hh, padL, padB, [0, 1, 2, 4, 8].map(X), ['0', '1', '2', '4', '8'], [0, .5, 1].map(v => [Y(v), `${v * 100} %`]), '');
+    const ownM = mean(cov.own);
+    ctx.strokeStyle = css('--faint'); ctx.lineWidth = 3; ctx.setLineDash([10, 8]); ctx.beginPath(); ctx.moveTo(X(0), Y(ownM)); ctx.lineTo(X(8), Y(ownM)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle = css('--fg'); ctx.fillStyle = css('--fg'); ctx.lineWidth = 4; ctx.beginPath();
+    m.hops.forEach((k, i) => { const p = [X(k), Y(mean(cov.fused[k]))]; i ? ctx.lineTo(...p) : ctx.moveTo(...p); }); ctx.stroke();
+    m.hops.forEach((k) => { ctx.beginPath(); ctx.arc(X(k), Y(mean(cov.fused[k])), k === hopOf() ? 9 : 5, 0, Math.PI * 2); ctx.fill(); });
+    ctx.fillStyle = css('--muted'); ctx.font = `22px ${css('--sans')}`; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+    ctx.fillText(`own observation ${(100 * ownM).toFixed(0)} %`, padL + 14, Y(ownM) - 6);
+    ctx.textAlign = 'right'; ctx.fillText(`round ${hopOf()}: ${(100 * mean(cov.fused[hopOf()])).toFixed(0)} %`, W - 14, Y(mean(cov.fused[hopOf()])) - 14);
+  }
+  function chartKB() {
+    const cv = $('chartKB'), ctx = cv.getContext('2d'), W = cv.width, Hh = cv.height, padL = 92, padB = 44, m = H.meta;
+    ctx.clearRect(0, 0, W, Hh);
+    const perRound = 2 * m.edges.length * m.message_bytes, max = 8 * perRound / 1024, top = Math.ceil(max / 50) * 50;
+    const X = (r) => padL + (W - padL - 30) * r / 8, Y = (v) => 10 + (Hh - padB - 20) * (1 - v / top);
+    const ticks = [0, top / 2, top].map(v => [Y(v), `${v} KB`]);
+    axes(ctx, W, Hh, padL, padB, [0, 1, 2, 3, 4, 5, 6, 7, 8].map(X), ['0', '1', '2', '3', '4', '5', '6', '7', '8'], ticks, '');
+    const bw = (W - padL - 30) / 8 * .42;
+    for (let r = 0; r <= 8; r++) {
+      const v = r * perRound / 1024; ctx.fillStyle = r <= hopOf() ? css('--fg') : css('--rule');
+      ctx.fillRect(X(r) - bw / 2, Y(v), bw, Y(0) - Y(v));
+    }
+    ctx.fillStyle = css('--muted'); ctx.font = `22px ${css('--sans')}`; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText(`${m.edges.length} links \u00d7 2 directions \u00d7 ${(m.message_bytes / 1024).toFixed(0)} KB = ${(perRound / 1024).toFixed(0)} KB per round`, padL + 14, 12);
+  }
+
+  // ---- wiring
+  function save() { try { localStorage.setItem('sheafgbp-demo3d', JSON.stringify({ house: houseSel.value, mode: modeSel.value, agent: agentSel.value, round: roundIn.value, cut: cutIn.value, errors: errBox.checked })); } catch (e) {} }
+  function readouts() { $('roundout').textContent = `round ${hopOf()}`; $('cutout').textContent = `${(cutZ() * 0.1).toFixed(1)} m`; }
+  let busy = false, again = false;
+  function renderAll() {
+    readouts(); if (!H) return;
+    if (busy) { again = true; return; }                        // a change during a redraw is drawn right after it
+    busy = true;
+    requestAnimationFrame(() => {
+      try { renderTiles(); render3d(); status(); msg.textContent = ''; } catch (e) { msg.textContent = `Could not draw: ${e.message}`; }
+      busy = false; if (again) { again = false; renderAll(); }
+    });
+  }
+  async function pickHouse() {
+    try { H = await load(houseSel.value); renderAll(); } catch (e) { msg.textContent = `Could not load the house: ${e.message}`; }
+  }
+  houseSel.addEventListener('change', () => { save(); pickHouse(); });
+  for (const el of [modeSel, agentSel, errBox]) el.addEventListener('change', () => { save(); renderAll(); });
+  roundIn.addEventListener('input', () => { save(); renderAll(); });
+  cutIn.addEventListener('input', readouts); cutIn.addEventListener('change', () => { save(); renderAll(); });
+  let timer = null;
+  playBtn.addEventListener('click', () => {
+    if (timer) { clearInterval(timer); timer = null; playBtn.textContent = 'Play rounds'; return; }
+    roundIn.value = 0; renderAll(); playBtn.textContent = 'Pause';
+    timer = setInterval(() => { if (+roundIn.value >= 4) { clearInterval(timer); timer = null; playBtn.textContent = 'Play rounds'; return; } roundIn.value = +roundIn.value + 1; renderAll(); }, 1100);
+  });
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => renderAll());
+  new MutationObserver(() => renderAll()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  (async () => {
+    if (typeof THREE === 'undefined' || !THREE.OrbitControls) { msg.textContent = 'The 3D library did not load.'; return; }
+    let houses = [];
+    try { houses = await fetch('data/index.json').then(r => r.json()); } catch (e) { msg.textContent = 'Could not load the house list.'; return; }
+    houses.forEach(h => { const o = document.createElement('option'); o.value = h.house; o.textContent = `${h.rooms} room${h.rooms > 1 ? 's' : ''}, plan ${h.index + 1} (${h.chart_m.toFixed(0)} m)`; houseSel.appendChild(o); });
+    try { const s = JSON.parse(localStorage.getItem('sheafgbp-demo3d') || '{}');
+      if (s.house && houses.some(h => h.house === s.house)) houseSel.value = s.house; if (s.mode) modeSel.value = s.mode; if (s.agent != null) agentSel.value = s.agent;
+      if (s.round != null) roundIn.value = s.round; if (s.cut != null) cutIn.value = s.cut; if (s.errors != null) errBox.checked = s.errors; } catch (e) {}
+    size(); readouts(); pickHouse();
+  })();
+})();
+</script>
