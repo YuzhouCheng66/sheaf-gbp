@@ -1,5 +1,6 @@
 #!/bin/bash
-# Day-6 batch 3S-X, the STACK (Claude; written 2026-10-26 04:14 UTC while 3S-S runs, before any 3S-X training). Pre-registered in
+# Day-6 batch 3S-X, the STACK (Claude; written 2026-10-26 04:14 UTC while 3S-S ran, revised 04:32 UTC after code_review_v430_stack.md M1-M3
+# and S1-S7, before any 3S-X training). Pre-registered in
 # OVERNIGHT_REPORT D8-25. Purpose: the user's F1 goal (R8 >= .90, K0 >= .95, var >= .75). This is a COMBINATION batch, disclosed as such:
 # it puts the levers confirmed one at a time (D8-16 width + layout -> D2; D8-23 two cycles; D8-24 the code-layout ladder: 32x32x1 @ 8+8 is
 # a lever at 16k, +4.5 / +3.7 pp R8 surface, furniture .30 -> .42; and 3S-S's data verdict, read at run time) together on one recipe.
@@ -10,6 +11,8 @@
 # cycle 1 => no cycle 2). Control = 3S-T's two-cycle D2 (runs/v427-length/c2-s*, 2 x 25,500; 16x16x1 @ 8+8 on the 4,708-house cache).
 # So the comparison holds the training amount, the cycle protocol, the decoder family / width, the precision and the known-BCE fixed and
 # changes the code layout (and, if 3S-S said so, the data); trunk / head initial tensors are asserted equal to the control's cycle 1.
+# Disclosed (review S7): the decoder's initial tensors all differ from the control's (its first conv is wider, which shifts the seeded
+# draw), and with the full cache the data order differs too; these come with the two variables and are not separable here.
 # Pre-registered reading (final VAL, 24 houses, paired by seed, Delta = arm cycle-2 final - control cycle-2 final):
 #   Delta R8 variable-structure F1 >= +3 pp AND Delta R8 surface F1 >= +2 pp on BOTH seeds => the stack is a lever (new baseline);
 #   Delta R8 surface F1 <= -1 pp on BOTH seeds OR Delta R8 variable-structure F1 <= -2 pp on BOTH seeds => worse (the layout lever does
@@ -63,12 +66,15 @@ PY
 read ACACHE LAZY <<<"$($P - <<'PY'
 import json
 try:
-    a = json.load(open("runs/v430-data/analysis.json")); print(a["next_baseline_cache"], "--cache-lazy" if a.get("next_baseline_cache_lazy") else "")
+    a = json.load(open("runs/v430-data/analysis.json")); c = a.get("next_baseline_cache")
+    print(c if c else "/mnt/datasets/yuzhou-sheaf-gbp-research/cache3d-v420/train-r1-k1600", "--cache-lazy" if (c and a.get("next_baseline_cache_lazy")) else "")   # review S3: INCONCLUSIVE 3S-S -> k1600
 except Exception as e:
     print("/mnt/datasets/yuzhou-sheaf-gbp-research/cache3d-v420/train-r1-k1600", "")
 PY
 )"
 [ -f $ACACHE/manifest.json ] || { log "ABORT: arm cache $ACACHE has no manifest"; exit 2; }
+AMSHA=$(sha256sum $ACACHE/manifest.json | cut -d' ' -f1)
+read DD CB <<<"$($P -c "import json; m=json.load(open('$RDIR/${RP}342101/run.json')); print(m['D'], m.get('raw_code_bytes', 512))")"
 CTRL=$CTRL1; CP=c2-s
 for s in 342101 342202; do [ -f $CTRL/c2-s$s/final.json ] && [ -f $CTRL/c1-s$s/checkpoints/initial.pt ] && [ -f $CTRL/c1-s$s/final.json ] || { log "ABORT: control $CTRL/c{1,2}-s$s (final / initial) missing"; exit 2; }; done
 read DEC WID LAY PREC KW WB <<<"$($P -c "import json; m=json.load(open('$RDIR/${RP}342101/run.json')); print(m.get('decoder','d3'), m.get('decoder_width',1.0), m.get('layout', 'x'.join(str(v) for v in m['blocks'])), m.get('precision','learned'), m.get('known_weight','uniform'), ','.join(str(b) for b in m.get('wire_bits', [8, 8])))")"
@@ -93,21 +99,21 @@ COMMON="--source $S --cache $ACACHE $LAZY --dims 128,128,32 --device cuda --val-
 run_seed(){                                                                     # $1 = cycle (1 | 2), $2 = seed
   CYC=$1; seed=$2; check_shas
   while [ -n "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]; do log "3S-X: GPU busy before c$CYC seed $seed; waiting"; sleep 120; done
-  if [ "$CYC" = "2" ]; then INIT="--init-from $OUT/c1-s$seed/checkpoints/final.pt --lr 1e-4"; else INIT=""; fi
+  if [ "$CYC" = "2" ]; then INIT="--init-from $OUT/c1-s$seed/checkpoints/final.pt --lr 1e-4"; else INIT="--lr $CLR"; fi            # review S4: cycle 1 at the control's lr
   TS2=$(date -u +%H%M%S)
   timeout -k 60 1800 $P scripts/train_3d_v430.py $COMMON $INIT --out $OUT/pf-$TS2-c$CYC-s$seed --seed $seed --updates 16000 --max-updates 1100 --val-every 1100 --deadline-total 0 > $OUT/pf-$TS2-c$CYC-s$seed.log 2>&1
   PFX=$?
   read RS LS VS <<<"$(rate $OUT/pf-$TS2-c$CYC-s$seed.log)"
   [ "$RS" = "nan" ] && { log "ABORT INCONCLUSIVE (preflight failed, exit $PFX): c$CYC seed $seed"; return 1; }
-  UPD=$CUPD; UPDFROM="control"; BUD=6000                                      # 3S-X: the control's cycle count (same training amount); the preflight only confirms the fit
+  UPD=$CUPD; UPDFROM="control"; BUD=6300                                      # 3S-X: the control's cycle count (same training amount); the preflight only confirms the fit (review M3: 6,300 s, the deadline is 6,600 s)
   FIT=$($P -c "import math; r=float('$RS'); print(1 if math.isfinite(r) and r>0 and 1.05*(float('$LS')+$UPD*r+3*float('$VS'))<=$BUD else 0)")
   log "batch 3S-X preflight c$CYC seed $seed (exit $PFX): s/update $RS load $LS val $VS -> updates $UPD (from $UPDFROM; cap 96,000; floor 24,000); fits: $FIT"
   [ "$UPD" -ge 24000 ] && [ "$FIT" = "1" ] || { log "ABORT INCONCLUSIVE (budget): c$CYC seed $seed: $UPD updates (floor 24,000) fit=$FIT"; return 1; }
   START=$(date +%s); DE=$((START+6600)); DT=$((START+7150))
   cat > $OUT/lease_c$CYC-s$seed.json <<JSON
-{"lease_start_epoch": $START, "train_deadline_epoch": $DE, "total_deadline_epoch": $DT, "inclusive_seconds": 7200, "world": "v420 furnished HouseExpo storeys", "dims": [128, 128, 32], "D": 256, "updates": $UPD, "seed": $seed, "cycle": $CYC,
+{"lease_start_epoch": $START, "train_deadline_epoch": $DE, "total_deadline_epoch": $DT, "inclusive_seconds": 7200, "world": "v420 furnished HouseExpo storeys", "dims": [128, 128, 32], "D": $DD, "code_bytes": $CB, "updates": $UPD, "seed": $seed, "cycle": $CYC,
  "batch": "3S-X", "variable": "stack: layout $LAY (control $CLAY) + cache $ACACHE $LAZY, two cycles of $UPD as the control", "wire_bits": "$WB", "warm_start": "$INIT", "updates_from": "$UPDFROM", "baseline": "$BASE", "baseline_recipe": {"decoder": "$DEC", "decoder_width": $WID, "layout": "$LAY", "precision": "$PREC", "known_weight": "$KW"}, "preflight": "rate=$RS load=$LS val=$VS",
- "trainer": "scripts/train_3d_v430.py", "trainer_sha256": "$TSHA", "data_module_sha256": "$DSHA", "kbit_sha256": "$KSHA", "diag_sha256": "$GSHA", "diag_interior_sha256": "$ISHA", "diag_veto_sha256": "$VSHA", "cache": "$CACHE", "cache_manifest_sha256": "$MSHA", "control": "$CTRL/$CP$seed",
+ "trainer": "scripts/train_3d_v430.py", "trainer_sha256": "$TSHA", "data_module_sha256": "$DSHA", "kbit_sha256": "$KSHA", "diag_sha256": "$GSHA", "diag_interior_sha256": "$ISHA", "diag_veto_sha256": "$VSHA", "cache": "$ACACHE", "cache_manifest_sha256": "$AMSHA", "cache_lazy": "$LAZY", "control": "$CTRL/$CP$seed",
  "expectation": "stack vs two-cycle D2 (cycle-2 final, or cycle 1 alone on early stop): Delta R8 var >= +3pp and Delta R8 surface >= +2pp on both seeds => lever; Delta R8 surface <= -1pp on both or Delta R8 var <= -2pp on both => worse; Delta R8 surface < +1pp and Delta R8 var < +2pp on both => not better; else ambiguous; early stop after cycle 1 if Delta R8 surface < +1pp on both seeds; guards FPR <= control + 0.3pp, slab recall >= control - 2pp, K0 var >= control - 2pp; mechanism: fusion gap must not widen by > 2pp on either seed; incomplete => INCONCLUSIVE"}
 JSON
   log "batch 3S-X start c$CYC seed $seed ($UPD updates, $DEC W $WID $LAY $PREC $KW${INIT:+, warm start lr 1e-4})"
@@ -137,13 +143,13 @@ check_shas
 for s in 342101 342202; do                                                      # report-only breakdowns for the FINAL run of each seed and the control
   if [ -f $OUT/c2-s$s/checkpoints/final.pt ]; then ln -sfn c2-s$s $OUT/a-s$s; ln -sf c2-s$s.log $OUT/a-s$s.log; elif [ -f $OUT/c1-s$s/checkpoints/final.pt ]; then ln -sfn c1-s$s $OUT/a-s$s; ln -sf c1-s$s.log $OUT/a-s$s.log; fi
   if [ -f $OUT/a-s$s/checkpoints/final.pt ]; then
-    timeout -k 30 1800 $P scripts/diag_storey_v429.py --source $S --run $OUT/a-s$s --out $OUT/diag-a-s$s --trainer train_3d_v427 > $OUT/diag-a-s$s.log 2>&1
-    timeout -k 30 1800 $P scripts/diag_interior_v429.py --source $S --run $OUT/a-s$s --trainer train_3d_v427 2>$OUT/diag-interior-a-s$s.err | tail -1 > $OUT/diag-interior-a-s$s.json
-    CUDA_VISIBLE_DEVICES= timeout -k 30 1800 $P scripts/diag_veto_v429.py --source $S --run $OUT/a-s$s --trainer train_3d_v427 --out $OUT/veto-a-s$s.json > $OUT/veto-a-s$s.log 2>&1
+    timeout -k 30 1800 $P scripts/diag_storey_v429.py --source $S --run $OUT/a-s$s --out $OUT/diag-a-s$s --trainer train_3d_v430 > $OUT/diag-a-s$s.log 2>&1
+    timeout -k 30 1800 $P scripts/diag_interior_v429.py --source $S --run $OUT/a-s$s --trainer train_3d_v430 2>$OUT/diag-interior-a-s$s.err | tail -1 > $OUT/diag-interior-a-s$s.json
+    CUDA_VISIBLE_DEVICES= timeout -k 30 1800 $P scripts/diag_veto_v429.py --source $S --run $OUT/a-s$s --trainer train_3d_v430 --out $OUT/veto-a-s$s.json > $OUT/veto-a-s$s.log 2>&1
   fi
-  [ -f $OUT/diag-control-s$s/diag.json ] || timeout -k 30 1800 $P scripts/diag_storey_v429.py --source $S --run $CTRL/$CP$s --out $OUT/diag-control-s$s --trainer train_3d_v427 > $OUT/diag-control-s$s.log 2>&1
-  [ -s $OUT/diag-interior-control-s$s.json ] || timeout -k 30 1800 $P scripts/diag_interior_v429.py --source $S --run $CTRL/$CP$s --trainer train_3d_v427 2>$OUT/diag-interior-control-s$s.err | tail -1 > $OUT/diag-interior-control-s$s.json
-  [ -s $OUT/veto-control-s$s.json ] || CUDA_VISIBLE_DEVICES= timeout -k 30 1800 $P scripts/diag_veto_v429.py --source $S --run $CTRL/$CP$s --trainer train_3d_v427 --out $OUT/veto-control-s$s.json > $OUT/veto-control-s$s.log 2>&1
+  [ -f $OUT/diag-control-s$s/diag.json ] || timeout -k 30 1800 $P scripts/diag_storey_v429.py --source $S --run $CTRL/$CP$s --out $OUT/diag-control-s$s --trainer train_3d_v430 > $OUT/diag-control-s$s.log 2>&1
+  [ -s $OUT/diag-interior-control-s$s.json ] || timeout -k 30 1800 $P scripts/diag_interior_v429.py --source $S --run $CTRL/$CP$s --trainer train_3d_v430 2>$OUT/diag-interior-control-s$s.err | tail -1 > $OUT/diag-interior-control-s$s.json
+  [ -s $OUT/veto-control-s$s.json ] || CUDA_VISIBLE_DEVICES= timeout -k 30 1800 $P scripts/diag_veto_v429.py --source $S --run $CTRL/$CP$s --trainer train_3d_v430 --out $OUT/veto-control-s$s.json > $OUT/veto-control-s$s.log 2>&1
 done
 RES=$($P - "$CTRL" "$CP" <<'PY'
 import json, math, re, sys, torch
@@ -215,6 +221,9 @@ try:
     elif max(d("R8_surface_f1")) <= -.01 or max(d("R8_var_occ_f1")) <= -.02: verdict = "worse"
     elif max(d("R8_surface_f1")) < .01 and max(d("R8_var_occ_f1")) < .02: verdict = "not better"
     else: verdict = "ambiguous"
+    if rows["342101"]["arm"]["cycles"] == 1:                                           # review M2: no cycle 2 -> never compare cycle 1 with the control's cycle 2
+        es = all(r["arm"]["cycle1"]["R8_surface_f1"] - r["arm"]["control_cycle1"]["R8_surface_f1"] < .01 and r["arm"]["cycle1"]["R8_var_occ_f1"] - r["arm"]["control_cycle1"]["R8_var_occ_f1"] < .02 for r in rows.values())
+        verdict = "not better (early stop after cycle 1 vs the control's cycle 1)" if es else "INCONCLUSIVE (cycle 2 missing)"
     guards = {}
     for name, fn in (("fpr_ok", lambda r: r["arm"]["R8_unknown_known_fpr"] <= r["control"]["R8_unknown_known_fpr"] + .003), ("slab_ok", lambda r: r["arm"]["R8_slab_recall"] >= r["control"]["R8_slab_recall"] - .02), ("k0var_ok", lambda r: r["delta"]["K0_var_occ_f1"] >= -.02)):
         try: guards[name] = all(fn(r) for r in rows.values())
@@ -237,16 +246,16 @@ try:
     fusion_gap = {s: (round(r["arm"]["R8_surface_f1"] - r["arm"]["K0_surface_f1"], 4), round(r["control"]["R8_surface_f1"] - r["control"]["K0_surface_f1"], 4)) for s, r in rows.items()}
 except Exception as e:
     fusion_gap = f"n/a ({e})"
-adopt = verdict == "lever" and isinstance(guards, dict) and guards.get("fpr_ok") is True and guards.get("k0var_ok") is True    # review S4: pre-registered
-if verdict == "lever" and not adopt: verdict = "lever, but a guard failed (FPR or K0 var): baseline unchanged"
+adopt = verdict == "lever" and isinstance(guards, dict) and all(guards.get(g) is True for g in ("fpr_ok", "slab_ok", "k0var_ok"))   # review S5: all three guards
+if verdict == "lever" and not adopt: verdict = "lever, but a guard failed (FPR, slab or K0 var): baseline unchanged"
 nb_dir, nb_prefix = (OUT, "a-s") if adopt else (CTRL, CP)
-nb_updates = (rows["342101"]["arm"]["total_updates"] if adopt else 16000) if isinstance(rows.get("342101"), dict) else None
-nb_cycles = (dict(cycles=rows["342101"]["arm"]["cycles"], updates_per_cycle=rows["342101"]["arm"]["updates"], final_runs={s: ("c2-s" if rows[s]["arm"]["cycles"] == 2 else "c1-s") + s for s in rows}) if adopt else dict(cycles=1, updates_per_cycle=16000)) if isinstance(rows.get("342101"), dict) else None
+nb_updates = (rows["342101"]["arm"]["total_updates"] if adopt else 2 * rows["342101"]["control"]["updates"]) if isinstance(rows.get("342101"), dict) else None     # review S1: the control is a two-cycle run
+nb_cycles = (dict(cycles=rows["342101"]["arm"]["cycles"], updates_per_cycle=rows["342101"]["arm"]["updates"], final_runs={s: ("c2-s" if rows[s]["arm"]["cycles"] == 2 else "c1-s") + s for s in rows}) if adopt else dict(cycles=2, updates_per_cycle=rows["342101"]["control"]["updates"], final_runs={s: "c2-s" + s for s in rows})) if isinstance(rows.get("342101"), dict) else None
 try: verdict = f"{verdict} ({verdict_label})"
 except Exception: pass
 nb_recipe = ({k: rows["342101"]["arm"][k] for k in ("decoder", "decoder_width", "blocks", "wire_bits", "precision", "known_weight", "cache_dir")} if adopt else {k: rows["342101"]["control"][k] for k in ("decoder", "decoder_width", "blocks", "wire_bits", "precision", "known_weight", "cache_dir")}) if isinstance(rows.get("342101"), dict) else None
 json.dump(dict(control=CTRL, control_prefix=CP, next_baseline_updates=nb_updates, next_baseline_cycles=nb_cycles, next_baseline_recipe=nb_recipe, baseline_recipe={k: rows["342101"]["control"][k] for k in ("decoder", "decoder_width", "blocks", "precision", "known_weight")} if isinstance(rows.get("342101"), dict) else None,
-               rows=rows, verdict=verdict, guards=guards, mechanism=mech, absolute_verdict=absolute, fusion_gap_arm_vs_control=fusion_gap, next_baseline_dir=nb_dir, next_baseline_prefix=nb_prefix, code_bytes=512), open(f"{OUT}/analysis.json", "w"), indent=1)
+               rows=rows, verdict=verdict, guards=guards, mechanism=mech, absolute_verdict=absolute, fusion_gap_arm_vs_control=fusion_gap, next_baseline_dir=nb_dir, next_baseline_prefix=nb_prefix, code_bytes=(rows["342101"]["arm"]["raw_code_bytes"] if adopt else rows["342101"]["control"]["raw_code_bytes"]) if isinstance(rows.get("342101"), dict) else None), open(f"{OUT}/analysis.json", "w"), indent=1)
 print(verdict, "| guards", guards, "| mechanism", mech, "| absolute", absolute, "| fusion gap (arm, control)", fusion_gap, "| next baseline", nb_dir, nb_prefix, "|", json.dumps({s: (r["delta"] if isinstance(r, dict) else r) for s, r in rows.items()}))
 PY
 )
