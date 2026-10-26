@@ -1,11 +1,14 @@
 #!/bin/bash
-# Day-6 batch 3S-Z (Claude; written 2026-10-26 12:58 UTC while 3S-Y runs, before any 3S-Z training; LAUNCHED ONLY AFTER THE USER APPROVES
+# Day-6 batch 3S-Z (Claude; written 2026-10-26 13:16 UTC while 3S-Y runs, before any 3S-Z training; LAUNCHED ONLY AFTER THE USER APPROVES
 # 8 KB messages for a diagnostic arm). Pre-registered in OVERNIGHT_REPORT D8-29.
 # Question: does the coordinate ladder keep paying? D8-24: 16x16x1 -> 32x32x1 gave +4.5 / +3.7 pp R8 surface and furniture .30 -> .42 at
 # 16k; more bits per coordinate gave nothing. The next rung: 64x64x1 @ 8+8 (D = 4,096; every coordinate owns an L/64 x L/64 column =
 # 2 x 2 x 32 voxels at R1; 8,192 B per message). Trainer train_3d_v431 (= v430 + this layout; the v429 fold, space-to-depth 4 onto the
 # 16 x 16 start grid: the decoder's first convolution reads 32 channels, everything else is the control's; the trunk sees 1 x 1 x 16-cell
-# patches, i.e. a pure per-column z-profile encoder). ONE variable: the layout. Control = L1 (runs/v429-ladder/l1-s*: 32x32x1 @ 8+8, d3
+# patches, i.e. a pure per-column z-profile encoder: only 3 of 27 taps of each conv ever see data; the decoder's initial tensors all
+# differ from the control's because its first conv is wider, which shifts the seeded draw; the coverage key is a 2 x 2 x 32 column --
+# disclosed, review S2). The latent prior is floored at the wire codebook floor 1e-8 (review M1; the control's 1.22e-8 is unchanged).
+# ONE variable: the layout. Control = L1 (runs/v429-ladder/l1-s*: 32x32x1 @ 8+8, d3
 # W2, learned precision, uniform known-BCE, 16,000 updates, k1600 cache). Everything else copied from the control's run.json.
 # Pre-registered reading (final VAL, 24 houses, paired by seed, Delta = arm - L1):
 #   Delta R8 variable-structure F1 >= +3 pp AND Delta R8 surface F1 >= +1 pp on BOTH seeds => the rung is a lever;
@@ -20,6 +23,7 @@
 #   slower than L1's 0.20 s/update -- the preflight decides; 16,000 updates must fit, else INCONCLUSIVE); hard timeouts inside the lease.
 #   Writes only under /mnt/datasets (runs/v431-rung).
 cd /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021 || exit 1
+APPROVED="$1"; [ -n "$APPROVED" ] || { echo "usage: chain_day6_3SZ.sh <user approval, e.g. 2026-10-26T14:05Z>"; exit 2; }   # review S3: the 8 KB arm needs the user's approval
 export HOUSEEXPO_JSON_DIR=/mnt/datasets/yuzhou-sheaf-gbp-research/houseexpo-v365/json HOUSEEXPO_INDEX=/mnt/datasets/yuzhou-sheaf-gbp-research/houseexpo-v365/houseexpo_index_v365.json
 P=/home/yuzhou/anaconda3/envs/jax-gpu/bin/python
 S=/home/yuzhou/Desktop/sheaf-gbp/v299-multiscale-v310-5090/source
@@ -31,7 +35,7 @@ log "chain_day6_3SZ started pid $$ sha256 $(sha256sum scripts/chain_day6_3SZ.sh 
 check_shas(){
   TSHA=$(sha256sum scripts/train_3d_v431.py | cut -d' ' -f1); DSHA=$(sha256sum scripts/mapping_3d_storey_data_v420.py | cut -d' ' -f1); KSHA=$(sha256sum scripts/train_v378.py | cut -d' ' -f1)
   GSHA=$(sha256sum scripts/diag_storey_v429.py | cut -d' ' -f1); ISHA=$(sha256sum scripts/diag_interior_v429.py | cut -d' ' -f1); VSHA=$(sha256sum scripts/diag_veto_v429.py | cut -d' ' -f1); MSHA=$(sha256sum $CACHE/manifest.json | cut -d' ' -f1)
-  [ "$TSHA" = "9e1c5081ffacd0c5a023404359c730ff2399f4f5360f97d3da34088001e8624c" ] || { log "ABORT: train_3d_v431.py sha changed ($TSHA)"; exit 2; }
+  [ "$TSHA" = "9097801fe7b32ec5bb6b6085f1b3c9c79a6249f2e9b82af6f359a92615b966c0" ] || { log "ABORT: train_3d_v431.py sha changed ($TSHA)"; exit 2; }
   [ "$DSHA" = "4793a3279ebd9564315500721e548ab9dd0e10d8f192df632c9b8ddf2964b61d" ] || { log "ABORT: mapping_3d_storey_data_v420.py sha changed ($DSHA)"; exit 2; }
   [ "$KSHA" = "db7bcc3528d58624a7ec34863f2be492fbd5aea9b87025239c662678fb875bff" ] || { log "ABORT: train_v378.py (k-bit wire) sha changed ($KSHA)"; exit 2; }
   [ "$GSHA" = "545a1532da83f520b1bf3b76ccaf385f6b4eef2bea49a921534c7f1cc400890c" ] || { log "ABORT: diag_storey_v429.py sha changed ($GSHA)"; exit 2; }
@@ -50,7 +54,7 @@ sleep 60; while busy; do sleep 120; done
 # ---- baseline from the previous batch's pre-registered analysis: label, control directory, run prefix
 BASE=L1; CTRL=runs/v429-ladder; CP=l1-s                                          # fixed control: the 32x32x1 @ 8+8 rung at 16k (D8-24)
 for s in 342101 342202; do [ -f $CTRL/$CP$s/final.json ] && [ -f $CTRL/$CP$s/checkpoints/initial.pt ] || { log "ABORT: control $CTRL/$CP$s (final / initial) missing"; exit 2; }; done
-read DEC WID LAY PREC KW <<<"$($P -c "import json; m=json.load(open('$CTRL/${CP}342101/run.json')); print(m.get('decoder','d3'), m.get('decoder_width',1.0), m.get('layout', 'x'.join(str(v) for v in m['blocks'])), m.get('precision','learned'), m.get('known_weight','uniform'))")"
+read DEC WID LAY PREC KW LR <<<"$($P -c "import json; m=json.load(open('$CTRL/${CP}342101/run.json')); print(m.get('decoder','d3'), m.get('decoder_width',1.0), m.get('layout', 'x'.join(str(v) for v in m['blocks'])), m.get('precision','learned'), m.get('known_weight','uniform'), m['lr'])")"
 [ "$DEC" = "d3" ] && [ "$WID" = "2.0" ] && [ "$LAY" = "32x32x1" ] || { log "ABORT: the rung needs the L1 (d3 W2 32x32x1) control (got $DEC W $WID $LAY)"; exit 2; }
 log "batch 3S-Z gate: control $CTRL/$CP* (decoder $DEC W $WID layout $LAY precision $PREC known-weight $KW); arm Z1 64x64x1 @ 8,8 (8 KB)"
 mkdir -p $OUT
@@ -68,7 +72,7 @@ PY
 }
 for arm in "z1 64x64x1 8,8"; do
   set -- $arm; ARM=$1; LAYOUT=$2; BITS=$3
-  COMMON="--source $S --cache $CACHE --dims 128,128,32 --device cuda --val-per-stratum 8 --gen-workers 8 --layout $LAYOUT --allow-non256 --wire-bits $BITS --decoder $DEC --decoder-width $WID --precision $PREC --known-weight $KW"
+  COMMON="--source $S --cache $CACHE --dims 128,128,32 --device cuda --val-per-stratum 8 --gen-workers 8 --layout $LAYOUT --allow-non256 --wire-bits $BITS --decoder $DEC --decoder-width $WID --precision $PREC --known-weight $KW --lr $LR"
   for seed in 342101 342202; do
     check_shas
     while [ -n "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]; do log "3S-Z: GPU busy before $ARM seed $seed; waiting"; sleep 120; done
@@ -84,7 +88,7 @@ for arm in "z1 64x64x1 8,8"; do
     START=$(date +%s); DE=$((START+6600)); DT=$((START+7150))
     cat > $OUT/lease_$ARM-s$seed.json <<JSON
 {"lease_start_epoch": $START, "train_deadline_epoch": $DE, "total_deadline_epoch": $DT, "inclusive_seconds": 7200, "world": "v420 furnished HouseExpo storeys", "dims": [128, 128, 32], "updates": $UPD, "seed": $seed,
- "batch": "3S-Z", "arm": "$ARM", "layout": "$LAYOUT", "wire_bits": "$BITS", "bytes_per_message": 8192, "baseline": "$BASE", "baseline_recipe": {"decoder": "$DEC", "decoder_width": $WID, "layout": "$LAY", "precision": "$PREC", "known_weight": "$KW"}, "preflight": "rate=$RS load=$LS val=$VS",
+ "batch": "3S-Z", "arm": "$ARM", "layout": "$LAYOUT", "wire_bits": "$BITS", "bytes_per_message": 8192, "user_approval": "$APPROVED", "lr": $LR, "baseline": "$BASE", "baseline_recipe": {"decoder": "$DEC", "decoder_width": $WID, "layout": "$LAY", "precision": "$PREC", "known_weight": "$KW"}, "preflight": "rate=$RS load=$LS val=$VS",
  "trainer": "scripts/train_3d_v431.py", "trainer_sha256": "$TSHA", "data_module_sha256": "$DSHA", "kbit_sha256": "$KSHA", "diag_sha256": "$GSHA", "diag_interior_sha256": "$ISHA", "diag_veto_sha256": "$VSHA", "cache": "$CACHE", "cache_manifest_sha256": "$MSHA", "control": "$CTRL/$CP$seed",
  "expectation": "64x64x1 vs L1, paired: Delta R8 var >= +3pp and Delta R8 surface >= +1pp on both seeds => the rung is a lever; <= -1pp / <= -2pp on both => worse; < +1pp and < +2pp on both => not better (ladder saturated); else ambiguous; guards FPR <= control + 0.3pp, slab recall >= control - 2pp, K0 var >= control - 2pp; adopted => next baseline; incomplete => INCONCLUSIVE"}
 JSON
@@ -202,7 +206,8 @@ def absolute(arm):
     except Exception as e:
         return f"n/a ({e})"
 json.dump(dict(control=CTRL, control_prefix=CP, rows=rows, arms=res, rung_reading=ladder, absolute={a: absolute(a) for a in ARMS}, next_baseline_dir=nb_dir, next_baseline_prefix=nb_prefix, next_baseline_arm=nb,
-               next_baseline_updates=16000, bytes_per_message={a: ARMS[a][2] for a in ARMS}), open(f"{OUT}/analysis.json", "w"), indent=1)
+               next_baseline_updates=16000, bytes_per_message={a: ARMS[a][2] for a in ARMS}, compared_against="L1 at 16k (runs/v429-ladder/l1-s*)",
+               note="a 16k comparison: the programme baseline for F1 is the two-cycle stack (runs/v429-stack); an adopted rung is stacked with the two-cycle protocol next"), open(f"{OUT}/analysis.json", "w"), indent=1)
 print("RUNG:", ladder, "|", {a: (res[a].get("verdict"), res[a].get("guards"), res[a].get("deltas")) for a in ARMS}, "| next baseline", nb_dir, nb_prefix, "| absolute", {a: absolute(a) for a in ARMS})
 PY
 )

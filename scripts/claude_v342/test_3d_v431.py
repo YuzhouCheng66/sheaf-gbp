@@ -44,6 +44,13 @@ with torch.no_grad():
     mu2, q2, _ = m.source(o2); assert torch.equal(mu2[0, k], mu[0, k]) and torch.equal(q2[0, k], q[0, k])
     f = T1.rollout_max(mu, q, mask, fx['edges'], stages=(8,))[8]; assert f.shape == (8, 8192)
     kl, ol = m.decoder(f); assert kl.shape == ol.shape == (8, 128 * 128 * 32)
+    # review M1: the prior floor -- a prior-only message must never out-rank the receiver's own prior; at D = 4,096 the own prior is the floor 1e-8
+    n = 8; assert max(T1.LATENT_PRIOR / (n * T1.D), 1e-8) == 1e-8 and T1.LATENT_PRIOR / (n * 1024) > 1e-8
+    mu0 = torch.zeros(2, T1.D); q0 = torch.full((2, T1.D), 2.); mk0 = torch.zeros(2, T1.D); mk0[0, :10] = 1.                 # agent 0 has evidence on 10 coordinates, agent 1 none
+    fz = T1.rollout_max(mu0, q0, mk0, [(0, 1, 1.)], stages=(0, 8))
+    lv_k0 = fz[0][1, T1.D:]; lv_r8 = fz[8][1, T1.D:]                                                                           # agent 1's log variance at K0 and R8
+    assert torch.allclose(lv_k0[10:], lv_r8[10:]), 'no-evidence coordinates must read the same precision at K0 and R8 (prior-only messages tie with the own prior)'
+    assert torch.allclose(torch.exp(-lv_r8[:10]), torch.full((10,), 2.), rtol=0.1), 'evidence from agent 0 reaches agent 1'
 pg = {kk: sum(p.numel() for p in v) for kk, v in m.parameter_groups().items()}
 opt = torch.optim.AdamW(m.parameters(), lr=1e-3); m.train(); losses = []
 for step in range(3):

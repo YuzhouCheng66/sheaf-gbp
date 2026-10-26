@@ -307,7 +307,7 @@ def select(p_list, e_list):
 
 def rollout_max(mu, q_learned, mask, edges, rounds=8, stages=HOPS):
     n = mu.shape[0]
-    prior = LATENT_PRIOR / (n * D)
+    prior = max(LATENT_PRIOR / (n * D), 1e-8)                             # v431 (review M1): never below the wire codebook floor, so a prior-only message can never out-rank the receiver's own prior (D <= 1,024: unchanged, 1.22e-8 at D = 1,024)
     evidence_q = mask.double() * q_learned.double()
     p_own = evidence_q + prior; eta_own = evidence_q * mu.double()
     graph = [(min(i, j), max(i, j), w) for i, j, w in edges]
