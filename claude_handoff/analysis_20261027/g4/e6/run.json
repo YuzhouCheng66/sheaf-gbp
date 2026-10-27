@@ -1,0 +1,23 @@
+{
+ "script": "g4_island_compose.py",
+ "script_sha256": "b7438b987c15ff4a4cc4d9c204763a11dd49d74cb18cb9aae793936b4917c8d8",
+ "frozen": {
+  "g4_registration": "e9574c7eff5e1400b0bd901e0befc3abb65520d1612e8efbeade80307b5899fe",
+  "g4_noise_panels": "2313d75bc3ee04515d87469ab9e89e49a3811e1125e39ca0bba839448cc8623f",
+  "g4_e3r": "1d65d9a85f8ef0df4bcdb9f44feba9e1e6cae5f0057a6ec6b097d545ad883970"
+ },
+ "args": {
+  "out": "../../claude_handoff/analysis_20261027/g4/e6",
+  "jobs": "",
+  "panels": "val,fresh",
+  "seeds": "1,2",
+  "conds": "cam_nf,cam,harsh",
+  "workers": 6,
+  "threads": 1,
+  "aggregate_only": false
+ },
+ "n_todo": 96,
+ "start_utc": "2026-10-27T13:43:09Z",
+ "end_utc": "2026-10-27T17:34:48Z",
+ "wall_seconds": 13899.534221887589
+}
