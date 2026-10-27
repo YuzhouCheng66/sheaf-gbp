@@ -1,0 +1,84 @@
+{
+ "stage": "select",
+ "seed": 342101,
+ "ckpt": "runs/e3l3_smoke/s342101/checkpoints/final.pt",
+ "ckpt_sha256": "c1e3118fc679dcfea1a3d0fc44dd7123f3200cd8815d49b9b4bd26d7c08c8a60",
+ "ctrl": "/home/skim/claude-sheaf-gbp/data/e3l2-ref/ctrl_holdout.json",
+ "ctrl_sha256": "f0b55ed9343c3b1f1a9da468bd84733fabef6e76481aa639b4b468182f8657e4",
+ "houses": [
+  "TRAIN_r1_i19",
+  "TRAIN_r1_i39",
+  "TRAIN_r1_i59",
+  "TRAIN_r1_i69",
+  "TRAIN_r1_i9",
+  "TRAIN_r2_i19",
+  "TRAIN_r2_i29",
+  "TRAIN_r2_i39",
+  "TRAIN_r2_i49",
+  "TRAIN_r2_i59",
+  "TRAIN_r2_i69",
+  "TRAIN_r2_i9",
+  "TRAIN_r3_i19",
+  "TRAIN_r3_i29",
+  "TRAIN_r3_i39",
+  "TRAIN_r3_i49",
+  "TRAIN_r3_i59",
+  "TRAIN_r3_i69",
+  "TRAIN_r3_i9"
+ ],
+ "n_houses": 19,
+ "draws": [
+  "cam_nf_s200",
+  "cam_nf_s201",
+  "cam_nf_s202"
+ ],
+ "device": "cpu",
+ "R8": {
+  "j_occ": 1986,
+  "t_occ": -0.28000000000000114,
+  "f1": 0.019478557316081044,
+  "free": 0.9951010291554137,
+  "free_min": 0.9949899097578526,
+  "feasible_occ": true,
+  "fpr": 0.018998846379233776,
+  "control": {
+   "free": 0.9974899097578526,
+   "fpr": 0.018998846379233776,
+   "furn_f1": 0.9806018585270954
+  }
+ },
+ "K0": {
+  "j_occ": 1989,
+  "t_occ": -0.21999999999999886,
+  "f1": 0.019776919986271,
+  "free": 0.9912341286571934,
+  "free_min": 0.9909473423370584,
+  "feasible_occ": true,
+  "fpr": 0.004759970498287011,
+  "control": {
+   "free": 0.9934473423370583,
+   "fpr": 0.004759970498287011,
+   "furn_f1": 0.9446689322926392
+  },
+  "k0_fallback_r8": false
+ },
+ "known_mismatch": 0,
+ "holdout_bytes": {
+  "median_ratio": 0.263932601646564,
+  "max_ratio": 0.29722006350183533,
+  "n": 57,
+  "report_only": true,
+  "median_bytes": 197574.15910459266
+ },
+ "z": {
+  "z_minus": 0.0,
+  "z_zero": 0.27068708177874395,
+  "z_plus": 0.729312918221256,
+  "z_entropy_bits": 0.8424488285099011,
+  "tanh_saturation": 0.3144833167731037,
+  "footprint": 34456044
+ },
+ "rule": "known = Lam_b > 0 (not selected); occupancy: pooled free recall >= control NET - 0.25 pp, max furniture F1, ties smallest; infeasible -> smallest bin of max free (flag); K0 the same on single agents, infeasible -> the R8 threshold (k0_fallback_r8)",
+ "script_sha256": "3dbd3f1611466a275d114c93c53f33ce944afbbcf5e65c1210fb120e4e959daa",
+ "seconds": 261.1630218029022
+}

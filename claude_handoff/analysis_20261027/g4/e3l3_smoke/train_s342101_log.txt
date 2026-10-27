@@ -1,0 +1,14 @@
+local CPU smoke Tue Oct 27 22:15:16 UTC 2026
+E3-L3 train seed 342101: 2 train / 1 holdout houses, 680227 parameters, evidence c:C:/Users/27118/Desktop/sheaf-gbp/experiments/sheaf-gbp-p6-local-skill/claude_handoff/analysis_20261027/review_E3R/inputs/e1c_fit.json:A:cam_nf, cpu, load 0s
+upd1 bce 0.69210 z -/0/+ 0.000/1.000/0.000 sat 0.000 w 1000.00 grad 1.119 enc 0.000 agents 23 pad 1 lr 3.33e-06 24s
+upd2 bce 0.69212 z -/0/+ 0.000/0.000/0.000 sat 0.000 w 1000.01 grad 1.081 enc 0.000 agents 24 pad 0 lr 6.41e-06 44s
+upd3 bce 0.69208 z -/0/+ 0.000/0.000/0.000 sat 0.000 w 1000.02 grad 1.081 enc 0.000 agents 21 pad 3 lr 8.54e-06 64s
+upd4 bce 0.69218 z -/0/+ 0.000/0.000/0.000 sat 0.000 w 1000.03 grad 0.952 enc 0.000 agents 11 pad 5 lr 9.22e-06 79s
+  probe upd4: holdout bce 0.69199 furn F1@0 0.0273 (free 0.9796) oracle 0.0782 z -/0/+ 0.000/1.000/0.000 H 0.000 sat 0.000 w 1000.0 known mismatch 0 bytes ratio 0.141 7.8s
+upd5 bce 0.69214 z -/0/+ 0.000/0.000/0.000 sat 0.000 w 1000.03 grad 0.938 enc 0.000 agents 12 pad 4 lr 8.33e-06 102s
+upd6 bce 0.69177 z -/0/+ 0.000/0.000/0.000 sat 0.000 w 1000.04 grad 1.219 enc 0.000 agents 24 pad 0 lr 6.17e-06 123s
+upd7 bce 0.69171 z -/0/+ 0.000/0.000/0.000 sat 0.000 w 1000.04 grad 1.230 enc 0.000 agents 25 pad 7 lr 3.42e-06 149s
+upd8 bce 0.69189 z -/0/+ 0.000/0.000/0.000 sat 0.000 w 1000.04 grad 1.080 enc 0.000 agents 17 pad 7 lr 1.01e-06 183s
+  probe upd8: holdout bce 0.69185 furn F1@0 0.0194 (free 0.9885) oracle 0.0782 z -/0/+ 0.000/1.000/0.000 H 0.000 sat 0.000 w 1000.0 known mismatch 0 bytes ratio 0.141 13.4s
+E3-L3 train seed 342101 done: 8 updates (complete), rate 20.505122542381287 s/update (windows from update 2, >= 2: ok; cv 0.3045093764431921, WARNING window CV 0.305 >= 0.1: rate = median of 6 windows), probe max 13.443597078323364 s, w 1000.04, snapshot 6, 196s
+exit 0 Tue Oct 27 22:18:38 UTC 2026

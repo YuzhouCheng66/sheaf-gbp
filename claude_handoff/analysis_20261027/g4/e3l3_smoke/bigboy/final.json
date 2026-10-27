@@ -1,0 +1,86 @@
+{
+ "updates_done": 100,
+ "updates_planned": 9000,
+ "max_updates": 100,
+ "truncated": false,
+ "complete": false,
+ "rate_s_per_update": 0.50646520058314,
+ "rate_mean_s_per_update": 0.50646520058314,
+ "rate_cv": 0.02277308150112777,
+ "rate_warning": null,
+ "rate_windows": [
+  [
+   40,
+   60,
+   0.49347332715988157
+  ],
+  [
+   60,
+   80,
+   0.5044200420379639
+  ],
+  [
+   80,
+   100,
+   0.5215022325515747
+  ]
+ ],
+ "time_from": 40,
+ "rate_window_start": 40,
+ "rate_window_start_ok": true,
+ "first_window_s": 15.844334602355957,
+ "first_window_updates": 20,
+ "load_seconds": 16.26976728439331,
+ "probe_seconds_max": 3.832728385925293,
+ "probes": 2,
+ "train_seconds": 56.157134771347046,
+ "weights_sha256": "15d57882a007ad490101912028aeb355c6c6b3f013658c8fbfbaa69775cf2773",
+ "w": 995.3369750976562,
+ "snapshot": null,
+ "checkpoint": "runs/e3l3_smoke/s342101/checkpoints/final.pt",
+ "checkpoint_sha256": "c1e3118fc679dcfea1a3d0fc44dd7123f3200cd8815d49b9b4bd26d7c08c8a60",
+ "probe_last": {
+  "updates": 100,
+  "holdout_bce": 0.2675740707539181,
+  "probe": {
+   "furn_f1_at0": 0.006043756799226399,
+   "free_at0": 0.9974243631374737,
+   "furn_f1_oracle": 0.1525546688776039,
+   "free_at_oracle": 0.9399995973320371,
+   "t_oracle": -1.759999999999998,
+   "known_mismatch": 0,
+   "w": 995.3369750976562,
+   "bytes": 1020075.4400387811,
+   "bytes_ratio_median": 0.25703488663097984,
+   "houses": [
+    [
+     "TRAIN_r1_i19",
+     "cam_nf_s200"
+    ],
+    [
+     "TRAIN_r2_i19",
+     "cam_nf_s201"
+    ],
+    [
+     "TRAIN_r2_i69",
+     "cam_nf_s202"
+    ],
+    [
+     "TRAIN_r3_i39",
+     "cam_nf_s200"
+    ]
+   ],
+   "z_minus": 0.0,
+   "z_zero": 0.2769889402093623,
+   "z_plus": 0.7230110597906376,
+   "z_entropy_bits": 0.8513155181470449,
+   "tanh_saturation": 0.2989991580872008,
+   "footprint": 2697429,
+   "seconds": 3.0548977851867676
+  },
+  "probe_seconds": 3.700399875640869,
+  "w": 995.3369750976562,
+  "seconds": 80.7637722492218
+ },
+ "seconds": 80.78681778907776
+}

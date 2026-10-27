@@ -1,0 +1,1307 @@
+{
+ "panels": {
+  "train": {
+   "seeds": {
+    "203": {
+     "houses": [
+      "r1_i0"
+     ],
+     "tiers": {
+      "cam_nf": {
+       "E3L3_342101": {
+        "R8": {
+         "furn_f1": 0.0,
+         "furn_f1_tol1": 0.0,
+         "surface_f1": 0.0,
+         "surface_f1_tol1": 0.0,
+         "var_occ_f1": 0.0,
+         "occ_f1": 0.0,
+         "obj_recall": 0.0,
+         "accuracy": 0.8880538949080573,
+         "unknown_known_fpr": 0.02137183416439815,
+         "free_recall": 0.999709496813268,
+         "furn_f1_pooled": 0.0,
+         "strata": {
+          "h_furn": [
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 3408
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 9704
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 3984
+           }
+          ],
+          "h_free": [
+           {
+            "recall": 0.9993682631184112,
+            "n_target": 202616
+           },
+           {
+            "recall": 0.9995497435495869,
+            "n_target": 408656
+           },
+           {
+            "recall": 0.9998209347207576,
+            "n_target": 1206264
+           }
+          ],
+          "m_furn": [
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 3248
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 4936
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 5256
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 2840
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 816
+           }
+          ],
+          "m_free": [
+           {
+            "recall": 0.9953753112771255,
+            "n_target": 112440
+           },
+           {
+            "recall": 0.9999811413268962,
+            "n_target": 424208
+           },
+           {
+            "recall": 1.0,
+            "n_target": 463296
+           },
+           {
+            "recall": 1.0,
+            "n_target": 300536
+           },
+           {
+            "recall": 1.0,
+            "n_target": 517056
+           }
+          ],
+          "k_furn": [
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 160
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 2296
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 4488
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 5960
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 3360
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 832
+           }
+          ],
+          "k_free": [
+           {
+            "recall": 0.0,
+            "n_target": 528
+           },
+           {
+            "recall": 1.0,
+            "n_target": 109208
+           },
+           {
+            "recall": 1.0,
+            "n_target": 425552
+           },
+           {
+            "recall": 1.0,
+            "n_target": 466264
+           },
+           {
+            "recall": 1.0,
+            "n_target": 298840
+           },
+           {
+            "recall": 1.0,
+            "n_target": 517144
+           }
+          ]
+         }
+        },
+        "K0": {
+         "furn_f1": 0.0,
+         "furn_f1_tol1": 0.0,
+         "surface_f1": 0.0,
+         "surface_f1_tol1": 0.0,
+         "var_occ_f1": 0.0,
+         "occ_f1": 0.0,
+         "obj_recall": 0.0,
+         "accuracy": 0.8958486702475318,
+         "unknown_known_fpr": 0.004064743090344287,
+         "free_recall": 0.9943117448135574,
+         "furn_f1_pooled": 0.0,
+         "strata": {
+          "h_furn": [
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 1078
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 3221
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 1242
+           }
+          ],
+          "h_free": [
+           {
+            "recall": 0.9919084613666261,
+            "n_target": 80578
+           },
+           {
+            "recall": 0.9925350674794493,
+            "n_target": 169459
+           },
+           {
+            "recall": 0.9953392830326304,
+            "n_target": 559356
+           }
+          ],
+          "k_furn": [
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 194
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 5347
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           }
+          ],
+          "k_free": [
+           {
+            "recall": 0.0,
+            "n_target": 4524
+           },
+           {
+            "recall": 1.0,
+            "n_target": 804869
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           }
+          ]
+         }
+        },
+        "K0_sep": {
+         "furn_f1": 0.0,
+         "furn_f1_tol1": 0.0,
+         "surface_f1": 0.0,
+         "surface_f1_tol1": 0.0,
+         "var_occ_f1": 0.0,
+         "occ_f1": 0.0,
+         "obj_recall": 0.0,
+         "accuracy": 0.8958486702475318,
+         "unknown_known_fpr": 0.004064743090344287,
+         "free_recall": 0.9943117448135574,
+         "furn_f1_pooled": 0.0,
+         "strata": {
+          "h_furn": [
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 1078
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 3221
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 1242
+           }
+          ],
+          "h_free": [
+           {
+            "recall": 0.9919084613666261,
+            "n_target": 80578
+           },
+           {
+            "recall": 0.9925350674794493,
+            "n_target": 169459
+           },
+           {
+            "recall": 0.9953392830326304,
+            "n_target": 559356
+           }
+          ],
+          "k_furn": [
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 194
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 5347
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           }
+          ],
+          "k_free": [
+           {
+            "recall": 0.0,
+            "n_target": 4524
+           },
+           {
+            "recall": 1.0,
+            "n_target": 804869
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           }
+          ]
+         }
+        },
+        "bytes_median": 116235.31288212755,
+        "report_bytes_upper_median": 147973.95182571065,
+        "k0_fallback_r8": false,
+        "known_mismatch": 0,
+        "quant_belief_diff": {
+         "mean_abs": 0.0,
+         "max_abs": 0.0,
+         "lost_cells": 0
+        },
+        "belief_disagreement_rms": 0.0,
+        "self_map": {
+         "bytes_median": 1911.8936590173128,
+         "upper_bytes_median": 3490.7190373254452,
+         "mask_bytes_median": 1748.0807135577052,
+         "footprint_median": 109075.0
+        },
+        "z": {
+         "z_minus": 0.0,
+         "z_zero": 1.0,
+         "z_plus": 0.0,
+         "z_entropy_bits": 0.0,
+         "tanh_saturation": 0.0,
+         "footprint": 902704
+        },
+        "whole_object_miss_share": 1.0,
+        "w": 1000.0430297851562,
+        "gbp": {
+         "cf_max": 0.0,
+         "cf_rel_max": 0.0,
+         "violations": 0
+        }
+       }
+      },
+      "cam": {
+       "E3L3_342101": {
+        "R8": {
+         "furn_f1": 0.0,
+         "furn_f1_tol1": 0.0,
+         "surface_f1": 0.0,
+         "surface_f1_tol1": 0.0,
+         "var_occ_f1": 0.0,
+         "occ_f1": 0.0,
+         "obj_recall": 0.0,
+         "accuracy": 0.8863374218496464,
+         "unknown_known_fpr": 0.0328193020545114,
+         "free_recall": 0.9977772104651572,
+         "furn_f1_pooled": 0.0,
+         "strata": {
+          "h_furn": [
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 3408
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 9704
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 3984
+           }
+          ],
+          "h_free": [
+           {
+            "recall": 0.9965254471512615,
+            "n_target": 202616
+           },
+           {
+            "recall": 0.9973180376649309,
+            "n_target": 408656
+           },
+           {
+            "recall": 0.998143026733783,
+            "n_target": 1206264
+           }
+          ],
+          "m_furn": [
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 3248
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 4936
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 5256
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 2840
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 816
+           }
+          ],
+          "m_free": [
+           {
+            "recall": 0.9647812166488794,
+            "n_target": 112440
+           },
+           {
+            "recall": 0.9998114132689624,
+            "n_target": 424208
+           },
+           {
+            "recall": 1.0,
+            "n_target": 463296
+           },
+           {
+            "recall": 1.0,
+            "n_target": 300536
+           },
+           {
+            "recall": 1.0,
+            "n_target": 517056
+           }
+          ],
+          "k_furn": [
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 504
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 2656
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 4048
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 6216
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 2928
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 744
+           }
+          ],
+          "k_free": [
+           {
+            "recall": 0.0,
+            "n_target": 4040
+           },
+           {
+            "recall": 1.0,
+            "n_target": 112104
+           },
+           {
+            "recall": 1.0,
+            "n_target": 428880
+           },
+           {
+            "recall": 1.0,
+            "n_target": 458720
+           },
+           {
+            "recall": 1.0,
+            "n_target": 300040
+           },
+           {
+            "recall": 1.0,
+            "n_target": 513752
+           }
+          ]
+         }
+        },
+        "K0": {
+         "furn_f1": 0.0,
+         "furn_f1_tol1": 0.0,
+         "surface_f1": 0.0,
+         "surface_f1_tol1": 0.0,
+         "var_occ_f1": 0.0,
+         "occ_f1": 0.0,
+         "obj_recall": 0.0,
+         "accuracy": 0.8958486702475318,
+         "unknown_known_fpr": 0.004064743090344287,
+         "free_recall": 0.9943117448135574,
+         "furn_f1_pooled": 0.0,
+         "strata": {
+          "h_furn": [
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 1078
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 3221
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 1242
+           }
+          ],
+          "h_free": [
+           {
+            "recall": 0.9919084613666261,
+            "n_target": 80578
+           },
+           {
+            "recall": 0.9925350674794493,
+            "n_target": 169459
+           },
+           {
+            "recall": 0.9953392830326304,
+            "n_target": 559356
+           }
+          ],
+          "k_furn": [
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 194
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 5347
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           }
+          ],
+          "k_free": [
+           {
+            "recall": 0.0,
+            "n_target": 4524
+           },
+           {
+            "recall": 1.0,
+            "n_target": 804869
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           }
+          ]
+         }
+        },
+        "K0_sep": {
+         "furn_f1": 0.0,
+         "furn_f1_tol1": 0.0,
+         "surface_f1": 0.0,
+         "surface_f1_tol1": 0.0,
+         "var_occ_f1": 0.0,
+         "occ_f1": 0.0,
+         "obj_recall": 0.0,
+         "accuracy": 0.8958486702475318,
+         "unknown_known_fpr": 0.004064743090344287,
+         "free_recall": 0.9943117448135574,
+         "furn_f1_pooled": 0.0,
+         "strata": {
+          "h_furn": [
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 1078
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 3221
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 1242
+           }
+          ],
+          "h_free": [
+           {
+            "recall": 0.9919084613666261,
+            "n_target": 80578
+           },
+           {
+            "recall": 0.9925350674794493,
+            "n_target": 169459
+           },
+           {
+            "recall": 0.9953392830326304,
+            "n_target": 559356
+           }
+          ],
+          "k_furn": [
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 194
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 5347
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           }
+          ],
+          "k_free": [
+           {
+            "recall": 0.0,
+            "n_target": 4524
+           },
+           {
+            "recall": 1.0,
+            "n_target": 804869
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           }
+          ]
+         }
+        },
+        "bytes_median": 120117.25112374828,
+        "report_bytes_upper_median": 151193.20214455295,
+        "k0_fallback_r8": false,
+        "known_mismatch": 0,
+        "quant_belief_diff": {
+         "mean_abs": 0.0,
+         "max_abs": 0.0,
+         "lost_cells": 0
+        },
+        "belief_disagreement_rms": 0.0,
+        "self_map": {
+         "bytes_median": 1935.1712066404589,
+         "upper_bytes_median": 3547.741675838301,
+         "mask_bytes_median": 1776.1747187078283,
+         "footprint_median": 109312.0
+        },
+        "z": {
+         "z_minus": 0.0,
+         "z_zero": 1.0,
+         "z_plus": 0.0,
+         "z_entropy_bits": 0.0,
+         "tanh_saturation": 0.0,
+         "footprint": 904472
+        },
+        "whole_object_miss_share": 1.0,
+        "w": 1000.0430297851562,
+        "gbp": {
+         "cf_max": 0.0,
+         "cf_rel_max": 0.0,
+         "violations": 0
+        }
+       }
+      },
+      "clean": {
+       "E3L3_342101": {
+        "R8": {
+         "furn_f1": 0.0,
+         "furn_f1_tol1": 0.0,
+         "surface_f1": 0.0,
+         "surface_f1_tol1": 0.0,
+         "var_occ_f1": 0.0,
+         "occ_f1": 0.0,
+         "obj_recall": 0.0,
+         "accuracy": 0.8883119523610302,
+         "unknown_known_fpr": 0.0,
+         "free_recall": 1.0,
+         "furn_f1_pooled": 0.0,
+         "strata": {
+          "h_furn": [
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 3408
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 9704
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 3984
+           }
+          ],
+          "h_free": [
+           {
+            "recall": 1.0,
+            "n_target": 202616
+           },
+           {
+            "recall": 1.0,
+            "n_target": 408656
+           },
+           {
+            "recall": 1.0,
+            "n_target": 1206264
+           }
+          ],
+          "m_furn": [
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 3248
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 4936
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 5256
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 2840
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 816
+           }
+          ],
+          "m_free": [
+           {
+            "recall": 1.0,
+            "n_target": 112440
+           },
+           {
+            "recall": 1.0,
+            "n_target": 424208
+           },
+           {
+            "recall": 1.0,
+            "n_target": 463296
+           },
+           {
+            "recall": 1.0,
+            "n_target": 300536
+           },
+           {
+            "recall": 1.0,
+            "n_target": 517056
+           }
+          ],
+          "k_furn": [
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 3248
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 4936
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 5256
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 2840
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 816
+           }
+          ],
+          "k_free": [
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": 1.0,
+            "n_target": 112440
+           },
+           {
+            "recall": 1.0,
+            "n_target": 424208
+           },
+           {
+            "recall": 1.0,
+            "n_target": 463296
+           },
+           {
+            "recall": 1.0,
+            "n_target": 300536
+           },
+           {
+            "recall": 1.0,
+            "n_target": 517056
+           }
+          ]
+         }
+        },
+        "K0": {
+         "furn_f1": 0.0,
+         "furn_f1_tol1": 0.0,
+         "surface_f1": 0.0,
+         "surface_f1_tol1": 0.0,
+         "var_occ_f1": 0.0,
+         "occ_f1": 0.0,
+         "obj_recall": 0.0,
+         "accuracy": 0.9009712844767126,
+         "unknown_known_fpr": 0.0,
+         "free_recall": 1.0,
+         "furn_f1_pooled": 0.0,
+         "strata": {
+          "h_furn": [
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 1078
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 3221
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 1242
+           }
+          ],
+          "h_free": [
+           {
+            "recall": 1.0,
+            "n_target": 80578
+           },
+           {
+            "recall": 1.0,
+            "n_target": 169459
+           },
+           {
+            "recall": 1.0,
+            "n_target": 559356
+           }
+          ],
+          "k_furn": [
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 5541
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           }
+          ],
+          "k_free": [
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": 1.0,
+            "n_target": 809393
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           }
+          ]
+         }
+        },
+        "K0_sep": {
+         "furn_f1": 0.0,
+         "furn_f1_tol1": 0.0,
+         "surface_f1": 0.0,
+         "surface_f1_tol1": 0.0,
+         "var_occ_f1": 0.0,
+         "occ_f1": 0.0,
+         "obj_recall": 0.0,
+         "accuracy": 0.9009712844767126,
+         "unknown_known_fpr": 0.0,
+         "free_recall": 1.0,
+         "furn_f1_pooled": 0.0,
+         "strata": {
+          "h_furn": [
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 1078
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 3221
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 1242
+           }
+          ],
+          "h_free": [
+           {
+            "recall": 1.0,
+            "n_target": 80578
+           },
+           {
+            "recall": 1.0,
+            "n_target": 169459
+           },
+           {
+            "recall": 1.0,
+            "n_target": 559356
+           }
+          ],
+          "k_furn": [
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": 0.0,
+            "prec": null,
+            "n_target": 5541
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           },
+           {
+            "f1": null,
+            "prec": null,
+            "n_target": 0
+           }
+          ],
+          "k_free": [
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": 1.0,
+            "n_target": 809393
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           },
+           {
+            "recall": null,
+            "n_target": 0
+           }
+          ]
+         }
+        },
+        "bytes_median": 81665.3038556177,
+        "report_bytes_upper_median": 95887.12037896573,
+        "k0_fallback_r8": false,
+        "known_mismatch": 0,
+        "quant_belief_diff": {
+         "mean_abs": 0.0,
+         "max_abs": 0.0,
+         "lost_cells": 0
+        },
+        "belief_disagreement_rms": 0.0,
+        "self_map": {
+         "bytes_median": 1318.03741488455,
+         "upper_bytes_median": 2369.4625349217968,
+         "mask_bytes_median": 1193.1550641854747,
+         "footprint_median": 108655.0
+        },
+        "z": {
+         "z_minus": 0.0,
+         "z_zero": 1.0,
+         "z_plus": 0.0,
+         "z_entropy_bits": 0.0,
+         "tanh_saturation": 0.0,
+         "footprint": 896886
+        },
+        "whole_object_miss_share": 1.0,
+        "w": 1000.0430297851562,
+        "gbp": {
+         "cf_max": 0.0,
+         "cf_rel_max": 0.0,
+         "violations": 0
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "failed": [],
+ "skipped": [],
+ "e1_mismatch": [],
+ "script_sha256": [
+  "3dbd3f1611466a275d114c93c53f33ce944afbbcf5e65c1210fb120e4e959daa"
+ ],
+ "ckpts": [
+  "{\"claude_handoff/analysis_20261027/g4/e3l3_smoke/runs/s342101/checkpoints/final.pt\": \"30e223aaba506d65baaf864648b4b9f2bd42f6b5ae9fea699182c24b0cd17bda\"}"
+ ],
+ "gbp": {
+  "E3L3_342101": {
+   "cf_max": 0.0,
+   "cf_rel_max": 0.0,
+   "violations": 0,
+   "components": 3,
+   "steps": 48,
+   "jobs": 3,
+   "pass": true
+  }
+ },
+ "known_mismatch": {
+  "E3L3_342101": 0
+ },
+ "agg_reasons": [],
+ "decision": {
+  "verdict": "INCOMPLETE: control summary (E3-R) not given; training seed 342101: 8 updates < 2000; training seed 342202 missing; no GaBP checks for E3L3_342202",
+  "criteria": {
+   "prereg": "D8-63",
+   "judged_panel": "val",
+   "report_panel": "fresh",
+   "judged_tier": "cam_nf",
+   "cam_tier": "cam",
+   "clean_tier": "clean",
+   "train_seeds": [
+    "342101",
+    "342202"
+   ],
+   "noise_seeds": [
+    "1",
+    "2"
+   ],
+   "control_arm": "NET_{seed} (E3-R summary)",
+   "lever_furn_margin": -0.01,
+   "lever_bytes_ratio": 0.15,
+   "guard_free": 0.005,
+   "guard_surface": 0.005,
+   "guard_fpr": 0.0,
+   "clean_min": 0.99,
+   "k0_margin": -0.03,
+   "gbp_cf_tol": 1e-05,
+   "cam_demote_margin": -0.03,
+   "not_enough_furn_margin": -0.03,
+   "not_enough_bytes_ratio": 0.5,
+   "min_updates": 2000,
+   "truncated_blocks_lever": true,
+   "fresh_required": true,
+   "fresh_min_mean": -0.01,
+   "known_select_fpr": 0.0015,
+   "supplement": "D8-63: full-resolution D = 1 ternary latent, Lam = footprint, known = Lam_b > 0 (FPR asserted bit-identical to the control); lever = 4 VAL cam_nf cells d >= -1 pp, bytes <= .15 x, free / surface >= -0.5 pp, clean >= .99, K0 >= -3 pp, not truncated; cam 4-cell mean < -3 pp or fresh 4-cell mean < -1 pp demote LEVER only; not enough = any cell < -3 pp or bytes > .5 x; INCOMPLETE also on any failed GaBP check or known-mask mismatch",
+   "free_margin_select": 0.0025,
+   "budget_seconds": 6000,
+   "known_select": "none (Lam_b > 0)"
+  },
+  "cells": {},
+  "fresh_cells": {},
+  "fresh": null,
+  "runs": {
+   "342101": {
+    "updates_done": 8,
+    "updates_planned": 8,
+    "complete": true,
+    "truncated": false,
+    "evidence": "c:C:/Users/27118/Desktop/sheaf-gbp/experiments/sheaf-gbp-p6-local-skill/claude_handoff/analysis_20261027/review_E3R/inputs/e1c_fit.json:A:cam_nf",
+    "train_houses": 2,
+    "holdout_houses": 1,
+    "threshold": null,
+    "threshold_device": "cpu"
+   }
+  },
+  "truncated_seeds": [],
+  "notes": [],
+  "incomplete_reasons": [
+   "control summary (E3-R) not given",
+   "training seed 342101: 8 updates < 2000",
+   "training seed 342202 missing",
+   "no GaBP checks for E3L3_342202"
+  ],
+  "gbp": {
+   "E3L3_342101": {
+    "cf_max": 0.0,
+    "cf_rel_max": 0.0,
+    "violations": 0,
+    "components": 3,
+    "steps": 48,
+    "jobs": 3,
+    "pass": true
+   }
+  },
+  "known_mismatch": {
+   "E3L3_342101": 0
+  },
+  "report_refs": {},
+  "control_summary": null
+ }
+}

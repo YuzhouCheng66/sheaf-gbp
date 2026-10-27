@@ -1,0 +1,4 @@
+E3-L3 verdict: INCOMPLETE: control summary (E3-R) not given; training seed 342101: 8 updates < 2000; training seed 342202 missing; no GaBP checks for E3L3_342202
+  fresh: null
+  gbp: {"E3L3_342101": {"cf_max": 0.0, "cf_rel_max": 0.0, "violations": 0, "components": 3, "steps": 48, "jobs": 3, "pass": true}} | known mismatch: {"E3L3_342101": 0}
+exit 0

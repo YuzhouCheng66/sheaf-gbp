@@ -1,0 +1,5 @@
+Tue Oct 27 22:23:00 UTC 2026
+E3-L3 eval: 1 jobs, checkpoints ['claude_handoff/analysis_20261027/g4/e3l3_smoke/runs/s342101/checkpoints/final.pt'], 1 workers x 4 threads
+[1/1] train_r1_i0_s203 29s peak 2697 MB  31s
+exit 0
+Tue Oct 27 22:23:34 UTC 2026
