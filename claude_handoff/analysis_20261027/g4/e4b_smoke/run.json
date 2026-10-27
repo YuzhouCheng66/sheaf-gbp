@@ -1,0 +1,58 @@
+{
+ "script": "g4_registration_msg.py",
+ "fingerprint": {
+  "conds": [
+   "cam_nf",
+   "cam",
+   "harsh"
+  ],
+  "data_module_sha256": "4793a3279ebd9564315500721e548ab9dd0e10d8f192df632c9b8ddf2964b61d",
+  "g4_noise_panels_sha256": "2313d75bc3ee04515d87469ab9e89e49a3811e1125e39ca0bba839448cc8623f",
+  "g4_registration_sha256": "e9574c7eff5e1400b0bd901e0befc3abb65520d1612e8efbeade80307b5899fe",
+  "gauge": "prior",
+  "governing_integrator": "V3",
+  "houseexpo_index_sha256": "7b4730cc52689c9044228a6f9bf8e1b4785cb5f6f40f54a422e603c6000101c1",
+  "job_format": "E4b-1",
+  "match": {
+   "band_lo": 0.3,
+   "band_hi": 2.3,
+   "w_thr": 0.2,
+   "surf_rad_m": 0.15,
+   "lin_min": 0.3,
+   "ori_min": 0.3,
+   "up": 2,
+   "blur_cells": 0.75,
+   "yaw_max": 10.0,
+   "yaw_step": 0.5,
+   "t_max": 0.6,
+   "tau": 0.1,
+   "r_nn": 0.3,
+   "k_nn": 8,
+   "cos_nn": 0.7071067811865476,
+   "icp_iters": 60,
+   "icp_rtol": 1e-06,
+   "sym": true,
+   "gate_min_inl": 50,
+   "gate_min_wfrac": 0.2,
+   "gate_min_eig": 0.02
+  },
+  "script_sha256": "b305b8467c01ccb9db93d6b5596d80e4a57bbdcb16f423401db06d3216e3967c",
+  "side_plane": "max",
+  "sweeps": 2
+ },
+ "args": {
+  "out": "../../claude_handoff/analysis_20261027/g4/e4b_smoke",
+  "panels": "val",
+  "seeds": "1",
+  "houses": 2,
+  "conds": "cam_nf,cam,harsh",
+  "workers": 2,
+  "e1_jobs": "../../claude_handoff/analysis_20261027/g4/e1/jobs",
+  "e4_out": "../../claude_handoff/analysis_20261027/g4/e4",
+  "houseexpo_json_dir": "C:\\Users\\27118\\Desktop\\sheaf-gbp\\experiments\\sheaf-gbp-p6-local-skill\\claude_handoff\\analysis_20261027\\data\\houseexpo_json",
+  "houseexpo_index": "C:\\Users\\27118\\Desktop\\sheaf-gbp\\experiments\\sheaf-gbp-p6-local-skill\\claude_handoff\\claude_reviews_20261021\\houseexpo_index_v365.json",
+  "aggregate_only": false,
+  "smoke_asserts": true
+ },
+ "seconds": 554.1112267971039
+}
