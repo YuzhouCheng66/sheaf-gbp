@@ -1,0 +1,253 @@
+G4-E5 verdict: LEVER  arm Q3 (main arm)  Q3 LEVER / Q4 LEVER  reasons []
+  fresh rule (D8-52 补充): fresh 4-cell mean d -0.20 pp (>= -1.0: True); VAL mean -0.32 pp; literal sign opposite (report only): False
+  Q3: {"verdict": "LEVER", "acc": true, "guards": true, "bytes": true, "bytes_le_075": true, "reasons": []}
+    VAL 342101|3: d furn -0.20 pp (arm 0.9712 / Qinf 0.9731), worst house r2_i7 -0.78 pp, d free -0.00, d surf -0.04, d FPR +0.0e+00, LIN 0.9066/0.9067 | B 266 KB / Qinf 744 KB = 0.358 (per-house med 0.327; Sk 422, lev 266; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.373] | B_RO 0.103 [violates C5, report only] | own {"Sk": 31.5, "lev": 29.6, "min_of_sums": 29.6} KB | K0 0.9337 (d -0.98 pp) | clean 0.9974
+    VAL 342202|3: d furn -0.30 pp (arm 0.9708 / Qinf 0.9738), worst house r2_i7 -1.53 pp, d free -0.01, d surf -0.04, d FPR +0.0e+00, LIN 0.9065/0.9059 | B 267 KB / Qinf 754 KB = 0.354 (per-house med 0.323; Sk 391, lev 267; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.368] | B_RO 0.102 [violates C5, report only] | own {"Sk": 31.6, "lev": 29.7, "min_of_sums": 29.7} KB | K0 0.9394 (d -0.42 pp) | clean 0.9971
+    VAL 342101|4: d furn -0.40 pp (arm 0.9652 / Qinf 0.9692), worst house r3_i7 -2.24 pp, d free -0.01, d surf -0.07, d FPR +0.0e+00, LIN 0.8955/0.8962 | B 272 KB / Qinf 764 KB = 0.356 (per-house med 0.327; Sk 438, lev 272; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.373] | B_RO 0.104 [violates C5, report only] | own {"Sk": 32.7, "lev": 30.5, "min_of_sums": 30.5} KB | K0 0.9229 (d -0.08 pp) | clean 0.9974
+    VAL 342202|4: d furn -0.38 pp (arm 0.9662 / Qinf 0.9700), worst house r3_i7 -2.88 pp, d free -0.01, d surf -0.04, d FPR +0.0e+00, LIN 0.8954/0.8954 | B 272 KB / Qinf 774 KB = 0.352 (per-house med 0.322; Sk 406, lev 272; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.368] | B_RO 0.102 [violates C5, report only] | own {"Sk": 32.8, "lev": 30.6, "min_of_sums": 30.6} KB | K0 0.9182 (d -1.20 pp) | clean 0.9971
+    fresh 342101|3: d furn -0.21 pp (arm 0.9729 / Qinf 0.9750), worst house r1_i10 -0.76 pp, d free -0.01, d surf -0.09, d FPR +0.0e+00, LIN 0.9016/0.9011 | B 256 KB / Qinf 756 KB = 0.338 (per-house med 0.294; Sk 424, lev 256; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.354] | B_RO 0.101 [violates C5, report only] | own {"Sk": 31.7, "lev": 30.0, "min_of_sums": 30.0} KB | K0 0.9265 (d -1.01 pp) | clean 0.9976
+    fresh 342202|3: d furn -0.04 pp (arm 0.9720 / Qinf 0.9724), worst house r2_i8 -0.46 pp, d free -0.01, d surf -0.06, d FPR +0.0e+00, LIN 0.9015/0.9000 | B 256 KB / Qinf 766 KB = 0.334 (per-house med 0.291; Sk 384, lev 256; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.350] | B_RO 0.100 [violates C5, report only] | own {"Sk": 31.8, "lev": 30.1, "min_of_sums": 30.1} KB | K0 0.9245 (d -0.91 pp) | clean 0.9972
+    fresh 342101|4: d furn -0.24 pp (arm 0.9717 / Qinf 0.9741), worst house r1_i11 -0.68 pp, d free -0.01, d surf -0.09, d FPR +0.0e+00, LIN 0.9013/0.9014 | B 255 KB / Qinf 753 KB = 0.339 (per-house med 0.294; Sk 423, lev 255; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.356] | B_RO 0.103 [violates C5, report only] | own {"Sk": 32.3, "lev": 30.6, "min_of_sums": 30.6} KB | K0 0.9240 (d -0.69 pp) | clean 0.9976
+    fresh 342202|4: d furn -0.32 pp (arm 0.9697 / Qinf 0.9730), worst house r1_i11 -0.81 pp, d free -0.02, d surf -0.11, d FPR +0.0e+00, LIN 0.9011/0.9002 | B 256 KB / Qinf 763 KB = 0.336 (per-house med 0.290; Sk 384, lev 256; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.352] | B_RO 0.102 [violates C5, report only] | own {"Sk": 32.4, "lev": 30.6, "min_of_sums": 30.6} KB | K0 0.9234 (d -0.69 pp) | clean 0.9972
+  Q4: {"verdict": "LEVER", "acc": true, "guards": true, "bytes": true, "bytes_le_075": true, "reasons": []}
+    VAL 342101|3: d furn -0.12 pp (arm 0.9720 / Qinf 0.9731), worst house r2_i4 -0.84 pp, d free +0.00, d surf -0.01, d FPR +0.0e+00, LIN 0.9004/0.9067 | B 291 KB / Qinf 744 KB = 0.391 (per-house med 0.355; Sk 362, lev 291; modes {'Sk': 1, 'lev': 23}) [mask coded once, report only: 0.397] | B_RO 0.111 [violates C5, report only] | own {"Sk": 34.9, "lev": 33.5, "min_of_sums": 33.5} KB | K0 0.9360 (d -0.76 pp) | clean 0.9978
+    VAL 342202|3: d furn -0.21 pp (arm 0.9716 / Qinf 0.9738), worst house r3_i7 -1.34 pp, d free -0.02, d surf -0.03, d FPR +0.0e+00, LIN 0.8975/0.9059 | B 327 KB / Qinf 754 KB = 0.434 (per-house med 0.396; Sk 457, lev 327; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.439] | B_RO 0.119 [violates C5, report only] | own {"Sk": 40.9, "lev": 38.1, "min_of_sums": 38.1} KB | K0 0.9301 (d -1.35 pp) | clean 0.9973
+    VAL 342101|4: d furn -0.28 pp (arm 0.9664 / Qinf 0.9692), worst house r3_i7 -1.83 pp, d free -0.01, d surf -0.04, d FPR +0.0e+00, LIN 0.8900/0.8962 | B 297 KB / Qinf 764 KB = 0.389 (per-house med 0.351; Sk 367, lev 297; modes {'Sk': 1, 'lev': 23}) [mask coded once, report only: 0.393] | B_RO 0.111 [violates C5, report only] | own {"Sk": 35.4, "lev": 33.8, "min_of_sums": 33.8} KB | K0 0.9305 (d +0.69 pp) | clean 0.9978
+    VAL 342202|4: d furn -0.20 pp (arm 0.9680 / Qinf 0.9700), worst house r3_i7 -1.21 pp, d free -0.01, d surf -0.02, d FPR +0.0e+00, LIN 0.8867/0.8954 | B 334 KB / Qinf 774 KB = 0.432 (per-house med 0.396; Sk 471, lev 334; modes {'Sk': 1, 'lev': 23}) [mask coded once, report only: 0.432] | B_RO 0.118 [violates C5, report only] | own {"Sk": 41.0, "lev": 38.3, "min_of_sums": 38.3} KB | K0 0.9156 (d -1.46 pp) | clean 0.9973
+    fresh 342101|3: d furn -0.14 pp (arm 0.9737 / Qinf 0.9750), worst house r1_i10 -0.69 pp, d free -0.01, d surf -0.07, d FPR +0.0e+00, LIN 0.8955/0.9011 | B 279 KB / Qinf 756 KB = 0.370 (per-house med 0.324; Sk 355, lev 279; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.387] | B_RO 0.108 [violates C5, report only] | own {"Sk": 35.0, "lev": 33.8, "min_of_sums": 33.8} KB | K0 0.9335 (d -0.30 pp) | clean 0.9981
+    fresh 342202|3: d furn -0.14 pp (arm 0.9710 / Qinf 0.9724), worst house r1_i11 -0.55 pp, d free -0.02, d surf -0.04, d FPR +0.0e+00, LIN 0.8910/0.9000 | B 317 KB / Qinf 766 KB = 0.414 (per-house med 0.366; Sk 451, lev 317; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.433] | B_RO 0.117 [violates C5, report only] | own {"Sk": 40.6, "lev": 38.2, "min_of_sums": 38.2} KB | K0 0.9256 (d -0.80 pp) | clean 0.9972
+    fresh 342101|4: d furn -0.16 pp (arm 0.9726 / Qinf 0.9741), worst house r1_i10 -0.52 pp, d free -0.00, d surf -0.06, d FPR +0.0e+00, LIN 0.8954/0.9014 | B 278 KB / Qinf 753 KB = 0.369 (per-house med 0.322; Sk 360, lev 278; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.387] | B_RO 0.110 [violates C5, report only] | own {"Sk": 35.2, "lev": 33.9, "min_of_sums": 33.9} KB | K0 0.9251 (d -0.58 pp) | clean 0.9981
+    fresh 342202|4: d furn -0.21 pp (arm 0.9709 / Qinf 0.9730), worst house r3_i8 -0.92 pp, d free -0.02, d surf -0.07, d FPR +0.0e+00, LIN 0.8910/0.9002 | B 317 KB / Qinf 763 KB = 0.415 (per-house med 0.365; Sk 452, lev 317; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.435] | B_RO 0.118 [violates C5, report only] | own {"Sk": 41.1, "lev": 38.9, "min_of_sums": 38.9} KB | K0 0.9259 (d -0.44 pp) | clean 0.9972
+  [continuity] val seed 1 (24 houses)
+    342101 cam_nf: Qinf NET 0.9723
+      Q3: d furn -0.28 pp (arm 0.9695 / Qinf 0.9723), worst house r2_i4 -2.44 pp, d free -0.01, d surf -0.08, d FPR +0.0e+00, LIN 0.9047/0.9045 | B 267 KB / Qinf 751 KB = 0.355 (per-house med 0.330; Sk 425, lev 267; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.371] | B_RO 0.105 [violates C5, report only] | own {"Sk": 31.9, "lev": 30.1, "min_of_sums": 30.1} KB | K0 0.9221 (d -2.14 pp)
+      Q4: d furn -0.12 pp (arm 0.9710 / Qinf 0.9723), worst house r2_i4 -1.11 pp, d free -0.01, d surf -0.05, d FPR +0.0e+00, LIN 0.8978/0.9045 | B 292 KB / Qinf 751 KB = 0.388 (per-house med 0.354; Sk 363, lev 292; modes {'Sk': 1, 'lev': 23}) [mask coded once, report only: 0.396] | B_RO 0.113 [violates C5, report only] | own {"Sk": 35.0, "lev": 33.9, "min_of_sums": 33.9} KB | K0 0.9349 (d -0.86 pp)
+      VOTE: d furn -1.35 pp (arm 0.9588 / Qinf 0.9723), worst house r2_i4 -8.88 pp, d free -0.01, d surf -0.35, d FPR +0.0e+00, LIN 0.8479/0.9045 | B 192 KB / Qinf 751 KB = 0.256 (per-house med 0.235; Sk 279, lev 192; modes {'Sk': 1, 'lev': 23}) [mask coded once, report only: 0.267] | B_RO 0.087 [violates C5, report only] | own {"Sk": 21.8, "lev": 22.7, "min_of_sums": 21.8} KB
+      QPOST4 [prior at the source, report only]: {"furn": 0.97, "d_furn": -0.0023, "free": 0.9967, "d_free": -0.0003, "rc0_furn": 0.97, "d_rc0_furn": -0.0023, "theta": 0, "B_med": 144264.2882, "ratio": 0.1921, "ratio_mask_once": 0.1979}
+    342101 cam: Qinf NET 0.8057
+      Q3: d furn -0.44 pp (arm 0.8013 / Qinf 0.8057), worst house r2_i4 -2.46 pp, d free +0.01, d surf -0.19, d FPR +0.0e+00, LIN 0.7286/0.7333
+      Q4: d furn -0.20 pp (arm 0.8037 / Qinf 0.8057), worst house r2_i4 -2.68 pp, d free +0.00, d surf -0.10, d FPR +0.0e+00, LIN 0.7258/0.7333
+      VOTE: d furn -0.63 pp (arm 0.7995 / Qinf 0.8057), worst house r2_i4 -5.45 pp, d free -0.08, d surf -0.01, d FPR +0.0e+00, LIN 0.6886/0.7333
+      QPOST4 [prior at the source, report only]: {"furn": 0.7695, "d_furn": -0.0362, "free": 0.9736, "d_free": -0.0093, "rc0_furn": 0.7695, "d_rc0_furn": -0.0362, "theta": 0}
+    342101 clean: Qinf NET 0.9977
+      Q3: d furn -0.03 pp (arm 0.9974 / Qinf 0.9977), worst house r3_i7 -0.20 pp, d free +0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      Q4: d furn +0.01 pp (arm 0.9978 / Qinf 0.9977), worst house r3_i4 -0.09 pp, d free +0.00, d surf -0.00, d FPR +0.0e+00, LIN 1.0000/1.0000
+      VOTE: d furn -0.28 pp (arm 0.9949 / Qinf 0.9977), worst house r3_i7 -1.52 pp, d free +0.00, d surf -0.13, d FPR +0.0e+00, LIN 1.0000/1.0000
+    342202 cam_nf: Qinf NET 0.9729
+      Q3: d furn -0.26 pp (arm 0.9704 / Qinf 0.9729), worst house r2_i4 -1.48 pp, d free -0.01, d surf -0.06, d FPR +0.0e+00, LIN 0.9044/0.9034 | B 267 KB / Qinf 760 KB = 0.352 (per-house med 0.325; Sk 394, lev 267; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.367] | B_RO 0.104 [violates C5, report only] | own {"Sk": 32.0, "lev": 30.2, "min_of_sums": 30.2} KB | K0 0.9268 (d -1.14 pp)
+      Q4: d furn -0.19 pp (arm 0.9711 / Qinf 0.9729), worst house r2_i4 -1.22 pp, d free -0.02, d surf -0.03, d FPR +0.0e+00, LIN 0.8947/0.9034 | B 330 KB / Qinf 760 KB = 0.434 (per-house med 0.397; Sk 461, lev 330; modes {'Sk': 1, 'lev': 23}) [mask coded once, report only: 0.440] | B_RO 0.121 [violates C5, report only] | own {"Sk": 41.2, "lev": 38.7, "min_of_sums": 38.7} KB | K0 0.9346 (d -0.36 pp)
+      VOTE: d furn -1.36 pp (arm 0.9593 / Qinf 0.9729), worst house r2_i4 -10.91 pp, d free -0.02, d surf -0.35, d FPR +0.0e+00, LIN 0.8479/0.9034 | B 192 KB / Qinf 760 KB = 0.253 (per-house med 0.231; Sk 299, lev 192; modes {'Sk': 1, 'lev': 23}) [mask coded once, report only: 0.263] | B_RO 0.086 [violates C5, report only] | own {"Sk": 21.8, "lev": 22.7, "min_of_sums": 21.8} KB
+      QPOST4 [prior at the source, report only]: {"furn": 0.9705, "d_furn": -0.0024, "free": 0.9967, "d_free": -0.0003, "rc0_furn": 0.9705, "d_rc0_furn": -0.0024, "theta": 0, "B_med": 144321.233, "ratio": 0.1898, "ratio_mask_once": 0.1947}
+    342202 cam: Qinf NET 0.8024
+      Q3: d furn -0.29 pp (arm 0.7995 / Qinf 0.8024), worst house r3_i2 -1.82 pp, d free +0.01, d surf -0.21, d FPR +0.0e+00, LIN 0.7290/0.7338
+      Q4: d furn -0.14 pp (arm 0.8010 / Qinf 0.8024), worst house r1_i3 -0.60 pp, d free -0.01, d surf -0.07, d FPR +0.0e+00, LIN 0.7275/0.7338
+      VOTE: d furn -0.45 pp (arm 0.7979 / Qinf 0.8024), worst house r3_i4 -3.91 pp, d free -0.18, d surf -0.18, d FPR +0.0e+00, LIN 0.6886/0.7338
+      QPOST4 [prior at the source, report only]: {"furn": 0.7689, "d_furn": -0.0335, "free": 0.9735, "d_free": -0.0092, "rc0_furn": 0.7689, "d_rc0_furn": -0.0335, "theta": 0}
+    342202 clean: Qinf NET 0.9974
+      Q3: d furn -0.03 pp (arm 0.9971 / Qinf 0.9974), worst house r3_i1 -0.20 pp, d free +0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      Q4: d furn -0.01 pp (arm 0.9973 / Qinf 0.9974), worst house r3_i7 -0.27 pp, d free -0.00, d surf -0.01, d FPR +0.0e+00, LIN 0.9999/1.0000
+      VOTE: d furn -0.25 pp (arm 0.9949 / Qinf 0.9974), worst house r3_i7 -1.30 pp, d free +0.00, d surf -0.07, d FPR +0.0e+00, LIN 1.0000/1.0000
+  [continuity] val seed 2 (24 houses)
+    342101 cam_nf: Qinf NET 0.9657
+      Q3: d furn -0.22 pp (arm 0.9635 / Qinf 0.9657), worst house r2_i5 -0.72 pp, d free -0.01, d surf -0.05, d FPR +0.0e+00, LIN 0.8968/0.8964 | B 275 KB / Qinf 755 KB = 0.364 (per-house med 0.331; Sk 437, lev 275; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.380] | B_RO 0.103 [violates C5, report only] | own {"Sk": 32.5, "lev": 30.6, "min_of_sums": 30.6} KB | K0 0.9258 (d -0.91 pp)
+      Q4: d furn +0.00 pp (arm 0.9657 / Qinf 0.9657), worst house r2_i5 -0.36 pp, d free -0.01, d surf -0.03, d FPR +0.0e+00, LIN 0.8904/0.8964 | B 301 KB / Qinf 755 KB = 0.399 (per-house med 0.357; Sk 372, lev 301; modes {'Sk': 1, 'lev': 23}) [mask coded once, report only: 0.405] | B_RO 0.111 [violates C5, report only] | own {"Sk": 35.9, "lev": 34.2, "min_of_sums": 34.2} KB | K0 0.9226 (d -1.24 pp)
+      VOTE: d furn -1.41 pp (arm 0.9516 / Qinf 0.9657), worst house r2_i4 -8.41 pp, d free -0.00, d surf -0.30, d FPR +0.0e+00, LIN 0.8366/0.8964 | B 198 KB / Qinf 755 KB = 0.263 (per-house med 0.233; Sk 288, lev 198; modes {'Sk': 1, 'lev': 23}) [mask coded once, report only: 0.274] | B_RO 0.084 [violates C5, report only] | own {"Sk": 22.4, "lev": 23.3, "min_of_sums": 22.4} KB
+      QPOST4 [prior at the source, report only]: {"furn": 0.9613, "d_furn": -0.0044, "free": 0.9964, "d_free": -0.0006, "rc0_furn": 0.9613, "d_rc0_furn": -0.0044, "theta": 0, "B_med": 148216.1403, "ratio": 0.1963, "ratio_mask_once": 0.1989}
+    342101 cam: Qinf NET 0.8134
+      Q3: d furn -0.43 pp (arm 0.8091 / Qinf 0.8134), worst house r2_i4 -1.97 pp, d free +0.02, d surf -0.19, d FPR +0.0e+00, LIN 0.7364/0.7413
+      Q4: d furn -0.03 pp (arm 0.8131 / Qinf 0.8134), worst house r3_i7 -1.24 pp, d free +0.02, d surf -0.09, d FPR +0.0e+00, LIN 0.7328/0.7413
+      VOTE: d furn -0.66 pp (arm 0.8068 / Qinf 0.8134), worst house r2_i4 -6.61 pp, d free -0.12, d surf -0.52, d FPR +0.0e+00, LIN 0.6948/0.7413
+      QPOST4 [prior at the source, report only]: {"furn": 0.7853, "d_furn": -0.0281, "free": 0.9758, "d_free": -0.0079, "rc0_furn": 0.7853, "d_rc0_furn": -0.0281, "theta": 0}
+    342101 clean: Qinf NET 0.9977
+      Q3: d furn -0.03 pp (arm 0.9974 / Qinf 0.9977), worst house r3_i7 -0.20 pp, d free +0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      Q4: d furn +0.01 pp (arm 0.9978 / Qinf 0.9977), worst house r3_i4 -0.09 pp, d free +0.00, d surf -0.00, d FPR +0.0e+00, LIN 1.0000/1.0000
+      VOTE: d furn -0.28 pp (arm 0.9949 / Qinf 0.9977), worst house r3_i7 -1.52 pp, d free +0.00, d surf -0.13, d FPR +0.0e+00, LIN 1.0000/1.0000
+    342202 cam_nf: Qinf NET 0.9670
+      Q3: d furn -0.41 pp (arm 0.9629 / Qinf 0.9670), worst house r2_i4 -3.10 pp, d free -0.01, d surf -0.05, d FPR +0.0e+00, LIN 0.8965/0.8954 | B 276 KB / Qinf 765 KB = 0.360 (per-house med 0.326; Sk 405, lev 276; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.375] | B_RO 0.102 [violates C5, report only] | own {"Sk": 32.6, "lev": 30.6, "min_of_sums": 30.6} KB | K0 0.9308 (d -0.55 pp)
+      Q4: d furn -0.33 pp (arm 0.9638 / Qinf 0.9670), worst house r2_i4 -3.10 pp, d free -0.01, d surf -0.04, d FPR +0.0e+00, LIN 0.8862/0.8954 | B 337 KB / Qinf 765 KB = 0.441 (per-house med 0.399; Sk 467, lev 337; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.447] | B_RO 0.118 [violates C5, report only] | own {"Sk": 41.5, "lev": 38.7, "min_of_sums": 38.7} KB | K0 0.9226 (d -1.37 pp)
+      VOTE: d furn -1.45 pp (arm 0.9526 / Qinf 0.9670), worst house r2_i4 -8.55 pp, d free -0.03, d surf -0.37, d FPR +0.0e+00, LIN 0.8366/0.8954 | B 198 KB / Qinf 765 KB = 0.260 (per-house med 0.229; Sk 310, lev 198; modes {'Sk': 1, 'lev': 23}) [mask coded once, report only: 0.270] | B_RO 0.083 [violates C5, report only] | own {"Sk": 22.4, "lev": 23.3, "min_of_sums": 22.4} KB
+      QPOST4 [prior at the source, report only]: {"furn": 0.9636, "d_furn": -0.0034, "free": 0.9964, "d_free": -0.0006, "rc0_furn": 0.9636, "d_rc0_furn": -0.0034, "theta": 0, "B_med": 149047.0167, "ratio": 0.195, "ratio_mask_once": 0.1952}
+    342202 cam: Qinf NET 0.8127
+      Q3: d furn -0.45 pp (arm 0.8083 / Qinf 0.8127), worst house r1_i6 -1.18 pp, d free +0.01, d surf -0.14, d FPR +0.0e+00, LIN 0.7370/0.7414
+      Q4: d furn -0.28 pp (arm 0.8100 / Qinf 0.8127), worst house r2_i1 -1.06 pp, d free -0.01, d surf -0.07, d FPR +0.0e+00, LIN 0.7346/0.7414
+      VOTE: d furn -0.66 pp (arm 0.8061 / Qinf 0.8127), worst house r2_i4 -2.91 pp, d free -0.16, d surf -0.20, d FPR +0.0e+00, LIN 0.6948/0.7414
+      QPOST4 [prior at the source, report only]: {"furn": 0.7843, "d_furn": -0.0285, "free": 0.9754, "d_free": -0.0079, "rc0_furn": 0.7843, "d_rc0_furn": -0.0285, "theta": 0}
+    342202 clean: Qinf NET 0.9974
+      Q3: d furn -0.03 pp (arm 0.9971 / Qinf 0.9974), worst house r3_i1 -0.20 pp, d free +0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      Q4: d furn -0.01 pp (arm 0.9973 / Qinf 0.9974), worst house r3_i7 -0.27 pp, d free -0.00, d surf -0.01, d FPR +0.0e+00, LIN 0.9999/1.0000
+      VOTE: d furn -0.25 pp (arm 0.9949 / Qinf 0.9974), worst house r3_i7 -1.30 pp, d free +0.00, d surf -0.07, d FPR +0.0e+00, LIN 1.0000/1.0000
+  [judged seed, all tiers / report rows] val seed 3 (24 houses)
+    342101 cam_nf: Qinf NET 0.9731
+      Q3: d furn -0.20 pp (arm 0.9712 / Qinf 0.9731), worst house r2_i7 -0.78 pp, d free -0.00, d surf -0.04, d FPR +0.0e+00, LIN 0.9066/0.9067 | B 266 KB / Qinf 744 KB = 0.358 (per-house med 0.327; Sk 422, lev 266; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.373] | B_RO 0.103 [violates C5, report only] | own {"Sk": 31.5, "lev": 29.6, "min_of_sums": 29.6} KB | K0 0.9337 (d -0.98 pp)
+      Q4: d furn -0.12 pp (arm 0.9720 / Qinf 0.9731), worst house r2_i4 -0.84 pp, d free +0.00, d surf -0.01, d FPR +0.0e+00, LIN 0.9004/0.9067 | B 291 KB / Qinf 744 KB = 0.391 (per-house med 0.355; Sk 362, lev 291; modes {'Sk': 1, 'lev': 23}) [mask coded once, report only: 0.397] | B_RO 0.111 [violates C5, report only] | own {"Sk": 34.9, "lev": 33.5, "min_of_sums": 33.5} KB | K0 0.9360 (d -0.76 pp)
+      VOTE: d furn -1.03 pp (arm 0.9629 / Qinf 0.9731), worst house r2_i4 -4.21 pp, d free +0.00, d surf -0.30, d FPR +0.0e+00, LIN 0.8499/0.9067 | B 193 KB / Qinf 744 KB = 0.259 (per-house med 0.231; Sk 279, lev 193; modes {'Sk': 1, 'lev': 23}) [mask coded once, report only: 0.269] | B_RO 0.085 [violates C5, report only] | own {"Sk": 21.6, "lev": 22.4, "min_of_sums": 21.6} KB
+      QPOST4 [prior at the source, report only]: {"furn": 0.9706, "d_furn": -0.0025, "free": 0.9967, "d_free": -0.0007, "rc0_furn": 0.9706, "d_rc0_furn": -0.0025, "theta": 0, "B_med": 144619.7445, "ratio": 0.1945, "ratio_mask_once": 0.1962}
+    342101 cam: Qinf NET 0.8066
+      Q3: d furn -0.68 pp (arm 0.7998 / Qinf 0.8066), worst house r1_i6 -1.74 pp, d free +0.02, d surf -0.17, d FPR +0.0e+00, LIN 0.7292/0.7345
+      Q4: d furn -0.43 pp (arm 0.8024 / Qinf 0.8066), worst house r1_i6 -1.79 pp, d free +0.01, d surf -0.13, d FPR +0.0e+00, LIN 0.7263/0.7345
+      VOTE: d furn -0.38 pp (arm 0.8029 / Qinf 0.8066), worst house r2_i4 -3.01 pp, d free -0.12, d surf -0.08, d FPR +0.0e+00, LIN 0.6896/0.7345
+      QPOST4 [prior at the source, report only]: {"furn": 0.7736, "d_furn": -0.033, "free": 0.9736, "d_free": -0.0083, "rc0_furn": 0.7736, "d_rc0_furn": -0.033, "theta": 0}
+    342101 clean: Qinf NET 0.9977
+      Q3: d furn -0.03 pp (arm 0.9974 / Qinf 0.9977), worst house r3_i7 -0.20 pp, d free +0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      Q4: d furn +0.01 pp (arm 0.9978 / Qinf 0.9977), worst house r3_i4 -0.09 pp, d free +0.00, d surf -0.00, d FPR +0.0e+00, LIN 1.0000/1.0000
+      VOTE: d furn -0.28 pp (arm 0.9949 / Qinf 0.9977), worst house r3_i7 -1.52 pp, d free +0.00, d surf -0.13, d FPR +0.0e+00, LIN 1.0000/1.0000
+    342202 cam_nf: Qinf NET 0.9738
+      Q3: d furn -0.30 pp (arm 0.9708 / Qinf 0.9738), worst house r2_i7 -1.53 pp, d free -0.01, d surf -0.04, d FPR +0.0e+00, LIN 0.9065/0.9059 | B 267 KB / Qinf 754 KB = 0.354 (per-house med 0.323; Sk 391, lev 267; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.368] | B_RO 0.102 [violates C5, report only] | own {"Sk": 31.6, "lev": 29.7, "min_of_sums": 29.7} KB | K0 0.9394 (d -0.42 pp)
+      Q4: d furn -0.21 pp (arm 0.9716 / Qinf 0.9738), worst house r3_i7 -1.34 pp, d free -0.02, d surf -0.03, d FPR +0.0e+00, LIN 0.8975/0.9059 | B 327 KB / Qinf 754 KB = 0.434 (per-house med 0.396; Sk 457, lev 327; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.439] | B_RO 0.119 [violates C5, report only] | own {"Sk": 40.9, "lev": 38.1, "min_of_sums": 38.1} KB | K0 0.9301 (d -1.35 pp)
+      VOTE: d furn -1.17 pp (arm 0.9621 / Qinf 0.9738), worst house r2_i4 -4.91 pp, d free -0.02, d surf -0.33, d FPR +0.0e+00, LIN 0.8499/0.9059 | B 193 KB / Qinf 754 KB = 0.255 (per-house med 0.228; Sk 300, lev 193; modes {'Sk': 1, 'lev': 23}) [mask coded once, report only: 0.266] | B_RO 0.084 [violates C5, report only] | own {"Sk": 21.6, "lev": 22.4, "min_of_sums": 21.6} KB
+      QPOST4 [prior at the source, report only]: {"furn": 0.971, "d_furn": -0.0028, "free": 0.9966, "d_free": -0.0007, "rc0_furn": 0.971, "d_rc0_furn": -0.0028, "theta": 0, "B_med": 143777.8277, "ratio": 0.1907, "ratio_mask_once": 0.1929}
+    342202 cam: Qinf NET 0.8020
+      Q3: d furn -0.20 pp (arm 0.8000 / Qinf 0.8020), worst house r1_i0 -1.26 pp, d free +0.02, d surf -0.03, d FPR +0.0e+00, LIN 0.7296/0.7349
+      Q4: d furn -0.22 pp (arm 0.7999 / Qinf 0.8020), worst house r1_i0 -0.73 pp, d free +0.00, d surf -0.03, d FPR +0.0e+00, LIN 0.7289/0.7349
+      VOTE: d furn -0.24 pp (arm 0.7996 / Qinf 0.8020), worst house r3_i2 -2.54 pp, d free -0.18, d surf -0.03, d FPR +0.0e+00, LIN 0.6896/0.7349
+      QPOST4 [prior at the source, report only]: {"furn": 0.769, "d_furn": -0.033, "free": 0.9733, "d_free": -0.0079, "rc0_furn": 0.769, "d_rc0_furn": -0.033, "theta": 0}
+    342202 clean: Qinf NET 0.9974
+      Q3: d furn -0.03 pp (arm 0.9971 / Qinf 0.9974), worst house r3_i1 -0.20 pp, d free +0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      Q4: d furn -0.01 pp (arm 0.9973 / Qinf 0.9974), worst house r3_i7 -0.27 pp, d free -0.00, d surf -0.01, d FPR +0.0e+00, LIN 0.9999/1.0000
+      VOTE: d furn -0.25 pp (arm 0.9949 / Qinf 0.9974), worst house r3_i7 -1.30 pp, d free +0.00, d surf -0.07, d FPR +0.0e+00, LIN 1.0000/1.0000
+  [judged seed, all tiers / report rows] val seed 4 (24 houses)
+    342101 cam_nf: Qinf NET 0.9692
+      Q3: d furn -0.40 pp (arm 0.9652 / Qinf 0.9692), worst house r3_i7 -2.24 pp, d free -0.01, d surf -0.07, d FPR +0.0e+00, LIN 0.8955/0.8962 | B 272 KB / Qinf 764 KB = 0.356 (per-house med 0.327; Sk 438, lev 272; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.373] | B_RO 0.104 [violates C5, report only] | own {"Sk": 32.7, "lev": 30.5, "min_of_sums": 30.5} KB | K0 0.9229 (d -0.08 pp)
+      Q4: d furn -0.28 pp (arm 0.9664 / Qinf 0.9692), worst house r3_i7 -1.83 pp, d free -0.01, d surf -0.04, d FPR +0.0e+00, LIN 0.8900/0.8962 | B 297 KB / Qinf 764 KB = 0.389 (per-house med 0.351; Sk 367, lev 297; modes {'Sk': 1, 'lev': 23}) [mask coded once, report only: 0.393] | B_RO 0.111 [violates C5, report only] | own {"Sk": 35.4, "lev": 33.8, "min_of_sums": 33.8} KB | K0 0.9305 (d +0.69 pp)
+      VOTE: d furn -1.22 pp (arm 0.9571 / Qinf 0.9692), worst house r2_i4 -4.35 pp, d free -0.00, d surf -0.31, d FPR +0.0e+00, LIN 0.8402/0.8962 | B 195 KB / Qinf 764 KB = 0.255 (per-house med 0.231; Sk 287, lev 195; modes {'Sk': 1, 'lev': 23}) [mask coded once, report only: 0.268] | B_RO 0.085 [violates C5, report only] | own {"Sk": 22.5, "lev": 23.2, "min_of_sums": 22.5} KB
+      QPOST4 [prior at the source, report only]: {"furn": 0.9665, "d_furn": -0.0027, "free": 0.9967, "d_free": -0.0007, "rc0_furn": 0.9665, "d_rc0_furn": -0.0027, "theta": 0, "B_med": 145276.1558, "ratio": 0.1902, "ratio_mask_once": 0.1982}
+    342101 cam: Qinf NET 0.8183
+      Q3: d furn -0.25 pp (arm 0.8158 / Qinf 0.8183), worst house r3_i3 -2.16 pp, d free +0.03, d surf -0.24, d FPR +0.0e+00, LIN 0.7424/0.7466
+      Q4: d furn -0.10 pp (arm 0.8173 / Qinf 0.8183), worst house r3_i3 -1.59 pp, d free +0.02, d surf -0.15, d FPR +0.0e+00, LIN 0.7378/0.7466
+      VOTE: d furn -0.65 pp (arm 0.8118 / Qinf 0.8183), worst house r3_i7 -4.53 pp, d free -0.05, d surf -0.25, d FPR +0.0e+00, LIN 0.7018/0.7466
+      QPOST4 [prior at the source, report only]: {"furn": 0.7867, "d_furn": -0.0317, "free": 0.9761, "d_free": -0.0084, "rc0_furn": 0.7867, "d_rc0_furn": -0.0317, "theta": 0}
+    342101 clean: Qinf NET 0.9977
+      Q3: d furn -0.03 pp (arm 0.9974 / Qinf 0.9977), worst house r3_i7 -0.20 pp, d free +0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      Q4: d furn +0.01 pp (arm 0.9978 / Qinf 0.9977), worst house r3_i4 -0.09 pp, d free +0.00, d surf -0.00, d FPR +0.0e+00, LIN 1.0000/1.0000
+      VOTE: d furn -0.28 pp (arm 0.9949 / Qinf 0.9977), worst house r3_i7 -1.52 pp, d free +0.00, d surf -0.13, d FPR +0.0e+00, LIN 1.0000/1.0000
+    342202 cam_nf: Qinf NET 0.9700
+      Q3: d furn -0.38 pp (arm 0.9662 / Qinf 0.9700), worst house r3_i7 -2.88 pp, d free -0.01, d surf -0.04, d FPR +0.0e+00, LIN 0.8954/0.8954 | B 272 KB / Qinf 774 KB = 0.352 (per-house med 0.322; Sk 406, lev 272; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.368] | B_RO 0.102 [violates C5, report only] | own {"Sk": 32.8, "lev": 30.6, "min_of_sums": 30.6} KB | K0 0.9182 (d -1.20 pp)
+      Q4: d furn -0.20 pp (arm 0.9680 / Qinf 0.9700), worst house r3_i7 -1.21 pp, d free -0.01, d surf -0.02, d FPR +0.0e+00, LIN 0.8867/0.8954 | B 334 KB / Qinf 774 KB = 0.432 (per-house med 0.396; Sk 471, lev 334; modes {'Sk': 1, 'lev': 23}) [mask coded once, report only: 0.432] | B_RO 0.118 [violates C5, report only] | own {"Sk": 41.0, "lev": 38.3, "min_of_sums": 38.3} KB | K0 0.9156 (d -1.46 pp)
+      VOTE: d furn -1.38 pp (arm 0.9563 / Qinf 0.9700), worst house r2_i4 -8.99 pp, d free -0.01, d surf -0.27, d FPR +0.0e+00, LIN 0.8402/0.8954 | B 195 KB / Qinf 774 KB = 0.252 (per-house med 0.227; Sk 309, lev 195; modes {'Sk': 1, 'lev': 23}) [mask coded once, report only: 0.264] | B_RO 0.084 [violates C5, report only] | own {"Sk": 22.5, "lev": 23.2, "min_of_sums": 22.5} KB
+      QPOST4 [prior at the source, report only]: {"furn": 0.9663, "d_furn": -0.0037, "free": 0.9967, "d_free": -0.0007, "rc0_furn": 0.9663, "d_rc0_furn": -0.0037, "theta": 0, "B_med": 144678.3362, "ratio": 0.187, "ratio_mask_once": 0.1946}
+    342202 cam: Qinf NET 0.8185
+      Q3: d furn -0.35 pp (arm 0.8150 / Qinf 0.8185), worst house r2_i4 -1.58 pp, d free +0.00, d surf -0.16, d FPR +0.0e+00, LIN 0.7426/0.7466
+      Q4: d furn -0.11 pp (arm 0.8174 / Qinf 0.8185), worst house r3_i3 -1.11 pp, d free -0.02, d surf -0.08, d FPR +0.0e+00, LIN 0.7391/0.7466
+      VOTE: d furn -0.51 pp (arm 0.8134 / Qinf 0.8185), worst house r3_i7 -4.58 pp, d free -0.12, d surf -0.16, d FPR +0.0e+00, LIN 0.7018/0.7466
+      QPOST4 [prior at the source, report only]: {"furn": 0.7852, "d_furn": -0.0333, "free": 0.9761, "d_free": -0.0086, "rc0_furn": 0.7852, "d_rc0_furn": -0.0333, "theta": 0}
+    342202 clean: Qinf NET 0.9974
+      Q3: d furn -0.03 pp (arm 0.9971 / Qinf 0.9974), worst house r3_i1 -0.20 pp, d free +0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      Q4: d furn -0.01 pp (arm 0.9973 / Qinf 0.9974), worst house r3_i7 -0.27 pp, d free -0.00, d surf -0.01, d FPR +0.0e+00, LIN 0.9999/1.0000
+      VOTE: d furn -0.25 pp (arm 0.9949 / Qinf 0.9974), worst house r3_i7 -1.30 pp, d free +0.00, d surf -0.07, d FPR +0.0e+00, LIN 1.0000/1.0000
+  [continuity] fresh seed 1 (24 houses)
+    342101 cam_nf: Qinf NET 0.9686
+      Q3: d furn -0.25 pp (arm 0.9661 / Qinf 0.9686), worst house r1_i8 -0.62 pp, d free -0.01, d surf -0.07, d FPR +0.0e+00, LIN 0.8944/0.8947 | B 259 KB / Qinf 745 KB = 0.348 (per-house med 0.297; Sk 420, lev 259; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.365] | B_RO 0.104 [violates C5, report only] | own {"Sk": 31.8, "lev": 30.3, "min_of_sums": 30.3} KB | K0 0.9083 (d -1.64 pp)
+      Q4: d furn -0.23 pp (arm 0.9663 / Qinf 0.9686), worst house r1_i10 -1.17 pp, d free -0.00, d surf -0.05, d FPR +0.0e+00, LIN 0.8893/0.8947 | B 281 KB / Qinf 745 KB = 0.377 (per-house med 0.327; Sk 358, lev 281; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.396] | B_RO 0.112 [violates C5, report only] | own {"Sk": 35.3, "lev": 33.9, "min_of_sums": 33.9} KB | K0 0.9164 (d -0.83 pp)
+      VOTE: d furn -1.29 pp (arm 0.9557 / Qinf 0.9686), worst house r3_i8 -3.53 pp, d free -0.04, d surf -0.49, d FPR +0.0e+00, LIN 0.8359/0.8947 | B 186 KB / Qinf 745 KB = 0.250 (per-house med 0.209; Sk 280, lev 186; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.262] | B_RO 0.087 [violates C5, report only] | own {"Sk": 22.3, "lev": 22.9, "min_of_sums": 22.3} KB
+      QPOST4 [prior at the source, report only]: {"furn": 0.965, "d_furn": -0.0035, "free": 0.9961, "d_free": -0.0008, "rc0_furn": 0.965, "d_rc0_furn": -0.0035, "theta": 0, "B_med": 145309.3926, "ratio": 0.1951, "ratio_mask_once": 0.2048}
+    342101 cam: Qinf NET 0.8155
+      Q3: d furn -0.34 pp (arm 0.8121 / Qinf 0.8155), worst house r3_i11 -1.63 pp, d free +0.01, d surf -0.26, d FPR +0.0e+00, LIN 0.7429/0.7473
+      Q4: d furn -0.01 pp (arm 0.8154 / Qinf 0.8155), worst house r3_i11 -1.47 pp, d free +0.00, d surf -0.18, d FPR +0.0e+00, LIN 0.7412/0.7473
+      VOTE: d furn +0.03 pp (arm 0.8158 / Qinf 0.8155), worst house r3_i11 -3.56 pp, d free -0.12, d surf -0.40, d FPR +0.0e+00, LIN 0.7006/0.7473
+      QPOST4 [prior at the source, report only]: {"furn": 0.7838, "d_furn": -0.0317, "free": 0.975, "d_free": -0.0076, "rc0_furn": 0.7838, "d_rc0_furn": -0.0317, "theta": 0}
+    342101 clean: Qinf NET 0.9980
+      Q3: d furn -0.03 pp (arm 0.9976 / Qinf 0.9980), worst house r3_i8 -0.15 pp, d free -0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      Q4: d furn +0.02 pp (arm 0.9981 / Qinf 0.9980), worst house r3_i8 -0.07 pp, d free +0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      VOTE: d furn -0.21 pp (arm 0.9959 / Qinf 0.9980), worst house r3_i8 -0.77 pp, d free +0.00, d surf -0.11, d FPR +0.0e+00, LIN 1.0000/1.0000
+    342202 cam_nf: Qinf NET 0.9684
+      Q3: d furn -0.29 pp (arm 0.9655 / Qinf 0.9684), worst house r1_i8 -1.00 pp, d free -0.01, d surf -0.08, d FPR +0.0e+00, LIN 0.8943/0.8935 | B 259 KB / Qinf 755 KB = 0.344 (per-house med 0.294; Sk 381, lev 259; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.361] | B_RO 0.103 [violates C5, report only] | own {"Sk": 31.9, "lev": 30.3, "min_of_sums": 30.3} KB | K0 0.9135 (d -0.82 pp)
+      Q4: d furn -0.16 pp (arm 0.9668 / Qinf 0.9684), worst house r3_i11 -0.61 pp, d free -0.02, d surf -0.04, d FPR +0.0e+00, LIN 0.8845/0.8935 | B 319 KB / Qinf 755 KB = 0.423 (per-house med 0.367; Sk 450, lev 319; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.444] | B_RO 0.120 [violates C5, report only] | own {"Sk": 41.2, "lev": 38.8, "min_of_sums": 38.8} KB | K0 0.9172 (d -0.46 pp)
+      VOTE: d furn -1.33 pp (arm 0.9551 / Qinf 0.9684), worst house r1_i8 -3.48 pp, d free -0.05, d surf -0.46, d FPR +0.0e+00, LIN 0.8359/0.8935 | B 186 KB / Qinf 755 KB = 0.246 (per-house med 0.206; Sk 293, lev 186; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.259] | B_RO 0.085 [violates C5, report only] | own {"Sk": 22.3, "lev": 22.9, "min_of_sums": 22.3} KB
+      QPOST4 [prior at the source, report only]: {"furn": 0.9639, "d_furn": -0.0045, "free": 0.9961, "d_free": -0.0008, "rc0_furn": 0.9639, "d_rc0_furn": -0.0045, "theta": 0, "B_med": 144732.8191, "ratio": 0.1917, "ratio_mask_once": 0.2012}
+    342202 cam: Qinf NET 0.8192
+      Q3: d furn -0.33 pp (arm 0.8159 / Qinf 0.8192), worst house r3_i14 -1.59 pp, d free +0.01, d surf -0.22, d FPR +0.0e+00, LIN 0.7432/0.7475
+      Q4: d furn -0.21 pp (arm 0.8171 / Qinf 0.8192), worst house r1_i12 -1.27 pp, d free -0.01, d surf -0.14, d FPR +0.0e+00, LIN 0.7393/0.7475
+      VOTE: d furn -0.72 pp (arm 0.8120 / Qinf 0.8192), worst house r3_i11 -5.21 pp, d free -0.17, d surf -0.48, d FPR +0.0e+00, LIN 0.7006/0.7475
+      QPOST4 [prior at the source, report only]: {"furn": 0.7835, "d_furn": -0.0357, "free": 0.9747, "d_free": -0.0078, "rc0_furn": 0.7835, "d_rc0_furn": -0.0357, "theta": 0}
+    342202 clean: Qinf NET 0.9976
+      Q3: d furn -0.04 pp (arm 0.9972 / Qinf 0.9976), worst house r1_i10 -0.35 pp, d free -0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      Q4: d furn -0.04 pp (arm 0.9972 / Qinf 0.9976), worst house r3_i11 -0.40 pp, d free -0.00, d surf -0.01, d FPR +0.0e+00, LIN 0.9999/1.0000
+      VOTE: d furn -0.18 pp (arm 0.9959 / Qinf 0.9976), worst house r3_i15 -0.91 pp, d free +0.00, d surf -0.07, d FPR +0.0e+00, LIN 1.0000/1.0000
+  [continuity] fresh seed 2 (24 houses)
+    342101 cam_nf: Qinf NET 0.9710
+      Q3: d furn -0.24 pp (arm 0.9686 / Qinf 0.9710), worst house r1_i8 -1.80 pp, d free -0.01, d surf -0.08, d FPR +0.0e+00, LIN 0.9007/0.9014 | B 253 KB / Qinf 758 KB = 0.333 (per-house med 0.295; Sk 419, lev 253; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.350] | B_RO 0.101 [violates C5, report only] | own {"Sk": 32.1, "lev": 30.5, "min_of_sums": 30.5} KB | K0 0.9169 (d -1.68 pp)
+      Q4: d furn -0.14 pp (arm 0.9696 / Qinf 0.9710), worst house r1_i8 -1.70 pp, d free -0.00, d surf -0.05, d FPR +0.0e+00, LIN 0.8949/0.9014 | B 274 KB / Qinf 758 KB = 0.362 (per-house med 0.324; Sk 358, lev 274; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.380] | B_RO 0.109 [violates C5, report only] | own {"Sk": 35.4, "lev": 34.0, "min_of_sums": 34.0} KB | K0 0.9254 (d -0.83 pp)
+      VOTE: d furn -1.14 pp (arm 0.9596 / Qinf 0.9710), worst house r1_i12 -3.06 pp, d free -0.03, d surf -0.45, d FPR +0.0e+00, LIN 0.8455/0.9014 | B 183 KB / Qinf 758 KB = 0.242 (per-house med 0.209; Sk 279, lev 183; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.253] | B_RO 0.084 [violates C5, report only] | own {"Sk": 22.4, "lev": 23.0, "min_of_sums": 22.4} KB
+      QPOST4 [prior at the source, report only]: {"furn": 0.9669, "d_furn": -0.0041, "free": 0.9965, "d_free": -0.0005, "rc0_furn": 0.9669, "d_rc0_furn": -0.0041, "theta": 0, "B_med": 140595.355, "ratio": 0.1855, "ratio_mask_once": 0.1946}
+    342101 cam: Qinf NET 0.7876
+      Q3: d furn -0.35 pp (arm 0.7841 / Qinf 0.7876), worst house r1_i8 -2.58 pp, d free +0.03, d surf -0.21, d FPR +0.0e+00, LIN 0.7275/0.7314
+      Q4: d furn -0.13 pp (arm 0.7863 / Qinf 0.7876), worst house r1_i8 -2.59 pp, d free +0.02, d surf -0.15, d FPR +0.0e+00, LIN 0.7240/0.7314
+      VOTE: d furn -0.17 pp (arm 0.7860 / Qinf 0.7876), worst house r2_i11 -4.46 pp, d free -0.06, d surf -0.32, d FPR +0.0e+00, LIN 0.6926/0.7314
+      QPOST4 [prior at the source, report only]: {"furn": 0.765, "d_furn": -0.0226, "free": 0.9762, "d_free": -0.0066, "rc0_furn": 0.765, "d_rc0_furn": -0.0226, "theta": 0}
+    342101 clean: Qinf NET 0.9980
+      Q3: d furn -0.03 pp (arm 0.9976 / Qinf 0.9980), worst house r3_i8 -0.15 pp, d free -0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      Q4: d furn +0.02 pp (arm 0.9981 / Qinf 0.9980), worst house r3_i8 -0.07 pp, d free +0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      VOTE: d furn -0.21 pp (arm 0.9959 / Qinf 0.9980), worst house r3_i8 -0.77 pp, d free +0.00, d surf -0.11, d FPR +0.0e+00, LIN 1.0000/1.0000
+    342202 cam_nf: Qinf NET 0.9711
+      Q3: d furn -0.26 pp (arm 0.9685 / Qinf 0.9711), worst house r1_i8 -1.51 pp, d free -0.01, d surf -0.08, d FPR +0.0e+00, LIN 0.9007/0.9005 | B 253 KB / Qinf 768 KB = 0.330 (per-house med 0.291; Sk 380, lev 253; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.346] | B_RO 0.100 [violates C5, report only] | own {"Sk": 32.2, "lev": 30.5, "min_of_sums": 30.5} KB | K0 0.9247 (d -1.01 pp)
+      Q4: d furn -0.22 pp (arm 0.9690 / Qinf 0.9711), worst house r1_i10 -0.92 pp, d free -0.02, d surf -0.06, d FPR +0.0e+00, LIN 0.8912/0.9005 | B 312 KB / Qinf 768 KB = 0.406 (per-house med 0.365; Sk 450, lev 312; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.426] | B_RO 0.117 [violates C5, report only] | own {"Sk": 40.9, "lev": 38.4, "min_of_sums": 38.4} KB | K0 0.9304 (d -0.44 pp)
+      VOTE: d furn -1.25 pp (arm 0.9586 / Qinf 0.9711), worst house r1_i12 -4.22 pp, d free -0.03, d surf -0.44, d FPR +0.0e+00, LIN 0.8455/0.9005 | B 183 KB / Qinf 768 KB = 0.238 (per-house med 0.205; Sk 293, lev 183; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.250] | B_RO 0.083 [violates C5, report only] | own {"Sk": 22.4, "lev": 23.0, "min_of_sums": 22.4} KB
+      QPOST4 [prior at the source, report only]: {"furn": 0.9671, "d_furn": -0.0041, "free": 0.9965, "d_free": -0.0004, "rc0_furn": 0.9671, "d_rc0_furn": -0.0041, "theta": 0, "B_med": 139480.8996, "ratio": 0.1817, "ratio_mask_once": 0.1904}
+    342202 cam: Qinf NET 0.7909
+      Q3: d furn -0.30 pp (arm 0.7879 / Qinf 0.7909), worst house r3_i11 -2.17 pp, d free +0.01, d surf -0.19, d FPR +0.0e+00, LIN 0.7279/0.7314
+      Q4: d furn -0.19 pp (arm 0.7890 / Qinf 0.7909), worst house r1_i10 -1.33 pp, d free -0.02, d surf -0.11, d FPR +0.0e+00, LIN 0.7234/0.7314
+      VOTE: d furn +0.09 pp (arm 0.7918 / Qinf 0.7909), worst house r2_i11 -3.65 pp, d free -0.09, d surf -0.14, d FPR +0.0e+00, LIN 0.6926/0.7314
+      QPOST4 [prior at the source, report only]: {"furn": 0.7634, "d_furn": -0.0276, "free": 0.9759, "d_free": -0.0067, "rc0_furn": 0.7634, "d_rc0_furn": -0.0276, "theta": 0}
+    342202 clean: Qinf NET 0.9976
+      Q3: d furn -0.04 pp (arm 0.9972 / Qinf 0.9976), worst house r1_i10 -0.35 pp, d free -0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      Q4: d furn -0.04 pp (arm 0.9972 / Qinf 0.9976), worst house r3_i11 -0.40 pp, d free -0.00, d surf -0.01, d FPR +0.0e+00, LIN 0.9999/1.0000
+      VOTE: d furn -0.18 pp (arm 0.9959 / Qinf 0.9976), worst house r3_i15 -0.91 pp, d free +0.00, d surf -0.07, d FPR +0.0e+00, LIN 1.0000/1.0000
+  [judged seed, all tiers / report rows] fresh seed 3 (24 houses)
+    342101 cam_nf: Qinf NET 0.9750
+      Q3: d furn -0.21 pp (arm 0.9729 / Qinf 0.9750), worst house r1_i10 -0.76 pp, d free -0.01, d surf -0.09, d FPR +0.0e+00, LIN 0.9016/0.9011 | B 256 KB / Qinf 756 KB = 0.338 (per-house med 0.294; Sk 424, lev 256; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.354] | B_RO 0.101 [violates C5, report only] | own {"Sk": 31.7, "lev": 30.0, "min_of_sums": 30.0} KB | K0 0.9265 (d -1.01 pp)
+      Q4: d furn -0.14 pp (arm 0.9737 / Qinf 0.9750), worst house r1_i10 -0.69 pp, d free -0.01, d surf -0.07, d FPR +0.0e+00, LIN 0.8955/0.9011 | B 279 KB / Qinf 756 KB = 0.370 (per-house med 0.324; Sk 355, lev 279; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.387] | B_RO 0.108 [violates C5, report only] | own {"Sk": 35.0, "lev": 33.8, "min_of_sums": 33.8} KB | K0 0.9335 (d -0.30 pp)
+      VOTE: d furn -1.44 pp (arm 0.9606 / Qinf 0.9750), worst house r1_i10 -3.37 pp, d free -0.02, d surf -0.40, d FPR +0.0e+00, LIN 0.8449/0.9011 | B 182 KB / Qinf 756 KB = 0.240 (per-house med 0.210; Sk 280, lev 182; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.252] | B_RO 0.083 [violates C5, report only] | own {"Sk": 22.1, "lev": 22.8, "min_of_sums": 22.1} KB
+      QPOST4 [prior at the source, report only]: {"furn": 0.9695, "d_furn": -0.0055, "free": 0.9966, "d_free": -0.0008, "rc0_furn": 0.9695, "d_rc0_furn": -0.0055, "theta": 0, "B_med": 144381.8637, "ratio": 0.191, "ratio_mask_once": 0.1959}
+    342101 cam: Qinf NET 0.8173
+      Q3: d furn -0.45 pp (arm 0.8128 / Qinf 0.8173), worst house r1_i10 -2.60 pp, d free +0.06, d surf -0.18, d FPR +0.0e+00, LIN 0.7468/0.7515
+      Q4: d furn -0.34 pp (arm 0.8140 / Qinf 0.8173), worst house r1_i10 -3.34 pp, d free +0.05, d surf -0.13, d FPR +0.0e+00, LIN 0.7443/0.7515
+      VOTE: d furn -0.60 pp (arm 0.8113 / Qinf 0.8173), worst house r1_i8 -2.76 pp, d free -0.07, d surf -0.20, d FPR +0.0e+00, LIN 0.7054/0.7515
+      QPOST4 [prior at the source, report only]: {"furn": 0.7808, "d_furn": -0.0366, "free": 0.9754, "d_free": -0.0079, "rc0_furn": 0.7808, "d_rc0_furn": -0.0366, "theta": 0}
+    342101 clean: Qinf NET 0.9980
+      Q3: d furn -0.03 pp (arm 0.9976 / Qinf 0.9980), worst house r3_i8 -0.15 pp, d free -0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      Q4: d furn +0.02 pp (arm 0.9981 / Qinf 0.9980), worst house r3_i8 -0.07 pp, d free +0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      VOTE: d furn -0.21 pp (arm 0.9959 / Qinf 0.9980), worst house r3_i8 -0.77 pp, d free +0.00, d surf -0.11, d FPR +0.0e+00, LIN 1.0000/1.0000
+    342202 cam_nf: Qinf NET 0.9724
+      Q3: d furn -0.04 pp (arm 0.9720 / Qinf 0.9724), worst house r2_i8 -0.46 pp, d free -0.01, d surf -0.06, d FPR +0.0e+00, LIN 0.9015/0.9000 | B 256 KB / Qinf 766 KB = 0.334 (per-house med 0.291; Sk 384, lev 256; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.350] | B_RO 0.100 [violates C5, report only] | own {"Sk": 31.8, "lev": 30.1, "min_of_sums": 30.1} KB | K0 0.9245 (d -0.91 pp)
+      Q4: d furn -0.14 pp (arm 0.9710 / Qinf 0.9724), worst house r1_i11 -0.55 pp, d free -0.02, d surf -0.04, d FPR +0.0e+00, LIN 0.8910/0.9000 | B 317 KB / Qinf 766 KB = 0.414 (per-house med 0.366; Sk 451, lev 317; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.433] | B_RO 0.117 [violates C5, report only] | own {"Sk": 40.6, "lev": 38.2, "min_of_sums": 38.2} KB | K0 0.9256 (d -0.80 pp)
+      VOTE: d furn -1.23 pp (arm 0.9601 / Qinf 0.9724), worst house r1_i8 -2.45 pp, d free -0.02, d surf -0.35, d FPR +0.0e+00, LIN 0.8449/0.9000 | B 182 KB / Qinf 766 KB = 0.237 (per-house med 0.207; Sk 295, lev 182; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.248] | B_RO 0.082 [violates C5, report only] | own {"Sk": 22.1, "lev": 22.8, "min_of_sums": 22.1} KB
+      QPOST4 [prior at the source, report only]: {"furn": 0.9667, "d_furn": -0.0057, "free": 0.9965, "d_free": -0.0008, "rc0_furn": 0.9667, "d_rc0_furn": -0.0057, "theta": 0, "B_med": 142089.5204, "ratio": 0.1854, "ratio_mask_once": 0.1928}
+    342202 cam: Qinf NET 0.8182
+      Q3: d furn -0.38 pp (arm 0.8144 / Qinf 0.8182), worst house r1_i10 -2.61 pp, d free +0.02, d surf -0.27, d FPR +0.0e+00, LIN 0.7471/0.7515
+      Q4: d furn -0.18 pp (arm 0.8164 / Qinf 0.8182), worst house r3_i11 -1.07 pp, d free -0.00, d surf -0.12, d FPR +0.0e+00, LIN 0.7446/0.7515
+      VOTE: d furn -0.56 pp (arm 0.8127 / Qinf 0.8182), worst house r2_i8 -3.20 pp, d free -0.15, d surf -0.25, d FPR +0.0e+00, LIN 0.7054/0.7515
+      QPOST4 [prior at the source, report only]: {"furn": 0.7824, "d_furn": -0.0359, "free": 0.9753, "d_free": -0.0083, "rc0_furn": 0.7824, "d_rc0_furn": -0.0359, "theta": 0}
+    342202 clean: Qinf NET 0.9976
+      Q3: d furn -0.04 pp (arm 0.9972 / Qinf 0.9976), worst house r1_i10 -0.35 pp, d free -0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      Q4: d furn -0.04 pp (arm 0.9972 / Qinf 0.9976), worst house r3_i11 -0.40 pp, d free -0.00, d surf -0.01, d FPR +0.0e+00, LIN 0.9999/1.0000
+      VOTE: d furn -0.18 pp (arm 0.9959 / Qinf 0.9976), worst house r3_i15 -0.91 pp, d free +0.00, d surf -0.07, d FPR +0.0e+00, LIN 1.0000/1.0000
+  [judged seed, all tiers / report rows] fresh seed 4 (24 houses)
+    342101 cam_nf: Qinf NET 0.9741
+      Q3: d furn -0.24 pp (arm 0.9717 / Qinf 0.9741), worst house r1_i11 -0.68 pp, d free -0.01, d surf -0.09, d FPR +0.0e+00, LIN 0.9013/0.9014 | B 255 KB / Qinf 753 KB = 0.339 (per-house med 0.294; Sk 423, lev 255; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.356] | B_RO 0.103 [violates C5, report only] | own {"Sk": 32.3, "lev": 30.6, "min_of_sums": 30.6} KB | K0 0.9240 (d -0.69 pp)
+      Q4: d furn -0.16 pp (arm 0.9726 / Qinf 0.9741), worst house r1_i10 -0.52 pp, d free -0.00, d surf -0.06, d FPR +0.0e+00, LIN 0.8954/0.9014 | B 278 KB / Qinf 753 KB = 0.369 (per-house med 0.322; Sk 360, lev 278; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.387] | B_RO 0.110 [violates C5, report only] | own {"Sk": 35.2, "lev": 33.9, "min_of_sums": 33.9} KB | K0 0.9251 (d -0.58 pp)
+      VOTE: d furn -1.25 pp (arm 0.9617 / Qinf 0.9741), worst house r3_i8 -2.64 pp, d free -0.03, d surf -0.42, d FPR +0.0e+00, LIN 0.8433/0.9014 | B 183 KB / Qinf 753 KB = 0.243 (per-house med 0.208; Sk 281, lev 183; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.255] | B_RO 0.086 [violates C5, report only] | own {"Sk": 22.6, "lev": 23.0, "min_of_sums": 22.6} KB
+      QPOST4 [prior at the source, report only]: {"furn": 0.968, "d_furn": -0.0061, "free": 0.9965, "d_free": -0.0008, "rc0_furn": 0.968, "d_rc0_furn": -0.0061, "theta": 0, "B_med": 142169.7362, "ratio": 0.1889, "ratio_mask_once": 0.1982}
+    342101 cam: Qinf NET 0.7879
+      Q3: d furn -0.24 pp (arm 0.7855 / Qinf 0.7879), worst house r3_i12 -2.07 pp, d free +0.01, d surf -0.26, d FPR +0.0e+00, LIN 0.7139/0.7175
+      Q4: d furn -0.07 pp (arm 0.7872 / Qinf 0.7879), worst house r2_i8 -2.48 pp, d free +0.00, d surf -0.19, d FPR +0.0e+00, LIN 0.7102/0.7175
+      VOTE: d furn -0.32 pp (arm 0.7847 / Qinf 0.7879), worst house r3_i12 -4.04 pp, d free -0.15, d surf -0.47, d FPR +0.0e+00, LIN 0.6777/0.7175
+      QPOST4 [prior at the source, report only]: {"furn": 0.7527, "d_furn": -0.0352, "free": 0.9727, "d_free": -0.008, "rc0_furn": 0.7527, "d_rc0_furn": -0.0352, "theta": 0}
+    342101 clean: Qinf NET 0.9980
+      Q3: d furn -0.03 pp (arm 0.9976 / Qinf 0.9980), worst house r3_i8 -0.15 pp, d free -0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      Q4: d furn +0.02 pp (arm 0.9981 / Qinf 0.9980), worst house r3_i8 -0.07 pp, d free +0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      VOTE: d furn -0.21 pp (arm 0.9959 / Qinf 0.9980), worst house r3_i8 -0.77 pp, d free +0.00, d surf -0.11, d FPR +0.0e+00, LIN 1.0000/1.0000
+    342202 cam_nf: Qinf NET 0.9730
+      Q3: d furn -0.32 pp (arm 0.9697 / Qinf 0.9730), worst house r1_i11 -0.81 pp, d free -0.02, d surf -0.11, d FPR +0.0e+00, LIN 0.9011/0.9002 | B 256 KB / Qinf 763 KB = 0.336 (per-house med 0.290; Sk 384, lev 256; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.352] | B_RO 0.102 [violates C5, report only] | own {"Sk": 32.4, "lev": 30.6, "min_of_sums": 30.6} KB | K0 0.9234 (d -0.69 pp)
+      Q4: d furn -0.21 pp (arm 0.9709 / Qinf 0.9730), worst house r3_i8 -0.92 pp, d free -0.02, d surf -0.07, d FPR +0.0e+00, LIN 0.8910/0.9002 | B 317 KB / Qinf 763 KB = 0.415 (per-house med 0.365; Sk 452, lev 317; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.435] | B_RO 0.118 [violates C5, report only] | own {"Sk": 41.1, "lev": 38.9, "min_of_sums": 38.9} KB | K0 0.9259 (d -0.44 pp)
+      VOTE: d furn -1.23 pp (arm 0.9606 / Qinf 0.9730), worst house r1_i12 -3.20 pp, d free -0.04, d surf -0.38, d FPR +0.0e+00, LIN 0.8433/0.9002 | B 183 KB / Qinf 763 KB = 0.240 (per-house med 0.206; Sk 296, lev 183; modes {'Sk': 0, 'lev': 24}) [mask coded once, report only: 0.252] | B_RO 0.085 [violates C5, report only] | own {"Sk": 22.6, "lev": 23.0, "min_of_sums": 22.6} KB
+      QPOST4 [prior at the source, report only]: {"furn": 0.9675, "d_furn": -0.0055, "free": 0.9965, "d_free": -0.0008, "rc0_furn": 0.9675, "d_rc0_furn": -0.0055, "theta": 0, "B_med": 142241.307, "ratio": 0.1864, "ratio_mask_once": 0.1955}
+    342202 cam: Qinf NET 0.7914
+      Q3: d furn -0.70 pp (arm 0.7844 / Qinf 0.7914), worst house r3_i12 -2.52 pp, d free -0.01, d surf -0.26, d FPR +0.0e+00, LIN 0.7141/0.7174
+      Q4: d furn -0.34 pp (arm 0.7880 / Qinf 0.7914), worst house r1_i10 -1.79 pp, d free -0.01, d surf -0.09, d FPR +0.0e+00, LIN 0.7110/0.7174
+      VOTE: d furn -0.59 pp (arm 0.7854 / Qinf 0.7914), worst house r3_i15 -3.05 pp, d free -0.21, d surf -0.47, d FPR +0.0e+00, LIN 0.6777/0.7174
+      QPOST4 [prior at the source, report only]: {"furn": 0.7545, "d_furn": -0.0368, "free": 0.9725, "d_free": -0.0081, "rc0_furn": 0.7545, "d_rc0_furn": -0.0368, "theta": 0}
+    342202 clean: Qinf NET 0.9976
+      Q3: d furn -0.04 pp (arm 0.9972 / Qinf 0.9976), worst house r1_i10 -0.35 pp, d free -0.00, d surf -0.01, d FPR +0.0e+00, LIN 1.0000/1.0000
+      Q4: d furn -0.04 pp (arm 0.9972 / Qinf 0.9976), worst house r3_i11 -0.40 pp, d free -0.00, d surf -0.01, d FPR +0.0e+00, LIN 0.9999/1.0000
+      VOTE: d furn -0.18 pp (arm 0.9959 / Qinf 0.9976), worst house r3_i15 -0.91 pp, d free +0.00, d surf -0.07, d FPR +0.0e+00, LIN 1.0000/1.0000
+  timing: {"n": 192, "mean_s": 138.47537743672729, "max_s": 216.84882354736328}
