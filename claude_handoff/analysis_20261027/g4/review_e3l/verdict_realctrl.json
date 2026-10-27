@@ -1,0 +1,7 @@
+{
+ "equal_ratio0.10": "LEVER",
+ "ratio0.16": "AMBIGUOUS",
+ "ratio0.51": "NOT_ENOUGH",
+ "K0_-0.031": "AMBIGUOUS",
+ "cam_-0.031": "AMBIGUOUS (lever demoted: cam-tier 4-cell mean d -0.0310 < -0.03)"
+}

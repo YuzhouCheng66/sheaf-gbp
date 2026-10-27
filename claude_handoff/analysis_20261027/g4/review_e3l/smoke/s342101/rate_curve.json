@@ -1,0 +1,42 @@
+[
+ {
+  "measured_bits": 49862.919948320756,
+  "proxy_bits": 108461.09375,
+  "measured_over_proxy": 0.45973093414725735,
+  "support_cells": 2655.5,
+  "agents": 2,
+  "updates": 1,
+  "r_meas": 49862.919948320756,
+  "lam_dual": 0.0
+ },
+ {
+  "measured_bits": 63242.14313950476,
+  "proxy_bits": 142180.5625,
+  "measured_over_proxy": 0.44480161020255327,
+  "support_cells": 3904.5,
+  "agents": 2,
+  "updates": 2,
+  "r_meas": 56552.53154391276,
+  "lam_dual": 0.0
+ },
+ {
+  "measured_bits": 62177.266105248564,
+  "proxy_bits": 147224.890625,
+  "measured_over_proxy": 0.422328492426065,
+  "support_cells": 3214.0,
+  "agents": 2,
+  "updates": 4,
+  "r_meas": 58427.44306435803,
+  "lam_dual": 0.002
+ },
+ {
+  "measured_bits": 30191.57291490668,
+  "proxy_bits": 107891.84375,
+  "measured_over_proxy": 0.27983183775100406,
+  "support_cells": 2718.5,
+  "agents": 2,
+  "updates": 6,
+  "r_meas": 51368.47552699519,
+  "lam_dual": 0.004
+ }
+]
