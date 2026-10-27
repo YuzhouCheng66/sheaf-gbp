@@ -27,14 +27,14 @@ E3L=runs/e3l                                                             # E3-L 
 OUT=runs/e3l2
 LOG=runs/chain_day7.log
 # ---------------------------------------------------------------- pinned by the coordinator (after review)
-E3L2_SHA=FILL_g4_e3l2_sha256                                             # scripts/g4_e3l2.py as deployed
-E3R_SUM_SHA=FILL_e3r_summary_sha256                                      # $E3R/eval/summary.json (local copy g4/e3r/summary.json: 8a0bd5ddf3e87a1c206c421e86fb1a6fd3447af0b8d0d4e3d379d06946e7f577)
-TH1_SHA=FILL_e3r_threshold_342101_sha256                                 # $E3R/s342101/threshold.json (local copy: c2dc9883968c9ce29fcbc95f2ac2728dc9ed29dbf8252c7971ef8b8fec3ef9bf)
-TH2_SHA=FILL_e3r_threshold_342202_sha256                                 # $E3R/s342202/threshold.json (local copy: 775a0d4874e3d01bf32113395e2b34df74016181b33c3eb4c6e630410e8c14e3)
-EXPREC_SHA=FILL_export_records_content_sha256                            # (cd $EXPORT/records && LC_ALL=C ls *.json | LC_ALL=C sort | xargs cat | sha256sum) (local copy: 62527a542b88e4142235788b53962a4aa16117ace6dc9158578225919d712675)
-CTRLH_SHA=FILL_ctrl_holdout_sha256                                       # $REF2/ctrl_holdout.json = g4_e3l2.py ctrlprep --cache $CACHE --e3r $E3R --out $REF2/ctrl_holdout.json (CPU, before launch)
-E3L_SUM_SHA=FILL_e3l_summary_sha256                                      # $E3L/eval/summary.json (report only; local copy g4/e3l/summary.json)
-QFILE_SHA=FILL_criteria_quantizer_sha256                                 # $REF2/criteria_quantizer.json (E5; local g4/e5_quant/criteria_quantizer.json: 8ad9d8242865f5b1ee332fee5f17952684959388a46282eb8a4d562bd6126266)
+E3L2_SHA=bab73d647655ecc6504d4ffd738409618bf95cab8089a489a7cb4da28dc3f314                                             # scripts/g4_e3l2.py as deployed
+E3R_SUM_SHA=8a0bd5ddf3e87a1c206c421e86fb1a6fd3447af0b8d0d4e3d379d06946e7f577                                      # $E3R/eval/summary.json (local copy g4/e3r/summary.json: 8a0bd5ddf3e87a1c206c421e86fb1a6fd3447af0b8d0d4e3d379d06946e7f577)
+TH1_SHA=c2dc9883968c9ce29fcbc95f2ac2728dc9ed29dbf8252c7971ef8b8fec3ef9bf                                 # $E3R/s342101/threshold.json (local copy: c2dc9883968c9ce29fcbc95f2ac2728dc9ed29dbf8252c7971ef8b8fec3ef9bf)
+TH2_SHA=775a0d4874e3d01bf32113395e2b34df74016181b33c3eb4c6e630410e8c14e3                                 # $E3R/s342202/threshold.json (local copy: 775a0d4874e3d01bf32113395e2b34df74016181b33c3eb4c6e630410e8c14e3)
+EXPREC_SHA=62527a542b88e4142235788b53962a4aa16117ace6dc9158578225919d712675                            # (cd $EXPORT/records && LC_ALL=C ls *.json | LC_ALL=C sort | xargs cat | sha256sum) (local copy: 62527a542b88e4142235788b53962a4aa16117ace6dc9158578225919d712675)
+CTRLH_SHA=f0b55ed9343c3b1f1a9da468bd84733fabef6e76481aa639b4b468182f8657e4                                       # $REF2/ctrl_holdout.json = g4_e3l2.py ctrlprep --cache $CACHE --e3r $E3R --out $REF2/ctrl_holdout.json (CPU, before launch)
+E3L_SUM_SHA=7ea7cbbac682b6d326ae66426bc0fa84d54ea8d724bff3ac3690fd5abaff6a88                                      # $E3L/eval/summary.json (report only; local copy g4/e3l/summary.json)
+QFILE_SHA=8ad9d8242865f5b1ee332fee5f17952684959388a46282eb8a4d562bd6126266                                 # $REF2/criteria_quantizer.json (E5; local g4/e5_quant/criteria_quantizer.json: 8ad9d8242865f5b1ee332fee5f17952684959388a46282eb8a4d562bd6126266)
 # ---------------------------------------------------------------- frozen (values of the E3-L / E3-R chains and summaries)
 E3L_SHA=3dc970d8542f794082b28d265d68e0237f3670f2cf2dfd4f754c01c8ac24f6be    # g4_e3l.py (E3-L, frozen; imported read only; = the E3-L summary's script_sha256)
 CK1_SHA=1b035fd1b6f0b01b136972505da834a384d61574e148f48e388e7fbbcdfb85cd    # $E3R/s342101/checkpoints/final.pt
