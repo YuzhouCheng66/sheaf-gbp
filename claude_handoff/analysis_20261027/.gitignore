@@ -3,3 +3,4 @@ probes/**/houseexpo_json/
 probes/**/fx/
 probes/**/*.npz
 probes/**/cache_*/
+data/
