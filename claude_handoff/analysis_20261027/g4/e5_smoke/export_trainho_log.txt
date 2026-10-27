@@ -1,0 +1,3 @@
+export: 2 jobs (TRAIN), seeds [200], tiers ['cam_nf'], 2 workers
+[1/2] trainho_r1_i9_s200 ok 52s peak 678 MB  55s
+[2/2] trainho_r1_i19_s200 ok 73s peak 715 MB  76s

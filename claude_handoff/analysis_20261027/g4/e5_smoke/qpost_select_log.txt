@@ -1,0 +1,6 @@
+qpost-select: 2 TRAIN hold-out files, 2 workers
+[1/2] trainho_r1_i9_s200.npz 12s  15s
+[2/2] trainho_r1_i19_s200.npz 12s  15s
+  342101: theta_post 0 (sum q >= theta)  TRAIN-holdout F1 0.9867 free 0.9987 | lin F1 0.9429 free 0.9920 | R-C sum q >= 0: F1 0.9867 free 0.9987
+  342202: theta_post -1 (sum q >= theta)  TRAIN-holdout F1 0.9853 free 0.9984 | lin F1 0.9420 free 0.9917 | R-C sum q >= 0: F1 0.9852 free 0.9987
+qpost threshold claude_handoff/analysis_20261027/g4/e5_smoke/qpost_threshold_smoke.json sha256 88ac97dbd7bb0118bec7b8a30c714d80eb09cc4d0174ce867fe3bbd4e55a5c89

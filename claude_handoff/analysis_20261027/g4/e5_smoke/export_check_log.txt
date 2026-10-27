@@ -1,0 +1,2 @@
+export: 1 jobs (VALIDATION), seeds [3], tiers ['clean', 'cam_nf', 'cam'], 1 workers
+[1/1] val_r1_i0_s3 ok 101s peak 701 MB  104s

@@ -1,0 +1,3 @@
+eval: 2 jobs, seeds [1], panels ['val'], 2 workers x 2 threads, qpost False
+[1/2] val_r1_i0_s1 ok 87s peak 1819 MB  90s
+[2/2] val_r1_i1_s1 ok 91s peak 1821 MB  94s

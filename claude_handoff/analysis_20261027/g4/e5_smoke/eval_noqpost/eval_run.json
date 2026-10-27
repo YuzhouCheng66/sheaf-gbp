@@ -1,0 +1,31 @@
+{
+ "stage": "eval",
+ "utc": "2026-10-27 12:51:04 UTC",
+ "script_sha256": "379a00f143c50cd67064f5c6fcadd56a29047213035af46970202bfdf85a6a85",
+ "g4_e3r_sha256": "1d65d9a85f8ef0df4bcdb9f44feba9e1e6cae5f0057a6ec6b097d545ad883970",
+ "noise_panels_sha256": "2313d75bc3ee04515d87469ab9e89e49a3811e1125e39ca0bba839448cc8623f",
+ "calib_sha256": "c905d9e6c2bd8450da2803133c57edf52f7b2fee6055b37d8c5a5a0c8d5876a3",
+ "opts": {
+  "out": "claude_handoff/analysis_20261027/g4/e5_smoke/eval_noqpost",
+  "criteria": "claude_handoff/analysis_20261027/g4/e5_quant/criteria_quantizer.json",
+  "criteria_sha256": "857898857c6bc822b6527033270f9471ab0e7dd097f5ab7af8fc45df0d8e8e40",
+  "qpost": null,
+  "qpost_sha256": null,
+  "threads": 2,
+  "chunk": 2,
+  "script_sha256": "379a00f143c50cd67064f5c6fcadd56a29047213035af46970202bfdf85a6a85",
+  "tiers": [
+   "cam_nf",
+   "cam",
+   "clean"
+  ]
+ },
+ "seeds": [
+  1
+ ],
+ "panels": [
+  "val"
+ ],
+ "n_jobs": 2,
+ "smoke": true
+}

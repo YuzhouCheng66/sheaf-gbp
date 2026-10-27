@@ -1,0 +1,9 @@
+criteria/quantizer C:\Users\27118\Desktop\sheaf-gbp\experiments\sheaf-gbp-p6-local-skill\claude_handoff\analysis_20261027\g4\e5_quant\criteria_quantizer.json
+sha256 8ad9d8242865f5b1ee332fee5f17952684959388a46282eb8a4d562bd6126266
+  half A Q3: values [-97, 5, 95] symbols per level [31, 56, 24] MI 0.4577 bits (Qinf 0.4690)
+  half A Q4: values [-97, 0, 50, 101] symbols per level [24, 56, 14, 17] MI 0.4622 bits (Qinf 0.4690)
+  half A VOTE: values [-56, 76] symbols per level [41, 70] MI 0.4054 bits (Qinf 0.4690)
+  half B Q3: values [-93, 6, 93] symbols per level [29, 58, 24] MI 0.4562 bits (Qinf 0.4682)
+  half B Q4: values [-112, -20, 24, 96] symbols per level [9, 54, 28, 20] MI 0.4611 bits (Qinf 0.4682)
+  half B VOTE: values [-55, 75] symbols per level [41, 70] MI 0.4046 bits (Qinf 0.4682)
+  R-B probe match (half A Q3): {"Q3_A_values": true, "Q3_A_cut_sizes": true}

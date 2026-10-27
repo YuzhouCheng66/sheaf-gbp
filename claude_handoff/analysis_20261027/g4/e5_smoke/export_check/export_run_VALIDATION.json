@@ -1,0 +1,24 @@
+{
+ "stage": "export",
+ "utc": "2026-10-27 12:50:57 UTC",
+ "script_sha256": "379a00f143c50cd67064f5c6fcadd56a29047213035af46970202bfdf85a6a85",
+ "g4_e3r_sha256": "1d65d9a85f8ef0df4bcdb9f44feba9e1e6cae5f0057a6ec6b097d545ad883970",
+ "noise_panels_sha256": "2313d75bc3ee04515d87469ab9e89e49a3811e1125e39ca0bba839448cc8623f",
+ "split": "VALIDATION",
+ "seeds": [
+  3
+ ],
+ "tiers": [
+  "clean",
+  "cam_nf",
+  "cam"
+ ],
+ "panels": {
+  "val": [
+   [
+    1,
+    0
+   ]
+  ]
+ }
+}

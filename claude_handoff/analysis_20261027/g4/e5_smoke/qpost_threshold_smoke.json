@@ -1,0 +1,43 @@
+{
+ "stage": "qpost-select",
+ "utc": "2026-10-27 12:57:47 UTC",
+ "script_sha256": "8891616528fdbdf1ebf12ff869d0589046a7a52e07f4f17fc21fc3a4cc98ecb1",
+ "criteria_sha256": "0df6e6d8b989db6abdebf9a0ee0e075b0175ec204d98494be1d4729f84b2ae86",
+ "smoke": true,
+ "tau": 2.0,
+ "values": [
+  -3,
+  -1,
+  1,
+  3
+ ],
+ "files": [
+  "trainho_r1_i19_s200.npz",
+  "trainho_r1_i9_s200.npz"
+ ],
+ "n_houses": 2,
+ "rule": "E._select on TRAIN hold-out R8 component sums of q (component-expanded): pooled furniture F1 max s.t. pooled free recall >= the same half's B6 linear read-out (sum cq > theta) on the same houses; ties -> smallest theta; read-out sum q >= theta",
+ "definition": "R-C rc_qpost_probe.py: d = NET logit on the agent's own Qinf stalk - t_K0 (threshold.json k0.j_sep); q = -3 / -1 / +1 / +3 for d < -tau / [-tau, 0) / [0, tau) / >= tau, tau = 2",
+ "checkpoints": {
+  "342101": {
+   "theta": 0,
+   "f1": 0.9866795500034509,
+   "free": 0.9987157166747364,
+   "lin_f1": 0.9428668709567586,
+   "lin_free": 0.992005851387129,
+   "rc0_f1": 0.9866795500034509,
+   "rc0_free": 0.9987157166747364,
+   "t_k0": 0.0799999999999983
+  },
+  "342202": {
+   "theta": -1,
+   "f1": 0.9853457172342621,
+   "free": 0.9983517219354905,
+   "lin_f1": 0.9419670128283445,
+   "lin_free": 0.9916521583857864,
+   "rc0_f1": 0.9852230354923354,
+   "rc0_free": 0.9986813775483924,
+   "t_k0": 0.060000000000002274
+  }
+ }
+}
