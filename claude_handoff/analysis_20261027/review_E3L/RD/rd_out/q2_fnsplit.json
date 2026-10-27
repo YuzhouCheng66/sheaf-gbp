@@ -1,0 +1,44 @@
+{
+ "342101": {
+  "target_furn": 353530,
+  "fn": 90107,
+  "fn_pred_unknown_frac": 0.05745391589998557,
+  "fn_pred_free_frac": 0.9425460841000144,
+  "pooled_f1_formal": 0.8444953106391028,
+  "pooled_f1_known_oracle": 0.8489496200753464,
+  "pooled_f1_known_oracle_t0": 0.8935026450730893,
+  "pooled_f1_t0": 0.8880826172239865,
+  "free_recall_formal": 0.997671529749005,
+  "free_recall_t0": 0.9951459698477387,
+  "recall_formal": 0.7451220547053998,
+  "recall_t0": 0.8606058891748932
+ },
+ "342202": {
+  "target_furn": 353530,
+  "fn": 119576,
+  "fn_pred_unknown_frac": 0.043470261590954705,
+  "fn_pred_free_frac": 0.9565297384090453,
+  "pooled_f1_formal": 0.7929797326726129,
+  "pooled_f1_known_oracle": 0.7953943518571762,
+  "pooled_f1_known_oracle_t0": 0.9011676187662339,
+  "pooled_f1_t0": 0.8972430425804624,
+  "free_recall_formal": 0.9974745889017917,
+  "free_recall_t0": 0.9942344767161904,
+  "recall_formal": 0.6617656210222612,
+  "recall_t0": 0.8781715837411253
+ },
+ "jobs": [
+  "val_r1_i0_s1",
+  "val_r1_i2_s1",
+  "val_r1_i4_s1",
+  "val_r1_i6_s1",
+  "val_r2_i0_s1",
+  "val_r2_i2_s1",
+  "val_r2_i4_s1",
+  "val_r2_i6_s1",
+  "val_r3_i0_s1",
+  "val_r3_i2_s1",
+  "val_r3_i4_s1",
+  "val_r3_i6_s1"
+ ]
+}

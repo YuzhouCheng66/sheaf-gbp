@@ -1,0 +1,13 @@
+train 14 holdout 5
+info {"own_bits_median": 10436.120392326668, "own_bits_q": [4702.485141857969, 17270.482665974734], "r8_bits_median": 15198.538512725489, "touched_blocks_median": 2872.0, "bits_per_touched_block_lossless": 3.805245423273419, "e3l_budget_bits": 20000.0}
+C:\Users\27118\Desktop\sheaf-gbp\experiments\sheaf-gbp-p6-local-skill\claude_handoff\analysis_20261027\review_E3L\RD\rd_capacity.py:141: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\pytorch\torch\csrc\autograd\generated\python_variable_methods.cpp:837.)
+  print(f'  step {s} loss {float(loss):.4f} ({float(lk):.4f}/{float(lo):.4f}) {time.time() - t0:.0f}s', flush=True)
+  step 0 loss 1.3948 (0.6943/0.7004) 0s
+  step 250 loss 0.0842 (0.0420/0.0423) 26s
+  step 500 loss 0.0894 (0.0418/0.0476) 53s
+  step 750 loss 0.1095 (0.0561/0.0534) 80s
+  step 1000 loss 0.0593 (0.0258/0.0335) 106s
+  step 1250 loss 0.0841 (0.0392/0.0449) 132s
+  step 1499 loss 0.0630 (0.0328/0.0302) 160s
+ae_ctx_q1 {"R8": {"furn_f1": 0.6595209513039046, "furn_f1_tol1": 0.8569759778885115, "surface_f1": 0.90505794454628, "free_recall": 0.9919496077388559, "unknown_known_fpr": 0.0224988460757463}, "K0": {"furn_f1": 0.5771376111373255, "furn_f1_tol1": 0.7637734475392101, "surface_f1": 0.9148675678171581, "free_recall": 0.9908492818497153, "unknown_known_fpr": 0.010858778058979574}, "seconds": 166.65030145645142, "steps": 1500, "bits_per_touched_block_factorised": 8.240262199086121, "params": 65800}

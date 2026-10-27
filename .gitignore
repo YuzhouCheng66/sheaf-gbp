@@ -45,3 +45,5 @@ claude_handoff/analysis_20261027/review_E3R/inputs/
 claude_handoff/analysis_20261027/review_E3R/**/*.npz
 claude_handoff/analysis_20261027/review_E3R/**/*.pt
 claude_handoff/analysis_20261027/g4/probe_yaw/**/*.npz
+claude_handoff/analysis_20261027/review_E3L/**/*.npz
+claude_handoff/analysis_20261027/review_E3L/**/*.pt

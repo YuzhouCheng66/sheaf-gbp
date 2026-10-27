@@ -1,0 +1,67 @@
+{
+ "Qinf": {
+  "CTRL_ratio": 1.0,
+  "FR1_ratio": 0.9568,
+  "FR1_mask_plus_lam_ratio": 0.1222,
+  "FR1_h_ratio": 0.8344,
+  "FR1_src_per_agent_B": 14666.5874,
+  "FR1_total_over_src": 49.3667,
+  "S2D_ratio": 1.313,
+  "S2D_mask_plus_lam_ratio": 0.0084,
+  "S2D_S_only_ratio": 1.094,
+  "S2D_src_per_agent_B": 23045.671,
+  "S2D_total_over_src": 44.685
+ },
+ "Q3": {
+  "CTRL_ratio": 0.5571,
+  "FR1_ratio": 0.5128,
+  "FR1_mask_plus_lam_ratio": 0.1222,
+  "FR1_h_ratio": 0.3885,
+  "FR1_src_per_agent_B": 4120.6895,
+  "FR1_total_over_src": 95.572,
+  "S2D_ratio": 0.8856,
+  "S2D_mask_plus_lam_ratio": 0.0084,
+  "S2D_S_only_ratio": 0.671,
+  "S2D_src_per_agent_B": 10550.546,
+  "S2D_total_over_src": 62.1181
+ },
+ "VOTE": {
+  "CTRL_ratio": 0.3746,
+  "FR1_ratio": 0.3315,
+  "FR1_mask_plus_lam_ratio": 0.1222,
+  "FR1_h_ratio": 0.2101,
+  "FR1_src_per_agent_B": 2896.5566,
+  "FR1_total_over_src": 86.6068
+ },
+ "houses": [
+  "fresh_r1_i8_s1",
+  "fresh_r2_i9_s1",
+  "fresh_r3_i10_s1",
+  "fresh_r1_i11_s1",
+  "fresh_r2_i12_s1",
+  "fresh_r3_i13_s1",
+  "fresh_r1_i14_s1",
+  "fresh_r2_i15_s1"
+ ],
+ "n_agents": [
+  8,
+  8,
+  8,
+  8,
+  8,
+  8,
+  8,
+  8
+ ],
+ "directed": [
+  14,
+  14,
+  14,
+  14,
+  14,
+  14,
+  14,
+  14
+ ],
+ "CTRL_median_B": 744963.9498028874
+}

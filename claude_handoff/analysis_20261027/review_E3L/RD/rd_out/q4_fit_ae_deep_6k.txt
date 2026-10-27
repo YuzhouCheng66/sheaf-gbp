@@ -1,0 +1,31 @@
+train 14 holdout 5
+info {"own_bits_median": 10436.120392326668, "own_bits_q": [4702.485141857969, 17270.482665974734], "r8_bits_median": 15198.538512725489, "touched_blocks_median": 2872.0, "bits_per_touched_block_lossless": 3.805245423273419, "e3l_budget_bits": 20000.0}
+C:\Users\27118\Desktop\sheaf-gbp\experiments\sheaf-gbp-p6-local-skill\claude_handoff\analysis_20261027\review_E3L\RD\rd_capacity.py:145: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\pytorch\torch\csrc\autograd\generated\python_variable_methods.cpp:837.)
+  print(f'  step {s} loss {float(loss):.4f} ({float(lk):.4f}/{float(lo):.4f}) {time.time() - t0:.0f}s', flush=True)
+  step 0 loss 1.3850 (0.6945/0.6904) 0s
+  step 250 loss 0.0978 (0.0545/0.0433) 69s
+  step 500 loss 0.0955 (0.0463/0.0493) 134s
+  step 750 loss 0.1248 (0.0696/0.0553) 199s
+  step 1000 loss 0.0582 (0.0279/0.0303) 265s
+  step 1250 loss 0.0788 (0.0351/0.0437) 331s
+  step 1500 loss 0.0428 (0.0225/0.0203) 400s
+  step 1750 loss 0.0626 (0.0171/0.0455) 465s
+  step 2000 loss 0.0607 (0.0264/0.0343) 522s
+  step 2250 loss 0.0377 (0.0168/0.0209) 566s
+  step 2500 loss 0.0534 (0.0252/0.0282) 609s
+  step 2750 loss 0.0310 (0.0185/0.0125) 655s
+  step 3000 loss 0.0361 (0.0209/0.0153) 701s
+  step 3250 loss 0.0425 (0.0261/0.0165) 747s
+  step 3500 loss 0.0153 (0.0103/0.0051) 792s
+  step 3750 loss 0.0309 (0.0109/0.0200) 838s
+  step 4000 loss 0.0237 (0.0098/0.0140) 884s
+  step 4250 loss 0.0260 (0.0141/0.0119) 934s
+  step 4500 loss 0.0419 (0.0236/0.0182) 981s
+  step 4750 loss 0.0285 (0.0145/0.0140) 1029s
+  step 5000 loss 0.0415 (0.0171/0.0244) 1076s
+  step 5250 loss 0.0177 (0.0114/0.0062) 1123s
+  step 5500 loss 0.0386 (0.0244/0.0142) 1169s
+  step 5750 loss 0.0223 (0.0139/0.0084) 1218s
+  step 5999 loss 0.0352 (0.0148/0.0204) 1265s
+ae_deep {"R8": {"furn_f1": 0.8441916538114297, "furn_f1_tol1": 0.955692527962532, "surface_f1": 0.9582615844604003, "free_recall": 0.993595078945531, "unknown_known_fpr": 0.006046821155580587}, "K0": {"furn_f1": 0.7945067450177056, "furn_f1_tol1": 0.926583017830146, "surface_f1": 0.9575795510802774, "free_recall": 0.9918074644734356, "unknown_known_fpr": 0.0023678709915437544}, "seconds": 1273.5640861988068, "steps": 6000, "bits_per_touched_block_factorised": null, "params": 110520}

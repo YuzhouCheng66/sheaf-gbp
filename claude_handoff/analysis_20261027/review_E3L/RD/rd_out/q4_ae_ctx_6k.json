@@ -1,0 +1,56 @@
+{
+ "train_houses": [
+  "TRAIN_r1_i0",
+  "TRAIN_r1_i1",
+  "TRAIN_r1_i2",
+  "TRAIN_r1_i3",
+  "TRAIN_r1_i4",
+  "TRAIN_r2_i0",
+  "TRAIN_r2_i1",
+  "TRAIN_r2_i2",
+  "TRAIN_r2_i3",
+  "TRAIN_r2_i4",
+  "TRAIN_r3_i0",
+  "TRAIN_r3_i1",
+  "TRAIN_r3_i2",
+  "TRAIN_r3_i3"
+ ],
+ "holdout_houses": [
+  "TRAIN_r1_i19",
+  "TRAIN_r1_i9",
+  "TRAIN_r2_i19",
+  "TRAIN_r2_i9",
+  "TRAIN_r3_i9"
+ ],
+ "info": {
+  "own_bits_median": 10436.120392326668,
+  "own_bits_q": [
+   4702.485141857969,
+   17270.482665974734
+  ],
+  "r8_bits_median": 15198.538512725489,
+  "touched_blocks_median": 2872.0,
+  "bits_per_touched_block_lossless": 3.805245423273419,
+  "e3l_budget_bits": 20000.0
+ },
+ "ae_ctx": {
+  "R8": {
+   "furn_f1": 0.8987724864063175,
+   "furn_f1_tol1": 0.9738599698257818,
+   "surface_f1": 0.97374841474616,
+   "free_recall": 0.9955544450244508,
+   "unknown_known_fpr": 0.004203763867082412
+  },
+  "K0": {
+   "furn_f1": 0.8615128449301658,
+   "furn_f1_tol1": 0.9553055176418104,
+   "surface_f1": 0.971703757070174,
+   "free_recall": 0.9932187974034937,
+   "unknown_known_fpr": 0.0019208322452597825
+  },
+  "seconds": 624.803388595581,
+  "steps": 6000,
+  "bits_per_touched_block_factorised": null,
+  "params": 65800
+ }
+}
