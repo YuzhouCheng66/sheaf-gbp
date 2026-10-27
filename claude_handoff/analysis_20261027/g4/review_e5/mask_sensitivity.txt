@@ -1,0 +1,2 @@
+val_r1_i0_s1.npz: Qinf Sk 716402 B, mask coded in the k message 28715 B (4.0 %); Sk without the second mask 687687 B
+val_r1_i1_s1.npz: Qinf Sk 1448622 B, mask coded in the k message 50221 B (3.5 %); Sk without the second mask 1398401 B

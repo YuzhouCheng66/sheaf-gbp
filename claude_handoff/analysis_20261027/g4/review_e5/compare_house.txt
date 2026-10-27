@@ -1,0 +1,13 @@
+val_r1_i0_s1 342101 Qinf: furn own [0.9708870875670739] impl [0.9708870875670739] |d| 0.0e+00; edges max |d| 0.00e+00 B; Sk own 716402.064 impl 716402.064
+val_r1_i0_s1 342101 Q3: furn own [0.9687000228466986] impl [0.9687000228466986] |d| 0.0e+00; edges max |d| 4.51e-10 B; Sk own 436191.605 impl 436191.605; lev own 259183.909 impl 259183.909; B own 259184.034 impl 259184.034 mode lev; ratio B(Q3)/B(Qinf) own 0.3618 impl 0.3618
+val_r1_i0_s1 342101 Qinf: S bytes 623194, k bytes 93208 (13.0 % of Sk)
+val_r1_i0_s1 342202 Qinf: furn own [0.9683299156983367] impl [0.9683299156983367] |d| 0.0e+00; edges max |d| 0.00e+00 B; Sk own 724532.618 impl 724532.618
+val_r1_i0_s1 342202 Q3: furn own [0.964099068393547] impl [0.964099068393547] |d| 0.0e+00; edges max |d| 3.78e-10 B; Sk own 405514.721 impl 405514.721; lev own 259527.979 impl 259527.979; B own 259528.104 impl 259528.104 mode lev; ratio B(Q3)/B(Qinf) own 0.3582 impl 0.3582
+val_r1_i0_s1 342202 Qinf: S bytes 631325, k bytes 93208 (12.9 % of Sk)
+val_r1_i1_s1 342101 Qinf: furn own [0.9764106688111513] impl [0.9764106688111513] |d| 0.0e+00; edges max |d| 0.00e+00 B; Sk own 1448622.086 impl 1448622.086
+val_r1_i1_s1 342101 Q3: furn own [0.9730308505654822] impl [0.9730308505654822] |d| 0.0e+00; edges max |d| 2.95e-10 B; Sk own 883714.562 impl 883714.562; lev own 504861.163 impl 504861.163; B own 504861.288 impl 504861.288 mode lev; ratio B(Q3)/B(Qinf) own 0.3485 impl 0.3485
+val_r1_i1_s1 342101 Qinf: S bytes 1264037, k bytes 184585 (12.7 % of Sk)
+val_r1_i1_s1 342202 Qinf: furn own [0.9755574901225473] impl [0.9755574901225473] |d| 0.0e+00; edges max |d| 0.00e+00 B; Sk own 1466284.520 impl 1466284.520
+val_r1_i1_s1 342202 Q3: furn own [0.971947635586428] impl [0.971947635586428] |d| 0.0e+00; edges max |d| 3.10e-10 B; Sk own 815603.613 impl 815603.613; lev own 505196.020 impl 505196.020; B own 505196.145 impl 505196.145 mode lev; ratio B(Q3)/B(Qinf) own 0.3445 impl 0.3445
+val_r1_i1_s1 342202 Qinf: S bytes 1281700, k bytes 184585 (12.6 % of Sk)
+max abs differences: {"furn": 0.0, "edge": 4.511e-10, "B": 6.403e-10, "Sk": 1.164e-10, "lev": 6.403e-10}

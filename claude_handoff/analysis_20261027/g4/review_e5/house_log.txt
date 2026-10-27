@@ -1,0 +1,1 @@
+house: 2 houses, max 19s

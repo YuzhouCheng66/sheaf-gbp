@@ -1,0 +1,16 @@
+PASS test_b_ro_root_choice_bruteforce
+PASS test_contiguous_in_llr_order_is_globally_optimal
+PASS test_dp_equals_bruteforce_contiguous
+PASS test_known_mask_invariant_and_exact_relay
+PASS test_level_coder_onehot_agent_map
+PASS test_level_coder_roundtrip_and_ideal_length
+PASS test_level_value_formula_matches_e1c
+PASS test_new_seeds_disjoint_from_reserved
+PASS test_qpost_levels_match_rc_definition
+PASS test_quantised_stalk_is_local
+PASS test_quantizer_build_deterministic_and_matches_file
+11/11 passed
+
+real	0m3.035s
+user	0m0.015s
+sys	0m0.000s
