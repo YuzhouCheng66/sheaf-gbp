@@ -1,0 +1,108 @@
+loaded r1_i0
+loaded r1_i1
+loaded r2_i0
+loaded r2_i1
+loaded r3_i0
+loaded r3_i1
+{"house": "r1_i1", "kind": "own", "agent": 0, "hits_under_hits_prior": 723.9, "oracle_amodal": 366.5, "greedy_amodal": 504.9, "greedy_bytes_on_free_choices": 68.9, "hits_under_amodal_prior": 109487.9, "known": 0.2}
+{"house": "r1_i1", "kind": "own", "agent": 1, "hits_under_hits_prior": 1015.4, "oracle_amodal": 452.8, "greedy_amodal": 565.2, "greedy_bytes_on_free_choices": 88.1, "hits_under_amodal_prior": 91992.5, "known": 0.3}
+{"house": "r1_i1", "kind": "own", "agent": 2, "hits_under_hits_prior": 1023.6, "oracle_amodal": 470.5, "greedy_amodal": 647.4, "greedy_bytes_on_free_choices": 120.2, "hits_under_amodal_prior": 84593.0, "known": 0.3}
+{"house": "r1_i1", "kind": "own", "agent": 3, "hits_under_hits_prior": 1203.2, "oracle_amodal": 508.9, "greedy_amodal": 579.7, "greedy_bytes_on_free_choices": 121.5, "hits_under_amodal_prior": 80137.0, "known": 0.3}
+{"house": "r1_i1", "kind": "own", "agent": 4, "hits_under_hits_prior": 763.7, "oracle_amodal": 412.3, "greedy_amodal": 630.4, "greedy_bytes_on_free_choices": 91.6, "hits_under_amodal_prior": 102482.2, "known": 0.2}
+{"house": "r1_i1", "kind": "own", "agent": 5, "hits_under_hits_prior": 943.4, "oracle_amodal": 375.5, "greedy_amodal": 451.4, "greedy_bytes_on_free_choices": 77.6, "hits_under_amodal_prior": 98511.4, "known": 0.2}
+{"house": "r1_i1", "kind": "own", "agent": 6, "hits_under_hits_prior": 976.9, "oracle_amodal": 512.0, "greedy_amodal": 604.4, "greedy_bytes_on_free_choices": 95.2, "hits_under_amodal_prior": 84026.9, "known": 0.3}
+{"house": "r1_i1", "kind": "own", "agent": 7, "hits_under_hits_prior": 878.3, "oracle_amodal": 365.9, "greedy_amodal": 447.0, "greedy_bytes_on_free_choices": 81.2, "hits_under_amodal_prior": 105356.2, "known": 0.2}
+{"house": "r1_i1", "kind": "union8", "agent": 0, "hits_under_hits_prior": 1933.8, "oracle_amodal": 572.7, "greedy_amodal": 956.3, "greedy_bytes_on_free_choices": 77.2, "hits_under_amodal_prior": 7889.7, "known": 0.6}
+{"house": "r1_i1", "kind": "union8", "agent": 1, "hits_under_hits_prior": 1933.8, "oracle_amodal": 572.7, "greedy_amodal": 956.3, "greedy_bytes_on_free_choices": 77.2, "hits_under_amodal_prior": 7889.7, "known": 0.6}
+{"house": "r1_i1", "kind": "union8", "agent": 2, "hits_under_hits_prior": 1933.8, "oracle_amodal": 572.7, "greedy_amodal": 956.3, "greedy_bytes_on_free_choices": 77.2, "hits_under_amodal_prior": 7889.7, "known": 0.6}
+{"house": "r1_i1", "kind": "union8", "agent": 3, "hits_under_hits_prior": 1933.8, "oracle_amodal": 572.7, "greedy_amodal": 956.3, "greedy_bytes_on_free_choices": 77.2, "hits_under_amodal_prior": 7889.7, "known": 0.6}
+{"house": "r1_i1", "kind": "union8", "agent": 4, "hits_under_hits_prior": 1933.8, "oracle_amodal": 572.7, "greedy_amodal": 956.3, "greedy_bytes_on_free_choices": 77.2, "hits_under_amodal_prior": 7889.7, "known": 0.6}
+{"house": "r1_i1", "kind": "union8", "agent": 5, "hits_under_hits_prior": 1933.8, "oracle_amodal": 572.7, "greedy_amodal": 956.3, "greedy_bytes_on_free_choices": 77.2, "hits_under_amodal_prior": 7889.7, "known": 0.6}
+{"house": "r1_i1", "kind": "union8", "agent": 6, "hits_under_hits_prior": 1933.8, "oracle_amodal": 572.7, "greedy_amodal": 956.3, "greedy_bytes_on_free_choices": 77.2, "hits_under_amodal_prior": 7889.7, "known": 0.6}
+{"house": "r1_i1", "kind": "union8", "agent": 7, "hits_under_hits_prior": 1933.8, "oracle_amodal": 572.7, "greedy_amodal": 956.3, "greedy_bytes_on_free_choices": 77.2, "hits_under_amodal_prior": 7889.7, "known": 0.6}
+{"house": "r2_i0", "kind": "own", "agent": 0, "hits_under_hits_prior": 367.7, "oracle_amodal": 164.9, "greedy_amodal": 167.9, "greedy_bytes_on_free_choices": 30.1, "hits_under_amodal_prior": 142180.2, "known": 0.1}
+{"house": "r2_i0", "kind": "own", "agent": 1, "hits_under_hits_prior": 335.2, "oracle_amodal": 191.8, "greedy_amodal": 217.0, "greedy_bytes_on_free_choices": 41.5, "hits_under_amodal_prior": 141441.7, "known": 0.1}
+{"house": "r2_i0", "kind": "own", "agent": 2, "hits_under_hits_prior": 377.0, "oracle_amodal": 186.4, "greedy_amodal": 215.5, "greedy_bytes_on_free_choices": 31.9, "hits_under_amodal_prior": 145317.2, "known": 0.1}
+{"house": "r2_i0", "kind": "own", "agent": 3, "hits_under_hits_prior": 416.5, "oracle_amodal": 250.2, "greedy_amodal": 245.4, "greedy_bytes_on_free_choices": 36.6, "hits_under_amodal_prior": 136039.8, "known": 0.1}
+{"house": "r2_i0", "kind": "own", "agent": 4, "hits_under_hits_prior": 295.3, "oracle_amodal": 124.0, "greedy_amodal": 161.2, "greedy_bytes_on_free_choices": 29.1, "hits_under_amodal_prior": 149106.7, "known": 0.1}
+{"house": "r2_i0", "kind": "own", "agent": 5, "hits_under_hits_prior": 341.6, "oracle_amodal": 253.1, "greedy_amodal": 284.6, "greedy_bytes_on_free_choices": 45.0, "hits_under_amodal_prior": 135814.0, "known": 0.1}
+{"house": "r2_i0", "kind": "own", "agent": 6, "hits_under_hits_prior": 287.3, "oracle_amodal": 147.7, "greedy_amodal": 187.5, "greedy_bytes_on_free_choices": 41.7, "hits_under_amodal_prior": 140774.6, "known": 0.1}
+{"house": "r2_i0", "kind": "own", "agent": 7, "hits_under_hits_prior": 329.4, "oracle_amodal": 239.9, "greedy_amodal": 246.2, "greedy_bytes_on_free_choices": 35.1, "hits_under_amodal_prior": 135883.2, "known": 0.1}
+{"house": "r2_i0", "kind": "union8", "agent": 0, "hits_under_hits_prior": 789.4, "oracle_amodal": 394.8, "greedy_amodal": 453.8, "greedy_bytes_on_free_choices": 90.2, "hits_under_amodal_prior": 18773.9, "known": 0.3}
+{"house": "r2_i0", "kind": "union8", "agent": 1, "hits_under_hits_prior": 789.4, "oracle_amodal": 394.8, "greedy_amodal": 453.8, "greedy_bytes_on_free_choices": 90.2, "hits_under_amodal_prior": 18773.9, "known": 0.3}
+{"house": "r2_i0", "kind": "union8", "agent": 2, "hits_under_hits_prior": 789.4, "oracle_amodal": 394.8, "greedy_amodal": 453.8, "greedy_bytes_on_free_choices": 90.2, "hits_under_amodal_prior": 18773.9, "known": 0.3}
+{"house": "r2_i0", "kind": "union8", "agent": 3, "hits_under_hits_prior": 789.4, "oracle_amodal": 394.8, "greedy_amodal": 453.8, "greedy_bytes_on_free_choices": 90.2, "hits_under_amodal_prior": 18773.9, "known": 0.3}
+{"house": "r2_i0", "kind": "union8", "agent": 4, "hits_under_hits_prior": 789.4, "oracle_amodal": 394.8, "greedy_amodal": 453.8, "greedy_bytes_on_free_choices": 90.2, "hits_under_amodal_prior": 18773.9, "known": 0.3}
+{"house": "r2_i0", "kind": "union8", "agent": 5, "hits_under_hits_prior": 789.4, "oracle_amodal": 394.8, "greedy_amodal": 453.8, "greedy_bytes_on_free_choices": 90.2, "hits_under_amodal_prior": 18773.9, "known": 0.3}
+{"house": "r2_i0", "kind": "union8", "agent": 6, "hits_under_hits_prior": 789.4, "oracle_amodal": 394.8, "greedy_amodal": 453.8, "greedy_bytes_on_free_choices": 90.2, "hits_under_amodal_prior": 18773.9, "known": 0.3}
+{"house": "r2_i0", "kind": "union8", "agent": 7, "hits_under_hits_prior": 789.4, "oracle_amodal": 394.8, "greedy_amodal": 453.8, "greedy_bytes_on_free_choices": 90.2, "hits_under_amodal_prior": 18773.9, "known": 0.3}
+{"house": "r3_i1", "kind": "own", "agent": 0, "hits_under_hits_prior": 143.4, "oracle_amodal": 175.1, "greedy_amodal": 87.0, "greedy_bytes_on_free_choices": 35.0, "hits_under_amodal_prior": 134824.1, "known": 0.1}
+{"house": "r3_i1", "kind": "own", "agent": 1, "hits_under_hits_prior": 164.1, "oracle_amodal": 160.4, "greedy_amodal": 122.9, "greedy_bytes_on_free_choices": 49.0, "hits_under_amodal_prior": 141609.4, "known": 0.1}
+{"house": "r3_i1", "kind": "own", "agent": 2, "hits_under_hits_prior": 240.3, "oracle_amodal": 214.8, "greedy_amodal": 202.8, "greedy_bytes_on_free_choices": 70.5, "hits_under_amodal_prior": 132449.7, "known": 0.1}
+{"house": "r3_i1", "kind": "own", "agent": 3, "hits_under_hits_prior": 601.7, "oracle_amodal": 648.9, "greedy_amodal": 516.9, "greedy_bytes_on_free_choices": 92.2, "hits_under_amodal_prior": 112247.7, "known": 0.1}
+{"house": "r3_i1", "kind": "own", "agent": 4, "hits_under_hits_prior": 643.9, "oracle_amodal": 407.3, "greedy_amodal": 502.6, "greedy_bytes_on_free_choices": 96.5, "hits_under_amodal_prior": 112355.2, "known": 0.1}
+{"house": "r3_i1", "kind": "own", "agent": 5, "hits_under_hits_prior": 347.6, "oracle_amodal": 312.9, "greedy_amodal": 236.2, "greedy_bytes_on_free_choices": 64.2, "hits_under_amodal_prior": 123231.3, "known": 0.1}
+{"house": "r3_i1", "kind": "own", "agent": 6, "hits_under_hits_prior": 191.5, "oracle_amodal": 183.0, "greedy_amodal": 191.0, "greedy_bytes_on_free_choices": 66.2, "hits_under_amodal_prior": 135540.4, "known": 0.1}
+{"house": "r3_i1", "kind": "own", "agent": 7, "hits_under_hits_prior": 788.1, "oracle_amodal": 649.9, "greedy_amodal": 739.2, "greedy_bytes_on_free_choices": 129.8, "hits_under_amodal_prior": 112688.4, "known": 0.1}
+{"house": "r3_i1", "kind": "union8", "agent": 0, "hits_under_hits_prior": 1444.6, "oracle_amodal": 891.5, "greedy_amodal": 1220.4, "greedy_bytes_on_free_choices": 236.8, "hits_under_amodal_prior": 19241.4, "known": 0.3}
+{"house": "r3_i1", "kind": "union8", "agent": 1, "hits_under_hits_prior": 1444.6, "oracle_amodal": 891.5, "greedy_amodal": 1220.4, "greedy_bytes_on_free_choices": 236.8, "hits_under_amodal_prior": 19241.4, "known": 0.3}
+{"house": "r3_i1", "kind": "union8", "agent": 2, "hits_under_hits_prior": 1444.6, "oracle_amodal": 891.5, "greedy_amodal": 1220.4, "greedy_bytes_on_free_choices": 236.8, "hits_under_amodal_prior": 19241.4, "known": 0.3}
+{"house": "r3_i1", "kind": "union8", "agent": 3, "hits_under_hits_prior": 1444.6, "oracle_amodal": 891.5, "greedy_amodal": 1220.4, "greedy_bytes_on_free_choices": 236.8, "hits_under_amodal_prior": 19241.4, "known": 0.3}
+{"house": "r3_i1", "kind": "union8", "agent": 4, "hits_under_hits_prior": 1444.6, "oracle_amodal": 891.5, "greedy_amodal": 1220.4, "greedy_bytes_on_free_choices": 236.8, "hits_under_amodal_prior": 19241.4, "known": 0.3}
+{"house": "r3_i1", "kind": "union8", "agent": 5, "hits_under_hits_prior": 1444.6, "oracle_amodal": 891.5, "greedy_amodal": 1220.4, "greedy_bytes_on_free_choices": 236.8, "hits_under_amodal_prior": 19241.4, "known": 0.3}
+{"house": "r3_i1", "kind": "union8", "agent": 6, "hits_under_hits_prior": 1444.6, "oracle_amodal": 891.5, "greedy_amodal": 1220.4, "greedy_bytes_on_free_choices": 236.8, "hits_under_amodal_prior": 19241.4, "known": 0.3}
+{"house": "r3_i1", "kind": "union8", "agent": 7, "hits_under_hits_prior": 1444.6, "oracle_amodal": 891.5, "greedy_amodal": 1220.4, "greedy_bytes_on_free_choices": 236.8, "hits_under_amodal_prior": 19241.4, "known": 0.3}
+{
+ "own": {
+  "hits_under_hits_prior": {
+   "median": 396.7617669923336,
+   "mean": 558.2852681517351
+  },
+  "oracle_amodal": {
+   "median": 282.9950896000259,
+   "mean": 323.9425451782264
+  },
+  "greedy_amodal": {
+   "median": 265.3606878592125,
+   "mean": 364.7624299332004
+  },
+  "greedy_bytes_on_free_choices": {
+   "median": 67.55622722404489,
+   "mean": 68.27775793571392
+  },
+  "hits_under_amodal_prior": {
+   "median": 127840.50293870404,
+   "mean": 120337.11246077543
+  },
+  "known": {
+   "median": 0.1225137710571289,
+   "mean": 0.1506925423940023
+  }
+ },
+ "union8": {
+  "hits_under_hits_prior": {
+   "median": 1444.5540129356352,
+   "mean": 1389.2392165112958
+  },
+  "oracle_amodal": {
+   "median": 572.6586564087711,
+   "mean": 619.6712778346198
+  },
+  "greedy_amodal": {
+   "median": 956.3280093223138,
+   "mean": 876.8682107714667
+  },
+  "greedy_bytes_on_free_choices": {
+   "median": 90.22176241220481,
+   "mean": 134.75440674228264
+  },
+  "hits_under_amodal_prior": {
+   "median": 18773.919893049853,
+   "mean": 15301.67180804522
+  },
+  "known": {
+   "median": 0.29477882385253906,
+   "mean": 0.3762461344401042
+  }
+ }
+}

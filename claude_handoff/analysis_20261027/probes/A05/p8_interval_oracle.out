@@ -1,0 +1,16 @@
+r1_i0 54s
+r1_i1 64s
+r2_i0 60s
+r2_i1 61s
+r3_i0 59s
+r3_i1 59s
+K0 box_inst      direct_furn 0.564 direct_surf 0.877 ray_furn 0.621 ray_surf 0.890 ray_fpr 0.000 n 48
+K0 box_prim      direct_furn 1.000 direct_surf 1.000 ray_furn 1.000 ray_surf 1.000 ray_fpr 0.000 n 48
+K0 itv_1x1       direct_furn 0.930 direct_surf 0.987 ray_furn 0.923 ray_surf 0.977 ray_fpr 0.000 n 48
+K0 itv_2x2       direct_furn 0.655 direct_surf 0.922 ray_furn 0.501 ray_surf 0.873 ray_fpr 0.000 n 48
+K0 itv_2x2_fp    direct_furn 0.870 direct_surf 0.975 ray_furn 0.865 ray_surf 0.960 ray_fpr 0.000 n 48
+R8 box_inst      direct_furn 0.532 direct_surf 0.855 ray_furn 0.608 ray_surf 0.888 ray_fpr 0.000 n 6
+R8 box_prim      direct_furn 1.000 direct_surf 1.000 ray_furn 1.000 ray_surf 1.000 ray_fpr 0.000 n 6
+R8 itv_1x1       direct_furn 0.934 direct_surf 0.986 ray_furn 0.933 ray_surf 0.982 ray_fpr 0.000 n 6
+R8 itv_2x2       direct_furn 0.669 direct_surf 0.914 ray_furn 0.507 ray_surf 0.871 ray_fpr 0.000 n 6
+R8 itv_2x2_fp    direct_furn 0.871 direct_surf 0.972 ray_furn 0.865 ray_surf 0.964 ray_fpr 0.000 n 6

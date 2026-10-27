@@ -1,0 +1,9 @@
+r1_i0 64s
+r2_i0 84s
+r1_i1 87s
+r2_i1 72s
+r3_i1 65s
+r3_i0 67s
+0.01 {"n": 48, "exact": 0, "diff_median": 489.5, "diff_frac_known": 0.008032335712488728, "surface_f1": 0.9978674632789745, "furn_f1": 0.9936000238248254, "bits_per_agent": 44.0}
+0.002 {"n": 48, "exact": 0, "diff_median": 126.5, "diff_frac_known": 0.0021215041047728776, "surface_f1": 0.9994065735174171, "furn_f1": 0.9980001173348003, "bits_per_agent": 56.0}
+0.0005 {"n": 48, "exact": 0, "diff_median": 29.0, "diff_frac_known": 0.0005263388614722336, "surface_f1": 0.9998319080316239, "furn_f1": 0.9996003653980176, "bits_per_agent": 68.0}

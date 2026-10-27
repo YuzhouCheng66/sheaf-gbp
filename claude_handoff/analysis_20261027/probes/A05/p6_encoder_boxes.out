@@ -1,0 +1,56 @@
+r1_i0 145s
+r1_i1 66s
+r2_i0 39s
+r2_i1 31s
+r3_i0 37s
+r3_i1 36s
+{
+ "surface hop0": {
+  "tokens_median": 139.0,
+  "exact_share": 1.0,
+  "unsound_maps_share": 0.0,
+  "unsound_voxels_median": 0.0,
+  "surface_f1": 1.0,
+  "furn_f1": 1.0,
+  "fpr": 0.0,
+  "token_bytes_median": 318.0214557567838,
+  "bits_per_token": 17.598283843669382,
+  "n": 48
+ },
+ "surface hop8": {
+  "tokens_median": 487.0,
+  "exact_share": 1.0,
+  "unsound_maps_share": 0.0,
+  "unsound_voxels_median": 0.0,
+  "surface_f1": 1.0,
+  "furn_f1": 1.0,
+  "fpr": 0.0,
+  "token_bytes_median": 1056.4093814024384,
+  "bits_per_token": 17.678971277473863,
+  "n": 6
+ },
+ "solid hop0": {
+  "tokens_median": 90.5,
+  "exact_share": 1.0,
+  "unsound_maps_share": 0.6875,
+  "unsound_voxels_median": 2.5,
+  "surface_f1": 1.0,
+  "furn_f1": 1.0,
+  "fpr": 0.0,
+  "token_bytes_median": 230.6544625691198,
+  "bits_per_token": 19.53677375162227,
+  "n": 48
+ },
+ "solid hop8": {
+  "tokens_median": 331.0,
+  "exact_share": 0.0,
+  "unsound_maps_share": 1.0,
+  "unsound_voxels_median": 31.0,
+  "surface_f1": 0.9991694883335286,
+  "furn_f1": 0.9961720117146209,
+  "fpr": 0.0,
+  "token_bytes_median": 808.7308199088377,
+  "bits_per_token": 20.08463221680139,
+  "n": 6
+ }
+}

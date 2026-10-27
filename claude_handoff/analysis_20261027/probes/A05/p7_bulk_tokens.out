@@ -1,0 +1,14 @@
+r1_i0 28s
+r1_i1 32s
+r2_i0 30s
+r2_i1 30s
+r3_i0 29s
+r3_i1 29s
+oracle all hop0        tokens 59.5000 tokens_all 59.5000 surface_f1 1.0000 var_f1 1.0000 furn_f1 1.0000 fpr 0.0000 token_bytes 166.1363 bits_per_token 22.0533 n 48
+oracle bulk hop0       tokens 18.5000 tokens_all 59.5000 surface_f1 0.9718 var_f1 0.9435 furn_f1 0.8104 fpr 0.0080 token_bytes 59.6513 bits_per_token 25.0742 n 48
+solid all hop0         tokens 90.5000 tokens_all 90.5000 surface_f1 1.0000 var_f1 1.0000 furn_f1 1.0000 fpr 0.0000 token_bytes 230.6545 bits_per_token 19.5368 n 48
+solid bulk hop0        tokens 12.0000 tokens_all 90.5000 surface_f1 0.9422 var_f1 0.8795 furn_f1 0.5246 fpr 0.0256 token_bytes 37.8727 bits_per_token 25.0842 n 48
+oracle all hop8        tokens 178.5000 tokens_all 178.5000 surface_f1 1.0000 var_f1 1.0000 furn_f1 1.0000 fpr 0.0000 token_bytes 502.3291 bits_per_token 22.3283 n 6
+oracle bulk hop8       tokens 67.5000 tokens_all 178.5000 surface_f1 0.9698 var_f1 0.9489 furn_f1 0.8480 fpr 0.0144 token_bytes 210.1227 bits_per_token 25.4182 n 6
+solid all hop8         tokens 331.0000 tokens_all 331.0000 surface_f1 0.9992 var_f1 0.9988 furn_f1 0.9962 fpr 0.0000 token_bytes 808.7308 bits_per_token 20.0846 n 6
+solid bulk hop8        tokens 57.0000 tokens_all 331.0000 surface_f1 0.9424 var_f1 0.8987 furn_f1 0.6444 fpr 0.0700 token_bytes 172.6586 bits_per_token 24.9144 n 6

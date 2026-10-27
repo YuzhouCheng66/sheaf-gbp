@@ -1,0 +1,32 @@
+8 {
+ "A_source_only": {
+  "surface_f1": 0.9990937520639546,
+  "furn_f1": 0.995127614896127,
+  "mismatch_vs_central": 16.0625,
+  "pair_disagreement_mean": 0.0,
+  "pair_disagreement_max": 0.0
+ },
+ "B_relay_refit": {
+  "surface_f1": 0.9991656908940677,
+  "furn_f1": 0.9954103030040611,
+  "mismatch_vs_central": 12.395833333333334,
+  "pair_disagreement_mean": 2.422619047619047,
+  "pair_disagreement_max": 9.166666666666666
+ }
+}
+32 {
+ "A_source_only": {
+  "surface_f1": 0.9955532971685074,
+  "furn_f1": 0.9735291482975241,
+  "mismatch_vs_central": 98.58333333333333,
+  "pair_disagreement_mean": 0.0,
+  "pair_disagreement_max": 0.0
+ },
+ "B_relay_refit": {
+  "surface_f1": 0.9959896631340247,
+  "furn_f1": 0.9758749999679618,
+  "mismatch_vs_central": 74.41666666666667,
+  "pair_disagreement_mean": 13.0,
+  "pair_disagreement_max": 39.666666666666664
+ }
+}

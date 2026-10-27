@@ -1,0 +1,10 @@
+house_r1_i0.json 64s
+house_r1_i1.json 145s
+house_r2_i0.json 211s
+house_r2_i1.json 268s
+house_r3_i0.json 336s
+house_r3_i1.json 387s
+hop 0: median bytes ctx 1384  V+pose 593 | residual given OUR pred: tern_full 1242 V_full 554 V_furn 249 | furniture V alone 238 | base 2x2x1 581 + tern 972 / + V 442 / + V_furn 195
+        F1 before: surf 0.918 var 0.851 furn 0.524 | after V_furn: surf 0.972 var 0.960 furn 1.000 | base2 alone: surf 0.887 furn 0.764 | furn vox 1172 surf vox 7564
+hop 8: median bytes ctx 2813  V+pose 1562 | residual given OUR pred: tern_full 2729 V_full 1471 V_furn 705 | furniture V alone 683 | base 2x2x1 1295 + tern 1992 / + V 1184 / + V_furn 530
+        F1 before: surf 0.898 var 0.828 furn 0.540 | after V_furn: surf 0.965 var 0.944 furn 1.000 | base2 alone: surf 0.880 furn 0.770 | furn vox 3981 surf vox 27699

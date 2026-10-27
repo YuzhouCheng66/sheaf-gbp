@@ -1,0 +1,30 @@
+{
+ "own": {
+  "observed_cols_mean": 742.625,
+  "struct_share": 0.10722100656455143,
+  "furniture_share": 0.23399539920327667,
+  "plain_share": 0.6587835942321719,
+  "furniture_runs_share_1to5_6plus": [
+   0.851,
+   0.124,
+   0.011,
+   0.006,
+   0.007,
+   0.0
+  ]
+ },
+ "union8": {
+  "observed_cols_mean": 1881.8333333333333,
+  "struct_share": 0.13284917190682843,
+  "furniture_share": 0.29829067398813214,
+  "plain_share": 0.5688601541050394,
+  "furniture_runs_share_1to5_6plus": [
+   0.856,
+   0.118,
+   0.009,
+   0.006,
+   0.011,
+   0.0
+  ]
+ }
+}

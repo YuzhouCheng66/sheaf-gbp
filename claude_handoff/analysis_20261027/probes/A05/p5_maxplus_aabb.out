@@ -1,0 +1,16 @@
+r1_i0 253s
+r1_i1 334s
+r2_i0 253s
+r2_i1 289s
+r3_i0 272s
+r3_i1 92s
+K0 block4x4x4 kz1            active 187.0000 furn_bytes 274.3467 surface_f1 0.9675 var_f1 0.9465 furn_f1 0.8529 fpr 0.0000 homomorphic_all None n 48
+K0 block4x4x4 kz2            active 283.0000 furn_bytes 364.5416 surface_f1 0.9779 var_f1 0.9639 furn_f1 0.8970 fpr 0.0000 homomorphic_all None n 48
+K0 block4x4x8 kz4            active 283.0000 furn_bytes 364.5416 surface_f1 0.9779 var_f1 0.9639 furn_f1 0.8970 fpr 0.0000 homomorphic_all None n 48
+K0 block2x2x4 kz1            active 345.5000 furn_bytes 333.4433 surface_f1 0.9912 var_f1 0.9850 furn_f1 0.9592 fpr 0.0000 homomorphic_all None n 48
+K0 block8x8x8 kz4            active 182.0000 furn_bytes 281.5718 surface_f1 0.9273 var_f1 0.8888 furn_f1 0.7013 fpr 0.0000 homomorphic_all None n 48
+R8 block4x4x4 kz1            active 485.5000 furn_bytes 659.7941 surface_f1 0.9630 var_f1 0.9418 furn_f1 0.8472 fpr 0.0000 homomorphic_all True n 6
+R8 block4x4x4 kz2            active 789.5000 furn_bytes 920.3447 surface_f1 0.9740 var_f1 0.9594 furn_f1 0.8897 fpr 0.0000 homomorphic_all True n 6
+R8 block4x4x8 kz4            active 789.5000 furn_bytes 920.3447 surface_f1 0.9740 var_f1 0.9594 furn_f1 0.8897 fpr 0.0000 homomorphic_all True n 6
+R8 block2x2x4 kz1            active 990.5000 furn_bytes 886.6507 surface_f1 0.9913 var_f1 0.9854 furn_f1 0.9607 fpr 0.0000 homomorphic_all True n 6
+R8 block8x8x8 kz4            active 418.5000 furn_bytes 652.2377 surface_f1 0.9123 var_f1 0.8750 furn_f1 0.6649 fpr 0.0000 homomorphic_all True n 6

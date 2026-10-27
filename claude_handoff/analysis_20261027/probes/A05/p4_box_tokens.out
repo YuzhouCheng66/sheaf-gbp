@@ -1,0 +1,29 @@
+r1_i0 119 boxes 42 objects 25s
+r1_i1 222 boxes 63 objects 33s
+r2_i0 151 boxes 65 objects 27s
+r2_i1 388 boxes 105 objects 26s
+r3_i0 332 boxes 112 objects 25s
+r3_i1 339 boxes 110 objects 27s
+{
+ "hop0": {
+  "boxes_visible_median": 59.5,
+  "boxes_visible_mean": 67.14583333333333,
+  "objects_seen_median": 21.0,
+  "exact_all": true
+ },
+ "hop8": {
+  "boxes_visible_median": 178.5,
+  "boxes_visible_mean": 196.16666666666666,
+  "objects_seen_median": 62.0,
+  "exact_all": true
+ },
+ "house": {
+  "boxes_total_median": 277.0,
+  "objects_median": 85.0,
+  "boxes_per_object": 3.023051948051948
+ },
+ "k0_token_code": {
+  "bits_per_box_median": 22.228171046013696,
+  "bytes_median": 166.13631951346204
+ }
+}

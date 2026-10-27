@@ -1,0 +1,32 @@
+r1_i0 52s
+r1_i1 53s
+r2_i0 49s
+{
+ "f64": {
+  "maps_exact": "24/24",
+  "mismatch_median": 0.0,
+  "mismatch_max": 0,
+  "mismatch_occ_median": 0.0,
+  "surface_f1": 1.0,
+  "furn_f1": 1.0,
+  "fpr": 0.0
+ },
+ "f64_pose32": {
+  "maps_exact": "23/24",
+  "mismatch_median": 0.0,
+  "mismatch_max": 1,
+  "mismatch_occ_median": 0.0,
+  "surface_f1": 1.0,
+  "furn_f1": 1.0,
+  "fpr": 0.0
+ },
+ "f32": {
+  "maps_exact": "24/24",
+  "mismatch_median": 0.0,
+  "mismatch_max": 0,
+  "mismatch_occ_median": 0.0,
+  "surface_f1": 1.0,
+  "furn_f1": 1.0,
+  "fpr": 0.0
+ }
+}

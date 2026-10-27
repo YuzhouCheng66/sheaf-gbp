@@ -1,0 +1,12 @@
+casts done 536s
+vox      own bytes med    313 | K0 surf 1.000 var 1.000 furn 1.000 fpr 0.0000 | R8 surf 1.000 var 1.000 furn 1.000 fpr 0.0000
+box      own bytes med    280 | K0 surf 1.000 var 1.000 furn 1.000 fpr 0.0000 | R8 surf 1.000 var 1.000 furn 1.000 fpr 0.0000
+box>=2   own bytes med    274 | K0 surf 1.000 var 1.000 furn 0.999 fpr 0.0000 | R8 surf 1.000 var 1.000 furn 0.999 fpr 0.0001
+box>=4   own bytes med    252 | K0 surf 0.999 var 0.998 furn 0.994 fpr 0.0001 | R8 surf 0.999 var 0.999 furn 0.996 fpr 0.0003
+box>=8   own bytes med    211 | K0 surf 0.996 var 0.992 furn 0.973 fpr 0.0005 | R8 surf 0.996 var 0.994 furn 0.979 fpr 0.0014
+box>=16  own bytes med    167 | K0 surf 0.990 var 0.981 furn 0.930 fpr 0.0018 | R8 surf 0.991 var 0.985 furn 0.947 fpr 0.0043
+c221     own bytes med    205 | K0 surf 0.893 var 0.823 furn 0.548 fpr 0.0000 | R8 surf 0.888 var 0.825 furn 0.554 fpr 0.0000
+c222     own bytes med    179 | K0 surf 0.853 var 0.755 furn 0.401 fpr 0.0000 | R8 surf 0.848 var 0.760 furn 0.407 fpr 0.0000
+c441     own bytes med    145 | K0 surf 0.781 var 0.670 furn 0.271 fpr 0.0000 | R8 surf 0.780 var 0.680 furn 0.279 fpr 0.0000
+none     own bytes med     36 | K0 surf 0.908 var 0.801 furn 0.000 fpr 0.0305 | R8 surf 0.891 var 0.800 furn 0.000 fpr 0.0954
+total 659s

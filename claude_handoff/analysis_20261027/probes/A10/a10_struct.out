@@ -1,0 +1,9 @@
+r1_i0
+r1_i1
+r2_i0
+r2_i1
+r3_i0
+r3_i1
+own {'W2': 20.6, 'door': 8.9, 'Vf': 259.0, 'total': 329.2} mean total 340
+union {'W2': 37.5, 'door': 26.4, 'Vf': 734.6, 'total': 1029.8} mean total 1060
+edge {'W2': 24.9, 'door': 3.5, 'Vf': 318.1, 'total': 487.8} mean total 552

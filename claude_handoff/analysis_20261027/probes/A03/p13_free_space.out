@@ -1,0 +1,19 @@
+r1_i0 done
+r1_i0 done
+r1_i1 done
+r1_i1 done
+r2_i0 done
+r2_i0 done
+r2_i1 done
+r2_i1 done
+r3_i0 done
+r3_i0 done
+r3_i1 done
+r3_i1 done
+K0|ours surface_f1 0.9175 var_occ_f1 0.8506 furn_f1 0.5242 fpr 0.0122 free_f1 0.9799 acc3 0.9576
+K0|S-only surface_f1 1.0000 var_occ_f1 1.0000 furn_f1 1.0000 fpr 0.0000 free_f1 0.0000 acc3 0.1312
+K0|exact surface_f1 1.0000 var_occ_f1 1.0000 furn_f1 1.0000 fpr 0.0000 free_f1 1.0000 acc3 1.0000
+K8|ours surface_f1 0.8980 var_occ_f1 0.8283 furn_f1 0.5397 fpr 0.0310 free_f1 0.9792 acc3 0.9574
+K8|S-only surface_f1 1.0000 var_occ_f1 1.0000 furn_f1 1.0000 fpr 0.0000 free_f1 0.0000 acc3 0.1524
+K8|exact surface_f1 1.0000 var_occ_f1 1.0000 furn_f1 1.0000 fpr 0.0000 free_f1 1.0000 acc3 1.0000
+S-only bytes (K0, median) 568.7582129375666

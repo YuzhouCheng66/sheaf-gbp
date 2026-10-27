@@ -1,0 +1,144 @@
+{
+ "K0": {
+  "pooled_f1": 0.5885060677918817,
+  "recall": 0.47476127704723015,
+  "precision": 0.7739255765199161,
+  "fn_share_veto": 0.291525112478193,
+  "fn_share_free": 0.708474887521807,
+  "fp_share_thickening": 0.7998145357598239,
+  "fp_share_hallucination": 0.2001854642401762,
+  "fp_on_world_occ": 0.0,
+  "classes": {
+   "pole": {
+    "share_of_target": 0.04293798025913899,
+    "recall": 0.028079371022089104,
+    "fn_veto_share": 0.15254237288135594
+   },
+   "sheet": {
+    "share_of_target": 0.14961579268880815,
+    "recall": 0.5822499194154938,
+    "fn_veto_share": 0.1646090534979424
+   },
+   "panel": {
+    "share_of_target": 0.059528019805163486,
+    "recall": 0.12260329462597894,
+    "fn_veto_share": 0.2046783625730994
+   },
+   "bulk": {
+    "share_of_target": 0.7479182072468894,
+    "recall": 0.5069317571198281,
+    "fn_veto_share": 0.34106364428945074
+   },
+   "other": {
+    "share_of_target": 0.0,
+    "recall": 0.0,
+    "fn_veto_share": 0.0
+   },
+   "nonobj": {
+    "share_of_target": 0.0,
+    "recall": 0.0,
+    "fn_veto_share": 0.0
+   }
+  },
+  "oracle_f1_fix_pole": 0.6240943260620423,
+  "oracle_f1_fix_sheet": 0.641145663475742,
+  "oracle_f1_fix_panel": 0.6327655262268976,
+  "oracle_f1_fix_all_thin": 0.7132853159429241,
+  "oracle_f1_fix_veto": 0.7108498421162789,
+  "oracle_f1_fix_thickening": 0.6319517257612394,
+  "oracle_f1_fix_hallucination": 0.5988098013970133,
+  "zbands": {
+   "z0.1-0.4m": {
+    "recall": 0.3143704737806474,
+    "precision": 0.7715203426124198,
+    "share": 0.18424267755521975
+   },
+   "z0.4-0.9m": {
+    "recall": 0.5067045527105549,
+    "precision": 0.7789830175714145,
+    "share": 0.5035205607176156
+   },
+   "z0.9-1.5m": {
+    "recall": 0.5070962124510231,
+    "precision": 0.7859649122807018,
+    "share": 0.1846284924283831
+   },
+   "z1.5m+": {
+    "recall": 0.5335097001763669,
+    "precision": 0.7422011917280056,
+    "share": 0.12760826929878147
+   }
+  }
+ },
+ "R8": {
+  "pooled_f1": 0.557443070477735,
+  "recall": 0.44749175490366255,
+  "precision": 0.7390260508116243,
+  "fn_share_veto": 0.17826735783851713,
+  "fn_share_free": 0.8217326421614829,
+  "fp_share_thickening": 0.755650144171358,
+  "fp_share_hallucination": 0.24434985582864205,
+  "fp_on_world_occ": 0.0,
+  "classes": {
+   "pole": {
+    "share_of_target": 0.03832667939593821,
+    "recall": 0.014492753623188406,
+    "fn_veto_share": 0.08157169117647059
+   },
+   "sheet": {
+    "share_of_target": 0.13542787710466933,
+    "recall": 0.5463983593950269,
+    "fn_veto_share": 0.08611189601582368
+   },
+   "panel": {
+    "share_of_target": 0.0555806283631314,
+    "recall": 0.11203935040599625,
+    "fn_veto_share": 0.09874263606788007
+   },
+   "bulk": {
+    "share_of_target": 0.7706648151362611,
+    "recall": 0.4758378755799811,
+    "fn_veto_share": 0.21103913543244493
+   },
+   "other": {
+    "share_of_target": 0.0,
+    "recall": 0.0,
+    "fn_veto_share": 0.0
+   },
+   "nonobj": {
+    "share_of_target": 0.0,
+    "recall": 0.0,
+    "fn_veto_share": 0.0
+   }
+  },
+  "oracle_f1_fix_pole": 0.5906004822026043,
+  "oracle_f1_fix_sheet": 0.6106041949230862,
+  "oracle_f1_fix_panel": 0.6004646674428606,
+  "oracle_f1_fix_all_thin": 0.6796154455132011,
+  "oracle_f1_fix_veto": 0.6408249123950778,
+  "oracle_f1_fix_thickening": 0.6022344345875991,
+  "oracle_f1_fix_hallucination": 0.5711801083979318,
+  "zbands": {
+   "z0.1-0.4m": {
+    "recall": 0.28531814273430783,
+    "precision": 0.7476482847969357,
+    "share": 0.2018746745356709
+   },
+   "z0.4-0.9m": {
+    "recall": 0.4811986920829275,
+    "precision": 0.7422898920115366,
+    "share": 0.499010588439507
+   },
+   "z0.9-1.5m": {
+    "recall": 0.5008481969755719,
+    "precision": 0.7256161786391405,
+    "share": 0.17906613435167507
+   },
+   "z1.5m+": {
+    "recall": 0.5005060728744939,
+    "precision": 0.7382564649426819,
+    "share": 0.12004860267314703
+   }
+  }
+ }
+}

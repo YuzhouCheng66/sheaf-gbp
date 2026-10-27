@@ -1,0 +1,21 @@
+r1_i0 0 8 agents 61s
+r3_i1 0 8 agents 62s
+r3_i0 0 8 agents 66s
+r2_i1 0 8 agents 71s
+r1_i1 0 8 agents 88s
+r2_i0 0 8 agents 89s
+r1_i0 15 8 agents 59s
+r2_i0 15 8 agents 83s
+r2_i1 15 8 agents 83s
+r3_i1 15 8 agents 68s
+r3_i0 15 8 agents 71s
+r1_i1 15 8 agents 96s
+r1_i0 45 8 agents 56s
+r3_i1 45 8 agents 55s
+r2_i0 45 8 agents 64s
+r3_i0 45 8 agents 61s
+r2_i1 45 8 agents 63s
+r1_i1 45 8 agents 72s
+0 {"n": 48, "ctx": 1371.9320492442262, "hits_plus_poses": 557.9757287606297, "plan_box_bytes": 245.28790011664844, "shell_bytes": 817.9709316563967, "n_plan_boxes": 61.5, "n_shell_boxes": 233.5, "furn_hits": 1386.5, "ctx_over_planbox": 5.880206065624849, "ctx_over_shell": 1.748308574187754, "exact_plan": 12, "exact_shell": 12, "checked": 12}
+15 {"n": 48, "ctx": 1425.5248506955663, "hits_plus_poses": 624.6930861717742, "plan_box_bytes": 291.8461531020482, "shell_bytes": 918.0050642664714, "n_plan_boxes": 79.5, "n_shell_boxes": 268.5, "furn_hits": 1386.0, "ctx_over_planbox": 4.688396819715836, "ctx_over_shell": 1.7088013313621322, "exact_plan": 12, "exact_shell": 12, "checked": 12}
+45 {"n": 48, "ctx": 1497.3010376276932, "hits_plus_poses": 670.7438613952205, "plan_box_bytes": 394.4566640422212, "shell_bytes": 963.8535042076314, "n_plan_boxes": 108.5, "n_shell_boxes": 290.5, "furn_hits": 1392.5, "ctx_over_planbox": 3.800095996178359, "ctx_over_shell": 1.563668645263537, "exact_plan": 12, "exact_shell": 12, "checked": 12}

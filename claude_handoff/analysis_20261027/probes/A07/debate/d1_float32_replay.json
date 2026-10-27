@@ -1,0 +1,146 @@
+{
+ "summary": {
+  "f64_mismatch": {
+   "median": 0.0,
+   "max": 0
+  },
+  "f32_mismatch": {
+   "median": 0.0,
+   "max": 0
+  },
+  "f32_occ_mismatch": {
+   "median": 0.0,
+   "max": 0
+  },
+  "pose32_mismatch": {
+   "median": 0.0,
+   "max": 0
+  },
+  "known": {
+   "median": 57986.5,
+   "max": 72036
+  }
+ },
+ "rows": [
+  {
+   "house": "r1_i0",
+   "agent": 0,
+   "known": 64168,
+   "f64_mismatch": 0,
+   "f32_mismatch": 0,
+   "f32_occ_mismatch": 0,
+   "pose32_mismatch": 0,
+   "sec": 3.1
+  },
+  {
+   "house": "r1_i0",
+   "agent": 2,
+   "known": 51329,
+   "f64_mismatch": 0,
+   "f32_mismatch": 0,
+   "f32_occ_mismatch": 0,
+   "pose32_mismatch": 0,
+   "sec": 2.8
+  },
+  {
+   "house": "r1_i0",
+   "agent": 4,
+   "known": 64236,
+   "f64_mismatch": 0,
+   "f32_mismatch": 0,
+   "f32_occ_mismatch": 0,
+   "pose32_mismatch": 0,
+   "sec": 3.2
+  },
+  {
+   "house": "r1_i0",
+   "agent": 6,
+   "known": 71905,
+   "f64_mismatch": 0,
+   "f32_mismatch": 0,
+   "f32_occ_mismatch": 0,
+   "pose32_mismatch": 0,
+   "sec": 3.3
+  },
+  {
+   "house": "r2_i1",
+   "agent": 0,
+   "known": 67011,
+   "f64_mismatch": 0,
+   "f32_mismatch": 0,
+   "f32_occ_mismatch": 0,
+   "pose32_mismatch": 0,
+   "sec": 3.7
+  },
+  {
+   "house": "r2_i1",
+   "agent": 2,
+   "known": 46730,
+   "f64_mismatch": 0,
+   "f32_mismatch": 0,
+   "f32_occ_mismatch": 0,
+   "pose32_mismatch": 0,
+   "sec": 3.7
+  },
+  {
+   "house": "r2_i1",
+   "agent": 4,
+   "known": 68827,
+   "f64_mismatch": 0,
+   "f32_mismatch": 0,
+   "f32_occ_mismatch": 0,
+   "pose32_mismatch": 0,
+   "sec": 3.5
+  },
+  {
+   "house": "r2_i1",
+   "agent": 6,
+   "known": 40753,
+   "f64_mismatch": 0,
+   "f32_mismatch": 0,
+   "f32_occ_mismatch": 0,
+   "pose32_mismatch": 0,
+   "sec": 3.4
+  },
+  {
+   "house": "r3_i0",
+   "agent": 0,
+   "known": 50407,
+   "f64_mismatch": 0,
+   "f32_mismatch": 0,
+   "f32_occ_mismatch": 0,
+   "pose32_mismatch": 0,
+   "sec": 3.4
+  },
+  {
+   "house": "r3_i0",
+   "agent": 2,
+   "known": 51805,
+   "f64_mismatch": 0,
+   "f32_mismatch": 0,
+   "f32_occ_mismatch": 0,
+   "pose32_mismatch": 0,
+   "sec": 3.5
+  },
+  {
+   "house": "r3_i0",
+   "agent": 4,
+   "known": 72036,
+   "f64_mismatch": 0,
+   "f32_mismatch": 0,
+   "f32_occ_mismatch": 0,
+   "pose32_mismatch": 0,
+   "sec": 3.6
+  },
+  {
+   "house": "r3_i0",
+   "agent": 6,
+   "known": 29831,
+   "f64_mismatch": 0,
+   "f32_mismatch": 0,
+   "f32_occ_mismatch": 0,
+   "pose32_mismatch": 0,
+   "sec": 3.5
+  }
+ ]
+}

@@ -1,0 +1,102 @@
+32 r1_i0 ok
+32 r1_i1 ok
+32 r2_i0 ok
+32 r2_i1 ok
+32 r3_i0 ok
+32 r3_i1 ok
+64 r1_i0 ok
+64 r1_i1 ok
+64 r2_i0 ok
+64 r2_i1 ok
+64 r3_i0 ok
+64 r3_i1 ok
+{
+ "G32": {
+  "D": 1024,
+  "k0_evidenced_median": 184.5,
+  "k0_evidenced_frac": 0.20078531901041666,
+  "k0_mask_bytes_median": 14.337572669496234,
+  "converged_evidenced_median": 357.5,
+  "converged_evidenced_frac": 0.3356817336309524,
+  "converged_mask_bytes_median": 15.76119161209596,
+  "session_stalks_per_edge_median": {
+   "fixed": 8192.0,
+   "sparse": 2573.5,
+   "delta": 509.0,
+   "delta_dom": 472.5
+  },
+  "session_addr_bytes_per_edge_median": {
+   "sparse": 125.40285131020653,
+   "delta": 63.96674839321257,
+   "delta_dom": 63.346006825648004
+  },
+  "bytes_b13.63": {
+   "k0_message_median": 330.0176661238796,
+   "converged_message_median": 623.3047647102443,
+   "session_per_edge_fixed": 16384.0,
+   "session_per_edge_sparse_median": 4517.983736405604,
+   "session_per_edge_delta_median": 938.2730663425591,
+   "session_per_edge_delta_dom_median": 883.6321505964088
+  },
+  "bytes_b7.0": {
+   "k0_message_median": 177.11329112387966,
+   "converged_message_median": 324.95476471024426,
+   "session_per_edge_fixed": 16384.0,
+   "session_per_edge_sparse_median": 2390.582486405604,
+   "session_per_edge_delta_median": 516.4393163425591,
+   "session_per_edge_delta_dom_median": 492.04777559640877
+  },
+  "bytes_b4.0": {
+   "k0_message_median": 108.58434371216325,
+   "converged_message_median": 189.95476471024426,
+   "session_per_edge_fixed": 16384.0,
+   "session_per_edge_sparse_median": 1428.419939645363,
+   "session_per_edge_delta_median": 325.5643163425591,
+   "session_per_edge_delta_dom_median": 312.8809187535936
+  }
+ },
+ "G64": {
+  "D": 4096,
+  "k0_evidenced_median": 658.0,
+  "k0_evidenced_frac": 0.181304931640625,
+  "k0_mask_bytes_median": 24.05113281711981,
+  "converged_evidenced_median": 1340.0,
+  "converged_evidenced_frac": 0.30979701450892855,
+  "converged_mask_bytes_median": 27.25319847976361,
+  "session_stalks_per_edge_median": {
+   "fixed": 32768.0,
+   "sparse": 9557.5,
+   "delta": 1815.0,
+   "delta_dom": 1703.5
+  },
+  "session_addr_bytes_per_edge_median": {
+   "sparse": 215.4198048691174,
+   "delta": 133.43046055381302,
+   "delta_dom": 130.6967204165557
+  },
+  "bytes_b13.63": {
+   "k0_message_median": 1146.2300848777973,
+   "converged_message_median": 2311.8646835268746,
+   "session_per_edge_fixed": 65536.0,
+   "session_per_edge_sparse_median": 16567.59231056319,
+   "session_per_edge_delta_median": 3226.971919983613,
+   "session_per_edge_delta_dom_median": 3047.0297986252326
+  },
+  "bytes_b7.0": {
+   "k0_message_median": 601.3224722197536,
+   "converged_message_median": 1201.3396835268743,
+   "session_per_edge_fixed": 65536.0,
+   "session_per_edge_sparse_median": 8625.647605415863,
+   "session_per_edge_delta_median": 1719.475669983613,
+   "session_per_edge_delta_dom_median": 1635.2541736252324
+  },
+  "bytes_b4.0": {
+   "k0_message_median": 356.25997221975365,
+   "converged_message_median": 698.8396835268743,
+   "session_per_edge_fixed": 65536.0,
+   "session_per_edge_sparse_median": 5013.69914336502,
+   "session_per_edge_delta_median": 1037.350669983613,
+   "session_per_edge_delta_dom_median": 996.4416736252324
+  }
+ }
+}

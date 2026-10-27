@@ -1,0 +1,14 @@
+r1_i0 [0, 1, 2, 3, 4, 5, 6, 7] 199s
+r1_i1 [0, 1, 2, 3, 4, 5, 6, 7] 223s
+r2_i0 [0, 1, 2, 3, 4, 5, 6, 7] 270s
+r2_i1 [0, 1, 2, 3, 4, 5, 6, 7] 268s
+r3_i1 [0, 2, 3, 4, 5, 6, 7] 119s
+r3_i0 [0, 1, 2, 3, 4, 5, 6, 7] 148s
+theta  0: n 47 ctx   1368 H+p    580 gzip   2713 known 0.131 | du221   591 B surf 0.889 furn 0.763
+theta 15: n 47 ctx   1702 H+p    837 gzip   3324 known 0.131 | du221   736 B surf 0.874 furn 0.765
+theta 30: n 47 ctx   1849 H+p    906 gzip   3719 known 0.129 | du221   798 B surf 0.879 furn 0.776
+theta 45: n 47 ctx   1970 H+p   1019 gzip   3865 known 0.130 | du221   790 B surf 0.883 furn 0.791
+
+real	11m43.473s
+user	0m0.000s
+sys	0m0.031s

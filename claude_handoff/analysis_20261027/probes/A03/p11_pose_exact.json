@@ -1,0 +1,1038 @@
+{
+ "summary": {
+  "u12": {
+   "bits_per_agent": 86,
+   "exact": 14,
+   "n": 48,
+   "diff_median": 2.0,
+   "diff_max": 28,
+   "occ_diff_max": 2
+  },
+  "u16": {
+   "bits_per_agent": 110,
+   "exact": 44,
+   "n": 48,
+   "diff_median": 0.0,
+   "diff_max": 3,
+   "occ_diff_max": 1
+  },
+  "f32": {
+   "bits_per_agent": 206,
+   "exact": 48,
+   "n": 48,
+   "diff_median": 0.0,
+   "diff_max": 0,
+   "occ_diff_max": 0
+  }
+ },
+ "rows": [
+  {
+   "house": "r1_i0",
+   "agent": 0,
+   "q": "u12",
+   "diff": 5,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 0,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 0,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 1,
+   "q": "u12",
+   "diff": 5,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 1,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 1,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 2,
+   "q": "u12",
+   "diff": 1,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 2,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 2,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 3,
+   "q": "u12",
+   "diff": 3,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 3,
+   "q": "u16",
+   "diff": 1,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 3,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 4,
+   "q": "u12",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 4,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 4,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 5,
+   "q": "u12",
+   "diff": 1,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 5,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 5,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 6,
+   "q": "u12",
+   "diff": 2,
+   "occ_diff": 2
+  },
+  {
+   "house": "r1_i0",
+   "agent": 6,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 6,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 7,
+   "q": "u12",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 7,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i0",
+   "agent": 7,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 0,
+   "q": "u12",
+   "diff": 2,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 0,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 0,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 1,
+   "q": "u12",
+   "diff": 6,
+   "occ_diff": 2
+  },
+  {
+   "house": "r1_i1",
+   "agent": 1,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 1,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 2,
+   "q": "u12",
+   "diff": 1,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 2,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 2,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 3,
+   "q": "u12",
+   "diff": 5,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 3,
+   "q": "u16",
+   "diff": 3,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 3,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 4,
+   "q": "u12",
+   "diff": 1,
+   "occ_diff": 1
+  },
+  {
+   "house": "r1_i1",
+   "agent": 4,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 4,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 5,
+   "q": "u12",
+   "diff": 28,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 5,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 5,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 6,
+   "q": "u12",
+   "diff": 7,
+   "occ_diff": 2
+  },
+  {
+   "house": "r1_i1",
+   "agent": 6,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 6,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 7,
+   "q": "u12",
+   "diff": 4,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 7,
+   "q": "u16",
+   "diff": 1,
+   "occ_diff": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 7,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 0,
+   "q": "u12",
+   "diff": 2,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 0,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 0,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 1,
+   "q": "u12",
+   "diff": 2,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 1,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 1,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 2,
+   "q": "u12",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 2,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 2,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 3,
+   "q": "u12",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 3,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 3,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 4,
+   "q": "u12",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 4,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 4,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 5,
+   "q": "u12",
+   "diff": 3,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 5,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 5,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 6,
+   "q": "u12",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 6,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 6,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 7,
+   "q": "u12",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 7,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i0",
+   "agent": 7,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 0,
+   "q": "u12",
+   "diff": 1,
+   "occ_diff": 1
+  },
+  {
+   "house": "r2_i1",
+   "agent": 0,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 0,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 1,
+   "q": "u12",
+   "diff": 1,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 1,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 1,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 2,
+   "q": "u12",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 2,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 2,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 3,
+   "q": "u12",
+   "diff": 13,
+   "occ_diff": 1
+  },
+  {
+   "house": "r2_i1",
+   "agent": 3,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 3,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 4,
+   "q": "u12",
+   "diff": 4,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 4,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 4,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 5,
+   "q": "u12",
+   "diff": 3,
+   "occ_diff": 2
+  },
+  {
+   "house": "r2_i1",
+   "agent": 5,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 5,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 6,
+   "q": "u12",
+   "diff": 19,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 6,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 6,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 7,
+   "q": "u12",
+   "diff": 1,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 7,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 7,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 0,
+   "q": "u12",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 0,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 0,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 1,
+   "q": "u12",
+   "diff": 1,
+   "occ_diff": 1
+  },
+  {
+   "house": "r3_i0",
+   "agent": 1,
+   "q": "u16",
+   "diff": 1,
+   "occ_diff": 1
+  },
+  {
+   "house": "r3_i0",
+   "agent": 1,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 2,
+   "q": "u12",
+   "diff": 1,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 2,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 2,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 3,
+   "q": "u12",
+   "diff": 2,
+   "occ_diff": 1
+  },
+  {
+   "house": "r3_i0",
+   "agent": 3,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 3,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 4,
+   "q": "u12",
+   "diff": 3,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 4,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 4,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 5,
+   "q": "u12",
+   "diff": 6,
+   "occ_diff": 1
+  },
+  {
+   "house": "r3_i0",
+   "agent": 5,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 5,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 6,
+   "q": "u12",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 6,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 6,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 7,
+   "q": "u12",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 7,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 7,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 0,
+   "q": "u12",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 0,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 0,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 1,
+   "q": "u12",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 1,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 1,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 2,
+   "q": "u12",
+   "diff": 24,
+   "occ_diff": 1
+  },
+  {
+   "house": "r3_i1",
+   "agent": 2,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 2,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 3,
+   "q": "u12",
+   "diff": 2,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 3,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 3,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 4,
+   "q": "u12",
+   "diff": 6,
+   "occ_diff": 1
+  },
+  {
+   "house": "r3_i1",
+   "agent": 4,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 4,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 5,
+   "q": "u12",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 5,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 5,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 6,
+   "q": "u12",
+   "diff": 2,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 6,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 6,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 7,
+   "q": "u12",
+   "diff": 3,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 7,
+   "q": "u16",
+   "diff": 0,
+   "occ_diff": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 7,
+   "q": "f32",
+   "diff": 0,
+   "occ_diff": 0
+  }
+ ]
+}

@@ -1,0 +1,121 @@
+{
+ "per_house": {
+  "r1_i0": {
+   "agents": 8,
+   "directed_edges": 14,
+   "current_fixed_8rounds": 229376,
+   "current_send_once": 28672,
+   "gzip_flood": 159481,
+   "ctx_flood": 76421.68337568938,
+   "gzip_relay": 41961,
+   "ctx_relay": 19533.06041083738,
+   "S_pose_relay": 11830.523752105511,
+   "gravW_pose_relay": 8794.972700364979,
+   "oracleW_pose_relay": 6419.381564256099
+  },
+  "r1_i1": {
+   "agents": 8,
+   "directed_edges": 14,
+   "current_fixed_8rounds": 229376,
+   "current_send_once": 28672,
+   "gzip_flood": 280147,
+   "ctx_flood": 127557.65119134828,
+   "gzip_relay": 79388,
+   "ctx_relay": 35263.52534719812,
+   "S_pose_relay": 21601.778173035986,
+   "gravW_pose_relay": 16324.942930742112,
+   "oracleW_pose_relay": 11628.153803487838
+  },
+  "r2_i0": {
+   "agents": 8,
+   "directed_edges": 14,
+   "current_fixed_8rounds": 229376,
+   "current_send_once": 28672,
+   "gzip_flood": 122864,
+   "ctx_flood": 61140.539901280565,
+   "gzip_relay": 36946,
+   "ctx_relay": 18348.110526959284,
+   "S_pose_relay": 10399.510936544251,
+   "gravW_pose_relay": 8104.265585054107,
+   "oracleW_pose_relay": 6613.828346968036
+  },
+  "r2_i1": {
+   "agents": 8,
+   "directed_edges": 14,
+   "current_fixed_8rounds": 229376,
+   "current_send_once": 28672,
+   "gzip_flood": 194061,
+   "ctx_flood": 95941.32782887449,
+   "gzip_relay": 79772,
+   "ctx_relay": 38868.52699915246,
+   "S_pose_relay": 21248.000328194146,
+   "gravW_pose_relay": 16787.853678648436,
+   "oracleW_pose_relay": 11989.284334227079
+  },
+  "r3_i0": {
+   "agents": 8,
+   "directed_edges": 14,
+   "current_fixed_8rounds": 229376,
+   "current_send_once": 28672,
+   "gzip_flood": 117838,
+   "ctx_flood": 60004.204577632176,
+   "gzip_relay": 57011,
+   "ctx_relay": 29813.47272491652,
+   "S_pose_relay": 14542.02338837561,
+   "gravW_pose_relay": 10926.644417984226,
+   "oracleW_pose_relay": 8574.534207467581
+  },
+  "r3_i1": {
+   "agents": 8,
+   "directed_edges": 14,
+   "current_fixed_8rounds": 229376,
+   "current_send_once": 28672,
+   "gzip_flood": 124068,
+   "ctx_flood": 61633.53505019279,
+   "gzip_relay": 53334,
+   "ctx_relay": 26537.82901098547,
+   "S_pose_relay": 14121.252621205522,
+   "gravW_pose_relay": 11139.764643413762,
+   "oracleW_pose_relay": 9518.412935285814
+  }
+ },
+ "mean_bytes_per_house": {
+  "current_fixed_8rounds": 229376.0,
+  "current_send_once": 28672.0,
+  "gzip_flood": 166409.83333333334,
+  "ctx_flood": 80449.82365416961,
+  "gzip_relay": 58068.666666666664,
+  "ctx_relay": 28060.754170008207,
+  "S_pose_relay": 15623.848199910171,
+  "gravW_pose_relay": 12013.07399270127,
+  "oracleW_pose_relay": 9123.932531948742
+ },
+ "median_ratios": {
+  "S_pose_relay": {
+   "current_fixed_8rounds": 16.008319510792834,
+   "current_send_once": 2.0010399388491042,
+   "gzip_flood": 10.473771765857437,
+   "gzip_relay": 3.714698794845058,
+   "ctx_flood": 5.1972427268731085,
+   "ctx_relay": 1.7968018284372098
+  },
+  "gravW_pose_relay": {
+   "current_fixed_8rounds": 20.79154768011406,
+   "current_send_once": 2.5989434600142576,
+   "gzip_flood": 13.360009448593889,
+   "gzip_relay": 4.779367210916539,
+   "ctx_flood": 6.62958353783924,
+   "ctx_relay": 2.289641650741273
+  },
+  "oracleW_pose_relay": {
+   "current_fixed_8rounds": 25.42448793333864,
+   "current_send_once": 3.17806099166733,
+   "gzip_flood": 17.381519571848813,
+   "gzip_relay": 6.592742631242723,
+   "ctx_flood": 8.62330290641075,
+   "ctx_relay": 3.0377123474594656
+  },
+  "protocol_gain_gzip_flood_over_relay": 2.8790988834092284,
+  "protocol_gain_ctx_flood_over_relay": 2.9003038869474933
+ }
+}

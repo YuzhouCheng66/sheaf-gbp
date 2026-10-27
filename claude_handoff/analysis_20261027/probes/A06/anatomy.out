@@ -1,0 +1,44 @@
+r1_i0 done
+r1_i1 done
+r2_i0 done
+r2_i1 done
+r3_i0 done
+r3_i1 done
+
+=== hop 0: official furn F1 0.524 pooled 0.589 R 0.475 P 0.774 FN/FP 3.79 (tp 29533 fp 8627 fn 32673)
+  [tgt] height: 0: sh 0.184 rec 0.314 fnsh 0.241 F1fix 0.691; 1: sh 0.301 rec 0.495 fnsh 0.289 F1fix 0.710; 2: sh 0.266 rec 0.526 fnsh 0.240 F1fix 0.691; 3: sh 0.080 rec 0.483 fnsh 0.079 F1fix 0.624; 4: sh 0.063 rec 0.552 fnsh 0.054 F1fix 0.613; 5: sh 0.098 rec 0.521 fnsh 0.090 F1fix 0.629; 6: sh 0.007 rec 0.439 fnsh 0.008 F1fix 0.592
+  [tgt] part: 0: sh 0.104 rec 0.084 fnsh 0.181 F1fix 0.667; 1: sh 0.148 rec 0.586 fnsh 0.117 F1fix 0.640; 2: sh 0.016 rec 0.324 fnsh 0.021 F1fix 0.598; 3: sh 0.732 rec 0.511 fnsh 0.681 F1fix 0.845
+  [tgt] phase32: 0: sh 0.246 rec 0.329 fnsh 0.315 F1fix 0.720; 1: sh 0.412 rec 0.449 fnsh 0.432 F1fix 0.763; 2: sh 0.140 rec 0.529 fnsh 0.126 F1fix 0.644; 7: sh 0.177 rec 0.714 fnsh 0.096 F1fix 0.631; 8: sh 0.025 rec 0.340 fnsh 0.031 F1fix 0.603
+  [tgt] phase64: 0: sh 0.471 rec 0.373 fnsh 0.562 F1fix 0.807; 1: sh 0.328 rec 0.502 fnsh 0.311 F1fix 0.718; 7: sh 0.177 rec 0.714 fnsh 0.096 F1fix 0.631; 8: sh 0.025 rec 0.340 fnsh 0.031 F1fix 0.603
+  [tgt] wall: 0: sh 0.104 rec 0.424 fnsh 0.115 F1fix 0.639; 1: sh 0.233 rec 0.550 fnsh 0.199 F1fix 0.675; 2: sh 0.310 rec 0.522 fnsh 0.282 F1fix 0.707; 3: sh 0.239 rec 0.379 fnsh 0.283 F1fix 0.707; 4: sh 0.114 rec 0.440 fnsh 0.121 F1fix 0.642
+  [tgt] against: 0: sh 0.368 rec 0.293 fnsh 0.496 F1fix 0.785; 1: sh 0.632 rec 0.581 fnsh 0.504 F1fix 0.787
+  [tgt] col_levels: 0: sh 0.149 rec 0.640 fnsh 0.102 F1fix 0.634; 1: sh 0.159 rec 0.354 fnsh 0.196 F1fix 0.673; 2: sh 0.291 rec 0.353 fnsh 0.358 F1fix 0.736; 3: sh 0.401 rec 0.550 fnsh 0.344 F1fix 0.731
+  [tgt] col_wall: 0: sh 0.943 rec 0.477 fnsh 0.938 F1fix 0.919; 1: sh 0.057 rec 0.430 fnsh 0.062 F1fix 0.617
+  [fp] dist: 0: 0.688 (F1rm 0.625); 1: 0.110 (F1rm 0.594); 2: 0.093 (F1rm 0.593); 3: 0.056 (F1rm 0.591); 4: 0.053 (F1rm 0.591)
+  [fp] dist_world: 0: 0.759 (F1rm 0.630); 1: 0.151 (F1rm 0.596); 2: 0.039 (F1rm 0.591); 3: 0.051 (F1rm 0.591)
+  [fp] near_part: 0: 0.117 (F1rm 0.594); 1: 0.200 (F1rm 0.599); 2: 0.022 (F1rm 0.590); 3: 0.661 (F1rm 0.624)
+  [fp] adj32: 0: 0.099 (F1rm 0.594); 1: 0.351 (F1rm 0.607); 2: 0.118 (F1rm 0.595); 8: 0.119 (F1rm 0.595); 9: 0.312 (F1rm 0.605)
+  [fp] adj64: 0: 0.242 (F1rm 0.601); 1: 0.327 (F1rm 0.606); 8: 0.119 (F1rm 0.595); 9: 0.312 (F1rm 0.605)
+  [fp] col_has_furn: 0: 0.052 (F1rm 0.591); 1: 0.948 (F1rm 0.641)
+  [fp] height: 0: 0.124 (F1rm 0.595); 1: 0.322 (F1rm 0.605); 2: 0.274 (F1rm 0.603); 3: 0.085 (F1rm 0.593); 4: 0.058 (F1rm 0.591); 5: 0.089 (F1rm 0.593); 6: 0.049 (F1rm 0.591)
+  [fp] wall: 0: 0.131 (F1rm 0.595); 1: 0.286 (F1rm 0.603); 2: 0.243 (F1rm 0.601); 3: 0.233 (F1rm 0.601); 4: 0.108 (F1rm 0.594)
+  [fn state, share predicted unknown] {'all': 0.292, 'part0': 0.181, 'part1': 0.165, 'part2': 0.181, 'part3': 0.346, 'h0': 0.39, 'h1': 0.364, 'h2': 0.225, 'h3': 0.228, 'h4': 0.184, 'h5': 0.118, 'h6': 0.031}
+
+=== hop 8: official furn F1 0.540 pooled 0.557 R 0.447 P 0.739 FN/FP 3.50 (tp 103120 fp 36415 fn 127320)
+  [tgt] height: 0: sh 0.202 rec 0.285 fnsh 0.261 F1fix 0.676; 1: sh 0.309 rec 0.464 fnsh 0.300 F1fix 0.692; 2: sh 0.254 rec 0.524 fnsh 0.219 F1fix 0.659; 3: sh 0.076 rec 0.459 fnsh 0.074 F1fix 0.593; 4: sh 0.059 rec 0.508 fnsh 0.053 F1fix 0.583; 5: sh 0.093 rec 0.483 fnsh 0.087 F1fix 0.599; 6: sh 0.007 rec 0.495 fnsh 0.006 F1fix 0.561
+  [tgt] part: 0: sh 0.095 rec 0.072 fnsh 0.160 F1fix 0.633; 1: sh 0.134 rec 0.550 fnsh 0.109 F1fix 0.610; 2: sh 0.015 rec 0.298 fnsh 0.019 F1fix 0.567; 3: sh 0.755 rec 0.479 fnsh 0.712 F1fix 0.841
+  [tgt] phase32: 0: sh 0.258 rec 0.334 fnsh 0.311 F1fix 0.697; 1: sh 0.411 rec 0.427 fnsh 0.427 F1fix 0.742; 2: sh 0.138 rec 0.474 fnsh 0.132 F1fix 0.620; 7: sh 0.164 rec 0.665 fnsh 0.100 F1fix 0.605; 8: sh 0.028 rec 0.389 fnsh 0.031 F1fix 0.573
+  [tgt] phase64: 0: sh 0.479 rec 0.355 fnsh 0.559 F1fix 0.790; 1: sh 0.329 rec 0.479 fnsh 0.311 F1fix 0.697; 7: sh 0.164 rec 0.665 fnsh 0.100 F1fix 0.605; 8: sh 0.028 rec 0.389 fnsh 0.031 F1fix 0.573
+  [tgt] wall: 0: sh 0.122 rec 0.414 fnsh 0.129 F1fix 0.619; 1: sh 0.261 rec 0.494 fnsh 0.239 F1fix 0.667; 2: sh 0.298 rec 0.491 fnsh 0.275 F1fix 0.682; 3: sh 0.238 rec 0.368 fnsh 0.272 F1fix 0.681; 4: sh 0.081 rec 0.422 fnsh 0.085 F1fix 0.598
+  [tgt] against: 0: sh 0.366 rec 0.280 fnsh 0.478 F1fix 0.761; 1: sh 0.634 rec 0.544 fnsh 0.522 F1fix 0.777
+  [tgt] col_levels: 0: sh 0.113 rec 0.595 fnsh 0.083 F1fix 0.597; 1: sh 0.148 rec 0.350 fnsh 0.174 F1fix 0.639; 2: sh 0.316 rec 0.365 fnsh 0.363 F1fix 0.718; 3: sh 0.423 rec 0.504 fnsh 0.380 F1fix 0.724
+  [tgt] col_wall: 0: sh 0.928 rec 0.451 fnsh 0.922 F1fix 0.905; 1: sh 0.072 rec 0.396 fnsh 0.078 F1fix 0.595
+  [fp] dist: 0: 0.670 (F1rm 0.597); 1: 0.115 (F1rm 0.564); 2: 0.095 (F1rm 0.563); 3: 0.056 (F1rm 0.561); 4: 0.064 (F1rm 0.561)
+  [fp] dist_world: 0: 0.741 (F1rm 0.601); 1: 0.157 (F1rm 0.566); 2: 0.039 (F1rm 0.560); 3: 0.063 (F1rm 0.561)
+  [fp] near_part: 0: 0.114 (F1rm 0.564); 1: 0.197 (F1rm 0.568); 2: 0.021 (F1rm 0.559); 3: 0.668 (F1rm 0.597)
+  [fp] adj32: 0: 0.102 (F1rm 0.563); 1: 0.335 (F1rm 0.576); 2: 0.105 (F1rm 0.563); 8: 0.129 (F1rm 0.565); 9: 0.330 (F1rm 0.576)
+  [fp] adj64: 0: 0.240 (F1rm 0.571); 1: 0.302 (F1rm 0.575); 8: 0.129 (F1rm 0.565); 9: 0.330 (F1rm 0.576)
+  [fp] col_has_furn: 0: 0.081 (F1rm 0.562); 1: 0.919 (F1rm 0.613)
+  [fp] height: 0: 0.123 (F1rm 0.564); 1: 0.348 (F1rm 0.577); 2: 0.271 (F1rm 0.573); 3: 0.097 (F1rm 0.563); 4: 0.058 (F1rm 0.561); 5: 0.085 (F1rm 0.562); 6: 0.019 (F1rm 0.558)
+  [fp] wall: 0: 0.173 (F1rm 0.567); 1: 0.290 (F1rm 0.574); 2: 0.226 (F1rm 0.570); 3: 0.210 (F1rm 0.569); 4: 0.101 (F1rm 0.563)
+  [fn state, share predicted unknown] {'all': 0.178, 'part0': 0.091, 'part1': 0.087, 'part2': 0.07, 'part3': 0.215, 'h0': 0.255, 'h1': 0.213, 'h2': 0.12, 'h3': 0.114, 'h4': 0.11, 'h5': 0.081, 'h6': 0.039}

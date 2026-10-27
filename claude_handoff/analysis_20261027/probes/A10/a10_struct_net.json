@@ -1,0 +1,50 @@
+[
+ {
+  "house": "r1_i0",
+  "relay_struct": 7474.431603828229,
+  "cd_struct": 6562.54759337055,
+  "cut_struct": 5765.085564602959,
+  "edge_full_median": 524.2920843800969,
+  "edge_inn_median": 426.7801534745431
+ },
+ {
+  "house": "r1_i1",
+  "relay_struct": 12360.808641961057,
+  "cd_struct": 10714.893156932374,
+  "cut_struct": 9030.440908193736,
+  "edge_full_median": 811.0966048974377,
+  "edge_inn_median": 700.2741960536796
+ },
+ {
+  "house": "r2_i0",
+  "relay_struct": 6077.100095284097,
+  "cd_struct": 5343.2975599955325,
+  "cut_struct": 4639.43111990172,
+  "edge_full_median": 430.220494728467,
+  "edge_inn_median": 329.3977657829178
+ },
+ {
+  "house": "r2_i1",
+  "relay_struct": 13608.464202595389,
+  "cd_struct": 12333.062129302407,
+  "cut_struct": 11411.148022021629,
+  "edge_full_median": 1024.7288606607508,
+  "edge_inn_median": 813.4923206780327
+ },
+ {
+  "house": "r3_i0",
+  "relay_struct": 7610.856264765345,
+  "cd_struct": 7385.9415344484105,
+  "cut_struct": 7584.351338447071,
+  "edge_full_median": 563.4835718924171,
+  "edge_inn_median": 558.3183493898209
+ },
+ {
+  "house": "r3_i1",
+  "relay_struct": 8774.634664033661,
+  "cd_struct": 8209.778509167469,
+  "cut_struct": 7975.750167057034,
+  "edge_full_median": 658.0749525412821,
+  "edge_inn_median": 598.6580934022735
+ }
+]

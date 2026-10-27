@@ -1,0 +1,24 @@
+pose rounding 10 mm: differing voxels median 526 (range 351-1838), share of known 0.00780; correction ctx B median 548.2 (max 1484.7)
+pose rounding 1 mm: differing voxels median 68 (range 25-163), share of known 0.00067; correction ctx B median 105.0 (max 234.1)
+pose rounding 0.1 mm: differing voxels median 6 (range 2-46), share of known 0.00007; correction ctx B median 17.2 (max 46.0)
+exact-pose bytes per agent used: 27.2
+[own] n 48 agents med 1 | ctx ternary 1384 gzip 2732 | PROGRAM exact-pose med 259 (boxes 167, resid 71, n boxes 50, p90 420) ratios ctx 5.4 gzip 10.6 raw 507 ours2048 7.9 | RAYSHEAF ctx(O)+exact poses med 596 (= 0.43 x ctx; ratios gzip 4.6 raw 220)
+[union] n 48 agents med 8 | ctx ternary 2813 gzip 6060 | PROGRAM exact-pose med 821 (boxes 424, resid 155, n boxes 140, p90 1341) ratios ctx 3.4 gzip 7.4 raw 160 ours2048 2.5 | RAYSHEAF ctx(O)+exact poses med 1756 (= 0.62 x ctx; ratios gzip 3.5 raw 75)
+[edge] n 84 agents med 4 | ctx ternary 1752 gzip 3646 | PROGRAM exact-pose med 517 (boxes 288, resid 107, n boxes 91, p90 896) ratios ctx 3.4 gzip 7.1 raw 254 ours2048 4.0 | RAYSHEAF ctx(O)+exact poses med 1052 (= 0.60 x ctx; ratios gzip 3.5 raw 125)
+raycast probe houses 6: agreement with demo own maps (all voxels) 0.9960 (the stored known-IoU field of this run is invalid, see a06_raycast.py)
+  exact re-cast through O: own 48/48, union 48/48
+  synthetic maps: own ctx ternary 1371 ctx O 584; union 2810 / 1575
+  edges: ctx ternary 1782, ctx O 932, ctx O | receiver side 709 (ratio 0.82); new occ share 0.628
+  lossy 2x2x1_any      K0   296 B surf 0.724 var 0.536 furn 0.525 fpr 0.0000 | R8   789 B surf 0.728 var 0.567 furn 0.544 fpr 0.0000
+  lossy 1x1x2_any      K0   460 B surf 0.633 var 0.722 furn 0.397 fpr 0.0000 | R8  1215 B surf 0.669 var 0.761 furn 0.489 fpr 0.0000
+  lossy 2x2x2_any      K0   232 B surf 0.391 var 0.382 furn 0.195 fpr 0.0000 | R8   615 B surf 0.422 var 0.423 furn 0.248 fpr 0.0000
+  lossy minus_thin     K0   503 B surf 0.979 var 0.958 furn 0.832 fpr 0.0115 | R8  1429 B surf 0.978 var 0.964 furn 0.868 fpr 0.0236
+  lossy minus_thin_xy  K0   561 B surf 0.992 var 0.984 furn 0.938 fpr 0.0060 | R8  1533 B surf 0.991 var 0.986 furn 0.951 fpr 0.0102
+program decode on re-simulated maps [own] houses 6: exact 48/48; total med 240 B; boxes-only lossy (residual dropped): surf 0.994 var 0.989 furn 0.961 at 175 B
+program decode on re-simulated maps [union] houses 6: exact 48/48; total med 655 B; boxes-only lossy (residual dropped): surf 0.995 var 0.992 furn 0.972 at 475 B
+furn bits K0_m8: furniture boxes 34 = 116 B, structure boxes 12 = 41 B, residual 71 B; drop furniture residual -> furn F1 0.962 surface 0.995
+furn bits K0_m16: furniture boxes 24 = 84 B, structure boxes 12 = 39 B, residual 105 B; drop furniture residual -> furn F1 0.910 surface 0.988
+furn bits K0_m32: furniture boxes 12 = 44 B, structure boxes 11 = 36 B, residual 152 B; drop furniture residual -> furn F1 0.810 surface 0.977
+furn bits R8_m8: furniture boxes 106 = 322 B, structure boxes 29 = 93 B, residual 155 B; drop furniture residual -> furn F1 0.972 surface 0.995
+furn bits R8_m16: furniture boxes 73 = 226 B, structure boxes 26 = 85 B, residual 239 B; drop furniture residual -> furn F1 0.935 surface 0.989
+furn bits R8_m32: furniture boxes 41 = 135 B, structure boxes 22 = 76 B, residual 389 B; drop furniture residual -> furn F1 0.853 surface 0.978

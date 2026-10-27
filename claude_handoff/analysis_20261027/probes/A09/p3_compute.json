@@ -1,0 +1,92 @@
+{
+ "steps": {
+  "3S-X 32x32x1 W2 (fold 2)": {
+   "gmac_decode": 32.725794816,
+   "trunk_gmac_per_agent": 3.39738624,
+   "s_update": 0.21917575874560002,
+   "updates_per_lease_6600s": 30112
+  },
+  "3S-Z 64x64x1 W2 (fold 4)": {
+   "gmac_decode": 32.74702848,
+   "trunk_gmac_per_agent": 8.833204224,
+   "s_update": 0.21926281676800002,
+   "measured": 0.206,
+   "updates_per_lease_6600s": 30100
+  },
+  "D1 64x64xC8, occ head only": {
+   "gmac_decode": 32.808370176,
+   "s_update": 0.2145143177216,
+   "updates_per_lease_6600s": 30767
+  },
+  "D1 + hop sampling (K0 + 1 random hop: 16 decodes)": {
+   "s_update": 0.11880572708864001,
+   "updates_per_lease_6600s": 55552
+  },
+  "D1 + hop sampling + bf16 (assume 2x on conv)": {
+   "s_update": 0.08690286354432,
+   "updates_per_lease_6600s": 75946
+  },
+  "K0-only screening run (8 decodes)": {
+   "s_update": 0.0818525633536,
+   "updates_per_lease_6600s": 80632
+  },
+  "D2 stage A teacher AE, batch 8 GT worlds": {
+   "s_update": 0.056902863544320004,
+   "updates_per_lease_6600s": 115987
+  },
+  "D3 BEV detector (per map)": {
+   "gmac_per_map": 8.153726976,
+   "s_update_batch8": 0.02668605612032,
+   "updates_per_lease_6600s": 247320
+  }
+ },
+ "world": [
+  {
+   "house": "r1_i0",
+   "ctx_gt_occ": 378.2791455838359,
+   "ctx_gt_obj": 347.57736353649545,
+   "ctx_gt_struct": 62.98325190940997,
+   "n_objects": 36
+  },
+  {
+   "house": "r1_i1",
+   "ctx_gt_occ": 641.95998082835,
+   "ctx_gt_obj": 612.5262213122406,
+   "ctx_gt_struct": 63.41547391219411,
+   "n_objects": 65
+  },
+  {
+   "house": "r2_i0",
+   "ctx_gt_occ": 431.27419042586564,
+   "ctx_gt_obj": 405.4951663986813,
+   "ctx_gt_struct": 73.43952314205075,
+   "n_objects": 51
+  },
+  {
+   "house": "r2_i1",
+   "ctx_gt_occ": 924.6998084797804,
+   "ctx_gt_obj": 924.2312697368507,
+   "ctx_gt_struct": 79.425441512674,
+   "n_objects": 78
+  },
+  {
+   "house": "r3_i0",
+   "ctx_gt_occ": 920.3706801456939,
+   "ctx_gt_obj": 842.7651674746437,
+   "ctx_gt_struct": 117.36341887932724,
+   "n_objects": 94
+  },
+  {
+   "house": "r3_i1",
+   "ctx_gt_occ": 835.6223948918463,
+   "ctx_gt_obj": 809.7765458546144,
+   "ctx_gt_struct": 80.23242552161267,
+   "n_objects": 86
+  }
+ ],
+ "world_median": {
+  "ctx_gt_occ": 738.7911878600981,
+  "ctx_gt_obj": 711.1513835834276,
+  "ctx_gt_struct": 76.43248232736238
+ }
+}

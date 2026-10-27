@@ -1,0 +1,24 @@
+r1_i0 89s
+r1_i1 99s
+r2_i0 94s
+r2_i1 101s
+r3_i0 89s
+r3_i1 84s
+{
+ "own": {
+  "events": 59244.5,
+  "model_agrees": 0.959694291811007,
+  "base_adaptive": 427.23731070327847,
+  "base_pretrained": 254.99013818950647,
+  "hyper_adaptive": 433.5132486851419,
+  "hyper_pretrained": 192.94340819848725
+ },
+ "union8": {
+  "events": 180822.5,
+  "model_agrees": 0.9584193952476272,
+  "base_adaptive": 1194.7002821220772,
+  "base_pretrained": 885.9868824269527,
+  "hyper_adaptive": 1152.4860835170164,
+  "hyper_pretrained": 701.1703843362628
+ }
+}

@@ -1,0 +1,14 @@
+loaded r1_i0
+loaded r1_i1
+loaded r2_i0
+loaded r2_i1
+loaded r3_i0
+loaded r3_i1
+{"house": "r1_i0", "kind": "own", "agent": 0, "n_hits": 9757, "known": 0.1, "full_adaptive": 1225.7, "hits_adaptive": 601.1, "full_static_nb9": 959.6, "hits_static_nb9": 573.5, "hits_static_nb13": 510.2}
+{"house": "r1_i0", "kind": "own", "agent": 1, "n_hits": 6400, "known": 0.1, "full_adaptive": 1460.7, "hits_adaptive": 555.2, "full_static_nb9": 1257.0, "hits_static_nb9": 538.9, "hits_static_nb13": 499.0}
+{"house": "r1_i0", "kind": "own", "agent": 2, "n_hits": 7375, "known": 0.1, "full_adaptive": 1111.0, "hits_adaptive": 568.3, "full_static_nb9": 891.5, "hits_static_nb9": 528.5, "hits_static_nb13": 493.1}
+{"house": "r1_i0", "kind": "own", "agent": 3, "n_hits": 5720, "known": 0.1, "full_adaptive": 1207.1, "hits_adaptive": 495.4, "full_static_nb9": 1037.6, "hits_static_nb9": 483.4, "hits_static_nb13": 445.2}
+{"house": "r1_i0", "kind": "own", "agent": 4, "n_hits": 9107, "known": 0.1, "full_adaptive": 1395.1, "hits_adaptive": 636.4, "full_static_nb9": 1152.8, "hits_static_nb9": 591.8, "hits_static_nb13": 524.4}
+{"house": "r1_i0", "kind": "own", "agent": 5, "n_hits": 7922, "known": 0.1, "full_adaptive": 1628.8, "hits_adaptive": 745.3, "full_static_nb9": 1402.5, "hits_static_nb9": 719.2, "hits_static_nb13": 677.9}
+{"house": "r1_i0", "kind": "own", "agent": 6, "n_hits": 10133, "known": 0.1, "full_adaptive": 1560.4, "hits_adaptive": 726.4, "full_static_nb9": 1284.9, "hits_static_nb9": 726.2, "hits_static_nb13": 662.3}
+{"house": "r1_i0", "kind": "own", "agent": 7, "n_hits": 7932, "known": 0.1, "full_adaptive": 1328.6, "hits_adaptive": 569.2, "full_static_nb9": 1040.8, "hits_static_nb9": 533.4, "hits_static_nb13": 485.2}

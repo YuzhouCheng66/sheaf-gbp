@@ -1,0 +1,3 @@
+vox_q1 {"K0_surface_f1": 0.9978, "K0_var_occ_f1": 0.9962, "K0_furn_f1": 0.995, "K0_fpr": 0.0005, "R8_surface_f1": 0.9987, "R8_var_occ_f1": 0.9977, "R8_furn_f1": 0.9967, "R8_fpr": 0.0013}
+box_q1 {"K0_surface_f1": 0.9977, "K0_var_occ_f1": 0.996, "K0_furn_f1": 0.9943, "K0_fpr": 0.0005, "R8_surface_f1": 0.9985, "R8_var_occ_f1": 0.9973, "R8_furn_f1": 0.9955, "R8_fpr": 0.001}
+454s

@@ -1,0 +1,21 @@
+r1_i0 0.0 33s
+r2_i0 0.0 39s
+r1_i1 0.0 41s
+r2_i1 0.0 37s
+r3_i1 0.0 34s
+r3_i0 0.0 36s
+r1_i0 0.02 70s
+r2_i0 0.02 89s
+r1_i1 0.02 93s
+r2_i1 0.02 87s
+r3_i1 0.02 84s
+r3_i0 0.02 89s
+r1_i0 0.05 90s
+r2_i0 0.05 112s
+r1_i1 0.05 119s
+r2_i1 0.05 78s
+r3_i1 0.05 62s
+r3_i0 0.05 65s
+0.0 {"n": 48, "ctx": 1426.6165992877816, "hits_plus_poses": 574.2582129375666, "shell_bytes": 798.222353884295, "shell_boxes": 231.5, "n_hits": 7564.0, "clean_vs_noisy_surface": 1.0, "clean_vs_noisy_furn": 1.0}
+0.02 {"n": 48, "ctx": 2337.510813442685, "hits_plus_poses": 1488.694590471863, "shell_bytes": 3881.500785014974, "shell_boxes": 1141.5, "n_hits": 13388.0, "clean_vs_noisy_surface": 0.36511804254194047, "clean_vs_noisy_furn": 0.3493238378056847}
+0.05 {"n": 48, "ctx": 2837.9222299588205, "hits_plus_poses": 1869.047827405212, "shell_bytes": 4288.370301389639, "shell_boxes": 1289.5, "n_hits": 15490.5, "clean_vs_noisy_surface": 0.20150391161973083, "clean_vs_noisy_furn": 0.2895335138218588}

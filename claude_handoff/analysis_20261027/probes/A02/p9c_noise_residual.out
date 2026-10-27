@@ -1,0 +1,44 @@
+{'house': 'r1_i0', 'agent': 0, 'setting': 'clean', 'n_occ': 9791, 'n_mismatch': 0, 'hits_bytes': 608.9581979271838, 'residual_bytes': 0.0, 'exact_codec_bytes': 608.9581979271838, 'ternary_ctx_bytes': 1229.5337683933726}
+{'house': 'r1_i0', 'agent': 0, 'setting': 'd2cm', 'n_occ': 9798, 'n_mismatch': 410, 'hits_bytes': 682.3282711714622, 'residual_bytes': 489.695121278679, 'exact_codec_bytes': 1172.0233924501413, 'ternary_ctx_bytes': 1339.9944549856978}
+{'house': 'r1_i0', 'agent': 0, 'setting': 'r1.5pct', 'n_occ': 10560, 'n_mismatch': 1538, 'hits_bytes': 1445.0245236704393, 'residual_bytes': 1383.3108210511598, 'exact_codec_bytes': 2828.335344721599, 'ternary_ctx_bytes': 2216.3472460341086}
+{'house': 'r1_i0', 'agent': 1, 'setting': 'clean', 'n_occ': 6436, 'n_mismatch': 0, 'hits_bytes': 577.030884917341, 'residual_bytes': 0.0, 'exact_codec_bytes': 577.030884917341, 'ternary_ctx_bytes': 1480.077320999257}
+{'house': 'r1_i0', 'agent': 1, 'setting': 'd2cm', 'n_occ': 6383, 'n_mismatch': 327, 'hits_bytes': 642.8095317551055, 'residual_bytes': 397.7397112854297, 'exact_codec_bytes': 1040.5492430405352, 'ternary_ctx_bytes': 1568.9694496305983}
+{'house': 'r1_i0', 'agent': 1, 'setting': 'r1.5pct', 'n_occ': 6342, 'n_mismatch': 609, 'hits_bytes': 902.1451543133963, 'residual_bytes': 700.4666213998504, 'exact_codec_bytes': 1602.6117757132467, 'ternary_ctx_bytes': 1887.5247438477384}
+{'house': 'r2_i0', 'agent': 0, 'setting': 'clean', 'n_occ': 8313, 'n_mismatch': 0, 'hits_bytes': 446.9538716603106, 'residual_bytes': 0.0, 'exact_codec_bytes': 446.9538716603106, 'ternary_ctx_bytes': 1096.230830996145}
+{'house': 'r2_i0', 'agent': 0, 'setting': 'd2cm', 'n_occ': 8319, 'n_mismatch': 160, 'hits_bytes': 465.23069988995866, 'residual_bytes': 224.59204493733816, 'exact_codec_bytes': 689.8227448272968, 'ternary_ctx_bytes': 1118.2370843788408}
+{'house': 'r2_i0', 'agent': 0, 'setting': 'r1.5pct', 'n_occ': 8672, 'n_mismatch': 665, 'hits_bytes': 921.7854946333684, 'residual_bytes': 789.9659623518406, 'exact_codec_bytes': 1711.7514569852092, 'ternary_ctx_bytes': 1640.265377745718}
+{'house': 'r2_i0', 'agent': 1, 'setting': 'clean', 'n_occ': 6809, 'n_mismatch': 0, 'hits_bytes': 432.12789148511814, 'residual_bytes': 0.0, 'exact_codec_bytes': 432.12789148511814, 'ternary_ctx_bytes': 1049.6548332880518}
+{'house': 'r2_i0', 'agent': 1, 'setting': 'd2cm', 'n_occ': 6823, 'n_mismatch': 215, 'hits_bytes': 473.8825355558625, 'residual_bytes': 243.5416502152702, 'exact_codec_bytes': 717.4241857711327, 'ternary_ctx_bytes': 1101.399914914304}
+{'house': 'r2_i0', 'agent': 1, 'setting': 'r1.5pct', 'n_occ': 7159, 'n_mismatch': 668, 'hits_bytes': 835.1098553211671, 'residual_bytes': 692.0929431020193, 'exact_codec_bytes': 1527.2027984231863, 'ternary_ctx_bytes': 1474.186565355559}
+{'house': 'r3_i1', 'agent': 0, 'setting': 'clean', 'n_occ': 5732, 'n_mismatch': 0, 'hits_bytes': 224.3553016494976, 'residual_bytes': 0.0, 'exact_codec_bytes': 224.3553016494976, 'ternary_ctx_bytes': 448.7118291936154}
+{'house': 'r3_i1', 'agent': 0, 'setting': 'd2cm', 'n_occ': 5739, 'n_mismatch': 156, 'hits_bytes': 252.57756840739995, 'residual_bytes': 202.66302274028845, 'exact_codec_bytes': 455.2405911476884, 'ternary_ctx_bytes': 493.58476549648384}
+{'house': 'r3_i1', 'agent': 0, 'setting': 'r1.5pct', 'n_occ': 6151, 'n_mismatch': 715, 'hits_bytes': 634.9997549661047, 'residual_bytes': 630.0851044129133, 'exact_codec_bytes': 1265.0848593790179, 'ternary_ctx_bytes': 910.4483641166925}
+{'house': 'r3_i1', 'agent': 1, 'setting': 'clean', 'n_occ': 6134, 'n_mismatch': 0, 'hits_bytes': 197.30110199187715, 'residual_bytes': 0.0, 'exact_codec_bytes': 197.30110199187715, 'ternary_ctx_bytes': 396.7982043368756}
+{'house': 'r3_i1', 'agent': 1, 'setting': 'd2cm', 'n_occ': 6118, 'n_mismatch': 224, 'hits_bytes': 227.57838118291295, 'residual_bytes': 213.14117569894628, 'exact_codec_bytes': 440.71955688185926, 'ternary_ctx_bytes': 430.7955530012652}
+{'house': 'r3_i1', 'agent': 1, 'setting': 'r1.5pct', 'n_occ': 6437, 'n_mismatch': 584, 'hits_bytes': 567.6462050077565, 'residual_bytes': 567.9845367427212, 'exact_codec_bytes': 1135.6307417504777, 'ternary_ctx_bytes': 790.6505574540994}
+{
+ "clean": {
+  "n_occ": 6622.5,
+  "n_mismatch": 0.0,
+  "hits_bytes": 439.5408815727144,
+  "residual_bytes": 0.0,
+  "exact_codec_bytes": 439.5408815727144,
+  "ternary_ctx_bytes": 1072.9428321420983
+ },
+ "d2cm": {
+  "n_occ": 6603.0,
+  "n_mismatch": 219.5,
+  "hits_bytes": 469.5566177229106,
+  "residual_bytes": 234.06684757630418,
+  "exact_codec_bytes": 703.6234652992148,
+  "ternary_ctx_bytes": 1109.8184996465725
+ },
+ "r1.5pct": {
+  "n_occ": 6798.0,
+  "n_mismatch": 666.5,
+  "hits_bytes": 868.6275048172818,
+  "residual_bytes": 696.2797822509349,
+  "exact_codec_bytes": 1564.9072870682166,
+  "ternary_ctx_bytes": 1557.2259715506384
+ }
+}

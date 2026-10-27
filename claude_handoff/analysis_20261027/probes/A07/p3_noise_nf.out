@@ -1,0 +1,20 @@
+r1_i0 cam_nf 34s
+r3_i1 cam_nf 34s
+r3_i0 cam_nf 36s
+r2_i1 cam_nf 37s
+r2_i0 cam_nf 41s
+r1_i1 cam_nf 42s
+r1_i0 harsh_nf 57s
+r3_i1 harsh_nf 56s
+r3_i0 harsh_nf 59s
+r2_i1 harsh_nf 61s
+r2_i0 harsh_nf 66s
+r1_i1 harsh_nf 69s
+cam_nf    K0 ctx   2388 H+p   1416 gz   4387 floor s/v/f 0.922/0.880/0.780 fpr 0.0038 | du221   867 0.859/0.634 desp  2386 0.922/0.780
+          R8 max ctx   7769 floor 0.893/0.800 | sum ctx   6432 H   4479 gz  11780 floor 0.955/0.932/0.915 | du221  2276 0.864/0.721 desp  6429 0.955/0.915
+harsh_nf  K0 ctx   3748 H+p   2577 gz   6602 floor s/v/f 0.846/0.770/0.613 fpr 0.0117 | du221  1155 0.827/0.539 desp  3747 0.847/0.613
+          R8 max ctx  11515 floor 0.816/0.608 | sum ctx   9874 H   7236 gz  16776 floor 0.903/0.856/0.791 | du221  2852 0.843/0.661 desp  9863 0.903/0.792
+
+real	1m18.047s
+user	0m0.015s
+sys	0m0.015s

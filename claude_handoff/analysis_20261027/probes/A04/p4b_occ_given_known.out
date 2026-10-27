@@ -1,0 +1,18 @@
+r1_i0 39s
+r1_i1 62s
+r2_i0 106s
+r2_i1 147s
+r3_i0 181s
+r3_i1 215s
+K0_1x1x1         bytes     379 (med    357)  refined n/a  surf 1.000  var 1.000  furn 1.000
+K0_2x2x1         bytes     209 (med    206)  refined n/a  surf 0.887  var 0.812  furn 0.764
+K0_4x4x1         bytes      93 (med     92)  refined n/a  surf 0.785  var 0.587  furn 0.466
+K0_2x2x2         bytes     177 (med    165)  refined n/a  surf 0.763  var 0.641  furn 0.351
+K0_4x4->2x2      bytes     241 (med    251)  refined 0.34  surf 0.887  var 0.812  furn 0.764
+K0_4x4->1x1      bytes     370 (med    374)  refined 0.43  surf 1.000  var 1.000  furn 1.000
+R8_1x1x1         bytes     984 (med    985)  refined n/a  surf 1.000  var 1.000  furn 1.000
+R8_2x2x1         bytes     549 (med    570)  refined n/a  surf 0.880  var 0.817  furn 0.770
+R8_4x4x1         bytes     236 (med    240)  refined n/a  surf 0.774  var 0.622  furn 0.488
+R8_2x2x2         bytes     430 (med    459)  refined n/a  surf 0.770  var 0.673  furn 0.434
+R8_4x4->2x2      bytes     648 (med    651)  refined 0.41  surf 0.880  var 0.817  furn 0.770
+R8_4x4->1x1      bytes    1028 (med   1008)  refined 0.51  surf 1.000  var 1.000  furn 1.000

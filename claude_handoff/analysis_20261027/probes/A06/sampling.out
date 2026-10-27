@@ -1,0 +1,36 @@
+r1_i0 counted
+r1_i1 counted
+r2_i0 counted
+r2_i1 counted
+r3_i0 counted
+r3_i1 counted
+r1_i0 decoded
+r1_i1 decoded
+r2_i0 decoded
+r2_i1 decoded
+r3_i0 decoded
+r3_i1 decoded
+
+=== hop 0
+  broadcast        surf 0.887 var 0.812 furn 0.764
+  MAP              surf 0.766 var 0.546 furn 0.656
+  marg_0.2         surf 0.884 var 0.805 furn 0.709
+  marg_0.3         surf 0.877 var 0.788 furn 0.762
+  marg_0.4         surf 0.820 var 0.671 furn 0.723
+  marg_0.5         surf 0.760 var 0.536 furn 0.671
+  marg_0.6         surf 0.697 var 0.361 furn 0.555
+  sampavg16_0.3    surf 0.863 var 0.762 furn 0.700
+  sampavg16_0.5    surf 0.788 var 0.601 furn 0.636
+  sample_mean4     surf 0.770 var 0.574 furn 0.546
+
+=== hop 8
+  broadcast        surf 0.880 var 0.817 furn 0.770
+  MAP              surf 0.801 var 0.659 furn 0.674
+  marg_0.2         surf 0.873 var 0.803 furn 0.764
+  marg_0.3         surf 0.871 var 0.795 furn 0.763
+  marg_0.4         surf 0.832 var 0.724 furn 0.740
+  marg_0.5         surf 0.801 var 0.664 furn 0.699
+  marg_0.6         surf 0.741 var 0.529 furn 0.629
+  sampavg16_0.3    surf 0.856 var 0.771 furn 0.753
+  sampavg16_0.5    surf 0.808 var 0.675 furn 0.700
+  sample_mean4     surf 0.774 var 0.617 furn 0.617

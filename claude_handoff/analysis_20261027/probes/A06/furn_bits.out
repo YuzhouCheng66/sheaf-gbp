@@ -1,0 +1,12 @@
+r1_i0 done
+r1_i1 done
+r2_i0 done
+r2_i1 done
+r3_i0 done
+r3_i1 done
+K0_m8   furniture boxes 34 = 116 B; structure boxes 12 = 41 B; residual 71 B | drop furniture residual -> furn F1 0.962, surface 0.995
+K0_m16  furniture boxes 24 = 84 B; structure boxes 12 = 39 B; residual 105 B | drop furniture residual -> furn F1 0.910, surface 0.988
+K0_m32  furniture boxes 12 = 44 B; structure boxes 11 = 36 B; residual 152 B | drop furniture residual -> furn F1 0.810, surface 0.977
+R8_m8   furniture boxes 106 = 322 B; structure boxes 29 = 93 B; residual 155 B | drop furniture residual -> furn F1 0.972, surface 0.995
+R8_m16  furniture boxes 73 = 226 B; structure boxes 26 = 85 B; residual 239 B | drop furniture residual -> furn F1 0.935, surface 0.989
+R8_m32  furniture boxes 41 = 135 B; structure boxes 22 = 76 B; residual 389 B | drop furniture residual -> furn F1 0.853, surface 0.978

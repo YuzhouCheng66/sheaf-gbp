@@ -1,0 +1,30 @@
+r1_i0 {"house": "r1_i0", "instances_visible": 33, "box_vox": 24137, "box_in_F": 0.4049, "box_in_unknown": 0.3921, "paint_fpr": 0.0238, "render_fpr": 0.0, "render_mismatch": 14337, "carved_fpr": 0.0, "carved_mismatch": 0} paint {'surface_f1': 0.804, 'var_occ_f1': 0.717, 'furn_f1': 0.492} render {'surface_f1': 0.863, 'var_occ_f1': 0.795, 'furn_f1': 0.587} carved {'surface_f1': 1.0, 'var_occ_f1': 1.0, 'furn_f1': 1.0} 25s
+r1_i1 {"house": "r1_i1", "instances_visible": 59, "box_vox": 33941, "box_in_F": 0.3654, "box_in_unknown": 0.3896, "paint_fpr": 0.0563, "render_fpr": 0.0, "render_mismatch": 20207, "carved_fpr": 0.0, "carved_mismatch": 0} paint {'surface_f1': 0.853, 'var_occ_f1': 0.753, 'furn_f1': 0.554} render {'surface_f1': 0.889, 'var_occ_f1': 0.82, 'furn_f1': 0.636} carved {'surface_f1': 1.0, 'var_occ_f1': 1.0, 'furn_f1': 1.0} 54s
+r2_i0 {"house": "r2_i0", "instances_visible": 41, "box_vox": 10353, "box_in_F": 0.4169, "box_in_unknown": 0.2596, "paint_fpr": 0.0073, "render_fpr": 0.0, "render_mismatch": 6700, "carved_fpr": 0.0, "carved_mismatch": 0} paint {'surface_f1': 0.905, 'var_occ_f1': 0.855, 'furn_f1': 0.573} render {'surface_f1': 0.938, 'var_occ_f1': 0.907, 'furn_f1': 0.747} carved {'surface_f1': 1.0, 'var_occ_f1': 1.0, 'furn_f1': 1.0} 82s
+r2_i1 {"house": "r2_i1", "instances_visible": 70, "box_vox": 37229, "box_in_F": 0.4723, "box_in_unknown": 0.2951, "paint_fpr": 0.0346, "render_fpr": 0.0, "render_mismatch": 31066, "carved_fpr": 0.0, "carved_mismatch": 0} paint {'surface_f1': 0.778, 'var_occ_f1': 0.697, 'furn_f1': 0.46} render {'surface_f1': 0.809, 'var_occ_f1': 0.74, 'furn_f1': 0.523} carved {'surface_f1': 1.0, 'var_occ_f1': 1.0, 'furn_f1': 1.0} 104s
+r3_i0 {"house": "r3_i0", "instances_visible": 48, "box_vox": 13660, "box_in_F": 0.3423, "box_in_unknown": 0.4029, "paint_fpr": 0.0175, "render_fpr": 0.0, "render_mismatch": 14073, "carved_fpr": 0.0, "carved_mismatch": 0} paint {'surface_f1': 0.928, 'var_occ_f1': 0.894, 'furn_f1': 0.593} render {'surface_f1': 0.932, 'var_occ_f1': 0.908, 'furn_f1': 0.58} carved {'surface_f1': 1.0, 'var_occ_f1': 1.0, 'furn_f1': 1.0} 126s
+r3_i1 {"house": "r3_i1", "instances_visible": 56, "box_vox": 18261, "box_in_F": 0.3782, "box_in_unknown": 0.4087, "paint_fpr": 0.0198, "render_fpr": 0.0, "render_mismatch": 13647, "carved_fpr": 0.0, "carved_mismatch": 0} paint {'surface_f1': 0.864, 'var_occ_f1': 0.805, 'furn_f1': 0.516} render {'surface_f1': 0.893, 'var_occ_f1': 0.848, 'furn_f1': 0.556} carved {'surface_f1': 1.0, 'var_occ_f1': 1.0, 'furn_f1': 1.0} 147s
+{
+ "paint": {
+  "surface_f1": 0.8551705929177027,
+  "var_occ_f1": 0.787079826887886,
+  "furn_f1": 0.5313226891647537
+ },
+ "render": {
+  "surface_f1": 0.8872366411919286,
+  "var_occ_f1": 0.8363134186240017,
+  "furn_f1": 0.604926521112107
+ },
+ "carved": {
+  "surface_f1": 1.0,
+  "var_occ_f1": 1.0,
+  "furn_f1": 1.0
+ },
+ "paint_fpr": 0.0265386191826482,
+ "render_fpr": 0.0,
+ "carved_fpr": 0.0,
+ "carved_mismatch_total": 0,
+ "render_mismatch_total": 100030,
+ "box_in_F_mean": 0.3966711043759356,
+ "box_in_unknown_mean": 0.35802166084713644
+}

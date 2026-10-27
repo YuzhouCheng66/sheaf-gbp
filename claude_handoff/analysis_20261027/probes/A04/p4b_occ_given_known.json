@@ -1,0 +1,98 @@
+{
+ "K0_1x1x1": {
+  "bytes_mean": 378.88507337900575,
+  "bytes_median": 357.3217103908,
+  "refined_share": null,
+  "surface_f1": 1.0,
+  "var_occ_f1": 1.0,
+  "furn_f1": 1.0
+ },
+ "K0_2x2x1": {
+  "bytes_mean": 209.49269829926268,
+  "bytes_median": 205.84939538933455,
+  "refined_share": null,
+  "surface_f1": 0.8872676199428765,
+  "var_occ_f1": 0.8123903254083125,
+  "furn_f1": 0.7635918338759492
+ },
+ "K0_4x4x1": {
+  "bytes_mean": 93.00442110467692,
+  "bytes_median": 91.98584437711853,
+  "refined_share": null,
+  "surface_f1": 0.7851892733351393,
+  "var_occ_f1": 0.5871864787415296,
+  "furn_f1": 0.4657226792260098
+ },
+ "K0_2x2x2": {
+  "bytes_mean": 177.02234720170676,
+  "bytes_median": 164.7341158763802,
+  "refined_share": null,
+  "surface_f1": 0.763167364002881,
+  "var_occ_f1": 0.6412543426986083,
+  "furn_f1": 0.35106721821621
+ },
+ "K0_4x4->2x2": {
+  "bytes_mean": 241.2525460102072,
+  "bytes_median": 251.1063404181281,
+  "refined_share": 0.3420124164581731,
+  "surface_f1": 0.8872676199428765,
+  "var_occ_f1": 0.8123903254083125,
+  "furn_f1": 0.7635918338759492
+ },
+ "K0_4x4->1x1": {
+  "bytes_mean": 370.34133702418194,
+  "bytes_median": 373.60803217791477,
+  "refined_share": 0.4279336665074878,
+  "surface_f1": 1.0,
+  "var_occ_f1": 1.0,
+  "furn_f1": 1.0
+ },
+ "R8_1x1x1": {
+  "bytes_mean": 983.5308355333581,
+  "bytes_median": 985.0558237304431,
+  "refined_share": null,
+  "surface_f1": 1.0,
+  "var_occ_f1": 1.0,
+  "furn_f1": 1.0
+ },
+ "R8_2x2x1": {
+  "bytes_mean": 549.482850218215,
+  "bytes_median": 570.3626183219504,
+  "refined_share": null,
+  "surface_f1": 0.8795806042812538,
+  "var_occ_f1": 0.8170281403394138,
+  "furn_f1": 0.7704101610044408
+ },
+ "R8_4x4x1": {
+  "bytes_mean": 235.50008418281416,
+  "bytes_median": 239.61252542537454,
+  "refined_share": null,
+  "surface_f1": 0.773629378725818,
+  "var_occ_f1": 0.621606439653127,
+  "furn_f1": 0.48770970764576965
+ },
+ "R8_2x2x2": {
+  "bytes_mean": 429.8665437008646,
+  "bytes_median": 458.8397545291172,
+  "refined_share": null,
+  "surface_f1": 0.770039290187451,
+  "var_occ_f1": 0.6730886566419164,
+  "furn_f1": 0.43440886155637765
+ },
+ "R8_4x4->2x2": {
+  "bytes_mean": 647.643306566753,
+  "bytes_median": 650.6146347345966,
+  "refined_share": 0.40921278329257915,
+  "surface_f1": 0.8795806042812538,
+  "var_occ_f1": 0.8170281403394138,
+  "furn_f1": 0.7704101610044408
+ },
+ "R8_4x4->1x1": {
+  "bytes_mean": 1027.7194291385333,
+  "bytes_median": 1008.3575032528954,
+  "refined_share": 0.5065535361903684,
+  "surface_f1": 1.0,
+  "var_occ_f1": 1.0,
+  "furn_f1": 1.0
+ }
+}

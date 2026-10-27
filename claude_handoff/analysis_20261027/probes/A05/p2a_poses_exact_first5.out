@@ -1,0 +1,11 @@
+r1_i0 2bb2c9eadf08bf773d6d29b412f700d5 centres True [(True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True)] 192s
+r1_i1 db0ac8e289eec7909a6641d726dfd5cf centres True [(True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True)] 285s
+r2_i0 17978942755c39ec27dee2ecd06a52f1 centres True [(True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True)] 234s
+r2_i1 870209a57b62f77280e4932e257b9f0a centres True [(True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True)] 262s
+r3_i0 89112163d8deb929aeacf3e72f27f467 centres True [(True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True), (True, True, True, True)] 283s
+Traceback (most recent call last):
+  File "C:\Users\27118\Desktop\sheaf-gbp\experiments\sheaf-gbp-p6-local-skill\claude_handoff\analysis_20261027\probes\A05\p2a_poses_exact.py", line 136, in <module>
+    mine = raycast(gt['occ'].astype(bool), cell, poses)
+  File "C:\Users\27118\Desktop\sheaf-gbp\experiments\sheaf-gbp-p6-local-skill\claude_handoff\analysis_20261027\probes\A05\p2a_poses_exact.py", line 91, in raycast
+    idx = np.floor((p[None, None, :] + r[:, None, :] * steps[None, :, None]) / cell).astype(np.int64)   # [R, S, 3]
+numpy._core._exceptions._ArrayMemoryError: Unable to allocate 18.8 MiB for an array with shape (8192, 100, 3) and data type float64

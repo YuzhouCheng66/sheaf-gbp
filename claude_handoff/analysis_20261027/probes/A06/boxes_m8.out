@@ -1,0 +1,10 @@
+memory pressure, retry 0
+memory pressure, retry 1
+r1_i0 covered
+r1_i1 covered
+r2_i0 covered
+r2_i1 covered
+r3_i0 covered
+r3_i1 covered
+[own] m=8: exact 48/48; boxes med 52; residual voxels med 85 of 7610; bytes med: boxes 170 + residual 71 + poses 6 = 240 (mean 244) | ctx ternary 1371, ctx O 584 | boxes-only lossy: surf 0.994 var 0.989 furn 0.961 at 175 B
+[union] m=8: exact 48/48; boxes med 140; residual voxels med 222 of 27674; bytes med: boxes 431 + residual 158 + poses 44 = 655 (mean 692) | ctx ternary 2810, ctx O 1575 | boxes-only lossy: surf 0.995 var 0.992 furn 0.972 at 475 B

@@ -1,0 +1,58 @@
+r1_i0 sizes done 1s
+r1_i1 sizes done 2s
+r2_i0 sizes done 3s
+r2_i1 sizes done 3s
+r3_i0 sizes done 4s
+r3_i1 sizes done 5s
+principle {'agent': 0, 'seconds_per_observe': 1.3018267154693604, 'mismatch_exact': 0, 'n_known': 64006, 'n_occ': 9925, 'synthetic_full': 1220.5381338304285, 'synthetic_known': 914.3627611138446, 'synthetic_O9': 576.4627606679312, 'synthetic_O13': 561.6151077988679, 'synthetic_n_occ': 9925, 'synthetic_n_known': 64006, 'mismatch_pose_0.001m': 85, 'mismatch_pose_0.001m_occ_to_other': 8, 'mismatch_pose_0.01m': 587, 'mismatch_pose_0.01m_occ_to_other': 57}
+principle {'agent': 1, 'seconds_per_observe': 1.2827355861663818, 'mismatch_exact': 0, 'n_known': 56726, 'n_occ': 6461, 'synthetic_full': 1453.446795422772, 'synthetic_known': 1183.6962546570555, 'synthetic_O9': 556.299524031291, 'synthetic_O13': 515.1234459554913, 'synthetic_n_occ': 6461, 'synthetic_n_known': 56726, 'mismatch_pose_0.001m': 54, 'mismatch_pose_0.001m_occ_to_other': 8, 'mismatch_pose_0.01m': 482, 'mismatch_pose_0.01m_occ_to_other': 48}
+{
+ "own": {
+  "full": 1383.7949925115936,
+  "known": 1033.979913716598,
+  "O9": 568.7582129375674,
+  "O13": 543.7998996715511,
+  "n_occ": 7564.0,
+  "n_known": 59244.5,
+  "O13_over_full_median": 0.4066260602534626,
+  "full_over_O13_median": 2.4592640791823683,
+  "mean": {
+   "full": 1436.6039938244576,
+   "known": 1115.2585031541778,
+   "O9": 623.7494192321474,
+   "O13": 591.9786542647513
+  }
+ },
+ "union8": {
+  "full": 2812.9219259214306,
+  "known": 2042.0748225252537,
+  "O9": 1538.2162705242615,
+  "O13": 1462.7877008131586,
+  "n_occ": 27699.0,
+  "n_known": 180822.5,
+  "O13_over_full_median": 0.5499508910426666,
+  "full_over_O13_median": 1.820949372255888,
+  "mean": {
+   "full": 2583.519380469006,
+   "known": 1825.7815324896553,
+   "O9": 1459.5477994723408,
+   "O13": 1387.635510283112
+  }
+ },
+ "edge": {
+  "full": 1752.258197984592,
+  "known": 1312.2370307176266,
+  "O9": 936.4380898347426,
+  "O13": 886.4373247312328,
+  "n_occ": 17216.0,
+  "n_known": 122006.5,
+  "O13_over_full_median": 0.4779099892008175,
+  "full_over_O13_median": 2.092445868978907,
+  "mean": {
+   "full": 2004.3395835720153,
+   "known": 1478.576342325265,
+   "O9": 1019.989157136449,
+   "O13": 969.1923896604458
+  }
+ }
+}

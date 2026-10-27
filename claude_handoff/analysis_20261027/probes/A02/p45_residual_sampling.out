@@ -1,0 +1,214 @@
+r1_i0 0 0 {'n_err': 1199, 'n_err_furn': 785, 'n_occ_known': 9757, 'n_occ_furn': 1735, 'bytes_e_all': 462.0, 'bytes_e_furn': 318.3, 'bytes_lossless_given_pred': 1208.0}
+r1_i0 0 1 {'n_err': 1271, 'n_err_furn': 870, 'n_occ_known': 6400, 'n_occ_furn': 1141, 'bytes_e_all': 501.0, 'bytes_e_furn': 342.8, 'bytes_lossless_given_pred': 1420.1}
+r1_i0 0 2 {'n_err': 1429, 'n_err_furn': 905, 'n_occ_known': 7375, 'n_occ_furn': 1761, 'bytes_e_all': 530.1, 'bytes_e_furn': 377.5, 'bytes_lossless_given_pred': 1082.9}
+r1_i0 0 3 {'n_err': 1087, 'n_err_furn': 815, 'n_occ_known': 5720, 'n_occ_furn': 1142, 'bytes_e_all': 425.7, 'bytes_e_furn': 314.1, 'bytes_lossless_given_pred': 1146.9}
+r1_i0 0 4 {'n_err': 1250, 'n_err_furn': 797, 'n_occ_known': 9107, 'n_occ_furn': 1635, 'bytes_e_all': 475.4, 'bytes_e_furn': 320.0, 'bytes_lossless_given_pred': 1360.0}
+r1_i0 0 5 {'n_err': 1009, 'n_err_furn': 765, 'n_occ_known': 7922, 'n_occ_furn': 1465, 'bytes_e_all': 434.7, 'bytes_e_furn': 320.1, 'bytes_lossless_given_pred': 1549.5}
+r1_i0 0 6 {'n_err': 1768, 'n_err_furn': 1168, 'n_occ_known': 10133, 'n_occ_furn': 2026, 'bytes_e_all': 632.4, 'bytes_e_furn': 444.0, 'bytes_lossless_given_pred': 1584.4}
+r1_i0 0 7 {'n_err': 1173, 'n_err_furn': 824, 'n_occ_known': 7932, 'n_occ_furn': 1463, 'bytes_e_all': 480.6, 'bytes_e_furn': 344.1, 'bytes_lossless_given_pred': 1297.1}
+r1_i0 8 0 {'n_err': 4127, 'n_err_furn': 2391, 'n_occ_known': 21390, 'n_occ_furn': 4420, 'bytes_e_all': 1204.8, 'bytes_e_furn': 823.6, 'bytes_lossless_given_pred': 1733.9}
+r1_i0 8 1 {'n_err': 4107, 'n_err_furn': 2401, 'n_occ_known': 21390, 'n_occ_furn': 4420, 'bytes_e_all': 1210.3, 'bytes_e_furn': 827.8, 'bytes_lossless_given_pred': 1731.1}
+r1_i0 8 2 {'n_err': 4120, 'n_err_furn': 2411, 'n_occ_known': 21390, 'n_occ_furn': 4420, 'bytes_e_all': 1210.0, 'bytes_e_furn': 829.4, 'bytes_lossless_given_pred': 1731.2}
+r1_i0 8 3 {'n_err': 4122, 'n_err_furn': 2383, 'n_occ_known': 21390, 'n_occ_furn': 4420, 'bytes_e_all': 1202.2, 'bytes_e_furn': 818.3, 'bytes_lossless_given_pred': 1733.8}
+r1_i0 8 4 {'n_err': 4100, 'n_err_furn': 2393, 'n_occ_known': 21390, 'n_occ_furn': 4420, 'bytes_e_all': 1209.3, 'bytes_e_furn': 827.0, 'bytes_lossless_given_pred': 1733.6}
+r1_i0 8 5 {'n_err': 4144, 'n_err_furn': 2409, 'n_occ_known': 21390, 'n_occ_furn': 4420, 'bytes_e_all': 1209.2, 'bytes_e_furn': 827.7, 'bytes_lossless_given_pred': 1733.0}
+r1_i0 8 6 {'n_err': 4117, 'n_err_furn': 2386, 'n_occ_known': 21390, 'n_occ_furn': 4420, 'bytes_e_all': 1206.3, 'bytes_e_furn': 823.4, 'bytes_lossless_given_pred': 1732.7}
+r1_i0 8 7 {'n_err': 4158, 'n_err_furn': 2413, 'n_occ_known': 21390, 'n_occ_furn': 4420, 'bytes_e_all': 1213.8, 'bytes_e_furn': 829.4, 'bytes_lossless_given_pred': 1735.5}
+r1_i1 0 0 {'n_err': 1509, 'n_err_furn': 1074, 'n_occ_known': 11052, 'n_occ_furn': 1839, 'bytes_e_all': 562.6, 'bytes_e_furn': 445.1, 'bytes_lossless_given_pred': 1976.0}
+r1_i1 0 1 {'n_err': 2079, 'n_err_furn': 1559, 'n_occ_known': 15350, 'n_occ_furn': 2993, 'bytes_e_all': 871.5, 'bytes_e_furn': 687.2, 'bytes_lossless_given_pred': 2354.9}
+r1_i1 0 2 {'n_err': 2948, 'n_err_furn': 1925, 'n_occ_known': 15385, 'n_occ_furn': 2757, 'bytes_e_all': 1064.7, 'bytes_e_furn': 764.7, 'bytes_lossless_given_pred': 2788.2}
+r1_i1 0 3 {'n_err': 3271, 'n_err_furn': 2161, 'n_occ_known': 14956, 'n_occ_furn': 3196, 'bytes_e_all': 1149.6, 'bytes_e_furn': 840.5, 'bytes_lossless_given_pred': 3074.6}
+r1_i1 0 4 {'n_err': 1314, 'n_err_furn': 900, 'n_occ_known': 10952, 'n_occ_furn': 1809, 'bytes_e_all': 517.4, 'bytes_e_furn': 369.9, 'bytes_lossless_given_pred': 2133.4}
+r1_i1 0 5 {'n_err': 2709, 'n_err_furn': 1684, 'n_occ_known': 14133, 'n_occ_furn': 2440, 'bytes_e_all': 959.5, 'bytes_e_furn': 660.6, 'bytes_lossless_given_pred': 2608.1}
+r1_i1 0 6 {'n_err': 2432, 'n_err_furn': 1376, 'n_occ_known': 16187, 'n_occ_furn': 2672, 'bytes_e_all': 905.7, 'bytes_e_furn': 586.1, 'bytes_lossless_given_pred': 2408.5}
+r1_i1 0 7 {'n_err': 1886, 'n_err_furn': 1389, 'n_occ_known': 12975, 'n_occ_furn': 2487, 'bytes_e_all': 778.5, 'bytes_e_furn': 599.7, 'bytes_lossless_given_pred': 1767.1}
+r1_i1 8 0 {'n_err': 6885, 'n_err_furn': 4749, 'n_occ_known': 38105, 'n_occ_furn': 7527, 'bytes_e_all': 2046.8, 'bytes_e_furn': 1582.2, 'bytes_lossless_given_pred': 3321.7}
+r1_i1 8 1 {'n_err': 6876, 'n_err_furn': 4755, 'n_occ_known': 38105, 'n_occ_furn': 7527, 'bytes_e_all': 2047.3, 'bytes_e_furn': 1582.9, 'bytes_lossless_given_pred': 3322.4}
+r1_i1 8 2 {'n_err': 6899, 'n_err_furn': 4762, 'n_occ_known': 38105, 'n_occ_furn': 7527, 'bytes_e_all': 2043.6, 'bytes_e_furn': 1580.4, 'bytes_lossless_given_pred': 3323.1}
+r1_i1 8 3 {'n_err': 6879, 'n_err_furn': 4756, 'n_occ_known': 38105, 'n_occ_furn': 7527, 'bytes_e_all': 2039.5, 'bytes_e_furn': 1577.7, 'bytes_lossless_given_pred': 3321.8}
+r1_i1 8 4 {'n_err': 6867, 'n_err_furn': 4732, 'n_occ_known': 38105, 'n_occ_furn': 7527, 'bytes_e_all': 2042.7, 'bytes_e_furn': 1581.1, 'bytes_lossless_given_pred': 3319.3}
+r1_i1 8 5 {'n_err': 6898, 'n_err_furn': 4768, 'n_occ_known': 38105, 'n_occ_furn': 7527, 'bytes_e_all': 2045.1, 'bytes_e_furn': 1584.7, 'bytes_lossless_given_pred': 3325.8}
+r1_i1 8 6 {'n_err': 6868, 'n_err_furn': 4749, 'n_occ_known': 38105, 'n_occ_furn': 7527, 'bytes_e_all': 2043.7, 'bytes_e_furn': 1581.9, 'bytes_lossless_given_pred': 3322.1}
+r1_i1 8 7 {'n_err': 6870, 'n_err_furn': 4745, 'n_occ_known': 38105, 'n_occ_furn': 7527, 'bytes_e_all': 2043.3, 'bytes_e_furn': 1580.3, 'bytes_lossless_given_pred': 3319.4}
+r2_i0 0 0 {'n_err': 780, 'n_err_furn': 531, 'n_occ_known': 8252, 'n_occ_furn': 1147, 'bytes_e_all': 285.3, 'bytes_e_furn': 219.4, 'bytes_lossless_given_pred': 909.6}
+r2_i0 0 1 {'n_err': 608, 'n_err_furn': 446, 'n_occ_known': 6897, 'n_occ_furn': 808, 'bytes_e_all': 265.3, 'bytes_e_furn': 196.9, 'bytes_lossless_given_pred': 980.8}
+r2_i0 0 2 {'n_err': 727, 'n_err_furn': 585, 'n_occ_known': 6398, 'n_occ_furn': 1044, 'bytes_e_all': 316.7, 'bytes_e_furn': 248.6, 'bytes_lossless_given_pred': 1212.5}
+r2_i0 0 3 {'n_err': 596, 'n_err_furn': 418, 'n_occ_known': 6380, 'n_occ_furn': 776, 'bytes_e_all': 261.1, 'bytes_e_furn': 195.6, 'bytes_lossless_given_pred': 1109.4}
+r2_i0 0 4 {'n_err': 703, 'n_err_furn': 488, 'n_occ_known': 5995, 'n_occ_furn': 1000, 'bytes_e_all': 258.7, 'bytes_e_furn': 197.9, 'bytes_lossless_given_pred': 829.3}
+r2_i0 0 5 {'n_err': 673, 'n_err_furn': 558, 'n_occ_known': 7055, 'n_occ_furn': 833, 'bytes_e_all': 264.4, 'bytes_e_furn': 222.7, 'bytes_lossless_given_pred': 1106.1}
+r2_i0 0 6 {'n_err': 1137, 'n_err_furn': 649, 'n_occ_known': 6799, 'n_occ_furn': 663, 'bytes_e_all': 393.0, 'bytes_e_furn': 249.4, 'bytes_lossless_given_pred': 685.7}
+r2_i0 0 7 {'n_err': 754, 'n_err_furn': 431, 'n_occ_known': 4809, 'n_occ_furn': 518, 'bytes_e_all': 263.2, 'bytes_e_furn': 163.4, 'bytes_lossless_given_pred': 901.6}
+r2_i0 8 0 {'n_err': 2900, 'n_err_furn': 1790, 'n_occ_known': 22237, 'n_occ_furn': 2777, 'bytes_e_all': 889.5, 'bytes_e_furn': 621.5, 'bytes_lossless_given_pred': 1711.8}
+r2_i0 8 1 {'n_err': 2896, 'n_err_furn': 1793, 'n_occ_known': 22237, 'n_occ_furn': 2777, 'bytes_e_all': 879.9, 'bytes_e_furn': 621.2, 'bytes_lossless_given_pred': 1711.4}
+r2_i0 8 2 {'n_err': 2921, 'n_err_furn': 1794, 'n_occ_known': 22237, 'n_occ_furn': 2777, 'bytes_e_all': 890.0, 'bytes_e_furn': 618.7, 'bytes_lossless_given_pred': 1716.5}
+r2_i0 8 3 {'n_err': 2894, 'n_err_furn': 1785, 'n_occ_known': 22237, 'n_occ_furn': 2777, 'bytes_e_all': 885.9, 'bytes_e_furn': 620.3, 'bytes_lossless_given_pred': 1710.5}
+r2_i0 8 4 {'n_err': 2909, 'n_err_furn': 1786, 'n_occ_known': 22237, 'n_occ_furn': 2777, 'bytes_e_all': 885.8, 'bytes_e_furn': 620.1, 'bytes_lossless_given_pred': 1714.1}
+r2_i0 8 5 {'n_err': 2896, 'n_err_furn': 1781, 'n_occ_known': 22237, 'n_occ_furn': 2777, 'bytes_e_all': 879.5, 'bytes_e_furn': 616.9, 'bytes_lossless_given_pred': 1710.4}
+r2_i0 8 6 {'n_err': 2908, 'n_err_furn': 1791, 'n_occ_known': 22237, 'n_occ_furn': 2777, 'bytes_e_all': 891.2, 'bytes_e_furn': 623.2, 'bytes_lossless_given_pred': 1718.4}
+r2_i0 8 7 {'n_err': 2907, 'n_err_furn': 1793, 'n_occ_known': 22237, 'n_occ_furn': 2777, 'bytes_e_all': 881.5, 'bytes_e_furn': 619.4, 'bytes_lossless_given_pred': 1715.6}
+r2_i1 0 0 {'n_err': 1893, 'n_err_furn': 1331, 'n_occ_known': 8203, 'n_occ_furn': 1606, 'bytes_e_all': 781.0, 'bytes_e_furn': 570.1, 'bytes_lossless_given_pred': 2068.4}
+r2_i1 0 1 {'n_err': 1835, 'n_err_furn': 958, 'n_occ_known': 6525, 'n_occ_furn': 1158, 'bytes_e_all': 657.5, 'bytes_e_furn': 393.9, 'bytes_lossless_given_pred': 1626.4}
+r2_i1 0 2 {'n_err': 1287, 'n_err_furn': 845, 'n_occ_known': 7419, 'n_occ_furn': 1886, 'bytes_e_all': 450.7, 'bytes_e_furn': 310.2, 'bytes_lossless_given_pred': 980.0}
+r2_i1 0 3 {'n_err': 2883, 'n_err_furn': 2009, 'n_occ_known': 9398, 'n_occ_furn': 2150, 'bytes_e_all': 1174.3, 'bytes_e_furn': 833.4, 'bytes_lossless_given_pred': 3024.8}
+r2_i1 0 4 {'n_err': 2052, 'n_err_furn': 1228, 'n_occ_known': 7796, 'n_occ_furn': 1485, 'bytes_e_all': 752.9, 'bytes_e_furn': 507.1, 'bytes_lossless_given_pred': 2149.0}
+r2_i1 0 5 {'n_err': 1386, 'n_err_furn': 966, 'n_occ_known': 6845, 'n_occ_furn': 1110, 'bytes_e_all': 554.1, 'bytes_e_furn': 408.7, 'bytes_lossless_given_pred': 1495.9}
+r2_i1 0 6 {'n_err': 1361, 'n_err_furn': 756, 'n_occ_known': 6401, 'n_occ_furn': 1890, 'bytes_e_all': 488.2, 'bytes_e_furn': 300.5, 'bytes_lossless_given_pred': 923.1}
+r2_i1 0 7 {'n_err': 1463, 'n_err_furn': 961, 'n_occ_known': 7372, 'n_occ_furn': 1218, 'bytes_e_all': 499.7, 'bytes_e_furn': 352.9, 'bytes_lossless_given_pred': 1140.9}
+r2_i1 8 0 {'n_err': 8363, 'n_err_furn': 5388, 'n_occ_known': 33306, 'n_occ_furn': 7207, 'bytes_e_all': 2351.1, 'bytes_e_furn': 1770.6, 'bytes_lossless_given_pred': 4023.7}
+r2_i1 8 1 {'n_err': 8329, 'n_err_furn': 5345, 'n_occ_known': 33306, 'n_occ_furn': 7207, 'bytes_e_all': 2343.8, 'bytes_e_furn': 1762.9, 'bytes_lossless_given_pred': 4019.9}
+r2_i1 8 2 {'n_err': 8333, 'n_err_furn': 5343, 'n_occ_known': 33306, 'n_occ_furn': 7207, 'bytes_e_all': 2344.1, 'bytes_e_furn': 1766.1, 'bytes_lossless_given_pred': 4021.3}
+r2_i1 8 3 {'n_err': 8328, 'n_err_furn': 5364, 'n_occ_known': 33306, 'n_occ_furn': 7207, 'bytes_e_all': 2342.1, 'bytes_e_furn': 1762.6, 'bytes_lossless_given_pred': 4016.8}
+r2_i1 8 4 {'n_err': 8336, 'n_err_furn': 5356, 'n_occ_known': 33306, 'n_occ_furn': 7207, 'bytes_e_all': 2346.4, 'bytes_e_furn': 1760.5, 'bytes_lossless_given_pred': 4020.8}
+r2_i1 8 5 {'n_err': 8358, 'n_err_furn': 5379, 'n_occ_known': 33306, 'n_occ_furn': 7207, 'bytes_e_all': 2351.8, 'bytes_e_furn': 1772.3, 'bytes_lossless_given_pred': 4025.8}
+r2_i1 8 6 {'n_err': 8329, 'n_err_furn': 5346, 'n_occ_known': 33306, 'n_occ_furn': 7207, 'bytes_e_all': 2324.3, 'bytes_e_furn': 1755.0, 'bytes_lossless_given_pred': 4025.6}
+r2_i1 8 7 {'n_err': 8338, 'n_err_furn': 5341, 'n_occ_known': 33306, 'n_occ_furn': 7207, 'bytes_e_all': 2334.4, 'bytes_e_furn': 1755.7, 'bytes_lossless_given_pred': 4035.5}
+r3_i0 0 0 {'n_err': 41, 'n_err_furn': 0, 'n_occ_known': 7618, 'n_occ_furn': 0, 'bytes_e_all': 22.6, 'bytes_e_furn': 7.6, 'bytes_lossless_given_pred': 174.7}
+r3_i0 0 1 {'n_err': 1992, 'n_err_furn': 956, 'n_occ_known': 9026, 'n_occ_furn': 1028, 'bytes_e_all': 613.1, 'bytes_e_furn': 355.0, 'bytes_lossless_given_pred': 1714.6}
+r3_i0 0 2 {'n_err': 49, 'n_err_furn': 0, 'n_occ_known': 7680, 'n_occ_furn': 0, 'bytes_e_all': 20.2, 'bytes_e_furn': 7.7, 'bytes_lossless_given_pred': 146.8}
+r3_i0 0 3 {'n_err': 1960, 'n_err_furn': 921, 'n_occ_known': 7912, 'n_occ_furn': 1108, 'bytes_e_all': 661.9, 'bytes_e_furn': 349.9, 'bytes_lossless_given_pred': 1952.3}
+r3_i0 0 4 {'n_err': 1603, 'n_err_furn': 962, 'n_occ_known': 9918, 'n_occ_furn': 1186, 'bytes_e_all': 701.6, 'bytes_e_furn': 433.2, 'bytes_lossless_given_pred': 2122.0}
+r3_i0 0 5 {'n_err': 1269, 'n_err_furn': 518, 'n_occ_known': 7478, 'n_occ_furn': 639, 'bytes_e_all': 483.9, 'bytes_e_furn': 251.6, 'bytes_lossless_given_pred': 1398.3}
+r3_i0 0 6 {'n_err': 845, 'n_err_furn': 443, 'n_occ_known': 4951, 'n_occ_furn': 565, 'bytes_e_all': 263.0, 'bytes_e_furn': 155.5, 'bytes_lossless_given_pred': 591.7}
+r3_i0 0 7 {'n_err': 43, 'n_err_furn': 0, 'n_occ_known': 7589, 'n_occ_furn': 0, 'bytes_e_all': 22.2, 'bytes_e_furn': 8.0, 'bytes_lossless_given_pred': 237.2}
+r3_i0 8 0 {'n_err': 5031, 'n_err_furn': 2912, 'n_occ_known': 32202, 'n_occ_furn': 3332, 'bytes_e_all': 1553.4, 'bytes_e_furn': 1037.0, 'bytes_lossless_given_pred': 3832.7}
+r3_i0 8 1 {'n_err': 5058, 'n_err_furn': 2840, 'n_occ_known': 32202, 'n_occ_furn': 3332, 'bytes_e_all': 1564.9, 'bytes_e_furn': 1032.5, 'bytes_lossless_given_pred': 3851.9}
+r3_i0 8 2 {'n_err': 5030, 'n_err_furn': 2912, 'n_occ_known': 32202, 'n_occ_furn': 3332, 'bytes_e_all': 1553.5, 'bytes_e_furn': 1037.2, 'bytes_lossless_given_pred': 3832.0}
+r3_i0 8 3 {'n_err': 5082, 'n_err_furn': 2847, 'n_occ_known': 32202, 'n_occ_furn': 3332, 'bytes_e_all': 1566.3, 'bytes_e_furn': 1031.0, 'bytes_lossless_given_pred': 3857.1}
+r3_i0 8 4 {'n_err': 5235, 'n_err_furn': 2911, 'n_occ_known': 32202, 'n_occ_furn': 3332, 'bytes_e_all': 1589.8, 'bytes_e_furn': 1049.9, 'bytes_lossless_given_pred': 3850.2}
+r3_i0 8 5 {'n_err': 5022, 'n_err_furn': 2910, 'n_occ_known': 32202, 'n_occ_furn': 3332, 'bytes_e_all': 1550.3, 'bytes_e_furn': 1036.0, 'bytes_lossless_given_pred': 3831.7}
+r3_i0 8 6 {'n_err': 5026, 'n_err_furn': 2910, 'n_occ_known': 32202, 'n_occ_furn': 3332, 'bytes_e_all': 1554.1, 'bytes_e_furn': 1039.4, 'bytes_lossless_given_pred': 3833.0}
+r3_i0 8 7 {'n_err': 5029, 'n_err_furn': 2912, 'n_occ_known': 32202, 'n_occ_furn': 3332, 'bytes_e_all': 1553.4, 'bytes_e_furn': 1037.1, 'bytes_lossless_given_pred': 3832.7}
+r3_i1 0 0 {'n_err': 300, 'n_err_furn': 52, 'n_occ_known': 5755, 'n_occ_furn': 63, 'bytes_e_all': 82.9, 'bytes_e_furn': 31.0, 'bytes_lossless_given_pred': 326.0}
+r3_i1 0 1 {'n_err': 396, 'n_err_furn': 206, 'n_occ_known': 6115, 'n_occ_furn': 174, 'bytes_e_all': 156.3, 'bytes_e_furn': 79.8, 'bytes_lossless_given_pred': 329.1}
+r3_i1 0 2 {'n_err': 630, 'n_err_furn': 329, 'n_occ_known': 6566, 'n_occ_furn': 290, 'bytes_e_all': 239.0, 'bytes_e_furn': 129.2, 'bytes_lossless_given_pred': 644.7}
+r3_i1 0 3 {'n_err': 1918, 'n_err_furn': 1311, 'n_occ_known': 7442, 'n_occ_furn': 1511, 'bytes_e_all': 736.8, 'bytes_e_furn': 542.6, 'bytes_lossless_given_pred': 1894.6}
+r3_i1 0 4 {'n_err': 1878, 'n_err_furn': 1272, 'n_occ_known': 7539, 'n_occ_furn': 1405, 'bytes_e_all': 727.6, 'bytes_e_furn': 515.2, 'bytes_lossless_given_pred': 1744.6}
+r3_i1 0 5 {'n_err': 1079, 'n_err_furn': 451, 'n_occ_known': 7483, 'n_occ_furn': 459, 'bytes_e_all': 391.2, 'bytes_e_furn': 207.2, 'bytes_lossless_given_pred': 980.0}
+r3_i1 0 6 {'n_err': 594, 'n_err_furn': 171, 'n_occ_known': 6176, 'n_occ_furn': 174, 'bytes_e_all': 203.2, 'bytes_e_furn': 85.8, 'bytes_lossless_given_pred': 544.7}
+r3_i1 0 7 {'n_err': 2380, 'n_err_furn': 1551, 'n_occ_known': 8937, 'n_occ_furn': 1751, 'bytes_e_all': 894.7, 'bytes_e_furn': 626.7, 'bytes_lossless_given_pred': 2164.3}
+r3_i1 8 0 {'n_err': 5548, 'n_err_furn': 3274, 'n_occ_known': 23196, 'n_occ_furn': 3542, 'bytes_e_all': 1671.5, 'bytes_e_furn': 1156.3, 'bytes_lossless_given_pred': 3302.1}
+r3_i1 8 1 {'n_err': 5558, 'n_err_furn': 3281, 'n_occ_known': 23196, 'n_occ_furn': 3542, 'bytes_e_all': 1675.0, 'bytes_e_furn': 1157.7, 'bytes_lossless_given_pred': 3304.2}
+r3_i1 8 2 {'n_err': 5560, 'n_err_furn': 3287, 'n_occ_known': 23196, 'n_occ_furn': 3542, 'bytes_e_all': 1675.7, 'bytes_e_furn': 1160.5, 'bytes_lossless_given_pred': 3304.7}
+r3_i1 8 3 {'n_err': 5600, 'n_err_furn': 3271, 'n_occ_known': 23196, 'n_occ_furn': 3542, 'bytes_e_all': 1676.1, 'bytes_e_furn': 1150.8, 'bytes_lossless_given_pred': 3305.8}
+r3_i1 8 4 {'n_err': 5616, 'n_err_furn': 3279, 'n_occ_known': 23196, 'n_occ_furn': 3542, 'bytes_e_all': 1675.4, 'bytes_e_furn': 1149.1, 'bytes_lossless_given_pred': 3315.8}
+r3_i1 8 5 {'n_err': 5582, 'n_err_furn': 3273, 'n_occ_known': 23196, 'n_occ_furn': 3542, 'bytes_e_all': 1675.1, 'bytes_e_furn': 1153.0, 'bytes_lossless_given_pred': 3307.6}
+r3_i1 8 6 {'n_err': 5548, 'n_err_furn': 3274, 'n_occ_known': 23196, 'n_occ_furn': 3542, 'bytes_e_all': 1672.5, 'bytes_e_furn': 1156.3, 'bytes_lossless_given_pred': 3304.2}
+r3_i1 8 7 {'n_err': 5577, 'n_err_furn': 3264, 'n_occ_known': 23196, 'n_occ_furn': 3542, 'bytes_e_all': 1674.2, 'bytes_e_furn': 1151.3, 'bytes_lossless_given_pred': 3310.5}
+{
+ "P4_hop0": {
+  "n_err": {
+   "median": 1279.0,
+   "mean": 1363.5208333333333
+  },
+  "n_err_furn": {
+   "median": 834.5,
+   "mean": 860.4166666666666
+  },
+  "n_occ_known": {
+   "median": 7564.0,
+   "mean": 8459.6875
+  },
+  "n_occ_furn": {
+   "median": 1172.0,
+   "mean": 1295.9583333333333
+  },
+  "bytes_e_all": {
+   "median": 486.0683699102064,
+   "mean": 513.2933327151417
+  },
+  "bytes_e_furn": {
+   "median": 331.43392427301035,
+   "mean": 351.8991649481295
+  },
+  "bytes_lossless_given_pred": {
+   "median": 1328.5078819275018,
+   "mean": 1413.931995026535
+  }
+ },
+ "P5_hop0_2x2x1": {
+  "thr0.2_surf": 0.8771870723244778,
+  "thr0.2_furn": 0.714185916971712,
+  "thr0.3_surf": 0.8899201626230518,
+  "thr0.3_furn": 0.7594882753781816,
+  "thr0.4_surf": 0.8929259298490836,
+  "thr0.4_furn": 0.7663969920505779,
+  "thr0.5_surf": 0.8929259298490836,
+  "thr0.5_furn": 0.7663969920505779,
+  "thr0.6_surf": 0.8630592625153662,
+  "thr0.6_furn": 0.6559147772547148,
+  "sample_surf": 0.8745151089387009,
+  "sample_furn": 0.7028521784803985
+ },
+ "P5_hop0_4x4x1": {
+  "thr0.2_surf": 0.7412603315255869,
+  "thr0.2_furn": 0.369798304494341,
+  "thr0.3_surf": 0.7749815542456124,
+  "thr0.3_furn": 0.4088312125988461,
+  "thr0.4_surf": 0.787565373820685,
+  "thr0.4_furn": 0.4853305658724225,
+  "thr0.5_surf": 0.7871087201387299,
+  "thr0.5_furn": 0.46987533807185705,
+  "thr0.6_surf": 0.7546272472936102,
+  "thr0.6_furn": 0.44780508073336994,
+  "sample_surf": 0.7431617429353857,
+  "sample_furn": 0.34920735634764916
+ },
+ "P4_hop8": {
+  "n_err": {
+   "median": 5391.5,
+   "mean": 5480.916666666667
+  },
+  "n_err_furn": {
+   "median": 3088.0,
+   "mean": 3411.1458333333335
+  },
+  "n_occ_known": {
+   "median": 27699.0,
+   "mean": 28406.0
+  },
+  "n_occ_furn": {
+   "median": 3981.0,
+   "mean": 4800.833333333333
+  },
+  "bytes_e_all": {
+   "median": 1630.63638586453,
+   "mean": 1619.1705589641715
+  },
+  "bytes_e_furn": {
+   "median": 1099.5004281416582,
+   "mean": 1163.74753247013
+  },
+  "bytes_lossless_given_pred": {
+   "median": 3317.552214393381,
+   "mean": 2989.8957553304913
+  }
+ },
+ "P5_hop8_2x2x1": {
+  "thr0.2_surf": 0.8636927840232715,
+  "thr0.2_furn": 0.7209810271863829,
+  "thr0.3_surf": 0.8778091305072802,
+  "thr0.3_furn": 0.7672179239275151,
+  "thr0.4_surf": 0.8795806042812538,
+  "thr0.4_furn": 0.7704101610044408,
+  "thr0.5_surf": 0.8795806042812538,
+  "thr0.5_furn": 0.7704101610044408,
+  "thr0.6_surf": 0.8470880415407933,
+  "thr0.6_furn": 0.6621047332663202,
+  "sample_surf": 0.8590133376047765,
+  "sample_furn": 0.7073791675916884
+ },
+ "P5_hop8_4x4x1": {
+  "thr0.2_surf": 0.7251347811869356,
+  "thr0.2_furn": 0.39311040506708766,
+  "thr0.3_surf": 0.7640313812311986,
+  "thr0.3_furn": 0.468319660855853,
+  "thr0.4_surf": 0.7755413588301524,
+  "thr0.4_furn": 0.506136154151941,
+  "thr0.5_surf": 0.773629378725818,
+  "thr0.5_furn": 0.48770970764576965,
+  "thr0.6_surf": 0.732237838003479,
+  "thr0.6_furn": 0.4439165474727025,
+  "sample_surf": 0.7222108988436403,
+  "sample_furn": 0.3885550340075669
+ }
+}

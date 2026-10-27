@@ -1,0 +1,26 @@
+check [{'house': 'r1_i0', 'agent': 0, 'variant': 'V2', 'mismatch': 0}, {'house': 'r1_i0', 'agent': 0, 'variant': 'V3', 'mismatch': 0}, {'house': 'r1_i0', 'agent': 0, 'variant': 'V4', 'mismatch': 0}, {'house': 'r1_i0', 'agent': 0, 'variant': 'V5', 'mismatch': 0}]
+check [{'house': 'r1_i0', 'agent': 1, 'variant': 'V2', 'mismatch': 0}, {'house': 'r1_i0', 'agent': 1, 'variant': 'V3', 'mismatch': 0}, {'house': 'r1_i0', 'agent': 1, 'variant': 'V4', 'mismatch': 0}, {'house': 'r1_i0', 'agent': 1, 'variant': 'V5', 'mismatch': 0}]
+check [{'house': 'r1_i1', 'agent': 0, 'variant': 'V2', 'mismatch': 0}, {'house': 'r1_i1', 'agent': 0, 'variant': 'V3', 'mismatch': 0}, {'house': 'r1_i1', 'agent': 0, 'variant': 'V4', 'mismatch': 0}, {'house': 'r1_i1', 'agent': 0, 'variant': 'V5', 'mismatch': 0}]
+check [{'house': 'r1_i1', 'agent': 1, 'variant': 'V2', 'mismatch': 0}, {'house': 'r1_i1', 'agent': 1, 'variant': 'V3', 'mismatch': 0}, {'house': 'r1_i1', 'agent': 1, 'variant': 'V4', 'mismatch': 0}, {'house': 'r1_i1', 'agent': 1, 'variant': 'V5', 'mismatch': 0}]
+loaded r1_i0
+loaded r1_i1
+loaded r2_i0
+loaded r2_i1
+loaded r3_i0
+loaded r3_i1
+{"house": "r1_i1", "kind": "own", "agent": 0, "V1_adaptive": 834.0, "V1_static": 684.8, "V2_adaptive": 1108.9, "V2_static": 984.4, "V3_adaptive": 1224.3, "V3_static": 1022.0, "V4_adaptive": 1254.4, "V5_adaptive": 642.0}
+{"house": "r1_i1", "kind": "own", "agent": 1, "V1_adaptive": 1152.4, "V1_static": 960.4, "V2_adaptive": 1345.8, "V2_static": 1223.9, "V3_adaptive": 1438.7, "V3_static": 1154.1, "V4_adaptive": 1328.4, "V5_adaptive": 642.0}
+{"house": "r1_i1", "kind": "own", "agent": 2, "V1_adaptive": 1164.5, "V1_static": 960.8, "V2_adaptive": 1625.9, "V2_static": 1414.1, "V3_adaptive": 1752.0, "V3_static": 1410.8, "V4_adaptive": 1645.7, "V5_adaptive": 642.0}
+{"house": "r1_i1", "kind": "own", "agent": 3, "V1_adaptive": 1315.1, "V1_static": 1157.4, "V2_adaptive": 1882.0, "V2_static": 1771.8, "V3_adaptive": 2016.1, "V3_static": 1740.5, "V4_adaptive": 1888.2, "V5_adaptive": 642.0}
+{"house": "r1_i1", "kind": "own", "agent": 4, "V1_adaptive": 849.9, "V1_static": 740.5, "V2_adaptive": 1383.1, "V2_static": 1271.8, "V3_adaptive": 1518.2, "V3_static": 1265.6, "V4_adaptive": 1394.4, "V5_adaptive": 642.0}
+{"house": "r1_i1", "kind": "own", "agent": 5, "V1_adaptive": 1073.4, "V1_static": 888.9, "V2_adaptive": 1430.3, "V2_static": 1229.7, "V3_adaptive": 1613.7, "V3_static": 1283.9, "V4_adaptive": 1554.8, "V5_adaptive": 642.0}
+{"house": "r1_i1", "kind": "own", "agent": 6, "V1_adaptive": 1129.9, "V1_static": 897.2, "V2_adaptive": 1346.0, "V2_static": 1204.9, "V3_adaptive": 1446.2, "V3_static": 1217.7, "V4_adaptive": 1391.2, "V5_adaptive": 642.0}
+{"house": "r1_i1", "kind": "own", "agent": 7, "V1_adaptive": 989.7, "V1_static": 856.8, "V2_adaptive": 819.5, "V2_static": 718.6, "V3_adaptive": 949.5, "V3_static": 751.6, "V4_adaptive": 948.5, "V5_adaptive": 642.0}
+{"house": "r1_i1", "kind": "union8", "agent": 0, "V1_adaptive": 1853.2, "V1_static": 2096.9, "V2_adaptive": 1455.5, "V2_static": 1778.8, "V3_adaptive": 1485.5, "V3_static": 1728.6, "V4_adaptive": 1397.9, "V5_adaptive": 642.0}
+{"house": "r1_i1", "kind": "union8", "agent": 1, "V1_adaptive": 1853.2, "V1_static": 2096.9, "V2_adaptive": 1455.5, "V2_static": 1778.8, "V3_adaptive": 1485.5, "V3_static": 1728.6, "V4_adaptive": 1397.9, "V5_adaptive": 642.0}
+{"house": "r1_i1", "kind": "union8", "agent": 2, "V1_adaptive": 1853.2, "V1_static": 2096.9, "V2_adaptive": 1455.5, "V2_static": 1778.8, "V3_adaptive": 1485.5, "V3_static": 1728.6, "V4_adaptive": 1397.9, "V5_adaptive": 642.0}
+{"house": "r1_i1", "kind": "union8", "agent": 3, "V1_adaptive": 1853.2, "V1_static": 2096.9, "V2_adaptive": 1455.5, "V2_static": 1778.8, "V3_adaptive": 1485.5, "V3_static": 1728.6, "V4_adaptive": 1397.9, "V5_adaptive": 642.0}
+{"house": "r1_i1", "kind": "union8", "agent": 4, "V1_adaptive": 1853.2, "V1_static": 2096.9, "V2_adaptive": 1455.5, "V2_static": 1778.8, "V3_adaptive": 1485.5, "V3_static": 1728.6, "V4_adaptive": 1397.9, "V5_adaptive": 642.0}
+{"house": "r1_i1", "kind": "union8", "agent": 5, "V1_adaptive": 1853.2, "V1_static": 2096.9, "V2_adaptive": 1455.5, "V2_static": 1778.8, "V3_adaptive": 1485.5, "V3_static": 1728.6, "V4_adaptive": 1397.9, "V5_adaptive": 642.0}
+{"house": "r1_i1", "kind": "union8", "agent": 6, "V1_adaptive": 1853.2, "V1_static": 2096.9, "V2_adaptive": 1455.5, "V2_static": 1778.8, "V3_adaptive": 1485.5, "V3_static": 1728.6, "V4_adaptive": 1397.9, "V5_adaptive": 642.0}
+{"house": "r1_i1", "kind": "union8", "agent": 7, "V1_adaptive": 1853.2, "V1_static": 2096.9, "V2_adaptive": 1455.5, "V2_static": 1778.8, "V3_adaptive": 1485.5, "V3_static": 1728.6, "V4_adaptive": 1397.9, "V5_adaptive": 642.0}

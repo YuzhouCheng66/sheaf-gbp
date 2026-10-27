@@ -1,0 +1,288 @@
+{
+ "summary": {
+  "exact": {
+   "maps": 24,
+   "maps_with_any_mismatch": 0,
+   "median_mismatch": 0.0,
+   "median_occ_mismatch": 0.0
+  },
+  "float32": {
+   "maps": 24,
+   "maps_with_any_mismatch": 0,
+   "median_mismatch": 0.0,
+   "median_occ_mismatch": 0.0
+  },
+  "1cm": {
+   "maps": 24,
+   "maps_with_any_mismatch": 24,
+   "median_mismatch": 325.5,
+   "median_occ_mismatch": 31.5
+  }
+ },
+ "rows": [
+  {
+   "house": "r1_i0",
+   "agent": 0,
+   "occupied_seen": 9757,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 732,
+   "mismatch_occ_1cm": 63
+  },
+  {
+   "house": "r1_i0",
+   "agent": 1,
+   "occupied_seen": 6400,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 320,
+   "mismatch_occ_1cm": 31
+  },
+  {
+   "house": "r1_i0",
+   "agent": 2,
+   "occupied_seen": 7375,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 361,
+   "mismatch_occ_1cm": 53
+  },
+  {
+   "house": "r1_i0",
+   "agent": 3,
+   "occupied_seen": 5720,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 299,
+   "mismatch_occ_1cm": 30
+  },
+  {
+   "house": "r1_i0",
+   "agent": 4,
+   "occupied_seen": 9107,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 579,
+   "mismatch_occ_1cm": 40
+  },
+  {
+   "house": "r1_i0",
+   "agent": 5,
+   "occupied_seen": 7922,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 565,
+   "mismatch_occ_1cm": 60
+  },
+  {
+   "house": "r1_i0",
+   "agent": 6,
+   "occupied_seen": 10133,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 561,
+   "mismatch_occ_1cm": 51
+  },
+  {
+   "house": "r1_i0",
+   "agent": 7,
+   "occupied_seen": 7932,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 458,
+   "mismatch_occ_1cm": 50
+  },
+  {
+   "house": "r2_i0",
+   "agent": 0,
+   "occupied_seen": 8252,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 190,
+   "mismatch_occ_1cm": 26
+  },
+  {
+   "house": "r2_i0",
+   "agent": 1,
+   "occupied_seen": 6897,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 331,
+   "mismatch_occ_1cm": 28
+  },
+  {
+   "house": "r2_i0",
+   "agent": 2,
+   "occupied_seen": 6398,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 249,
+   "mismatch_occ_1cm": 23
+  },
+  {
+   "house": "r2_i0",
+   "agent": 3,
+   "occupied_seen": 6380,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 238,
+   "mismatch_occ_1cm": 32
+  },
+  {
+   "house": "r2_i0",
+   "agent": 4,
+   "occupied_seen": 5995,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 199,
+   "mismatch_occ_1cm": 18
+  },
+  {
+   "house": "r2_i0",
+   "agent": 5,
+   "occupied_seen": 7055,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 239,
+   "mismatch_occ_1cm": 19
+  },
+  {
+   "house": "r2_i0",
+   "agent": 6,
+   "occupied_seen": 6799,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 196,
+   "mismatch_occ_1cm": 25
+  },
+  {
+   "house": "r2_i0",
+   "agent": 7,
+   "occupied_seen": 4809,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 419,
+   "mismatch_occ_1cm": 58
+  },
+  {
+   "house": "r3_i0",
+   "agent": 0,
+   "occupied_seen": 7618,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 74,
+   "mismatch_occ_1cm": 6
+  },
+  {
+   "house": "r3_i0",
+   "agent": 1,
+   "occupied_seen": 9026,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 724,
+   "mismatch_occ_1cm": 98
+  },
+  {
+   "house": "r3_i0",
+   "agent": 2,
+   "occupied_seen": 7680,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 50,
+   "mismatch_occ_1cm": 4
+  },
+  {
+   "house": "r3_i0",
+   "agent": 3,
+   "occupied_seen": 7912,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 618,
+   "mismatch_occ_1cm": 66
+  },
+  {
+   "house": "r3_i0",
+   "agent": 4,
+   "occupied_seen": 9918,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 775,
+   "mismatch_occ_1cm": 95
+  },
+  {
+   "house": "r3_i0",
+   "agent": 5,
+   "occupied_seen": 7478,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 774,
+   "mismatch_occ_1cm": 49
+  },
+  {
+   "house": "r3_i0",
+   "agent": 6,
+   "occupied_seen": 4951,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 217,
+   "mismatch_occ_1cm": 11
+  },
+  {
+   "house": "r3_i0",
+   "agent": 7,
+   "occupied_seen": 7589,
+   "mismatch_exact": 0,
+   "mismatch_occ_exact": 0,
+   "mismatch_float32": 0,
+   "mismatch_occ_float32": 0,
+   "mismatch_1cm": 184,
+   "mismatch_occ_1cm": 12
+  }
+ ]
+}

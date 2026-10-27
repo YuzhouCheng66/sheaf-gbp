@@ -1,0 +1,8 @@
+L= 16 D=  256  stalks/house: fixed    28672 sparse    9902 delta    1959 innov    1870 | mask    387 B | innov bytes/house b16    4127 b10    2724 b6    1790 | own evid     59 (0.23) K0 bytes b16    125 b10     81 b6     51 | final evid    138
+      innov stalks per round [854, 428, 314, 187, 73, 13, 0, 0]
+L= 32 D= 1024  stalks/house: fixed   114688 sparse   35244 delta    6700 innov    6392 | mask    891 B | innov bytes/house b16   13676 b10    8882 b6    5685 | own evid    206 (0.20) K0 bytes b16    424 b10    270 b6    167 | final evid    504
+      innov stalks per round [2965, 1440, 1074, 630, 240, 43, 0, 0]
+L= 64 D= 4096  stalks/house: fixed   458752 sparse  129643 delta   23296 innov   22194 | mask   2035 B | innov bytes/house b16   46423 b10   29778 b6   18681 | own evid    743 (0.18) K0 bytes b16   1511 b10    954 b6    582 | final evid   1882
+      innov stalks per round [10710, 4906, 3619, 2056, 763, 138, 0, 0]
+L=128 D=16384  stalks/house: fixed  1835008 sparse  495030 delta   84837 innov   80801 | mask   4895 B | innov bytes/house b16  166498 b10  105897 b6   65496 | own evid   2812 (0.17) K0 bytes b16   5678 b10   3570 b6   2164 | final evid   7238
+      innov stalks per round [40543, 17366, 12774, 7055, 2576, 487, 0, 0]

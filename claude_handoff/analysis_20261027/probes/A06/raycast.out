@@ -1,0 +1,15 @@
+r1_i0 765s
+r1_i1 751s
+r2_i0 587s
+r2_i1 202s
+r3_i0 194s
+r3_i1 218s
+agreement with demo own maps (all voxels / known IoU): 0.9959818522135416 8.85054552938289
+own: exact 48/48; ctx ternary med 1371 B; ctx O med 584 B (+5.5 B poses); occ voxels med 7610
+union8: exact 48/48; ctx ternary med 2810 B; ctx O med 1575 B; poses med 44 B
+edges: ctx ternary med 1782; ctx O med 932; ctx O | receiver med 709 (mean 818); new occ frac 0.628
+2x2x1_any      K0    296 B surf 0.724 var 0.536 furn 0.525 fpr 0.0000 | R8    789 B surf 0.728 var 0.567 furn 0.544 fpr 0.0000
+1x1x2_any      K0    460 B surf 0.633 var 0.722 furn 0.397 fpr 0.0000 | R8   1215 B surf 0.669 var 0.761 furn 0.489 fpr 0.0000
+2x2x2_any      K0    232 B surf 0.391 var 0.382 furn 0.195 fpr 0.0000 | R8    615 B surf 0.422 var 0.423 furn 0.248 fpr 0.0000
+minus_thin     K0    503 B surf 0.979 var 0.958 furn 0.832 fpr 0.0115 | R8   1429 B surf 0.978 var 0.964 furn 0.868 fpr 0.0236
+minus_thin_xy  K0    561 B surf 0.992 var 0.984 furn 0.938 fpr 0.0060 | R8   1533 B surf 0.991 var 0.986 furn 0.951 fpr 0.0102

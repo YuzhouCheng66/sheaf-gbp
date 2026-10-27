@@ -1,0 +1,586 @@
+{
+ "summary": {
+  "own": {
+   "hits_under_hits_prior": {
+    "median": 396.7617669923336,
+    "mean": 558.2852681517351
+   },
+   "oracle_amodal": {
+    "median": 282.9950896000259,
+    "mean": 323.9425451782264
+   },
+   "greedy_amodal": {
+    "median": 265.3606878592125,
+    "mean": 364.7624299332004
+   },
+   "greedy_bytes_on_free_choices": {
+    "median": 67.55622722404489,
+    "mean": 68.27775793571392
+   },
+   "hits_under_amodal_prior": {
+    "median": 127840.50293870404,
+    "mean": 120337.11246077543
+   },
+   "known": {
+    "median": 0.1225137710571289,
+    "mean": 0.1506925423940023
+   }
+  },
+  "union8": {
+   "hits_under_hits_prior": {
+    "median": 1444.5540129356352,
+    "mean": 1389.2392165112958
+   },
+   "oracle_amodal": {
+    "median": 572.6586564087711,
+    "mean": 619.6712778346198
+   },
+   "greedy_amodal": {
+    "median": 956.3280093223138,
+    "mean": 876.8682107714667
+   },
+   "greedy_bytes_on_free_choices": {
+    "median": 90.22176241220481,
+    "mean": 134.75440674228264
+   },
+   "hits_under_amodal_prior": {
+    "median": 18773.919893049853,
+    "mean": 15301.67180804522
+   },
+   "known": {
+    "median": 0.29477882385253906,
+    "mean": 0.3762461344401042
+   }
+  }
+ },
+ "rows": [
+  {
+   "house": "r1_i1",
+   "kind": "own",
+   "agent": 0,
+   "hits_under_hits_prior": 723.8826257893048,
+   "oracle_amodal": 366.52715599591164,
+   "greedy_amodal": 504.9050962919318,
+   "greedy_bytes_on_free_choices": 68.89329514866448,
+   "hits_under_amodal_prior": 109487.92832495447,
+   "known": 0.2047576904296875
+  },
+  {
+   "house": "r1_i1",
+   "kind": "own",
+   "agent": 1,
+   "hits_under_hits_prior": 1015.3618828398103,
+   "oracle_amodal": 452.7530818380198,
+   "greedy_amodal": 565.1717869671746,
+   "greedy_bytes_on_free_choices": 88.14597844305914,
+   "hits_under_amodal_prior": 91992.51049781786,
+   "known": 0.2742805480957031
+  },
+  {
+   "house": "r1_i1",
+   "kind": "own",
+   "agent": 2,
+   "hits_under_hits_prior": 1023.6081737274164,
+   "oracle_amodal": 470.48427159461886,
+   "greedy_amodal": 647.4462262749445,
+   "greedy_bytes_on_free_choices": 120.18962108984022,
+   "hits_under_amodal_prior": 84592.97259464956,
+   "known": 0.2788410186767578
+  },
+  {
+   "house": "r1_i1",
+   "kind": "own",
+   "agent": 3,
+   "hits_under_hits_prior": 1203.1521074380141,
+   "oracle_amodal": 508.90065038198344,
+   "greedy_amodal": 579.7200075418799,
+   "greedy_bytes_on_free_choices": 121.49910607246953,
+   "hits_under_amodal_prior": 80136.95135339693,
+   "known": 0.2685585021972656
+  },
+  {
+   "house": "r1_i1",
+   "kind": "own",
+   "agent": 4,
+   "hits_under_hits_prior": 763.7269969331365,
+   "oracle_amodal": 412.3492106165605,
+   "greedy_amodal": 630.4213531129066,
+   "greedy_bytes_on_free_choices": 91.61340356101736,
+   "hits_under_amodal_prior": 102482.24229413772,
+   "known": 0.19640731811523438
+  },
+  {
+   "house": "r1_i1",
+   "kind": "own",
+   "agent": 5,
+   "hits_under_hits_prior": 943.3812963018046,
+   "oracle_amodal": 375.4918774909547,
+   "greedy_amodal": 451.4257068152317,
+   "greedy_bytes_on_free_choices": 77.63520713304945,
+   "hits_under_amodal_prior": 98511.44102039593,
+   "known": 0.24803924560546875
+  },
+  {
+   "house": "r1_i1",
+   "kind": "own",
+   "agent": 6,
+   "hits_under_hits_prior": 976.9087407151784,
+   "oracle_amodal": 511.9650666003795,
+   "greedy_amodal": 604.3838674988092,
+   "greedy_bytes_on_free_choices": 95.17677452258494,
+   "hits_under_amodal_prior": 84026.94313643844,
+   "known": 0.2915172576904297
+  },
+  {
+   "house": "r1_i1",
+   "kind": "own",
+   "agent": 7,
+   "hits_under_hits_prior": 878.2925546900909,
+   "oracle_amodal": 365.9069883697385,
+   "greedy_amodal": 446.9963154033658,
+   "greedy_bytes_on_free_choices": 81.17732053397012,
+   "hits_under_amodal_prior": 105356.18306262944,
+   "known": 0.2226428985595703
+  },
+  {
+   "house": "r1_i1",
+   "kind": "union8",
+   "agent": 0,
+   "hits_under_hits_prior": 1933.8028101104933,
+   "oracle_amodal": 572.6586564087711,
+   "greedy_amodal": 956.3280093223138,
+   "greedy_bytes_on_free_choices": 77.24073151999173,
+   "hits_under_amodal_prior": 7889.6565850554025,
+   "known": 0.5523052215576172
+  },
+  {
+   "house": "r1_i1",
+   "kind": "union8",
+   "agent": 1,
+   "hits_under_hits_prior": 1933.8028101104933,
+   "oracle_amodal": 572.6586564087711,
+   "greedy_amodal": 956.3280093223138,
+   "greedy_bytes_on_free_choices": 77.24073151999173,
+   "hits_under_amodal_prior": 7889.6565850554025,
+   "known": 0.5523052215576172
+  },
+  {
+   "house": "r1_i1",
+   "kind": "union8",
+   "agent": 2,
+   "hits_under_hits_prior": 1933.8028101104933,
+   "oracle_amodal": 572.6586564087711,
+   "greedy_amodal": 956.3280093223138,
+   "greedy_bytes_on_free_choices": 77.24073151999173,
+   "hits_under_amodal_prior": 7889.6565850554025,
+   "known": 0.5523052215576172
+  },
+  {
+   "house": "r1_i1",
+   "kind": "union8",
+   "agent": 3,
+   "hits_under_hits_prior": 1933.8028101104933,
+   "oracle_amodal": 572.6586564087711,
+   "greedy_amodal": 956.3280093223138,
+   "greedy_bytes_on_free_choices": 77.24073151999173,
+   "hits_under_amodal_prior": 7889.6565850554025,
+   "known": 0.5523052215576172
+  },
+  {
+   "house": "r1_i1",
+   "kind": "union8",
+   "agent": 4,
+   "hits_under_hits_prior": 1933.8028101104933,
+   "oracle_amodal": 572.6586564087711,
+   "greedy_amodal": 956.3280093223138,
+   "greedy_bytes_on_free_choices": 77.24073151999173,
+   "hits_under_amodal_prior": 7889.6565850554025,
+   "known": 0.5523052215576172
+  },
+  {
+   "house": "r1_i1",
+   "kind": "union8",
+   "agent": 5,
+   "hits_under_hits_prior": 1933.8028101104933,
+   "oracle_amodal": 572.6586564087711,
+   "greedy_amodal": 956.3280093223138,
+   "greedy_bytes_on_free_choices": 77.24073151999173,
+   "hits_under_amodal_prior": 7889.6565850554025,
+   "known": 0.5523052215576172
+  },
+  {
+   "house": "r1_i1",
+   "kind": "union8",
+   "agent": 6,
+   "hits_under_hits_prior": 1933.8028101104933,
+   "oracle_amodal": 572.6586564087711,
+   "greedy_amodal": 956.3280093223138,
+   "greedy_bytes_on_free_choices": 77.24073151999173,
+   "hits_under_amodal_prior": 7889.6565850554025,
+   "known": 0.5523052215576172
+  },
+  {
+   "house": "r1_i1",
+   "kind": "union8",
+   "agent": 7,
+   "hits_under_hits_prior": 1933.8028101104933,
+   "oracle_amodal": 572.6586564087711,
+   "greedy_amodal": 956.3280093223138,
+   "greedy_bytes_on_free_choices": 77.24073151999173,
+   "hits_under_amodal_prior": 7889.6565850554025,
+   "known": 0.5523052215576172
+  },
+  {
+   "house": "r2_i0",
+   "kind": "own",
+   "agent": 0,
+   "hits_under_hits_prior": 367.6696022558799,
+   "oracle_amodal": 164.91638532228987,
+   "greedy_amodal": 167.85891316418744,
+   "greedy_bytes_on_free_choices": 30.057427256506358,
+   "hits_under_amodal_prior": 142180.2464728882,
+   "known": 0.13260269165039062
+  },
+  {
+   "house": "r2_i0",
+   "kind": "own",
+   "agent": 1,
+   "hits_under_hits_prior": 335.1944204605814,
+   "oracle_amodal": 191.84028679228925,
+   "greedy_amodal": 217.0218012212761,
+   "greedy_bytes_on_free_choices": 41.525366541938936,
+   "hits_under_amodal_prior": 141441.6543277321,
+   "known": 0.11568832397460938
+  },
+  {
+   "house": "r2_i0",
+   "kind": "own",
+   "agent": 2,
+   "hits_under_hits_prior": 377.04869916662324,
+   "oracle_amodal": 186.38733917329398,
+   "greedy_amodal": 215.48682656362507,
+   "greedy_bytes_on_free_choices": 31.86045832403476,
+   "hits_under_amodal_prior": 145317.24088439674,
+   "known": 0.141021728515625
+  },
+  {
+   "house": "r2_i0",
+   "kind": "own",
+   "agent": 3,
+   "hits_under_hits_prior": 416.47483481804403,
+   "oracle_amodal": 250.2285141564959,
+   "greedy_amodal": 245.38302080813392,
+   "greedy_bytes_on_free_choices": 36.574079616476936,
+   "hits_under_amodal_prior": 136039.79135201886,
+   "known": 0.12315750122070312
+  },
+  {
+   "house": "r2_i0",
+   "kind": "own",
+   "agent": 4,
+   "hits_under_hits_prior": 295.34712501813556,
+   "oracle_amodal": 123.95363519764453,
+   "greedy_amodal": 161.1749730537163,
+   "greedy_bytes_on_free_choices": 29.074017526853766,
+   "hits_under_amodal_prior": 149106.66395705225,
+   "known": 0.10739707946777344
+  },
+  {
+   "house": "r2_i0",
+   "kind": "own",
+   "agent": 5,
+   "hits_under_hits_prior": 341.5979610010856,
+   "oracle_amodal": 253.08741333950192,
+   "greedy_amodal": 284.5657514784972,
+   "greedy_bytes_on_free_choices": 44.97637726032662,
+   "hits_under_amodal_prior": 135813.95554051525,
+   "known": 0.1364002227783203
+  },
+  {
+   "house": "r2_i0",
+   "kind": "own",
+   "agent": 6,
+   "hits_under_hits_prior": 287.25471280268954,
+   "oracle_amodal": 147.6904841015629,
+   "greedy_amodal": 187.5155602735808,
+   "greedy_bytes_on_free_choices": 41.71407583919646,
+   "hits_under_amodal_prior": 140774.56057695198,
+   "known": 0.082183837890625
+  },
+  {
+   "house": "r2_i0",
+   "kind": "own",
+   "agent": 7,
+   "hits_under_hits_prior": 329.35590394371803,
+   "oracle_amodal": 239.91400317708016,
+   "greedy_amodal": 246.15562423992776,
+   "greedy_bytes_on_free_choices": 35.120721528413064,
+   "hits_under_amodal_prior": 135883.23738262424,
+   "known": 0.08035469055175781
+  },
+  {
+   "house": "r2_i0",
+   "kind": "union8",
+   "agent": 0,
+   "hits_under_hits_prior": 789.3608264877585,
+   "oracle_amodal": 394.819852482166,
+   "greedy_amodal": 453.8384589431853,
+   "greedy_bytes_on_free_choices": 90.22176241220481,
+   "hits_under_amodal_prior": 18773.919893049853,
+   "known": 0.29477882385253906
+  },
+  {
+   "house": "r2_i0",
+   "kind": "union8",
+   "agent": 1,
+   "hits_under_hits_prior": 789.3608264877585,
+   "oracle_amodal": 394.819852482166,
+   "greedy_amodal": 453.8384589431853,
+   "greedy_bytes_on_free_choices": 90.22176241220481,
+   "hits_under_amodal_prior": 18773.919893049853,
+   "known": 0.29477882385253906
+  },
+  {
+   "house": "r2_i0",
+   "kind": "union8",
+   "agent": 2,
+   "hits_under_hits_prior": 789.3608264877585,
+   "oracle_amodal": 394.819852482166,
+   "greedy_amodal": 453.8384589431853,
+   "greedy_bytes_on_free_choices": 90.22176241220481,
+   "hits_under_amodal_prior": 18773.919893049853,
+   "known": 0.29477882385253906
+  },
+  {
+   "house": "r2_i0",
+   "kind": "union8",
+   "agent": 3,
+   "hits_under_hits_prior": 789.3608264877585,
+   "oracle_amodal": 394.819852482166,
+   "greedy_amodal": 453.8384589431853,
+   "greedy_bytes_on_free_choices": 90.22176241220481,
+   "hits_under_amodal_prior": 18773.919893049853,
+   "known": 0.29477882385253906
+  },
+  {
+   "house": "r2_i0",
+   "kind": "union8",
+   "agent": 4,
+   "hits_under_hits_prior": 789.3608264877585,
+   "oracle_amodal": 394.819852482166,
+   "greedy_amodal": 453.8384589431853,
+   "greedy_bytes_on_free_choices": 90.22176241220481,
+   "hits_under_amodal_prior": 18773.919893049853,
+   "known": 0.29477882385253906
+  },
+  {
+   "house": "r2_i0",
+   "kind": "union8",
+   "agent": 5,
+   "hits_under_hits_prior": 789.3608264877585,
+   "oracle_amodal": 394.819852482166,
+   "greedy_amodal": 453.8384589431853,
+   "greedy_bytes_on_free_choices": 90.22176241220481,
+   "hits_under_amodal_prior": 18773.919893049853,
+   "known": 0.29477882385253906
+  },
+  {
+   "house": "r2_i0",
+   "kind": "union8",
+   "agent": 6,
+   "hits_under_hits_prior": 789.3608264877585,
+   "oracle_amodal": 394.819852482166,
+   "greedy_amodal": 453.8384589431853,
+   "greedy_bytes_on_free_choices": 90.22176241220481,
+   "hits_under_amodal_prior": 18773.919893049853,
+   "known": 0.29477882385253906
+  },
+  {
+   "house": "r2_i0",
+   "kind": "union8",
+   "agent": 7,
+   "hits_under_hits_prior": 789.3608264877585,
+   "oracle_amodal": 394.819852482166,
+   "greedy_amodal": 453.8384589431853,
+   "greedy_bytes_on_free_choices": 90.22176241220481,
+   "hits_under_amodal_prior": 18773.919893049853,
+   "known": 0.29477882385253906
+  },
+  {
+   "house": "r3_i1",
+   "kind": "own",
+   "agent": 0,
+   "hits_under_hits_prior": 143.42981420346615,
+   "oracle_amodal": 175.0907217956842,
+   "greedy_amodal": 87.01993891089792,
+   "greedy_bytes_on_free_choices": 34.96568658702532,
+   "hits_under_amodal_prior": 134824.12881390163,
+   "known": 0.0650482177734375
+  },
+  {
+   "house": "r3_i1",
+   "kind": "own",
+   "agent": 1,
+   "hits_under_hits_prior": 164.05083312760297,
+   "oracle_amodal": 160.37249223394386,
+   "greedy_amodal": 122.93809955073912,
+   "greedy_bytes_on_free_choices": 48.97909246894397,
+   "hits_under_amodal_prior": 141609.39502436045,
+   "known": 0.06771278381347656
+  },
+  {
+   "house": "r3_i1",
+   "kind": "own",
+   "agent": 2,
+   "hits_under_hits_prior": 240.34172825721603,
+   "oracle_amodal": 214.84157122498178,
+   "greedy_amodal": 202.7800399078666,
+   "greedy_bytes_on_free_choices": 70.52544164854307,
+   "hits_under_amodal_prior": 132449.6811718737,
+   "known": 0.07924461364746094
+  },
+  {
+   "house": "r3_i1",
+   "kind": "own",
+   "agent": 3,
+   "hits_under_hits_prior": 601.67118569934,
+   "oracle_amodal": 648.9395661281188,
+   "greedy_amodal": 516.9303404198497,
+   "greedy_bytes_on_free_choices": 92.18132080334463,
+   "hits_under_amodal_prior": 112247.66511473554,
+   "known": 0.10374259948730469
+  },
+  {
+   "house": "r3_i1",
+   "kind": "own",
+   "agent": 4,
+   "hits_under_hits_prior": 643.8792568027922,
+   "oracle_amodal": 407.2519514776176,
+   "greedy_amodal": 502.55712552678136,
+   "greedy_bytes_on_free_choices": 96.54486870783713,
+   "hits_under_amodal_prior": 112355.19593295561,
+   "known": 0.11231803894042969
+  },
+  {
+   "house": "r3_i1",
+   "kind": "own",
+   "agent": 5,
+   "hits_under_hits_prior": 347.5795027451827,
+   "oracle_amodal": 312.9027658605499,
+   "greedy_amodal": 236.22486196395474,
+   "greedy_bytes_on_free_choices": 64.17644333883848,
+   "hits_under_amodal_prior": 123231.32470553437,
+   "known": 0.091583251953125
+  },
+  {
+   "house": "r3_i1",
+   "kind": "own",
+   "agent": 6,
+   "hits_under_hits_prior": 191.5044911234571,
+   "oracle_amodal": 182.9530896982326,
+   "greedy_amodal": 191.02807994299272,
+   "greedy_bytes_on_free_choices": 66.2191592994253,
+   "hits_under_amodal_prior": 135540.3811081761,
+   "known": 0.07125091552734375
+  },
+  {
+   "house": "r3_i1",
+   "kind": "own",
+   "agent": 7,
+   "hits_under_hits_prior": 788.13198578107,
+   "oracle_amodal": 649.8725617099794,
+   "greedy_amodal": 739.1870014645401,
+   "greedy_bytes_on_free_choices": 129.8409472047739,
+   "hits_under_amodal_prior": 112688.40440847304,
+   "known": 0.12187004089355469
+  },
+  {
+   "house": "r3_i1",
+   "kind": "union8",
+   "agent": 0,
+   "hits_under_hits_prior": 1444.5540129356352,
+   "oracle_amodal": 891.5353246129223,
+   "greedy_amodal": 1220.438164048901,
+   "greedy_bytes_on_free_choices": 236.8007262946514,
+   "hits_under_amodal_prior": 19241.4389460304,
+   "known": 0.28165435791015625
+  },
+  {
+   "house": "r3_i1",
+   "kind": "union8",
+   "agent": 1,
+   "hits_under_hits_prior": 1444.5540129356352,
+   "oracle_amodal": 891.5353246129223,
+   "greedy_amodal": 1220.438164048901,
+   "greedy_bytes_on_free_choices": 236.8007262946514,
+   "hits_under_amodal_prior": 19241.4389460304,
+   "known": 0.28165435791015625
+  },
+  {
+   "house": "r3_i1",
+   "kind": "union8",
+   "agent": 2,
+   "hits_under_hits_prior": 1444.5540129356352,
+   "oracle_amodal": 891.5353246129223,
+   "greedy_amodal": 1220.438164048901,
+   "greedy_bytes_on_free_choices": 236.8007262946514,
+   "hits_under_amodal_prior": 19241.4389460304,
+   "known": 0.28165435791015625
+  },
+  {
+   "house": "r3_i1",
+   "kind": "union8",
+   "agent": 3,
+   "hits_under_hits_prior": 1444.5540129356352,
+   "oracle_amodal": 891.5353246129223,
+   "greedy_amodal": 1220.438164048901,
+   "greedy_bytes_on_free_choices": 236.8007262946514,
+   "hits_under_amodal_prior": 19241.4389460304,
+   "known": 0.28165435791015625
+  },
+  {
+   "house": "r3_i1",
+   "kind": "union8",
+   "agent": 4,
+   "hits_under_hits_prior": 1444.5540129356352,
+   "oracle_amodal": 891.5353246129223,
+   "greedy_amodal": 1220.438164048901,
+   "greedy_bytes_on_free_choices": 236.8007262946514,
+   "hits_under_amodal_prior": 19241.4389460304,
+   "known": 0.28165435791015625
+  },
+  {
+   "house": "r3_i1",
+   "kind": "union8",
+   "agent": 5,
+   "hits_under_hits_prior": 1444.5540129356352,
+   "oracle_amodal": 891.5353246129223,
+   "greedy_amodal": 1220.438164048901,
+   "greedy_bytes_on_free_choices": 236.8007262946514,
+   "hits_under_amodal_prior": 19241.4389460304,
+   "known": 0.28165435791015625
+  },
+  {
+   "house": "r3_i1",
+   "kind": "union8",
+   "agent": 6,
+   "hits_under_hits_prior": 1444.5540129356352,
+   "oracle_amodal": 891.5353246129223,
+   "greedy_amodal": 1220.438164048901,
+   "greedy_bytes_on_free_choices": 236.8007262946514,
+   "hits_under_amodal_prior": 19241.4389460304,
+   "known": 0.28165435791015625
+  },
+  {
+   "house": "r3_i1",
+   "kind": "union8",
+   "agent": 7,
+   "hits_under_hits_prior": 1444.5540129356352,
+   "oracle_amodal": 891.5353246129223,
+   "greedy_amodal": 1220.438164048901,
+   "greedy_bytes_on_free_choices": 236.8007262946514,
+   "hits_under_amodal_prior": 19241.4389460304,
+   "known": 0.28165435791015625
+  }
+ ]
+}

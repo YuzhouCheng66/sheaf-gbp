@@ -1,0 +1,54 @@
+r1_i0 62s
+r1_i1 72s
+r2_i0 80s
+r2_i1 96s
+r3_i0 102s
+r3_i1 108s
+{
+ "own": {
+  "events": 59297.0,
+  "vis_adaptive": 424.16228903253113,
+  "vis_pretrained": 250.12612093795312,
+  "bits_furniture_share": 0.3951447636524399,
+  "occ_furniture_share": 0.1808561971713029,
+  "bits_structure_share": 0.15370957551484193,
+  "occ_structure_share": 0.3436524266174728,
+  "bits_slab_share": 0.0389527067122656,
+  "occ_slab_share": 0.44493101412225766,
+  "bits_free_share": 0.4122856047127309,
+  "occ_free_share": 0.0,
+  "raster_full": 1406.4034884319442,
+  "raster_O13": 543.9774371395029,
+  "raster_n_known": 59297.0
+ },
+ "union8": {
+  "events": 180662.5,
+  "vis_adaptive": 1183.4837408183414,
+  "vis_pretrained": 880.3970663741782,
+  "bits_furniture_share": 0.3983377729945786,
+  "occ_furniture_share": 0.19253213536359592,
+  "bits_structure_share": 0.1671004966655016,
+  "occ_structure_share": 0.38830555663925104,
+  "bits_slab_share": 0.034984125263457226,
+  "occ_slab_share": 0.40557970332505344,
+  "bits_free_share": 0.40288104205244246,
+  "occ_free_share": 0.0,
+  "raster_full": 2830.3685879768036,
+  "raster_O13": 1523.863293050233,
+  "raster_n_known": 180662.5
+ },
+ "edge": {
+  "events": 121511.5,
+  "vis_adaptive": 775.3461830395781,
+  "vis_pretrained": 537.5457043231396,
+  "bits_furniture_share": 0.39706528623120435,
+  "occ_furniture_share": 0.18437878176779693,
+  "bits_structure_share": 0.16567481781139937,
+  "occ_structure_share": 0.35682777461442833,
+  "bits_slab_share": 0.03541808953929314,
+  "occ_slab_share": 0.42512717367858704,
+  "bits_free_share": 0.40452565214555813,
+  "occ_free_share": 0.0,
+  "side": 4.0
+ }
+}

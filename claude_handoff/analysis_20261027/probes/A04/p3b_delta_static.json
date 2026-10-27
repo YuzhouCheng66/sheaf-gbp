@@ -1,0 +1,1273 @@
+{
+ "summary": {
+  "own": {
+   "adaptive_median": 1383.7949925115936,
+   "static_median": 1129.9126503114835
+  },
+  "union8": {
+   "adaptive_median": 2812.9219259214306,
+   "static_median": 2367.403729637086
+  },
+  "edge": {
+   "adaptive_median": 1752.258197984592,
+   "static_median": 1424.8665832514616,
+   "delta_static_median": 1131.007623692372,
+   "incremental_adaptive_median": 253.68084247062336,
+   "delta_over_full_static_median": 0.8484561724113536,
+   "sum_full_static": 139915.78795699502,
+   "sum_delta_static": 119683.43183206559,
+   "sum_incremental": 52488.587628763984
+  }
+ },
+ "rows": [
+  {
+   "kind": "own",
+   "house": "r1_i0",
+   "adaptive": 1225.675604358198,
+   "static": 944.4125019345653
+  },
+  {
+   "kind": "union8",
+   "house": "r1_i0",
+   "adaptive": 1471.5061367392339,
+   "static": 1138.689875025814
+  },
+  {
+   "kind": "own",
+   "house": "r1_i0",
+   "adaptive": 1460.7489925948287,
+   "static": 1223.8945066707863
+  },
+  {
+   "kind": "union8",
+   "house": "r1_i0",
+   "adaptive": 1471.5061367392339,
+   "static": 1138.689875025814
+  },
+  {
+   "kind": "own",
+   "house": "r1_i0",
+   "adaptive": 1111.0093997743472,
+   "static": 847.4827059758727
+  },
+  {
+   "kind": "union8",
+   "house": "r1_i0",
+   "adaptive": 1471.5061367392339,
+   "static": 1138.689875025814
+  },
+  {
+   "kind": "own",
+   "house": "r1_i0",
+   "adaptive": 1207.078506905311,
+   "static": 979.1372299788375
+  },
+  {
+   "kind": "union8",
+   "house": "r1_i0",
+   "adaptive": 1471.5061367392339,
+   "static": 1138.689875025814
+  },
+  {
+   "kind": "own",
+   "house": "r1_i0",
+   "adaptive": 1395.071829892948,
+   "static": 1119.8478149962123
+  },
+  {
+   "kind": "union8",
+   "house": "r1_i0",
+   "adaptive": 1471.5061367392339,
+   "static": 1138.689875025814
+  },
+  {
+   "kind": "own",
+   "house": "r1_i0",
+   "adaptive": 1628.785184528295,
+   "static": 1340.157890007469
+  },
+  {
+   "kind": "union8",
+   "house": "r1_i0",
+   "adaptive": 1471.5061367392339,
+   "static": 1138.689875025814
+  },
+  {
+   "kind": "own",
+   "house": "r1_i0",
+   "adaptive": 1560.4396123327494,
+   "static": 1253.5426102038298
+  },
+  {
+   "kind": "union8",
+   "house": "r1_i0",
+   "adaptive": 1471.5061367392339,
+   "static": 1138.689875025814
+  },
+  {
+   "kind": "own",
+   "house": "r1_i0",
+   "adaptive": 1328.5742089975195,
+   "static": 1048.9434840558179
+  },
+  {
+   "kind": "union8",
+   "house": "r1_i0",
+   "adaptive": 1471.5061367392339,
+   "static": 1138.689875025814
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i0",
+   "adaptive": 1516.6735452738342,
+   "static": 1177.4975668168634,
+   "delta_static": 1052.631072640166,
+   "incremental_adaptive": 144.9319277417144
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i0",
+   "adaptive": 1328.5742089975195,
+   "static": 1048.9434840558179,
+   "delta_static": 354.1452618200377,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i0",
+   "adaptive": 1406.2476537775472,
+   "static": 1125.7671405150154,
+   "delta_static": 391.27235345313954,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i0",
+   "adaptive": 1584.1496974077902,
+   "static": 1235.9753971625119,
+   "delta_static": 1006.7854486780797,
+   "incremental_adaptive": 67.2584829616867
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i0",
+   "adaptive": 1047.716825258785,
+   "static": 793.337874643216,
+   "delta_static": 479.9388076315519,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i0",
+   "adaptive": 1741.6490878348632,
+   "static": 1389.1324015675305,
+   "delta_static": 960.8556093392092,
+   "incremental_adaptive": 425.78931148044876
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i0",
+   "adaptive": 1603.6679872842385,
+   "static": 1284.0117839233098,
+   "delta_static": 835.8279820775015,
+   "incremental_adaptive": 416.5023264206077
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i0",
+   "adaptive": 1057.0038103186262,
+   "static": 796.6491664749218,
+   "delta_static": 709.0840060818451,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i0",
+   "adaptive": 1547.1758077826444,
+   "static": 1213.4595989909442,
+   "delta_static": 1078.3297640134379,
+   "incremental_adaptive": 266.42762983392277
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i0",
+   "adaptive": 1207.078506905311,
+   "static": 979.1372299788375,
+   "delta_static": 393.10222528074934,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i0",
+   "adaptive": 1433.7581326612094,
+   "static": 1144.5092111780768,
+   "delta_static": 776.79243716005,
+   "incremental_adaptive": 240.93405510732396
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i0",
+   "adaptive": 1232.57208163191,
+   "static": 933.5847188880656,
+   "delta_static": 791.7396495107338,
+   "incremental_adaptive": 39.74800407802445
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i0",
+   "adaptive": 1111.0093997743472,
+   "static": 847.4827059758727,
+   "delta_static": 581.6487956276376,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i0",
+   "adaptive": 1715.7836659287568,
+   "static": 1387.3712963061676,
+   "delta_static": 949.5389303960346,
+   "incremental_adaptive": 362.4967369648866
+  },
+  {
+   "kind": "own",
+   "house": "r1_i1",
+   "adaptive": 1919.421199335209,
+   "static": 1631.0775140069898
+  },
+  {
+   "kind": "union8",
+   "house": "r1_i1",
+   "adaptive": 2743.4641786505726,
+   "static": 2329.397307069546
+  },
+  {
+   "kind": "own",
+   "house": "r1_i1",
+   "adaptive": 2255.3253702154516,
+   "static": 1936.9023689317635
+  },
+  {
+   "kind": "union8",
+   "house": "r1_i1",
+   "adaptive": 2743.4641786505726,
+   "static": 2329.397307069546
+  },
+  {
+   "kind": "own",
+   "house": "r1_i1",
+   "adaptive": 2632.4708673045666,
+   "static": 2280.5097458127507
+  },
+  {
+   "kind": "union8",
+   "house": "r1_i1",
+   "adaptive": 2743.4641786505726,
+   "static": 2329.397307069546
+  },
+  {
+   "kind": "own",
+   "house": "r1_i1",
+   "adaptive": 2914.990057979083,
+   "static": 2552.4620145795343
+  },
+  {
+   "kind": "union8",
+   "house": "r1_i1",
+   "adaptive": 2743.4641786505726,
+   "static": 2329.397307069546
+  },
+  {
+   "kind": "own",
+   "house": "r1_i1",
+   "adaptive": 2049.870799415421,
+   "static": 1796.2320917406905
+  },
+  {
+   "kind": "union8",
+   "house": "r1_i1",
+   "adaptive": 2743.4641786505726,
+   "static": 2329.397307069546
+  },
+  {
+   "kind": "own",
+   "house": "r1_i1",
+   "adaptive": 2447.683222323645,
+   "static": 2117.7474399442717
+  },
+  {
+   "kind": "union8",
+   "house": "r1_i1",
+   "adaptive": 2743.4641786505726,
+   "static": 2329.397307069546
+  },
+  {
+   "kind": "own",
+   "house": "r1_i1",
+   "adaptive": 2277.6369762440713,
+   "static": 1972.8111016172745
+  },
+  {
+   "kind": "union8",
+   "house": "r1_i1",
+   "adaptive": 2743.4641786505726,
+   "static": 2329.397307069546
+  },
+  {
+   "kind": "own",
+   "house": "r1_i1",
+   "adaptive": 1725.1231059465922,
+   "static": 1422.0292865375588
+  },
+  {
+   "kind": "union8",
+   "house": "r1_i1",
+   "adaptive": 2743.4641786505726,
+   "static": 2329.397307069546
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i1",
+   "adaptive": 2119.536138918179,
+   "static": 1777.2883248528387,
+   "delta_static": 1057.637870714749,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i1",
+   "adaptive": 2926.439947063498,
+   "static": 2513.665031465295,
+   "delta_static": 1963.2323825720418,
+   "incremental_adaptive": 625.9280397323937
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i1",
+   "adaptive": 2799.8572197606845,
+   "static": 2380.4557643834896,
+   "delta_static": 2080.391315439203,
+   "incremental_adaptive": 297.7809563269275
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i1",
+   "adaptive": 2447.683222323645,
+   "static": 2117.7474399442717,
+   "delta_static": 775.7863348108303,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i1",
+   "adaptive": 2811.8082566916974,
+   "static": 2388.628158137386,
+   "delta_static": 2269.784988348791,
+   "incremental_adaptive": 695.5933792351516
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i1",
+   "adaptive": 2049.870799415421,
+   "static": 1796.2320917406905,
+   "delta_static": 618.8566271550151,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i1",
+   "adaptive": 2435.8825957949466,
+   "static": 2075.0616081060525,
+   "delta_static": 1008.3426795743935,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i1",
+   "adaptive": 3143.3969865936137,
+   "static": 2704.9907708514065,
+   "delta_static": 1911.5713465228,
+   "incremental_adaptive": 309.58158285562604
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i1",
+   "adaptive": 2898.8258617124316,
+   "static": 2490.398975293379,
+   "delta_static": 2072.811989222425,
+   "incremental_adaptive": 1020.3410727039804
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i1",
+   "adaptive": 1725.1231059465922,
+   "static": 1422.0292865375588,
+   "delta_static": 906.1413674797295,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i1",
+   "adaptive": 1962.8154930344535,
+   "static": 1686.9207477622833,
+   "delta_static": 719.6891514867756,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i1",
+   "adaptive": 3121.779659315775,
+   "static": 2673.196680412572,
+   "delta_static": 2213.8520514795664,
+   "incremental_adaptive": 782.6486856161191
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i1",
+   "adaptive": 2688.905171965652,
+   "static": 2305.962001278793,
+   "delta_static": 1762.7319632502908,
+   "incremental_adaptive": 613.8632899890417
+  },
+  {
+   "kind": "edge",
+   "house": "r1_i1",
+   "adaptive": 2131.600888661531,
+   "static": 1784.2391211589138,
+   "delta_static": 1438.7574258176169,
+   "incremental_adaptive": 56.55900668492086
+  },
+  {
+   "kind": "own",
+   "house": "r2_i0",
+   "adaptive": 1081.0434810680877,
+   "static": 842.1809985729154
+  },
+  {
+   "kind": "union8",
+   "house": "r2_i0",
+   "adaptive": 1517.5923743571325,
+   "static": 1205.6925617773195
+  },
+  {
+   "kind": "own",
+   "house": "r2_i0",
+   "adaptive": 1038.053575763425,
+   "static": 815.5698472121687
+  },
+  {
+   "kind": "union8",
+   "house": "r2_i0",
+   "adaptive": 1517.5923743571325,
+   "static": 1205.6925617773195
+  },
+  {
+   "kind": "own",
+   "house": "r2_i0",
+   "adaptive": 1372.5181551302394,
+   "static": 1139.977485626755
+  },
+  {
+   "kind": "union8",
+   "house": "r2_i0",
+   "adaptive": 1517.5923743571325,
+   "static": 1205.6925617773195
+  },
+  {
+   "kind": "own",
+   "house": "r2_i0",
+   "adaptive": 1245.3008155557047,
+   "static": 1019.5178578283818
+  },
+  {
+   "kind": "union8",
+   "house": "r2_i0",
+   "adaptive": 1517.5923743571325,
+   "static": 1205.6925617773195
+  },
+  {
+   "kind": "own",
+   "house": "r2_i0",
+   "adaptive": 1030.2931678504044,
+   "static": 815.6761663782057
+  },
+  {
+   "kind": "union8",
+   "house": "r2_i0",
+   "adaptive": 1517.5923743571325,
+   "static": 1205.6925617773195
+  },
+  {
+   "kind": "own",
+   "house": "r2_i0",
+   "adaptive": 1259.8122294734103,
+   "static": 1021.0558313248026
+  },
+  {
+   "kind": "union8",
+   "house": "r2_i0",
+   "adaptive": 1517.5923743571325,
+   "static": 1205.6925617773195
+  },
+  {
+   "kind": "own",
+   "house": "r2_i0",
+   "adaptive": 731.7642503490978,
+   "static": 524.6518908863454
+  },
+  {
+   "kind": "union8",
+   "house": "r2_i0",
+   "adaptive": 1517.5923743571325,
+   "static": 1205.6925617773195
+  },
+  {
+   "kind": "own",
+   "house": "r2_i0",
+   "adaptive": 975.5771678497114,
+   "static": 776.758808242733
+  },
+  {
+   "kind": "union8",
+   "house": "r2_i0",
+   "adaptive": 1517.5923743571325,
+   "static": 1205.6925617773195
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i0",
+   "adaptive": 1666.7409558407783,
+   "static": 1329.1918670453058,
+   "delta_static": 1037.1715084089535,
+   "incremental_adaptive": 321.12570010793297
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i0",
+   "adaptive": 1198.4666742491995,
+   "static": 965.7147323075224,
+   "delta_static": 365.4135942815585,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i0",
+   "adaptive": 1424.3127297377923,
+   "static": 1115.1442041154112,
+   "delta_static": 1077.7702010216979,
+   "incremental_adaptive": 544.0152065074211
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i0",
+   "adaptive": 975.5771678497114,
+   "static": 776.758808242733,
+   "delta_static": 454.2686021989021,
+   "incremental_adaptive": 95.27964461934016
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i0",
+   "adaptive": 1372.5181551302394,
+   "static": 1139.977485626755,
+   "delta_static": 331.9275213099098,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i0",
+   "adaptive": 1588.6622819427769,
+   "static": 1263.2667495865435,
+   "delta_static": 1090.6993423247557,
+   "incremental_adaptive": 147.0742192268931
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i0",
+   "adaptive": 1466.8002759095548,
+   "static": 1162.7405606025193,
+   "delta_static": 905.1569156876154,
+   "incremental_adaptive": 275.1847932821388
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i0",
+   "adaptive": 1244.4075810749937,
+   "static": 996.315268781431,
+   "delta_static": 644.9600968951256,
+   "incremental_adaptive": 52.7920984475777
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i0",
+   "adaptive": 1038.053575763425,
+   "static": 815.5698472121687,
+   "delta_static": 432.96839028047236,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i0",
+   "adaptive": 1544.6342959739632,
+   "static": 1226.1841891189947,
+   "delta_static": 1063.80398852055,
+   "incremental_adaptive": 481.5387985937075
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i0",
+   "adaptive": 1112.643546430706,
+   "static": 886.4252020298021,
+   "delta_static": 499.5641058890668,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i0",
+   "adaptive": 1767.9171685251376,
+   "static": 1427.7038799653646,
+   "delta_static": 988.7290682988818,
+   "incremental_adaptive": 406.9488279264265
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i0",
+   "adaptive": 1215.6118681819096,
+   "static": 962.6775203991948,
+   "delta_static": 976.0909735666294,
+   "incremental_adaptive": 787.8281240080347
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i0",
+   "adaptive": 731.7642503490978,
+   "static": 524.6518908863454,
+   "delta_static": 693.7102745172451,
+   "incremental_adaptive": 303.9805061752229
+  },
+  {
+   "kind": "own",
+   "house": "r2_i1",
+   "adaptive": 2135.8021433098966,
+   "static": 1789.735386692209
+  },
+  {
+   "kind": "union8",
+   "house": "r2_i1",
+   "adaptive": 3426.529868680682,
+   "static": 2904.81892610833
+  },
+  {
+   "kind": "own",
+   "house": "r2_i1",
+   "adaptive": 1614.4113070438052,
+   "static": 1310.1361611045634
+  },
+  {
+   "kind": "union8",
+   "house": "r2_i1",
+   "adaptive": 3426.529868680682,
+   "static": 2904.81892610833
+  },
+  {
+   "kind": "own",
+   "house": "r2_i1",
+   "adaptive": 1033.8736621467563,
+   "static": 797.6164205516095
+  },
+  {
+   "kind": "union8",
+   "house": "r2_i1",
+   "adaptive": 3426.529868680682,
+   "static": 2904.81892610833
+  },
+  {
+   "kind": "own",
+   "house": "r2_i1",
+   "adaptive": 2975.941007403825,
+   "static": 2587.4184580844976
+  },
+  {
+   "kind": "union8",
+   "house": "r2_i1",
+   "adaptive": 3426.529868680682,
+   "static": 2904.81892610833
+  },
+  {
+   "kind": "own",
+   "house": "r2_i1",
+   "adaptive": 2155.2643279961158,
+   "static": 1824.1574808742007
+  },
+  {
+   "kind": "union8",
+   "house": "r2_i1",
+   "adaptive": 3426.529868680682,
+   "static": 2904.81892610833
+  },
+  {
+   "kind": "own",
+   "house": "r2_i1",
+   "adaptive": 1632.2911607510746,
+   "static": 1331.1757012014382
+  },
+  {
+   "kind": "union8",
+   "house": "r2_i1",
+   "adaptive": 3426.529868680682,
+   "static": 2904.81892610833
+  },
+  {
+   "kind": "own",
+   "house": "r2_i1",
+   "adaptive": 971.2150959921369,
+   "static": 732.1203803721686
+  },
+  {
+   "kind": "union8",
+   "house": "r2_i1",
+   "adaptive": 3426.529868680682,
+   "static": 2904.81892610833
+  },
+  {
+   "kind": "own",
+   "house": "r2_i1",
+   "adaptive": 1187.1052709098867,
+   "static": 907.4088293713318
+  },
+  {
+   "kind": "union8",
+   "house": "r2_i1",
+   "adaptive": 3426.529868680682,
+   "static": 2904.81892610833
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i1",
+   "adaptive": 3146.332851596532,
+   "static": 2685.238953545637,
+   "delta_static": 1780.2387730535604,
+   "incremental_adaptive": 227.4051704148419
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i1",
+   "adaptive": 3201.12469826584,
+   "static": 2699.6435407080457,
+   "delta_static": 2150.1752151878904,
+   "incremental_adaptive": 282.19701708415005
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i1",
+   "adaptive": 3489.610277966369,
+   "static": 2968.3919386936786,
+   "delta_static": 2759.9970640332276,
+   "incremental_adaptive": 1796.2387079296072
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i1",
+   "adaptive": 1632.2911607510746,
+   "static": 1331.1757012014382,
+   "delta_static": 1055.1079355891122,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i1",
+   "adaptive": 3742.3574163329667,
+   "static": 3216.3094793243836,
+   "delta_static": 2546.4774327758782,
+   "incremental_adaptive": 1444.522732173891
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i1",
+   "adaptive": 1984.0071365067909,
+   "static": 1611.209960154338,
+   "delta_static": 1376.3496714882904,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i1",
+   "adaptive": 3579.4799555667937,
+   "static": 3063.138557381515,
+   "delta_static": 2731.8749632319646,
+   "incremental_adaptive": 2241.424597770795
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i1",
+   "adaptive": 1187.1052709098867,
+   "static": 907.4088293713318,
+   "delta_static": 1270.684774896471,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i1",
+   "adaptive": 3016.2391040189664,
+   "static": 2527.0386307522735,
+   "delta_static": 1955.4728569208742,
+   "incremental_adaptive": 64.2936430134705
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i1",
+   "adaptive": 3364.2362256672113,
+   "static": 2892.9363219209995,
+   "delta_static": 2044.9943857756787,
+   "incremental_adaptive": 412.29076466171546
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i1",
+   "adaptive": 2139.7189522466906,
+   "static": 1784.800948961545,
+   "delta_static": 1548.9543363497876,
+   "incremental_adaptive": 73.17794674517927
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i1",
+   "adaptive": 3355.3519219355026,
+   "static": 2847.735458706305,
+   "delta_static": 2417.295352258343,
+   "incremental_adaptive": 1288.8109164339912
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i1",
+   "adaptive": 1614.4113070438052,
+   "static": 1310.1361611045634,
+   "delta_static": 1317.1065370808992,
+   "incremental_adaptive": 12.269148336646595
+  },
+  {
+   "kind": "edge",
+   "house": "r2_i1",
+   "adaptive": 3416.2607203440352,
+   "static": 2901.224291404903,
+   "delta_static": 2676.414571311078,
+   "incremental_adaptive": 1814.1185616368766
+  },
+  {
+   "kind": "own",
+   "house": "r3_i0",
+   "adaptive": 274.12099910912235,
+   "static": 199.99082504886906
+  },
+  {
+   "kind": "union8",
+   "house": "r3_i0",
+   "adaptive": 3459.6440511941278,
+   "static": 2968.728537051783
+  },
+  {
+   "kind": "own",
+   "house": "r3_i0",
+   "adaptive": 1637.0159483727853,
+   "static": 1345.952150685727
+  },
+  {
+   "kind": "union8",
+   "house": "r3_i0",
+   "adaptive": 3459.6440511941278,
+   "static": 2968.728537051783
+  },
+  {
+   "kind": "own",
+   "house": "r3_i0",
+   "adaptive": 224.04240681043677,
+   "static": 152.07548541767898
+  },
+  {
+   "kind": "union8",
+   "house": "r3_i0",
+   "adaptive": 3459.6440511941278,
+   "static": 2968.728537051783
+  },
+  {
+   "kind": "own",
+   "house": "r3_i0",
+   "adaptive": 1887.0445456356933,
+   "static": 1600.7799310791218
+  },
+  {
+   "kind": "union8",
+   "house": "r3_i0",
+   "adaptive": 3459.6440511941278,
+   "static": 2968.728537051783
+  },
+  {
+   "kind": "own",
+   "house": "r3_i0",
+   "adaptive": 2155.5292606116172,
+   "static": 1819.219257896187
+  },
+  {
+   "kind": "union8",
+   "house": "r3_i0",
+   "adaptive": 3459.6440511941278,
+   "static": 2968.728537051783
+  },
+  {
+   "kind": "own",
+   "house": "r3_i0",
+   "adaptive": 1400.701434994646,
+   "static": 1154.4248010686404
+  },
+  {
+   "kind": "union8",
+   "house": "r3_i0",
+   "adaptive": 3459.6440511941278,
+   "static": 2968.728537051783
+  },
+  {
+   "kind": "own",
+   "house": "r3_i0",
+   "adaptive": 608.1195343591219,
+   "static": 444.92544955159434
+  },
+  {
+   "kind": "union8",
+   "house": "r3_i0",
+   "adaptive": 3459.6440511941278,
+   "static": 2968.728537051783
+  },
+  {
+   "kind": "own",
+   "house": "r3_i0",
+   "adaptive": 385.45509548260355,
+   "static": 297.34642615709
+  },
+  {
+   "kind": "union8",
+   "house": "r3_i0",
+   "adaptive": 3459.6440511941278,
+   "static": 2968.728537051783
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i0",
+   "adaptive": 292.7389999273768,
+   "static": 212.13605938876717,
+   "delta_static": 744.6191173365607,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i0",
+   "adaptive": 3525.618474135427,
+   "static": 3029.2417938472595,
+   "delta_static": 3027.578812400602,
+   "incremental_adaptive": 3168.905051266751
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i0",
+   "adaptive": 1637.0159483727853,
+   "static": 1345.952150685727,
+   "delta_static": 1538.6124980392544,
+   "incremental_adaptive": 438.4539068049985
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i0",
+   "adaptive": 3023.1901443891293,
+   "static": 2573.822176946258,
+   "delta_static": 2618.149599314387,
+   "incremental_adaptive": 1824.6281028213425
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i0",
+   "adaptive": 3584.0009171651573,
+   "static": 3122.9689938072624,
+   "delta_static": 2666.5958917467888,
+   "incremental_adaptive": 1950.9431425283276
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i0",
+   "adaptive": 1510.7009086658002,
+   "static": 1208.8304243854438,
+   "delta_static": 1381.9920484260224,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i0",
+   "adaptive": 3464.6020083833996,
+   "static": 2972.9195868268503,
+   "delta_static": 3029.827710097344,
+   "incremental_adaptive": 3237.601644383691
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i0",
+   "adaptive": 224.04240681043677,
+   "static": 152.07548541767898,
+   "delta_static": 733.5037268825714,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i0",
+   "adaptive": 3729.351256660713,
+   "static": 3232.6573535447824,
+   "delta_static": 3026.953812717172,
+   "incremental_adaptive": 3075.8097717064275
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i0",
+   "adaptive": 385.8342794877001,
+   "static": 298.05425232596093,
+   "delta_static": 1012.4599037049904,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i0",
+   "adaptive": 2418.2597584255655,
+   "static": 2049.466687411154,
+   "delta_static": 2184.809117212662,
+   "incremental_adaptive": 1432.1099457664204
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i0",
+   "adaptive": 2029.5341054277073,
+   "static": 1643.5729519850008,
+   "delta_static": 2093.770997752492,
+   "incremental_adaptive": 1043.3842927685623
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i0",
+   "adaptive": 3380.4639827062,
+   "static": 2912.525959178379,
+   "delta_static": 2891.5647963520964,
+   "incremental_adaptive": 2853.5245168350057
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i0",
+   "adaptive": 608.1195343591219,
+   "static": 444.92544955159434,
+   "delta_static": 1223.6114252600692,
+   "incremental_adaptive": 81.18006848792766
+  },
+  {
+   "kind": "own",
+   "house": "r3_i1",
+   "adaptive": 426.75116251309385,
+   "static": 323.4103334762249
+  },
+  {
+   "kind": "union8",
+   "house": "r3_i1",
+   "adaptive": 2882.3796731922885,
+   "static": 2405.410152204626
+  },
+  {
+   "kind": "own",
+   "house": "r3_i1",
+   "adaptive": 394.663217659618,
+   "static": 280.1387362702979
+  },
+  {
+   "kind": "union8",
+   "house": "r3_i1",
+   "adaptive": 2882.3796731922885,
+   "static": 2405.410152204626
+  },
+  {
+   "kind": "own",
+   "house": "r3_i1",
+   "adaptive": 662.9318100496403,
+   "static": 526.9296516062393
+  },
+  {
+   "kind": "union8",
+   "house": "r3_i1",
+   "adaptive": 2882.3796731922885,
+   "static": 2405.410152204626
+  },
+  {
+   "kind": "own",
+   "house": "r3_i1",
+   "adaptive": 1849.5620683606892,
+   "static": 1528.746719247908
+  },
+  {
+   "kind": "union8",
+   "house": "r3_i1",
+   "adaptive": 2882.3796731922885,
+   "static": 2405.410152204626
+  },
+  {
+   "kind": "own",
+   "house": "r3_i1",
+   "adaptive": 1762.8673081343209,
+   "static": 1431.8241703730564
+  },
+  {
+   "kind": "union8",
+   "house": "r3_i1",
+   "adaptive": 2882.3796731922885,
+   "static": 2405.410152204626
+  },
+  {
+   "kind": "own",
+   "house": "r3_i1",
+   "adaptive": 978.896717152591,
+   "static": 779.18188545858
+  },
+  {
+   "kind": "union8",
+   "house": "r3_i1",
+   "adaptive": 2882.3796731922885,
+   "static": 2405.410152204626
+  },
+  {
+   "kind": "own",
+   "house": "r3_i1",
+   "adaptive": 568.0913435243953,
+   "static": 445.29378637526196
+  },
+  {
+   "kind": "union8",
+   "house": "r3_i1",
+   "adaptive": 2882.3796731922885,
+   "static": 2405.410152204626
+  },
+  {
+   "kind": "own",
+   "house": "r3_i1",
+   "adaptive": 2161.0270940617643,
+   "static": 1775.1887884237085
+  },
+  {
+   "kind": "union8",
+   "house": "r3_i1",
+   "adaptive": 2882.3796731922885,
+   "static": 2405.410152204626
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i1",
+   "adaptive": 426.75116251309385,
+   "static": 323.4103334762249,
+   "delta_static": 589.6175847061913,
+   "incremental_adaptive": 4.413097436755379
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i1",
+   "adaptive": 2879.966575755533,
+   "static": 2403.12074572304,
+   "delta_static": 2462.6179463464814,
+   "incremental_adaptive": 2457.6285106791947
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i1",
+   "adaptive": 1849.5620683606892,
+   "static": 1528.746719247908,
+   "delta_static": 1171.315905059988,
+   "incremental_adaptive": 79.56356586029733
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i1",
+   "adaptive": 2804.816107331991,
+   "static": 2348.5725441573927,
+   "delta_static": 1979.5579045741688,
+   "incremental_adaptive": 1034.8176048315993
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i1",
+   "adaptive": 2898.546973529914,
+   "static": 2421.586445437286,
+   "delta_static": 2429.2807634724354,
+   "incremental_adaptive": 2289.9436398502307
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i1",
+   "adaptive": 594.4360333420578,
+   "static": 463.66033331605564,
+   "delta_static": 617.2645233289311,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i1",
+   "adaptive": 394.663217659618,
+   "static": 280.1387362702979,
+   "delta_static": 600.8167726181052,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i1",
+   "adaptive": 2891.6669143526883,
+   "static": 2415.8042907261306,
+   "delta_static": 2449.99116494689,
+   "incremental_adaptive": 2489.7164555326704
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i1",
+   "adaptive": 831.7285911592127,
+   "static": 673.1899463781388,
+   "delta_static": 820.3252872321947,
+   "incremental_adaptive": 102.8657055339213
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i1",
+   "adaptive": 2781.513967658367,
+   "static": 2313.743655029198,
+   "delta_static": 2333.426333282106,
+   "incremental_adaptive": 2052.651082033076
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i1",
+   "adaptive": 1762.8673081343209,
+   "static": 1431.8241703730564,
+   "delta_static": 1213.6465197966063,
+   "incremental_adaptive": 2.0
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i1",
+   "adaptive": 2910.584290553585,
+   "static": 2463.6904338042946,
+   "delta_static": 2086.3296570805655,
+   "incremental_adaptive": 1121.5123650579676
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i1",
+   "adaptive": 1201.181470658355,
+   "static": 972.783488795673,
+   "delta_static": 1304.1451943520713,
+   "incremental_adaptive": 574.8353432162444
+  },
+  {
+   "kind": "edge",
+   "house": "r3_i1",
+   "adaptive": 2309.544329976044,
+   "static": 1863.9802314050562,
+   "delta_static": 2096.388527287037,
+   "incremental_adaptive": 1683.1982025339335
+  }
+ ],
+ "cap": 32.0
+}

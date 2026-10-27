@@ -1,0 +1,40 @@
+r1_i0 k0 exact 8 r8 exact 1 naive exact 0 108s
+r1_i2 k0 exact 8 r8 exact 1 naive exact 0 114s
+r1_i1 k0 exact 8 r8 exact 1 naive exact 0 145s
+r1_i3 k0 exact 8 r8 exact 1 naive exact 0 148s
+r1_i4 k0 exact 8 r8 exact 1 naive exact 0 161s
+r1_i5 k0 exact 8 r8 exact 1 naive exact 0 173s
+r1_i7 k0 exact 8 r8 exact 1 naive exact 0 163s
+r1_i6 k0 exact 8 r8 exact 1 naive exact 0 185s
+r2_i0 k0 exact 8 r8 exact 1 naive exact 0 187s
+r2_i1 k0 exact 8 r8 exact 1 naive exact 0 163s
+r2_i3 k0 exact 8 r8 exact 1 naive exact 0 142s
+r2_i2 k0 exact 8 r8 exact 1 naive exact 0 177s
+r2_i5 k0 exact 8 r8 exact 1 naive exact 0 118s
+r2_i4 k0 exact 8 r8 exact 1 naive exact 1 120s
+r2_i6 k0 exact 8 r8 exact 1 naive exact 0 99s
+r2_i7 k0 exact 8 r8 exact 1 naive exact 0 126s
+r3_i1 k0 exact 8 r8 exact 1 naive exact 0 110s
+r3_i0 k0 exact 8 r8 exact 1 naive exact 0 118s
+r3_i2 k0 exact 8 r8 exact 2 naive exact 1 120s
+r3_i3 k0 exact 8 r8 exact 1 naive exact 0 113s
+r3_i4 k0 exact 8 r8 exact 1 naive exact 0 88s
+r3_i5 k0 exact 8 r8 exact 1 naive exact 0 92s
+r3_i6 k0 exact 8 r8 exact 1 naive exact 0 93s
+r3_i7 k0 exact 8 r8 exact 1 naive exact 1 109s
+K0|box-only|m1               n 192 bytes med     212 [    67,   370] boxes    57 exact 0 surf None var None furn None
+K0|plan+box|m1               n 192 bytes med     201 [    64,   359] boxes    47 exact 192 surf 1.0 var 1.0 furn 1.0
+K0|plan+box|m4               n 192 bytes med     183 [    61,   312] boxes    40 exact None surf 0.999236362072678 var 0.998573626034768 furn 0.9942305176876592
+K0|plan+box|m16              n 192 bytes med     126 [    52,   192] boxes    24 exact None surf 0.992589595130962 var 0.9853487737328548 furn 0.940647715990676
+K0|shell|m1                  n 192 bytes med     756 [   238,  1461] boxes   217 exact 0 surf None var None furn None
+R8|box-only|m1               n 192 bytes med     658 [   298,   892] boxes   175 exact 0 surf None var None furn None
+R8|plan+box|m1               n 192 bytes med     619 [   295,   857] boxes   152 exact 192 surf 1.0 var 1.0 furn 1.0
+R8|plan+box|m4               n 192 bytes med     592 [   279,   809] boxes   135 exact None surf 0.9995920442809417 var 0.9993366265994497 furn 0.9969668470687534
+R8|plan+box|m16              n 192 bytes med     398 [   241,   609] boxes    80 exact None surf 0.9941565553800723 var 0.99027353021205 furn 0.9562605682406984
+R8|shell|m1                  n 192 bytes med    1906 [  1096,  3150] boxes   540 exact 0 surf None var None furn None
+R8naive|box-only|m1          n 192 bytes med    1689 [   899,  2422] boxes   464 exact 0 surf None var None furn None
+R8naive|plan+box|m1          n 192 bytes med    1607 [   772,  2377] boxes   398 exact 17 surf 0.9987436688374941 var 0.9982045270952294 furn 0.9945433041594365
+R8naive|shell|m1             n 192 bytes med    6315 [  2994,  9164] boxes  1798 exact 0 surf None var None furn None
+R8relay|box-only|m1          n 192 bytes med    1689 [   899,  2422] boxes   464 exact 192 surf 1.0 var 1.0 furn 1.0
+R8relay|plan+box|m1          n 192 bytes med    1607 [   772,  2377] boxes   398 exact 192 surf 1.0 var 1.0 furn 1.0
+R8relay|shell|m1             n 192 bytes med    6315 [  2994,  9164] boxes  1798 exact 192 surf 1.0 var 1.0 furn 1.0

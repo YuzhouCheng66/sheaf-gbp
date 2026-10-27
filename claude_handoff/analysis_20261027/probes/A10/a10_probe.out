@@ -1,0 +1,31 @@
+r1_i0 {"house": "r1_i0", "n_dir": 14, "ours_fixed_2KB": 229376, "ours_event_2KB": 86016, "ours_once_2KB": 28672, "ours_once_8KB": 114688, "event_sends": 42, "flood_gzip": 159481, "flood_ctx": 76422, "flood_V": 34588, "relay_union_gzip": 41961, "relay_union_ctx": 19533, "relay_union_V": 10795, "cd_ctx_best": 14745, "cd_V_best": 8664, "cut_ctx": 10879, "cut_V": 6746, "union_ctx_one": 1472, "union_V_one": 983, "sum_inn_vs_others_ctx": 2821, "sum_inn_vs_others_V": 1110}
+house_r1_i0.json 100s
+r1_i1 {"house": "r1_i1", "n_dir": 14, "ours_fixed_2KB": 229376, "ours_event_2KB": 86016, "ours_once_2KB": 28672, "ours_once_8KB": 114688, "event_sends": 42, "flood_gzip": 280147, "flood_ctx": 127558, "flood_V": 59869, "relay_union_gzip": 79388, "relay_union_ctx": 35264, "relay_union_V": 20566, "cd_ctx_best": 28100, "cd_V_best": 16685, "cut_ctx": 20399, "cut_V": 12781, "union_ctx_one": 2743, "union_V_one": 1897, "sum_inn_vs_others_ctx": 4561, "sum_inn_vs_others_V": 1868}
+house_r1_i1.json 203s
+r2_i0 {"house": "r2_i0", "n_dir": 14, "ours_fixed_2KB": 229376, "ours_event_2KB": 83968, "ours_once_2KB": 28672, "ours_once_8KB": 114688, "event_sends": 41, "flood_gzip": 122864, "flood_ctx": 61141, "flood_V": 24149, "relay_union_gzip": 36946, "relay_union_ctx": 18348, "relay_union_V": 9364, "cd_ctx_best": 14399, "cd_V_best": 7667, "cut_ctx": 11098, "cut_V": 6048, "union_ctx_one": 1518, "union_V_one": 897, "sum_inn_vs_others_ctx": 2711, "sum_inn_vs_others_V": 1062}
+house_r2_i0.json 364s
+r2_i1 {"house": "r2_i1", "n_dir": 14, "ours_fixed_2KB": 229376, "ours_event_2KB": 98304, "ours_once_2KB": 28672, "ours_once_8KB": 114688, "event_sends": 48, "flood_gzip": 194061, "flood_ctx": 95941, "flood_V": 40742, "relay_union_gzip": 79772, "relay_union_ctx": 38869, "relay_union_V": 20212, "cd_ctx_best": 31587, "cd_V_best": 17120, "cut_ctx": 26199, "cut_V": 14768, "union_ctx_one": 3427, "union_V_one": 2079, "sum_inn_vs_others_ctx": 6305, "sum_inn_vs_others_V": 2372}
+house_r2_i1.json 534s
+r3_i0 {"house": "r3_i0", "n_dir": 14, "ours_fixed_2KB": 229376, "ours_event_2KB": 96256, "ours_once_2KB": 28672, "ours_once_8KB": 114688, "event_sends": 47, "flood_gzip": 117838, "flood_ctx": 60004, "flood_V": 25512, "relay_union_gzip": 57011, "relay_union_ctx": 29813, "relay_union_V": 13506, "cd_ctx_best": 27097, "cd_V_best": 12462, "cut_ctx": 27074, "cut_V": 12193, "union_ctx_one": 3460, "union_V_one": 1640, "sum_inn_vs_others_ctx": 6075, "sum_inn_vs_others_V": 2085}
+house_r3_i0.json 714s
+r3_i1 {"house": "r3_i1", "n_dir": 14, "ours_fixed_2KB": 229376, "ours_event_2KB": 83968, "ours_once_2KB": 28672, "ours_once_8KB": 114688, "event_sends": 41, "flood_gzip": 124068, "flood_ctx": 61634, "flood_V": 26566, "relay_union_gzip": 53334, "relay_union_ctx": 26538, "relay_union_V": 13085, "cd_ctx_best": 23761, "cd_V_best": 11888, "cut_ctx": 21652, "cut_V": 10813, "union_ctx_one": 2882, "union_V_one": 1525, "sum_inn_vs_others_ctx": 5148, "sum_inn_vs_others_V": 1783}
+house_r3_i1.json 897s
+
+AGENTS (median over 48): {'gzip': 2732.5, 'ctx': 1383.8, 'V': 574.3, 'inn_vs_others': 482.1, 'Vinn_vs_others': 172.2, 'known': 0.1, 'surf_vox': 7564.0}
+EDGES (median over 84): {'gzip': 3646.5, 'full': 1752.3, 'wz_own': 1527.9, 'inn_own': 1195.0, 'inn': 1134.7, 'Vfull': 970.0, 'Vinn_own': 688.6, 'Vinn': 624.1, 'new_known_vox': 60743.5, 'new_surf_vox': 10861.0}
+  |S|=1 n=20 {'full': 1268, 'wz_own': 1065, 'inn_own': 738, 'inn': 599, 'Vfull': 553, 'Vinn': 234}
+  |S|=2 n=12 {'full': 1685, 'wz_own': 1460, 'inn_own': 1011, 'inn': 674, 'Vfull': 784, 'Vinn': 313}
+  |S|=3 n= 8 {'full': 1957, 'wz_own': 1759, 'inn_own': 1571, 'inn': 1242, 'Vfull': 1015, 'Vinn': 680}
+  |S|=4 n= 4 {'full': 2899, 'wz_own': 2661, 'inn_own': 2399, 'inn': 1906, 'Vfull': 1477, 'Vinn': 1056}
+  |S|=5 n= 8 {'full': 1639, 'wz_own': 1435, 'inn_own': 1208, 'inn': 1167, 'Vfull': 891, 'Vinn': 601}
+  |S|=6 n=12 {'full': 2912, 'wz_own': 2683, 'inn_own': 2161, 'inn': 2039, 'Vfull': 1608, 'Vinn': 1343}
+  |S|=7 n=20 {'full': 2846, 'wz_own': 2614, 'inn_own': 2227, 'inn': 2227, 'Vfull': 1495, 'Vinn': 1347}
+HOUSES (mean over 6): {'n_dir': 14, 'ours_fixed_2KB': 229376, 'ours_event_2KB': 89088, 'ours_once_2KB': 28672, 'ours_once_8KB': 114688, 'event_sends': 44, 'flood_gzip': 166410, 'flood_ctx': 80450, 'flood_V': 35238, 'relay_union_gzip': 58069, 'relay_union_ctx': 28061, 'relay_union_V': 14588, 'cd_ctx_best': 23281, 'cd_V_best': 12414, 'cut_ctx': 19550, 'cut_V': 10558, 'union_ctx_one': 2584, 'union_V_one': 1504, 'sum_inn_vs_others_ctx': 4603, 'sum_inn_vs_others_V': 1713}
+  scaling k=1: ctx    1384  V     574  known 0.113
+  scaling k=2: ctx    1784  V     781  known 0.158
+  scaling k=3: ctx    2018  V     997  known 0.195
+  scaling k=4: ctx    2082  V    1109  known 0.268
+  scaling k=5: ctx    2035  V    1050  known 0.281
+  scaling k=6: ctx    2892  V    1398  known 0.291
+  scaling k=7: ctx    2880  V    1519  known 0.323
+  scaling k=8: ctx    2813  V    1582  known 0.345

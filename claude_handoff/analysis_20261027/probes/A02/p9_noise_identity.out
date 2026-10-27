@@ -1,0 +1,178 @@
+r1_i0 a0 clean    occwins  known  63245 occ  9791 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 6s
+r1_i0 a0 clean    logodds  known  63245 occ  9791 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 8s
+r1_i0 a0 d1cm     occwins  known  63245 occ 15901 identity-mismatch  12997 (20.55 % of known, 81.7 % of occ) 11s
+r1_i0 a0 d1cm     logodds  known  63245 occ  9783 identity-mismatch    138 (0.22 % of known, 1.4 % of occ) 13s
+r1_i0 a0 d2cm     occwins  known  63244 occ 17527 identity-mismatch  15779 (24.95 % of known, 90.0 % of occ) 16s
+r1_i0 a0 d2cm     logodds  known  63244 occ  9783 identity-mismatch    344 (0.54 % of known, 3.5 % of occ) 18s
+r1_i0 a0 r1.5pct  occwins  known  64098 occ 19486 identity-mismatch  17637 (27.52 % of known, 90.5 % of occ) 21s
+r1_i0 a0 r1.5pct  logodds  known  64098 occ 10590 identity-mismatch   1614 (2.52 % of known, 15.2 % of occ) 22s
+r1_i0 a1 clean    occwins  known  56724 occ  6436 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 29s
+r1_i0 a1 clean    logodds  known  56724 occ  6436 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 30s
+r1_i0 a1 d1cm     occwins  known  56705 occ 10198 identity-mismatch   8239 (14.53 % of known, 80.8 % of occ) 33s
+r1_i0 a1 d1cm     logodds  known  56705 occ  6412 identity-mismatch    166 (0.29 % of known, 2.6 % of occ) 35s
+r1_i0 a1 d2cm     occwins  known  56694 occ 11050 identity-mismatch  10952 (19.32 % of known, 99.1 % of occ) 38s
+r1_i0 a1 d2cm     logodds  known  56694 occ  6388 identity-mismatch    362 (0.64 % of known, 5.7 % of occ) 40s
+r1_i0 a1 r1.5pct  occwins  known  56849 occ 11948 identity-mismatch  12748 (22.42 % of known, 106.7 % of occ) 43s
+r1_i0 a1 r1.5pct  logodds  known  56849 occ  6393 identity-mismatch    713 (1.25 % of known, 11.2 % of occ) 44s
+r1_i0 a2 clean    occwins  known  51335 occ  7329 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 50s
+r1_i0 a2 clean    logodds  known  51335 occ  7329 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 52s
+r1_i0 a2 d1cm     occwins  known  51337 occ 11672 identity-mismatch   7510 (14.63 % of known, 64.3 % of occ) 54s
+r1_i0 a2 d1cm     logodds  known  51337 occ  7326 identity-mismatch    162 (0.32 % of known, 2.2 % of occ) 56s
+r1_i0 a2 d2cm     occwins  known  51342 occ 12871 identity-mismatch   9605 (18.71 % of known, 74.6 % of occ) 58s
+r1_i0 a2 d2cm     logodds  known  51342 occ  7324 identity-mismatch    342 (0.67 % of known, 4.7 % of occ) 60s
+r1_i0 a2 r1.5pct  occwins  known  51862 occ 14313 identity-mismatch  11173 (21.54 % of known, 78.1 % of occ) 63s
+r1_i0 a2 r1.5pct  logodds  known  51862 occ  7808 identity-mismatch    992 (1.91 % of known, 12.7 % of occ) 64s
+r1_i0 a3 clean    occwins  known  40397 occ  5555 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 70s
+r1_i0 a3 clean    logodds  known  40397 occ  5555 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 72s
+r1_i0 a3 d1cm     occwins  known  40375 occ  9002 identity-mismatch   8882 (22.00 % of known, 98.7 % of occ) 75s
+r1_i0 a3 d1cm     logodds  known  40375 occ  5531 identity-mismatch     97 (0.24 % of known, 1.8 % of occ) 76s
+r1_i0 a3 d2cm     occwins  known  40375 occ  9608 identity-mismatch   9839 (24.37 % of known, 102.4 % of occ) 79s
+r1_i0 a3 d2cm     logodds  known  40375 occ  5519 identity-mismatch    219 (0.54 % of known, 4.0 % of occ) 81s
+r1_i0 a3 r1.5pct  occwins  known  40491 occ 10310 identity-mismatch  10796 (26.66 % of known, 104.7 % of occ) 84s
+r1_i0 a3 r1.5pct  logodds  known  40491 occ  5534 identity-mismatch    532 (1.31 % of known, 9.6 % of occ) 86s
+r1_i0 union clean    occwins  conflicts      0 = 0.0 % of union occupied
+r1_i0 union clean    logodds  conflicts      0 = 0.0 % of union occupied
+r1_i0 union d1cm     occwins  conflicts   5316 = 15.5 % of union occupied
+r1_i0 union d1cm     logodds  conflicts     81 = 0.4 % of union occupied
+r1_i0 union d2cm     occwins  conflicts   4709 = 12.8 % of union occupied
+r1_i0 union d2cm     logodds  conflicts    187 = 0.9 % of union occupied
+r1_i0 union r1.5pct  occwins  conflicts   4039 = 10.1 % of union occupied
+r1_i0 union r1.5pct  logodds  conflicts    953 = 4.5 % of union occupied
+r2_i0 a0 clean    occwins  known  70041 occ  8313 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 94s
+r2_i0 a0 clean    logodds  known  70041 occ  8313 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 96s
+r2_i0 a0 d1cm     occwins  known  70043 occ 13696 identity-mismatch   7458 (10.65 % of known, 54.5 % of occ) 99s
+r2_i0 a0 d1cm     logodds  known  70043 occ  8323 identity-mismatch     83 (0.12 % of known, 1.0 % of occ) 102s
+r2_i0 a0 d2cm     occwins  known  70048 occ 15131 identity-mismatch  10064 (14.37 % of known, 66.5 % of occ) 106s
+r2_i0 a0 d2cm     logodds  known  70048 occ  8321 identity-mismatch    186 (0.27 % of known, 2.2 % of occ) 107s
+r2_i0 a0 r1.5pct  occwins  known  70389 occ 16441 identity-mismatch  11547 (16.40 % of known, 70.2 % of occ) 111s
+r2_i0 a0 r1.5pct  logodds  known  70389 occ  8628 identity-mismatch    677 (0.96 % of known, 7.8 % of occ) 113s
+r2_i0 a1 clean    occwins  known  60205 occ  6809 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 119s
+r2_i0 a1 clean    logodds  known  60205 occ  6809 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 121s
+r2_i0 a1 d1cm     occwins  known  60209 occ 11244 identity-mismatch   6942 (11.53 % of known, 61.7 % of occ) 124s
+r2_i0 a1 d1cm     logodds  known  60209 occ  6816 identity-mismatch    131 (0.22 % of known, 1.9 % of occ) 126s
+r2_i0 a1 d2cm     occwins  known  60224 occ 12376 identity-mismatch   8815 (14.64 % of known, 71.2 % of occ) 129s
+r2_i0 a1 d2cm     logodds  known  60224 occ  6833 identity-mismatch    207 (0.34 % of known, 3.0 % of occ) 130s
+r2_i0 a1 r1.5pct  occwins  known  60582 occ 13594 identity-mismatch  10104 (16.68 % of known, 74.3 % of occ) 134s
+r2_i0 a1 r1.5pct  logodds  known  60582 occ  7164 identity-mismatch    632 (1.04 % of known, 8.8 % of occ) 135s
+r2_i0 a2 clean    occwins  known  72899 occ  6324 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 142s
+r2_i0 a2 clean    logodds  known  72899 occ  6324 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 145s
+r2_i0 a2 d1cm     occwins  known  72893 occ 10273 identity-mismatch   7502 (10.29 % of known, 73.0 % of occ) 148s
+r2_i0 a2 d1cm     logodds  known  72893 occ  6323 identity-mismatch     76 (0.10 % of known, 1.2 % of occ) 150s
+r2_i0 a2 d2cm     occwins  known  72889 occ 11289 identity-mismatch   9059 (12.43 % of known, 80.2 % of occ) 154s
+r2_i0 a2 d2cm     logodds  known  72889 occ  6330 identity-mismatch    146 (0.20 % of known, 2.3 % of occ) 156s
+r2_i0 a2 r1.5pct  occwins  known  73137 occ 12409 identity-mismatch  10202 (13.95 % of known, 82.2 % of occ) 160s
+r2_i0 a2 r1.5pct  logodds  known  73137 occ  6509 identity-mismatch    456 (0.62 % of known, 7.0 % of occ) 162s
+r2_i0 a3 clean    occwins  known  63446 occ  6245 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 169s
+r2_i0 a3 clean    logodds  known  63446 occ  6245 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 171s
+r2_i0 a3 d1cm     occwins  known  63425 occ  9906 identity-mismatch   8241 (12.99 % of known, 83.2 % of occ) 174s
+r2_i0 a3 d1cm     logodds  known  63425 occ  6217 identity-mismatch    133 (0.21 % of known, 2.1 % of occ) 176s
+r2_i0 a3 d2cm     occwins  known  63425 occ 11013 identity-mismatch  10118 (15.95 % of known, 91.9 % of occ) 179s
+r2_i0 a3 d2cm     logodds  known  63425 occ  6213 identity-mismatch    252 (0.40 % of known, 4.1 % of occ) 180s
+r2_i0 a3 r1.5pct  occwins  known  63696 occ 12107 identity-mismatch  11069 (17.38 % of known, 91.4 % of occ) 183s
+r2_i0 a3 r1.5pct  logodds  known  63696 occ  6391 identity-mismatch    551 (0.87 % of known, 8.6 % of occ) 185s
+r2_i0 union clean    occwins  conflicts      0 = 0.0 % of union occupied
+r2_i0 union clean    logodds  conflicts      0 = 0.0 % of union occupied
+r2_i0 union d1cm     occwins  conflicts   6354 = 23.9 % of union occupied
+r2_i0 union d1cm     logodds  conflicts     52 = 0.4 % of union occupied
+r2_i0 union d2cm     occwins  conflicts   5195 = 18.5 % of union occupied
+r2_i0 union d2cm     logodds  conflicts    100 = 0.7 % of union occupied
+r2_i0 union r1.5pct  occwins  conflicts   3972 = 13.2 % of union occupied
+r2_i0 union r1.5pct  logodds  conflicts    669 = 4.2 % of union occupied
+r3_i1 a0 clean    occwins  known  34009 occ  5732 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 190s
+r3_i1 a0 clean    logodds  known  34009 occ  5732 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 192s
+r3_i1 a0 d1cm     occwins  known  33997 occ  9157 identity-mismatch   4831 (14.21 % of known, 52.8 % of occ) 195s
+r3_i1 a0 d1cm     logodds  known  33997 occ  5719 identity-mismatch    104 (0.31 % of known, 1.8 % of occ) 196s
+r3_i1 a0 d2cm     occwins  known  34004 occ  9980 identity-mismatch   6085 (17.89 % of known, 61.0 % of occ) 199s
+r3_i1 a0 d2cm     logodds  known  34004 occ  5724 identity-mismatch    146 (0.43 % of known, 2.6 % of occ) 201s
+r3_i1 a0 r1.5pct  occwins  known  34418 occ 11032 identity-mismatch   7178 (20.86 % of known, 65.1 % of occ) 203s
+r3_i1 a0 r1.5pct  logodds  known  34418 occ  6136 identity-mismatch    706 (2.05 % of known, 11.5 % of occ) 205s
+r3_i1 a1 clean    occwins  known  35492 occ  6134 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 212s
+r3_i1 a1 clean    logodds  known  35492 occ  6134 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 214s
+r3_i1 a1 d1cm     occwins  known  35480 occ 10105 identity-mismatch   5328 (15.02 % of known, 52.7 % of occ) 217s
+r3_i1 a1 d1cm     logodds  known  35480 occ  6118 identity-mismatch    112 (0.32 % of known, 1.8 % of occ) 218s
+r3_i1 a1 d2cm     occwins  known  35489 occ 10884 identity-mismatch   6540 (18.43 % of known, 60.1 % of occ) 222s
+r3_i1 a1 d2cm     logodds  known  35489 occ  6131 identity-mismatch    242 (0.68 % of known, 3.9 % of occ) 223s
+r3_i1 a1 r1.5pct  occwins  known  35873 occ 11754 identity-mismatch   7716 (21.51 % of known, 65.6 % of occ) 226s
+r3_i1 a1 r1.5pct  logodds  known  35873 occ  6472 identity-mismatch    668 (1.86 % of known, 10.3 % of occ) 228s
+r3_i1 a2 clean    occwins  known  40512 occ  6447 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 234s
+r3_i1 a2 clean    logodds  known  40512 occ  6447 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 236s
+r3_i1 a2 d1cm     occwins  known  40510 occ 11214 identity-mismatch   8154 (20.13 % of known, 72.7 % of occ) 239s
+r3_i1 a2 d1cm     logodds  known  40510 occ  6446 identity-mismatch     31 (0.08 % of known, 0.5 % of occ) 240s
+r3_i1 a2 d2cm     occwins  known  40521 occ 11889 identity-mismatch   9367 (23.12 % of known, 78.8 % of occ) 243s
+r3_i1 a2 d2cm     logodds  known  40521 occ  6462 identity-mismatch     88 (0.22 % of known, 1.4 % of occ) 245s
+r3_i1 a2 r1.5pct  occwins  known  40825 occ 12480 identity-mismatch   9952 (24.38 % of known, 79.7 % of occ) 248s
+r3_i1 a2 r1.5pct  logodds  known  40825 occ  6740 identity-mismatch    404 (0.99 % of known, 6.0 % of occ) 249s
+r3_i1 a3 clean    occwins  known  51899 occ  7238 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 255s
+r3_i1 a3 clean    logodds  known  51899 occ  7238 identity-mismatch      0 (0.00 % of known, 0.0 % of occ) 257s
+r3_i1 a3 d1cm     occwins  known  51876 occ 11836 identity-mismatch  14181 (27.34 % of known, 119.8 % of occ) 260s
+r3_i1 a3 d1cm     logodds  known  51876 occ  7222 identity-mismatch    286 (0.55 % of known, 4.0 % of occ) 262s
+r3_i1 a3 d2cm     occwins  known  51881 occ 12984 identity-mismatch  16027 (30.89 % of known, 123.4 % of occ) 265s
+r3_i1 a3 d2cm     logodds  known  51881 occ  7237 identity-mismatch    509 (0.98 % of known, 7.0 % of occ) 268s
+r3_i1 a3 r1.5pct  occwins  known  52135 occ 13922 identity-mismatch  16927 (32.47 % of known, 121.6 % of occ) 270s
+r3_i1 a3 r1.5pct  logodds  known  52135 occ  7434 identity-mismatch    938 (1.80 % of known, 12.6 % of occ) 273s
+r3_i1 union clean    occwins  conflicts      0 = 0.0 % of union occupied
+r3_i1 union clean    logodds  conflicts      0 = 0.0 % of union occupied
+r3_i1 union d1cm     occwins  conflicts   3204 = 13.4 % of union occupied
+r3_i1 union d1cm     logodds  conflicts     15 = 0.1 % of union occupied
+r3_i1 union d2cm     occwins  conflicts   1925 = 7.6 % of union occupied
+r3_i1 union d2cm     logodds  conflicts     47 = 0.3 % of union occupied
+r3_i1 union r1.5pct  occwins  conflicts   1317 = 4.8 % of union occupied
+r3_i1 union r1.5pct  logodds  conflicts    347 = 2.3 % of union occupied
+{
+ "clean/occwins": {
+  "identity_mismatch_frac_known_median": 0.0,
+  "identity_mismatch_frac_occ_median": 0.0,
+  "identity_mismatch_voxels_median": 0.0,
+  "fp_vs_truth_median": 0.0,
+  "union_conflict_frac_median": 0.0
+ },
+ "clean/logodds": {
+  "identity_mismatch_frac_known_median": 0.0,
+  "identity_mismatch_frac_occ_median": 0.0,
+  "identity_mismatch_voxels_median": 0.0,
+  "fp_vs_truth_median": 0.0,
+  "union_conflict_frac_median": 0.0
+ },
+ "d1cm/occwins": {
+  "identity_mismatch_frac_known_median": 0.14579204071489194,
+  "identity_mismatch_frac_occ_median": 0.7286953020423654,
+  "identity_mismatch_voxels_median": 7832.0,
+  "fp_vs_truth_median": 4175.0,
+  "union_conflict_frac_median": 0.1548274355613805
+ },
+ "d1cm/logodds": {
+  "identity_mismatch_frac_known_median": 0.0022922337256925315,
+  "identity_mismatch_frac_occ_median": 0.018245816766385124,
+  "identity_mismatch_voxels_median": 121.5,
+  "fp_vs_truth_median": 12.5,
+  "union_conflict_frac_median": 0.003523512671093644
+ },
+ "d2cm/occwins": {
+  "identity_mismatch_frac_known_median": 0.18568062929757606,
+  "identity_mismatch_frac_occ_median": 0.7951668577892319,
+  "identity_mismatch_voxels_median": 9722.0,
+  "fp_vs_truth_median": 5214.5,
+  "union_conflict_frac_median": 0.1280872592753781
+ },
+ "d2cm/logodds": {
+  "identity_mismatch_frac_known_median": 0.004858880561492857,
+  "identity_mismatch_frac_occ_median": 0.037317288004034305,
+  "identity_mismatch_voxels_median": 230.5,
+  "fp_vs_truth_median": 21.5,
+  "union_conflict_frac_median": 0.006755843804891231
+ },
+ "r1.5pct/occwins": {
+  "identity_mismatch_frac_known_median": 0.21526462608182811,
+  "identity_mismatch_frac_occ_median": 0.8097905573084878,
+  "identity_mismatch_voxels_median": 10932.5,
+  "fp_vs_truth_median": 5856.0,
+  "union_conflict_frac_median": 0.10149516270888302
+ },
+ "r1.5pct/logodds": {
+  "identity_mismatch_frac_known_median": 0.012840359702942221,
+  "identity_mismatch_frac_occ_median": 0.09967342013836926,
+  "identity_mismatch_voxels_median": 672.5,
+  "fp_vs_truth_median": 92.0,
+  "union_conflict_frac_median": 0.04178116412690482
+ }
+}

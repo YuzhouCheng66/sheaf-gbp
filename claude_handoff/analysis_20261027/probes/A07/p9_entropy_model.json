@@ -1,0 +1,506 @@
+{
+ "summary": {
+  "own": {
+   "A_adaptive9": 572.6905966203743,
+   "B_static": 535.4637488652044,
+   "C_static": 761.1338525720639,
+   "D_static_2level": 888.6093101631284,
+   "n": 48
+  },
+  "union8": {
+   "A_adaptive9": 1564.7865654076236,
+   "B_static": 1525.3397325078445,
+   "C_static": 1552.924361712724,
+   "D_static_2level": 1879.3847993222785,
+   "n": 6
+  }
+ },
+ "rows": [
+  {
+   "house": "r1_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 595.5684512464636,
+   "B_static": 560.2094187028619,
+   "C_static": 1402.574673209477,
+   "D_static_2level": 1521.942216187154
+  },
+  {
+   "house": "r1_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 544.6734820456703,
+   "B_static": 514.662266771709,
+   "C_static": 1198.0621429838086,
+   "D_static_2level": 1271.7967373861638
+  },
+  {
+   "house": "r1_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 565.0905314988859,
+   "B_static": 522.198379830182,
+   "C_static": 1291.3887015311861,
+   "D_static_2level": 1388.0458936990487
+  },
+  {
+   "house": "r1_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 487.4680347318453,
+   "B_static": 460.8290722851209,
+   "C_static": 917.3623562128818,
+   "D_static_2level": 974.3172911593317
+  },
+  {
+   "house": "r1_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 631.6877981708845,
+   "B_static": 591.6685762126452,
+   "C_static": 1481.7565776896533,
+   "D_static_2level": 1582.9332641197557
+  },
+  {
+   "house": "r1_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 681.275476116234,
+   "B_static": 648.9385437380388,
+   "C_static": 1296.1742480270682,
+   "D_static_2level": 1391.3737588432464
+  },
+  {
+   "house": "r1_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 695.5176047644765,
+   "B_static": 653.7674821564437,
+   "C_static": 1600.334503036936,
+   "D_static_2level": 1726.3008204786593
+  },
+  {
+   "house": "r1_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 580.2906617418628,
+   "B_static": 548.7291179002267,
+   "C_static": 1322.4832355463068,
+   "D_static_2level": 1412.1245190706034
+  },
+  {
+   "house": "r1_i0",
+   "kind": "union8",
+   "agents": 8,
+   "A_adaptive9": 954.0400282464764,
+   "B_static": 919.4506576387239,
+   "C_static": 2774.9334810016812,
+   "D_static_2level": 2969.085681287482
+  },
+  {
+   "house": "r1_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 846.03630385012,
+   "B_static": 844.5422400201884,
+   "C_static": 721.3804071520092,
+   "D_static_2level": 787.2566235255164
+  },
+  {
+   "house": "r1_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 1199.3575588183198,
+   "B_static": 1195.2900356310315,
+   "C_static": 1049.9513712100656,
+   "D_static_2level": 1173.4524702721505
+  },
+  {
+   "house": "r1_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 1185.8815853984727,
+   "B_static": 1175.3052153280507,
+   "C_static": 1013.3825578967039,
+   "D_static_2level": 1155.3679792405253
+  },
+  {
+   "house": "r1_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 1377.7732988468947,
+   "B_static": 1412.6904438766023,
+   "C_static": 1206.2204579609681,
+   "D_static_2level": 1361.725476255439
+  },
+  {
+   "house": "r1_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 913.1777590741091,
+   "B_static": 912.9414028096083,
+   "C_static": 776.7047085105065,
+   "D_static_2level": 862.6694077237867
+  },
+  {
+   "house": "r1_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 1025.2384576759296,
+   "B_static": 1004.4193102268508,
+   "C_static": 897.0420012405214,
+   "D_static_2level": 1020.807901116557
+  },
+  {
+   "house": "r1_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 1066.603573935483,
+   "B_static": 1055.1702461483017,
+   "C_static": 912.4785792514459,
+   "D_static_2level": 1017.2903516401315
+  },
+  {
+   "house": "r1_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 1001.1694762881584,
+   "B_static": 986.3384299477964,
+   "C_static": 899.3086924201509,
+   "D_static_2level": 977.0579395433829
+  },
+  {
+   "house": "r1_i1",
+   "kind": "union8",
+   "agents": 8,
+   "A_adaptive9": 1858.638120588944,
+   "B_static": 1837.3677648381006,
+   "C_static": 1585.2124335619358,
+   "D_static_2level": 1860.410793038661
+  },
+  {
+   "house": "r2_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 453.18614252676315,
+   "B_static": 420.6970424419446,
+   "C_static": 326.7308892181112,
+   "D_static_2level": 421.26726522042054
+  },
+  {
+   "house": "r2_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 423.76917381642,
+   "B_static": 395.3713888764501,
+   "C_static": 313.3212872198042,
+   "D_static_2level": 399.06266503354027
+  },
+  {
+   "house": "r2_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 470.4736398355578,
+   "B_static": 447.00527328909675,
+   "C_static": 341.17893712696286,
+   "D_static_2level": 426.2706206178219
+  },
+  {
+   "house": "r2_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 491.86117828347915,
+   "B_static": 468.1817017691536,
+   "C_static": 385.6127255011644,
+   "D_static_2level": 456.62050596631195
+  },
+  {
+   "house": "r2_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 379.60386494384306,
+   "B_static": 355.8626124481438,
+   "C_static": 273.3023863398648,
+   "D_static_2level": 348.13290370358686
+  },
+  {
+   "house": "r2_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 428.1129428711378,
+   "B_static": 403.9662634618162,
+   "C_static": 313.6748298200722,
+   "D_static_2level": 373.34944640772443
+  },
+  {
+   "house": "r2_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 373.7362207353544,
+   "B_static": 343.2657664906771,
+   "C_static": 270.6232055461591,
+   "D_static_2level": 328.4187422305147
+  },
+  {
+   "house": "r2_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 397.73011953737245,
+   "B_static": 376.9925849842633,
+   "C_static": 296.4758288742453,
+   "D_static_2level": 342.9384722238371
+  },
+  {
+   "house": "r2_i0",
+   "kind": "union8",
+   "agents": 8,
+   "A_adaptive9": 906.4423375384566,
+   "B_static": 875.6635843299982,
+   "C_static": 703.9245846355028,
+   "D_static_2level": 881.1311848063706
+  },
+  {
+   "house": "r2_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 821.8157933918226,
+   "B_static": 790.2168607437379,
+   "C_static": 2011.739202869117,
+   "D_static_2level": 2214.1733081823586
+  },
+  {
+   "house": "r2_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 632.3454542822135,
+   "B_static": 603.7652555250636,
+   "C_static": 1382.636876773247,
+   "D_static_2level": 1501.2402170249877
+  },
+  {
+   "house": "r2_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 530.3910668290457,
+   "B_static": 498.46532249871194,
+   "C_static": 1234.723971531195,
+   "D_static_2level": 1363.4611480663307
+  },
+  {
+   "house": "r2_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 1252.9530705704071,
+   "B_static": 1249.5542994991401,
+   "C_static": 2559.5808206977745,
+   "D_static_2level": 2834.99107221614
+  },
+  {
+   "house": "r2_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 909.0431063036901,
+   "B_static": 880.6247630834172,
+   "C_static": 1911.2625563228569,
+   "D_static_2level": 2091.4872292869245
+  },
+  {
+   "house": "r2_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 638.8716404482514,
+   "B_static": 603.3255417408595,
+   "C_static": 1596.2676339707377,
+   "D_static_2level": 1755.7301370140806
+  },
+  {
+   "house": "r2_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 513.0592858444813,
+   "B_static": 484.35057879677373,
+   "C_static": 1194.0488065023503,
+   "D_static_2level": 1315.0575677521795
+  },
+  {
+   "house": "r2_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 555.5684725989605,
+   "B_static": 516.0456371657879,
+   "C_static": 1215.643454741346,
+   "D_static_2level": 1341.442831368785
+  },
+  {
+   "house": "r2_i1",
+   "kind": "union8",
+   "agents": 8,
+   "A_adaptive9": 2089.7134850939437,
+   "B_static": 2077.675121467996,
+   "C_static": 5406.932201121332,
+   "D_static_2level": 5899.008439277602
+  },
+  {
+   "house": "r3_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 121.32180168322691,
+   "B_static": 120.70258636998352,
+   "C_static": 77.12215471514895,
+   "D_static_2level": 116.7786103106245
+  },
+  {
+   "house": "r3_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 706.0395015441501,
+   "B_static": 665.7699025269784,
+   "C_static": 600.7368155906777,
+   "D_static_2level": 734.2774965092214
+  },
+  {
+   "house": "r3_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 113.63357654847921,
+   "B_static": 115.67305114273677,
+   "C_static": 81.3751064749799,
+   "D_static_2level": 118.20195815754067
+  },
+  {
+   "house": "r3_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 708.1942721522236,
+   "B_static": 692.4303631592861,
+   "C_static": 598.6361151047616,
+   "D_static_2level": 731.9525826146507
+  },
+  {
+   "house": "r3_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 973.7037316315507,
+   "B_static": 986.3562229434815,
+   "C_static": 922.4229244769859,
+   "D_static_2level": 1082.7413845041958
+  },
+  {
+   "house": "r3_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 536.9751052739898,
+   "B_static": 511.4169824517566,
+   "C_static": 407.96245437470634,
+   "D_static_2level": 499.6768854333385
+  },
+  {
+   "house": "r3_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 266.55824518292127,
+   "B_static": 246.19070530621843,
+   "C_static": 203.32654243431463,
+   "D_static_2level": 250.17403740299045
+  },
+  {
+   "house": "r3_i0",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 169.45470154068383,
+   "B_static": 162.33450207347983,
+   "C_static": 112.51443384566436,
+   "D_static_2level": 152.48111801430582
+  },
+  {
+   "house": "r3_i0",
+   "kind": "union8",
+   "agents": 8,
+   "A_adaptive9": 1623.7485363178819,
+   "B_static": 1585.143226994649,
+   "C_static": 1520.636289863512,
+   "D_static_2level": 1898.358805605896
+  },
+  {
+   "house": "r3_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 200.15620301311156,
+   "B_static": 187.51958166015044,
+   "C_static": 133.8990437661624,
+   "D_static_2level": 150.4352709757809
+  },
+  {
+   "house": "r3_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 204.18710155246777,
+   "B_static": 194.40225436552572,
+   "C_static": 165.83621307141868,
+   "D_static_2level": 203.20178604545887
+  },
+  {
+   "house": "r3_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 297.5577466271013,
+   "B_static": 281.37959278601966,
+   "C_static": 229.84587800881425,
+   "D_static_2level": 277.92631756096637
+  },
+  {
+   "house": "r3_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 665.6223729523979,
+   "B_static": 624.3919142075466,
+   "C_static": 501.32569828826206,
+   "D_static_2level": 602.8040726238721
+  },
+  {
+   "house": "r3_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 738.4218428482741,
+   "B_static": 703.6872824927883,
+   "C_static": 602.3945799185616,
+   "D_static_2level": 753.2848560645205
+  },
+  {
+   "house": "r3_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 420.3534796474168,
+   "B_static": 395.5324111297494,
+   "C_static": 319.1041146419457,
+   "D_static_2level": 384.0175083890298
+  },
+  {
+   "house": "r3_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 249.5967703465894,
+   "B_static": 237.63367619380224,
+   "C_static": 190.1320932932705,
+   "D_static_2level": 221.7439864380892
+  },
+  {
+   "house": "r3_i1",
+   "kind": "own",
+   "agents": 1,
+   "A_adaptive9": 961.4685055085739,
+   "B_static": 925.6211034634225,
+   "C_static": 745.5629966336213,
+   "D_static_2level": 914.5492126024701
+  },
+  {
+   "house": "r3_i1",
+   "kind": "union8",
+   "agents": 8,
+   "A_adaptive9": 1505.8245944973653,
+   "B_static": 1465.53623802104,
+   "C_static": 1250.3279717094933,
+   "D_static_2level": 1559.1612929034034
+  }
+ ]
+}

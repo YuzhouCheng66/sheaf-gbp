@@ -1,0 +1,73 @@
+[
+ {
+  "house": "r3_i1",
+  "house_id": "0d9f66efc8c54db86681cd1ecb1eab56",
+  "centres_match": true,
+  "agents": [
+   {
+    "agent": 0,
+    "observe_eq_export": true,
+    "vectorised_eq_observe": true,
+    "rayH_eq_export": true,
+    "rayGs_eq_export": true,
+    "mismatch_observe": 0
+   },
+   {
+    "agent": 1,
+    "observe_eq_export": true,
+    "vectorised_eq_observe": true,
+    "rayH_eq_export": true,
+    "rayGs_eq_export": true,
+    "mismatch_observe": 0
+   },
+   {
+    "agent": 2,
+    "observe_eq_export": true,
+    "vectorised_eq_observe": true,
+    "rayH_eq_export": true,
+    "rayGs_eq_export": true,
+    "mismatch_observe": 0
+   },
+   {
+    "agent": 3,
+    "observe_eq_export": true,
+    "vectorised_eq_observe": true,
+    "rayH_eq_export": true,
+    "rayGs_eq_export": true,
+    "mismatch_observe": 0
+   },
+   {
+    "agent": 4,
+    "observe_eq_export": true,
+    "vectorised_eq_observe": true,
+    "rayH_eq_export": true,
+    "rayGs_eq_export": true,
+    "mismatch_observe": 0
+   },
+   {
+    "agent": 5,
+    "observe_eq_export": true,
+    "vectorised_eq_observe": true,
+    "rayH_eq_export": true,
+    "rayGs_eq_export": true,
+    "mismatch_observe": 0
+   },
+   {
+    "agent": 6,
+    "observe_eq_export": true,
+    "vectorised_eq_observe": true,
+    "rayH_eq_export": true,
+    "rayGs_eq_export": true,
+    "mismatch_observe": 0
+   },
+   {
+    "agent": 7,
+    "observe_eq_export": true,
+    "vectorised_eq_observe": true,
+    "rayH_eq_export": true,
+    "rayGs_eq_export": true,
+    "mismatch_observe": 0
+   }
+  ]
+ }
+]

@@ -1,0 +1,50 @@
+r1_i0 lintel_k 22
+r1_i1 lintel_k 32
+r2_i0 lintel_k 22
+r2_i1 lintel_k 22
+r3_i0 lintel_k 22
+r3_i1 lintel_k 22
+{
+ "own": {
+  "ctx_full": 1383.7949925115936,
+  "ctx_H": 568.7582129375674,
+  "wall_cols": 142.0,
+  "lintel_cols": 24.5,
+  "furn_hits": 1356.5,
+  "c_wall": 22.489403645178903,
+  "c_lint": 13.175324910603427,
+  "c_furn": 263.6071980784659,
+  "c_furn_ctx": 263.5218037737473,
+  "structured": 315.6250684048613,
+  "furn_share_of_structured": 0.8671321825818099,
+  "n": 48
+ },
+ "union8": {
+  "ctx_full": 2812.9219259214306,
+  "ctx_H": 1538.2162705242615,
+  "wall_cols": 505.5,
+  "lintel_cols": 66.0,
+  "furn_hits": 4386.0,
+  "c_wall": 47.3588338021526,
+  "c_lint": 26.439944842277278,
+  "c_furn": 746.5027865766194,
+  "c_furn_ctx": 742.1824481855174,
+  "structured": 831.5114913110043,
+  "furn_share_of_structured": 0.9119664570515894,
+  "n": 48
+ },
+ "edge": {
+  "ctx_full": 1752.258197984592,
+  "ctx_H": 936.4380898347426,
+  "wall_cols": 277.0,
+  "lintel_cols": 40.0,
+  "furn_hits": 2911.5,
+  "c_wall": 35.25468180857639,
+  "c_lint": 17.008609086957037,
+  "c_furn": 442.2305883213737,
+  "c_furn_ctx": 442.09184255615617,
+  "structured": 518.1252963020377,
+  "furn_share_of_structured": 0.8925017661290554,
+  "n": 84
+ }
+}

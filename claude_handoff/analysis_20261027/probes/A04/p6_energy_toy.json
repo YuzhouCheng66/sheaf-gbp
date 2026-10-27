@@ -1,0 +1,41 @@
+{
+ "graph": {
+  "nodes": 8,
+  "undirected_edges": 14,
+  "cycles_rank": 7
+ },
+ "a_max_join": {
+  "async_updates": 4000,
+  "stale_or_duplicate_share": 0.2,
+  "equals_centralised": true,
+  "free_energy_monotone": true,
+  "phi_start": 16184.702245759941,
+  "phi_end": 2587.9537208644533
+ },
+ "b_c_overcount_median": {
+  "beta=1": {
+   "R8": 1244.9999999999998,
+   "R16": 5651244.445344185
+  },
+  "beta=2": {
+   "R8": 35.2845575287547,
+   "R16": 2378.1293807574666
+  },
+  "beta=4": {
+   "R8": 5.940080695983655,
+   "R16": 48.719916545159464
+  },
+  "beta=8": {
+   "R8": 2.43722805652585,
+   "R16": 6.979803749883992
+  },
+  "beta=inf": {
+   "R8": 1.0,
+   "R16": 1.0
+  }
+ },
+ "d_homomorphic": {
+  "fused_equals_enc_of_union": true,
+  "key_selection_feature_mass_lost": 0.2805275154672745
+ }
+}

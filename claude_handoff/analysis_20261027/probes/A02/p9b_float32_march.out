@@ -1,0 +1,34 @@
+{'house': 'r1_i0', 'agent': 0, 'known': 63245, 'occ': 9791, 'mismatch_pose32': 0, 'mismatch_all32': 0, 'mismatch_all32_occ': 0}
+{'house': 'r1_i0', 'agent': 1, 'known': 56724, 'occ': 6436, 'mismatch_pose32': 0, 'mismatch_all32': 0, 'mismatch_all32_occ': 0}
+{'house': 'r1_i1', 'agent': 0, 'known': 104075, 'occ': 10603, 'mismatch_pose32': 0, 'mismatch_all32': 1, 'mismatch_all32_occ': 1}
+{'house': 'r1_i1', 'agent': 1, 'known': 144437, 'occ': 15681, 'mismatch_pose32': 0, 'mismatch_all32': 0, 'mismatch_all32_occ': 0}
+{'house': 'r2_i0', 'agent': 0, 'known': 70041, 'occ': 8313, 'mismatch_pose32': 0, 'mismatch_all32': 0, 'mismatch_all32_occ': 0}
+{'house': 'r2_i0', 'agent': 1, 'known': 60205, 'occ': 6809, 'mismatch_pose32': 0, 'mismatch_all32': 0, 'mismatch_all32_occ': 0}
+{'house': 'r2_i1', 'agent': 0, 'known': 67613, 'occ': 8193, 'mismatch_pose32': 0, 'mismatch_all32': 1, 'mismatch_all32_occ': 0}
+{'house': 'r2_i1', 'agent': 1, 'known': 50238, 'occ': 6428, 'mismatch_pose32': 0, 'mismatch_all32': 0, 'mismatch_all32_occ': 0}
+{'house': 'r3_i0', 'agent': 0, 'known': 50390, 'occ': 7624, 'mismatch_pose32': 0, 'mismatch_all32': 0, 'mismatch_all32_occ': 0}
+{'house': 'r3_i0', 'agent': 1, 'known': 63667, 'occ': 9174, 'mismatch_pose32': 0, 'mismatch_all32': 0, 'mismatch_all32_occ': 0}
+{'house': 'r3_i1', 'agent': 0, 'known': 34009, 'occ': 5732, 'mismatch_pose32': 0, 'mismatch_all32': 0, 'mismatch_all32_occ': 0}
+{'house': 'r3_i1', 'agent': 1, 'known': 35492, 'occ': 6134, 'mismatch_pose32': 0, 'mismatch_all32': 0, 'mismatch_all32_occ': 0}
+{
+ "mismatch_pose32": {
+  "median": 0.0,
+  "max": 0.0
+ },
+ "mismatch_all32": {
+  "median": 0.0,
+  "max": 1.0
+ },
+ "mismatch_all32_occ": {
+  "median": 0.0,
+  "max": 1.0
+ },
+ "known": {
+  "median": 61725.0,
+  "max": 144437.0
+ },
+ "occ": {
+  "median": 7908.5,
+  "max": 15681.0
+ }
+}

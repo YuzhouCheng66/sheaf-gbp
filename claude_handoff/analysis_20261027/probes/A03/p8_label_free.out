@@ -1,0 +1,37 @@
+r1_i0 exact 8 / 8 25s
+r1_i2 exact 8 / 8 27s
+r1_i4 exact 8 / 8 30s
+r1_i6 exact 8 / 8 33s
+r1_i1 exact 8 / 8 29s
+r1_i3 exact 8 / 8 27s
+r1_i7 exact 8 / 8 23s
+r1_i5 exact 8 / 8 25s
+r2_i0 exact 8 / 8 16s
+r2_i6 exact 8 / 8 10s
+r2_i4 exact 8 / 8 12s
+r2_i2 exact 8 / 8 15s
+r2_i1 exact 8 / 8 13s
+r2_i7 exact 8 / 8 13s
+r2_i5 exact 8 / 8 12s
+r2_i3 exact 8 / 8 12s
+r3_i0 exact 6 / 8 12s
+r3_i2 exact 8 / 8 12s
+r3_i4 exact 8 / 8 11s
+r3_i6 exact 8 / 8 12s
+r3_i1 exact 8 / 8 11s
+r3_i5 exact 8 / 8 12s
+r3_i3 exact 8 / 8 13s
+r3_i7 exact 8 / 8 14s
+{
+ "n": 192,
+ "exact": 190,
+ "total_bytes_median": 198.35944928698274,
+ "total_bytes_p10": 73.73744029517962,
+ "total_bytes_p90": 330.8616900324187,
+ "plan_bytes_median": 32.24678960966176,
+ "box_bytes_median": 159.21745153143604,
+ "boxes_median": 60.5,
+ "struct_hits_in_boxes_median": 118.0,
+ "wall_cols_median": 140.0,
+ "true_struct_cols_seen_median": 164.0
+}

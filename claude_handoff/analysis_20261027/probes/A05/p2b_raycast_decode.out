@@ -1,0 +1,47 @@
+r1_i0 hop 0 63s
+r1_i1 hop 0 69s
+r1_i0 hop 8 126s
+r1_i1 hop 8 139s
+r2_i0 hop 0 65s
+r2_i1 hop 0 66s
+r2_i0 hop 8 127s
+r2_i1 hop 8 121s
+r3_i0 hop 0 50s
+r3_i1 hop 0 51s
+r3_i0 hop 8 98s
+r3_i1 hop 8 97s
+['r1_i0', 'r1_i1', 'r2_i0', 'r2_i1', 'r3_i0', 'r3_i1']
+K0|raycast|down_221                surface_f1 0.8925 var_occ_f1 0.8226 furn_f1 0.5478 fpr 0.0000 rate_furn 164.9161 rate_plan 36.5670 n 48
+K0|raycast|down_222                surface_f1 0.8534 var_occ_f1 0.7556 furn_f1 0.4004 fpr 0.0000 rate_furn 143.7801 rate_plan 36.5670 n 48
+K0|raycast|down_444                surface_f1 0.7065 var_occ_f1 0.5523 furn_f1 0.0971 fpr 0.0000 rate_furn 69.0953 rate_plan 36.5670 n 48
+K0|raycast|drop20                  surface_f1 0.9831 var_occ_f1 0.9669 furn_f1 0.8880 fpr 0.0100 n 48
+K0|raycast|exact                   surface_f1 1.0000 var_occ_f1 1.0000 furn_f1 1.0000 fpr 0.0000 rate_furn 263.6072 rate_plan 36.5670 exact_ok_all True n 48
+K0|raycast|model                   surface_f1 0.9281 var_occ_f1 0.8639 furn_f1 0.5092 fpr 0.0133 n 48
+K0|raycast|model_nb                surface_f1 0.9328 var_occ_f1 0.8711 furn_f1 0.5096 fpr 0.0141 n 48
+K0|raycast|none                    surface_f1 0.9079 var_occ_f1 0.8014 furn_f1 0.0000 fpr 0.0376 n 48
+K0|raycast|shell2                  surface_f1 1.0000 var_occ_f1 1.0000 furn_f1 1.0000 fpr 0.0000 n 48
+K0|raycast|thick1                  surface_f1 0.8008 var_occ_f1 0.6653 furn_f1 0.1343 fpr 0.0000 n 48
+K0|raycast|thin_miss               surface_f1 0.9762 var_occ_f1 0.9534 furn_f1 0.8467 fpr 0.0080 n 48
+K0|oracle_known|drop20             surface_f1 0.9831 var_occ_f1 0.9669 furn_f1 0.8880 fpr 0.0000 n 48
+K0|oracle_known|model              surface_f1 0.9389 var_occ_f1 0.8802 furn_f1 0.5242 fpr 0.0000 n 48
+K0|oracle_known|model_nb           surface_f1 0.9391 var_occ_f1 0.8788 furn_f1 0.5242 fpr 0.0000 n 48
+K0|oracle_known|thick1             surface_f1 0.8946 var_occ_f1 0.8225 furn_f1 0.5602 fpr 0.0000 n 48
+K0|oracle_known|thin_miss          surface_f1 0.9762 var_occ_f1 0.9534 furn_f1 0.8467 fpr 0.0000 n 48
+K0|known_head|model_as_is          surface_f1 0.9175 var_occ_f1 0.8506 furn_f1 0.5242 fpr 0.0122 n 48
+R8|raycast|down_221                surface_f1 0.8869 var_occ_f1 0.8246 furn_f1 0.5529 fpr 0.0000 rate_furn 437.4988 rate_plan 75.8235 n 48
+R8|raycast|down_222                surface_f1 0.8473 var_occ_f1 0.7592 furn_f1 0.4066 fpr 0.0000 rate_furn 366.0352 rate_plan 75.8235 n 48
+R8|raycast|down_444                surface_f1 0.7040 var_occ_f1 0.5543 furn_f1 0.1005 fpr 0.0000 rate_furn 153.8823 rate_plan 75.8235 n 48
+R8|raycast|drop20                  surface_f1 0.9799 var_occ_f1 0.9657 furn_f1 0.8879 fpr 0.0352 n 48
+R8|raycast|exact                   surface_f1 1.0000 var_occ_f1 1.0000 furn_f1 1.0000 fpr 0.0000 rate_furn 746.5028 rate_plan 75.8235 exact_ok_all True n 48
+R8|raycast|model                   surface_f1 0.9145 var_occ_f1 0.8550 furn_f1 0.5187 fpr 0.0412 n 48
+R8|raycast|model_nb                surface_f1 0.9196 var_occ_f1 0.8629 furn_f1 0.5210 fpr 0.0437 n 48
+R8|raycast|none                    surface_f1 0.8909 var_occ_f1 0.8004 furn_f1 0.0000 fpr 0.1028 n 48
+R8|raycast|shell2                  surface_f1 1.0000 var_occ_f1 1.0000 furn_f1 1.0000 fpr 0.0000 n 48
+R8|raycast|thick1                  surface_f1 0.7923 var_occ_f1 0.6743 furn_f1 0.1676 fpr 0.0000 n 48
+R8|raycast|thin_miss               surface_f1 0.9749 var_occ_f1 0.9587 furn_f1 0.8771 fpr 0.0137 n 48
+R8|oracle_known|drop20             surface_f1 0.9799 var_occ_f1 0.9657 furn_f1 0.8879 fpr 0.0000 n 6
+R8|oracle_known|model              surface_f1 0.9220 var_occ_f1 0.8680 furn_f1 0.5397 fpr 0.0000 n 48
+R8|oracle_known|model_nb           surface_f1 0.9239 var_occ_f1 0.8688 furn_f1 0.5397 fpr 0.0000 n 48
+R8|oracle_known|thick1             surface_f1 0.8796 var_occ_f1 0.8193 furn_f1 0.5637 fpr 0.0000 n 6
+R8|oracle_known|thin_miss          surface_f1 0.9749 var_occ_f1 0.9587 furn_f1 0.8771 fpr 0.0000 n 6
+R8|known_head|model_as_is          surface_f1 0.8980 var_occ_f1 0.8283 furn_f1 0.5397 fpr 0.0310 n 48

@@ -1,0 +1,82 @@
+r1_i0 done
+r1_i1 done
+r2_i0 done
+r2_i1 done
+r3_i0 done
+r3_i1 done
+== own n 48
+  chart_m                  median       15.0  mean       15.2
+  ctx_full                 median     1383.8  mean     1436.6
+  ctx_known                median     1034.0  mean     1115.3
+  ctx_H                    median      568.8  mean      623.7
+  ctx_H_given_K            median      391.6  mean      414.0
+  hits                     median     7564.0  mean     8459.7
+  hits_slab                median     3447.5  mean     4087.2
+  hits_struct              median     2894.0  mean     2950.9
+  hits_obj                 median     1356.5  mean     1421.6
+  known                    median    59244.5  mean    68017.1
+  act_2x2x2                median     2067.0  mean     2331.0
+  tot_2x2x2                median    65536.0  mean    65536.0
+  idx_2x2x2                median      231.0  mean      232.3
+  actK_2x2x2               median     8540.5  mean     9485.1
+  actobj_2x2x2             median      507.0  mean      506.1
+  act_4x4x4                median      576.5  mean      641.4
+  tot_4x4x4                median     8192.0  mean     8192.0
+  idx_4x4x4                median      101.4  mean      102.4
+  actK_4x4x4               median     1279.5  mean     1386.4
+  actobj_4x4x4             median      187.0  mean      184.2
+  act_8x8x8                median      157.5  mean      170.8
+  tot_8x8x8                median     1024.0  mean     1024.0
+  idx_8x8x8                median       32.5  mean       33.9
+  actK_8x8x8               median      212.0  mean      229.2
+  actobj_8x8x8             median       66.5  mean       64.7
+  act_col2x2               median      630.0  mean      712.3
+  tot_col2x2               median     4096.0  mean     4096.0
+  actK_col2x2              median      658.0  mean      742.6
+  actobj_col2x2            median      172.0  mean      183.0
+  act_col4x4               median      177.5  mean      198.5
+  tot_col4x4               median     1024.0  mean     1024.0
+  actK_col4x4              median      184.5  mean      205.6
+  actobj_col4x4            median       73.0  mean       76.6
+== union8 n 48
+  chart_m                  median       15.0  mean       15.2
+  ctx_full                 median     2812.9  mean     2583.5
+  ctx_known                median     2042.1  mean     1825.8
+  ctx_H                    median     1538.2  mean     1459.5
+  ctx_H_given_K            median     1045.0  mean     1040.4
+  hits                     median    27699.0  mean    28406.0
+  hits_slab                median    10810.0  mean    11939.3
+  hits_struct              median    10552.5  mean    11040.5
+  hits_obj                 median     4386.0  mean     5426.2
+  known                    median   180822.5  mean   189413.2
+  act_2x2x2                median     7191.5  mean     7322.2
+  tot_2x2x2                median    65536.0  mean    65536.0
+  idx_2x2x2                median      568.6  mean      529.3
+  actK_2x2x2               median    24419.0  mean    25681.0
+  actobj_2x2x2             median     1500.0  mean     1824.7
+  act_4x4x4                median     1792.5  mean     1858.5
+  tot_4x4x4                median     8192.0  mean     8192.0
+  idx_4x4x4                median      222.3  mean      205.9
+  actK_4x4x4               median     3485.0  mean     3583.5
+  actobj_4x4x4             median      485.5  mean      611.2
+  act_8x8x8                median      440.0  mean      438.7
+  tot_8x8x8                median     1024.0  mean     1024.0
+  idx_8x8x8                median       57.4  mean       54.6
+  actK_8x8x8               median      535.5  mean      544.7
+  actobj_8x8x8             median      147.5  mean      186.7
+  act_col2x2               median     1768.5  mean     1862.7
+  tot_col2x2               median     4096.0  mean     4096.0
+  actK_col2x2              median     1805.0  mean     1881.8
+  actobj_col2x2            median      500.5  mean      600.3
+  act_col4x4               median      481.5  mean      499.7
+  tot_col4x4               median     1024.0  mean     1024.0
+  actK_col4x4              median      485.5  mean      504.2
+  actobj_col4x4            median      198.5  mean      235.3
+== edge n 84
+  side                     median        4.0  mean        4.0
+  ctx_full                 median     1752.3  mean     2004.3
+  ctx_H                    median      936.4  mean     1020.0
+  ctx_H_given_recvside     median      828.6  mean      940.1
+  ctx_H_given_recvown      median      837.0  mean      952.5
+  hits                     median    17216.0  mean    17438.8
+  new_hits                 median    10861.0  mean    10967.2

@@ -1,0 +1,22 @@
+r1_i0 raw built
+r1_i1 raw built
+r2_i0 raw built
+r2_i1 raw built
+r3_i0 raw built
+r3_i1 raw built
+nb9 coded
+nb13 coded
+nb13_z coded
+nb13_z_d coded
+own   nb9       adaptive     574  pre(w=0.25)     545  pre(w=1.0)     539  pre(w=4.0)     538
+own   nb13      adaptive     549  pre(w=0.25)     496  pre(w=1.0)     478  pre(w=4.0)     468
+own   nb13_z    adaptive     805  pre(w=0.25)     640  pre(w=1.0)     564  pre(w=4.0)     507
+own   nb13_z_d  adaptive    1073  pre(w=0.25)     797  pre(w=1.0)     678  pre(w=4.0)     578
+union nb9       adaptive    1582  pre(w=0.25)    1531  pre(w=1.0)    1526  pre(w=4.0)    1532
+union nb13      adaptive    1507  pre(w=0.25)    1403  pre(w=1.0)    1376  pre(w=4.0)    1374
+union nb13_z    adaptive    1995  pre(w=0.25)    1644  pre(w=1.0)    1493  pre(w=4.0)    1403
+union nb13_z_d  adaptive    2503  pre(w=0.25)    1940  pre(w=1.0)    1693  pre(w=4.0)    1530
+edge  nb9       adaptive     624  pre(w=0.25)     579  pre(w=1.0)     574  pre(w=4.0)     574
+edge  nb13      adaptive     635  pre(w=0.25)     555  pre(w=1.0)     527  pre(w=4.0)     505
+edge  nb13_z    adaptive    1109  pre(w=0.25)     842  pre(w=1.0)     717  pre(w=4.0)     616
+edge  nb13_z_d  adaptive    1494  pre(w=0.25)    1071  pre(w=1.0)     880  pre(w=4.0)     723

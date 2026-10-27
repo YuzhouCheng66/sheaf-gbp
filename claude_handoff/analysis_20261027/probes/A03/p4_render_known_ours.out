@@ -1,0 +1,12 @@
+r1_i0 531s
+r3_i1 550s
+r3_i0 575s
+r2_i1 621s
+r2_i0 686s
+r1_i1 711s
+K0|ours        surf 0.9175 var 0.8506 furn 0.5242 fpr 0.0122
+K0|rk_free     surf 0.9104 var 0.8404 furn 0.5092 fpr 0.0224
+K0|rk_block    surf 0.9049 var 0.8343 furn 0.5038 fpr 0.0049
+K8|ours        surf 0.8980 var 0.8283 furn 0.5397 fpr 0.0310
+K8|rk_free     surf 0.8932 var 0.8210 furn 0.5189 fpr 0.0711
+K8|rk_block    surf 0.8899 var 0.8165 furn 0.5172 fpr 0.0189

@@ -1,0 +1,14 @@
+r1_i0 24s own mism f64/f32/cm [0, 0, 3095] occ mism cm 677 union mism [0] code med 362 ctx med 1362
+r1_i1 51s own mism f64/f32/cm [0, 1, 5379] occ mism cm 1453 union mism [0] code med 594 ctx med 2266
+r1_i2 77s own mism f64/f32/cm [0, 0, 4957] occ mism cm 1366 union mism [0] code med 386 ctx med 1662
+r1_i3 113s own mism f64/f32/cm [0, 0, 7345] occ mism cm 2243 union mism [0] code med 548 ctx med 1984
+r2_i0 139s own mism f64/f32/cm [0, 0, 1656] occ mism cm 409 union mism [0] code med 256 ctx med 1060
+r2_i1 163s own mism f64/f32/cm [0, 0, 3358] occ mism cm 757 union mism [0] code med 434 ctx med 1623
+r2_i2 189s own mism f64/f32/cm [0, 0, 3862] occ mism cm 713 union mism [0] code med 443 ctx med 1988
+r2_i3 214s own mism f64/f32/cm [0, 0, 2231] occ mism cm 480 union mism [0] code med 341 ctx med 1120
+r3_i0 238s own mism f64/f32/cm [0, 0, 2984] occ mism cm 694 union mism [0] code med 221 ctx med 1004
+r3_i1 262s own mism f64/f32/cm [0, 0, 2688] occ mism cm 600 union mism [0] code med 215 ctx med 821
+r3_i2 286s own mism f64/f32/cm [0, 0, 934] occ mism cm 257 union mism [0, 0] code med 160 ctx med 622
+r3_i3 311s own mism f64/f32/cm [0, 0, 2056] occ mism cm 413 union mism [0] code med 259 ctx med 999
+houses 12 agents 96 voxel mismatches f64 0 f32 1 cm 40545 occupancy mismatches cm 10062 | own code median 351 ctx median 1301
+unions 13 mismatches f64 0 code median 970 ctx median 2038

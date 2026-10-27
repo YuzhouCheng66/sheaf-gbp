@@ -1,0 +1,17 @@
+{
+ "plan_box": {
+  "boxes_median": 47.0,
+  "field_bytes_median": 155.52309257763648,
+  "joint_bytes_median": 126.29939538408235,
+  "bits_per_box_field": 26.401458846269826,
+  "bits_per_box_joint": 20.85839495911368
+ },
+ "shell": {
+  "boxes_median": 217.0,
+  "field_bytes_median": 748.8760162440199,
+  "joint_bytes_median": 514.5333997526926,
+  "bits_per_box_field": 26.97911460700225,
+  "bits_per_box_joint": 18.099580629718425
+ },
+ "library_dl_own_median": 106.78980108408629
+}

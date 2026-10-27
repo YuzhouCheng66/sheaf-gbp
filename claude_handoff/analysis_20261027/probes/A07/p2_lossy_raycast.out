@@ -1,0 +1,20 @@
+r1_i0 673s
+r2_i0 702s
+r1_i1 724s
+r2_i1 712s
+r3_i0 720s
+r3_i1 709s
+1x1x1_any                      K0    573 B surf 1.000 var 1.000 furn 1.000 fpr 0.0000 | R8   1565 B surf 1.000 var 1.000 furn 1.000 fpr 0.0000
+2x2x1_any                      K0    307 B surf 0.726 var 0.539 furn 0.524 fpr 0.0000 | R8    788 B surf 0.729 var 0.568 furn 0.542 fpr 0.0000
+2x2x1_ge2                      K0    295 B surf 0.760 var 0.567 furn 0.592 fpr 0.0144 | R8    753 B surf 0.760 var 0.599 furn 0.619 fpr 0.0389
+1x1x2_any                      K0    440 B surf 0.632 var 0.721 furn 0.395 fpr 0.0000 | R8   1172 B surf 0.668 var 0.760 furn 0.488 fpr 0.0000
+2x2x2_any                      K0    239 B surf 0.392 var 0.384 furn 0.195 fpr 0.0000 | R8    615 B surf 0.422 var 0.423 furn 0.247 fpr 0.0000
+4x4x1_any                      K0    164 B surf 0.498 var 0.239 furn 0.168 fpr 0.0000 | R8    419 B surf 0.507 var 0.275 furn 0.190 fpr 0.0000
+ternary_downup_2x2x1_tau0.5    K0    584 B surf 0.888 var 0.814 furn 0.764 fpr 0.0124 | R8   1278 B surf 0.880 var 0.817 furn 0.770 fpr 0.0341
+ternary_downup_1x1x2_tau0.5    K0    950 B surf 0.847 var 0.753 furn 0.447 fpr 0.0054 | R8   1932 B surf 0.858 var 0.790 furn 0.542 fpr 0.0155
+ternary_downup_4x4x1_tau0.5    K0    248 B surf 0.786 var 0.589 furn 0.465 fpr 0.0355 | R8    557 B surf 0.774 var 0.622 furn 0.485 fpr 0.0956
+lossless_ctx_median {'K0': 1354.0488730834873, 'R8': 2781.1280968728083}
+
+real	24m16.534s
+user	0m0.031s
+sys	0m0.062s

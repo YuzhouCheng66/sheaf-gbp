@@ -1,0 +1,49 @@
+r1_i0 a5: identity mismatch 0, 1cm 578, 1mm 54, ctx full 1537 hits 680 (real 1629 / 745) 3.5s
+r1_i0 a1: identity mismatch 0, 1cm 443, 1mm 77, ctx full 1480 hits 579 (real 1461 / 555) 4.3s
+r1_i0 a2: identity mismatch 0, 1cm 476, 1mm 52, ctx full 1102 hits 603 (real 1111 / 568) 3.5s
+r1_i0 a7: identity mismatch 0, 1cm 272, 1mm 51, ctx full 1355 hits 563 (real 1329 / 569) 5.3s
+r1_i0 a0: identity mismatch 0, 1cm 635, 1mm 76, ctx full 1230 hits 611 (real 1226 / 601) 3.5s
+r1_i0 a4: identity mismatch 0, 1cm 476, 1mm 61, ctx full 1384 hits 631 (real 1395 / 636) 4.9s
+r1_i1 a2: identity mismatch 0, 1cm 1425, 1mm 181, ctx full 2732 hits 1132 (real 2632 / 1164) 6.6s
+r1_i0 a6: identity mismatch 0, 1cm 808, 1mm 79, ctx full 1605 hits 717 (real 1560 / 726) 5.4s
+r1_i0 a3: identity mismatch 0, 1cm 420, 1mm 36, ctx full 1176 hits 469 (real 1207 / 495) 4.7s
+r1_i1 a3: identity mismatch 0, 1cm 1305, 1mm 256, ctx full 2936 hits 1350 (real 2915 / 1315) 8.1s
+r1_i1 a1: identity mismatch 0, 1cm 1443, 1mm 124, ctx full 2241 hits 1189 (real 2255 / 1152) 8.7s
+r1_i1 a0: identity mismatch 0, 1cm 1276, 1mm 106, ctx full 2164 hits 908 (real 1919 / 834) 5.4s
+r1_i1 a6: identity mismatch 0, 1cm 1010, 1mm 172, ctx full 2225 hits 1062 (real 2278 / 1130) 8.3s
+r1_i1 a7: identity mismatch 0, 1cm 535, 1mm 111, ctx full 1700 hits 966 (real 1725 / 990) 7.0s
+r1_i1 a4: identity mismatch 0, 1cm 1301, 1mm 57, ctx full 2120 hits 830 (real 2050 / 850) 7.8s
+r1_i1 a5: identity mismatch 0, 1cm 845, 1mm 148, ctx full 2359 hits 974 (real 2448 / 1073) 8.2s
+r2_i0 a0: identity mismatch 0, 1cm 272, 1mm 19, ctx full 1096 hits 449 (real 1081 / 460) 9.7s
+r2_i0 a4: identity mismatch 0, 1cm 221, 1mm 13, ctx full 1023 hits 352 (real 1030 / 373) 9.5s
+r2_i1 a5: identity mismatch 0, 1cm 347, 1mm 33, ctx full 1663 hits 638 (real 1632 / 613) 9.0s
+r2_i0 a1: identity mismatch 0, 1cm 410, 1mm 110, ctx full 1050 hits 434 (real 1038 / 420) 9.4s
+r2_i0 a3: identity mismatch 0, 1cm 262, 1mm 57, ctx full 1238 hits 520 (real 1245 / 503) 9.3s
+r2_i0 a2: identity mismatch 0, 1cm 254, 1mm 24, ctx full 1390 hits 472 (real 1373 / 470) 9.5s
+r2_i0 a5: identity mismatch 0, 1cm 161, 1mm 30, ctx full 1169 hits 398 (real 1260 / 421) 9.6s
+r2_i0 a7: identity mismatch 0, 1cm 242, 1mm 37, ctx full 969 hits 406 (real 976 / 399) 8.6s
+r2_i1 a1: identity mismatch 0, 1cm 454, 1mm 42, ctx full 1560 hits 608 (real 1614 / 644) 8.9s
+multiprocessing.pool.RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "D:\anaconda3\envs\jax-gpu\lib\multiprocessing\pool.py", line 125, in worker
+    result = (True, func(*args, **kwds))
+  File "D:\anaconda3\envs\jax-gpu\lib\multiprocessing\pool.py", line 48, in mapstar
+    return list(map(*args))
+  File "C:\Users\27118\Desktop\sheaf-gbp\experiments\sheaf-gbp-p6-local-skill\claude_handoff\analysis_20261027\probes\A02\p1_render_hits.py", line 67, in job
+    t0 = time.time(); syn = observe(occ, cell, poses, rays); t_obs = time.time() - t0
+  File "C:\Users\27118\Desktop\sheaf-gbp\experiments\sheaf-gbp-p6-local-skill\claude_handoff\analysis_20261027\probes\A02\p1_render_hits.py", line 34, in observe
+    idx_all = np.floor((p[None] + rays * (s * ds)) / cell).astype(np.int64)
+numpy._core._exceptions._ArrayMemoryError: Unable to allocate 1.50 MiB for an array with shape (65536, 3) and data type float64
+"""
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\27118\Desktop\sheaf-gbp\experiments\sheaf-gbp-p6-local-skill\claude_handoff\analysis_20261027\probes\A02\p1_render_hits.py", line 92, in <module>
+    rows = pool.map(job, jobs, chunksize=1)
+  File "D:\anaconda3\envs\jax-gpu\lib\multiprocessing\pool.py", line 367, in map
+    return self._map_async(func, iterable, mapstar, chunksize).get()
+  File "D:\anaconda3\envs\jax-gpu\lib\multiprocessing\pool.py", line 774, in get
+    raise self._value
+numpy._core._exceptions._ArrayMemoryError: Unable to allocate 1.50 MiB for an array with shape (65536, 3) and data type float64

@@ -1,0 +1,100 @@
+{
+ "summary": {
+  "identity": {
+   "median": 0.0,
+   "max": 0.0
+  },
+  "mismatch_1mm": {
+   "median": 41.0,
+   "max": 102.0
+  },
+  "resid_bytes_1mm": {
+   "median": 68.3416851193096,
+   "max": 170.27320188464893
+  },
+  "mismatch_0.1mm": {
+   "median": 2.5,
+   "max": 15.0
+  },
+  "resid_bytes_0.1mm": {
+   "median": 8.937326662387273,
+   "max": 33.26658597878116
+  },
+  "mismatch_float32": {
+   "median": 0.0,
+   "max": 1.0
+  },
+  "resid_bytes_float32": {
+   "median": 0.0,
+   "max": 4.915713735493015
+  }
+ },
+ "rows": [
+  {
+   "house": "r2_i1",
+   "agent": 2,
+   "identity": 0,
+   "mismatch_1mm": 36,
+   "resid_bytes_1mm": 54.48642952822373,
+   "mismatch_0.1mm": 0,
+   "resid_bytes_0.1mm": 0.0,
+   "mismatch_float32": 0,
+   "resid_bytes_float32": 0.0
+  },
+  {
+   "house": "r2_i1",
+   "agent": 3,
+   "identity": 0,
+   "mismatch_1mm": 102,
+   "resid_bytes_1mm": 170.27320188464893,
+   "mismatch_0.1mm": 10,
+   "resid_bytes_0.1mm": 22.589199615239846,
+   "mismatch_float32": 0,
+   "resid_bytes_float32": 0.0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 2,
+   "identity": 0,
+   "mismatch_1mm": 4,
+   "resid_bytes_1mm": 12.555935991271713,
+   "mismatch_0.1mm": 0,
+   "resid_bytes_0.1mm": 0.0,
+   "mismatch_float32": 0,
+   "resid_bytes_float32": 0.0
+  },
+  {
+   "house": "r3_i0",
+   "agent": 3,
+   "identity": 0,
+   "mismatch_1mm": 70,
+   "resid_bytes_1mm": 125.80199963961896,
+   "mismatch_0.1mm": 15,
+   "resid_bytes_0.1mm": 33.26658597878116,
+   "mismatch_float32": 1,
+   "resid_bytes_float32": 4.915713735493015
+  },
+  {
+   "house": "r3_i1",
+   "agent": 2,
+   "identity": 0,
+   "mismatch_1mm": 16,
+   "resid_bytes_1mm": 37.30486118772596,
+   "mismatch_0.1mm": 2,
+   "resid_bytes_0.1mm": 7.684499258502397,
+   "mismatch_float32": 0,
+   "resid_bytes_float32": 0.0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 3,
+   "identity": 0,
+   "mismatch_1mm": 46,
+   "resid_bytes_1mm": 82.19694071039547,
+   "mismatch_0.1mm": 3,
+   "resid_bytes_0.1mm": 10.190154066272148,
+   "mismatch_float32": 0,
+   "resid_bytes_float32": 0.0
+  }
+ ]
+}

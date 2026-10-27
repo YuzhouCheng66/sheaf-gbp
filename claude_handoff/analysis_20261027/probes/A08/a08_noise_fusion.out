@@ -1,0 +1,6 @@
+r1_i0 done 64s
+r1_i1 done 137s
+r2_i0 done 206s
+lidar {"ctx_noisy_med": 1451.1953, "ctx_clean_med": 1394.8997, "K0_surface_f1": 0.9928, "K0_var_occ_f1": 0.9914, "K0_furn_f1": 0.9873, "K0_fpr": 0.0001, "K0_free_recall": 0.9992, "R8max_surface_f1": 0.9953, "R8max_var_occ_f1": 0.9924, "R8max_furn_f1": 0.9872, "R8max_fpr": 0.0004, "R8max_free_recall": 0.999, "R8sum_surface_f1": 0.9976, "R8sum_var_occ_f1": 0.9963, "R8sum_furn_f1": 0.9951, "R8sum_fpr": 0.0004, "R8sum_free_recall": 0.9997}
+cam {"ctx_noisy_med": 2262.7293, "ctx_clean_med": 1394.8997, "K0_surface_f1": 0.9583, "K0_var_occ_f1": 0.9517, "K0_furn_f1": 0.9432, "K0_fpr": 0.0019, "K0_free_recall": 0.9974, "R8max_surface_f1": 0.9708, "R8max_var_occ_f1": 0.9539, "R8max_furn_f1": 0.9437, "R8max_fpr": 0.0136, "R8max_free_recall": 0.9931, "R8sum_surface_f1": 0.9858, "R8sum_var_occ_f1": 0.9802, "R8sum_furn_f1": 0.9771, "R8sum_fpr": 0.0136, "R8sum_free_recall": 0.9989}
+total 206s

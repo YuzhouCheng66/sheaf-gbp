@@ -1,0 +1,9 @@
+r1_i0 13s
+r1_i1 19s
+r2_i0 21s
+r2_i1 17s
+r3_i0 18s
+r3_i1 17s
+u12 {'bits_per_agent': 86, 'exact': 14, 'n': 48, 'diff_median': 2.0, 'diff_max': 28, 'occ_diff_max': 2}
+u16 {'bits_per_agent': 110, 'exact': 44, 'n': 48, 'diff_median': 0.0, 'diff_max': 3, 'occ_diff_max': 1}
+f32 {'bits_per_agent': 206, 'exact': 48, 'n': 48, 'diff_median': 0.0, 'diff_max': 0, 'occ_diff_max': 0}

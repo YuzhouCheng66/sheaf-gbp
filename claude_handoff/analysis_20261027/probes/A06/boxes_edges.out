@@ -1,0 +1,9 @@
+r1_i0 30
+r1_i1 30
+r2_i0 30
+r2_i1 30
+r3_i0 30
+r3_i1 30
+[own] n 48: total med 237 B (boxes 167, resid 71, poses 6; mean 246, p90 399); boxes 50; ctx ternary 1384; ctx O 569; gzip 2732; ratios (median of per-map) ctx/prog 6.2, gzip/prog 12.9, raw/prog 553
+[union] n 48: total med 647 B (boxes 424, resid 155, poses 44; mean 691, p90 1167); boxes 140; ctx ternary 2813; ctx O 1538; gzip 6060; ratios (median of per-map) ctx/prog 3.5, gzip/prog 7.7, raw/prog 203
+[edge] n 84: total med 419 B (boxes 288, resid 107, poses 22; mean 450, p90 755); boxes 91; ctx ternary 1752; ctx O 936; gzip 3646; ratios (median of per-map) ctx/prog 4.4, gzip/prog 9.5, raw/prog 313

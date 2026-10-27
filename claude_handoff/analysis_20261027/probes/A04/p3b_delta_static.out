@@ -1,0 +1,32 @@
+loaded r1_i0
+loaded r1_i1
+loaded r2_i0
+loaded r2_i1
+loaded r3_i0
+loaded r3_i1
+r1_i0 21s
+r1_i1 32s
+r2_i0 40s
+r2_i1 48s
+r3_i0 66s
+r3_i1 75s
+{
+ "own": {
+  "adaptive_median": 1383.7949925115936,
+  "static_median": 1129.9126503114835
+ },
+ "union8": {
+  "adaptive_median": 2812.9219259214306,
+  "static_median": 2367.403729637086
+ },
+ "edge": {
+  "adaptive_median": 1752.258197984592,
+  "static_median": 1424.8665832514616,
+  "delta_static_median": 1131.007623692372,
+  "incremental_adaptive_median": 253.68084247062336,
+  "delta_over_full_static_median": 0.8484561724113536,
+  "sum_full_static": 139915.78795699502,
+  "sum_delta_static": 119683.43183206559,
+  "sum_incremental": 52488.587628763984
+ }
+}

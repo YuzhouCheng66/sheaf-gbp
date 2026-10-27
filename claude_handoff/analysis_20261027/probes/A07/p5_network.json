@@ -1,0 +1,244 @@
+{
+ "summary": {
+  "n_edges": {
+   "sum": 42.0,
+   "median": 7.0
+  },
+  "directed": {
+   "sum": 84.0,
+   "median": 14.0
+  },
+  "ours_fixed_32": {
+   "sum": 1376256.0,
+   "median": 229376.0
+  },
+  "ours_stop_32": {
+   "sum": 534528.0,
+   "median": 86016.0
+  },
+  "ours_event_32": {
+   "sum": 58873.878045951125,
+   "median": 8705.586426940148
+  },
+  "ours_fixed_32_max_agent": {
+   "sum": 294912.0,
+   "median": 49152.0
+  },
+  "ours_event_32_max_agent": {
+   "sum": 16431.901481575263,
+   "median": 2493.054781860954
+  },
+  "evidence_coords_32_own_median": {
+   "sum": 1228.5,
+   "median": 173.25
+  },
+  "ours_fixed_64": {
+   "sum": 5505024.0,
+   "median": 917504.0
+  },
+  "ours_stop_64": {
+   "sum": 2138112.0,
+   "median": 344064.0
+  },
+  "ours_event_64": {
+   "sum": 207500.35105714767,
+   "median": 30151.50969023988
+  },
+  "ours_fixed_64_max_agent": {
+   "sum": 1179648.0,
+   "median": 196608.0
+  },
+  "ours_event_64_max_agent": {
+   "sum": 57641.4589087425,
+   "median": 8512.522644784662
+  },
+  "evidence_coords_64_own_median": {
+   "sum": 4419.0,
+   "median": 612.75
+  },
+  "flood_ctx": {
+   "sum": 482698.9419250176,
+   "median": 69027.60921294108
+  },
+  "flood_H": {
+   "sum": 211427.8048620015,
+   "median": 30577.204486508606
+  },
+  "union_edge_ctx": {
+   "sum": 168364.52502004924,
+   "median": 28175.650867950993
+  },
+  "union_edge_H": {
+   "sum": 87527.08919946171,
+   "median": 13295.638004790733
+  },
+  "twopass_ctx": {
+   "sum": 169559.47683063598,
+   "median": 28375.583415465546
+  },
+  "twopass_H": {
+   "sum": 83400.34124401423,
+   "median": 12852.587006100013
+  },
+  "twopass_rounds": {
+   "sum": 36.0,
+   "median": 6.0
+  },
+  "diameter": {
+   "sum": 32.0,
+   "median": 5.0
+  }
+ },
+ "houses": [
+  {
+   "house": "r1_i0",
+   "n_edges": 7,
+   "directed": 14,
+   "ours_fixed_32": 229376,
+   "ours_stop_32": 86016,
+   "ours_event_32": 8560.824430121516,
+   "ours_fixed_32_max_agent": 49152,
+   "ours_event_32_max_agent": 2394.630902859704,
+   "evidence_coords_32_own_median": 197.5,
+   "ours_fixed_64": 917504,
+   "ours_stop_64": 344064,
+   "ours_event_64": 30191.741519127292,
+   "ours_fixed_64_max_agent": 196608,
+   "ours_event_64_max_agent": 8387.646124222718,
+   "evidence_coords_64_own_median": 723.5,
+   "flood_ctx": 76421.68337568938,
+   "flood_H": 34588.45882537649,
+   "union_edge_ctx": 19533.06041083739,
+   "union_edge_H": 10794.523752104855,
+   "twopass_ctx": 19681.139475029744,
+   "twopass_H": 10273.18175405183,
+   "twopass_rounds": 6,
+   "diameter": 5
+  },
+  {
+   "house": "r1_i1",
+   "n_edges": 7,
+   "directed": 14,
+   "ours_fixed_32": 229376,
+   "ours_stop_32": 86016,
+   "ours_event_32": 15920.674441089352,
+   "ours_fixed_32_max_agent": 49152,
+   "ours_event_32_max_agent": 4332.826889345502,
+   "evidence_coords_32_own_median": 396.5,
+   "ours_fixed_64": 917504,
+   "ours_stop_64": 344064,
+   "ours_event_64": 56093.51247131125,
+   "ours_fixed_64_max_agent": 196608,
+   "ours_event_64_max_agent": 15084.716526852351,
+   "evidence_coords_64_own_median": 1469.5,
+   "flood_ctx": 127557.65119134827,
+   "flood_H": 59869.28545385042,
+   "union_edge_ctx": 35263.52534719812,
+   "union_edge_H": 20565.77817303666,
+   "twopass_ctx": 35547.343463534424,
+   "twopass_H": 19926.931192855063,
+   "twopass_rounds": 6,
+   "diameter": 5
+  },
+  {
+   "house": "r2_i0",
+   "n_edges": 7,
+   "directed": 14,
+   "ours_fixed_32": 229376,
+   "ours_stop_32": 83968,
+   "ours_event_32": 7665.816750757234,
+   "ours_fixed_32_max_agent": 49152,
+   "ours_event_32_max_agent": 2113.8449695724216,
+   "evidence_coords_32_own_median": 165.0,
+   "ours_fixed_64": 917504,
+   "ours_stop_64": 335872,
+   "ours_event_64": 26699.037509506277,
+   "ours_fixed_64_max_agent": 196608,
+   "ours_event_64_max_agent": 7282.69836894147,
+   "evidence_coords_64_own_median": 586.5,
+   "flood_ctx": 61140.53990128056,
+   "flood_H": 24149.410158492356,
+   "union_edge_ctx": 18348.110526959284,
+   "union_edge_H": 9363.510936545266,
+   "twopass_ctx": 18369.536791172945,
+   "twopass_H": 8842.14822264836,
+   "twopass_rounds": 6,
+   "diameter": 5
+  },
+  {
+   "house": "r2_i1",
+   "n_edges": 7,
+   "directed": 14,
+   "ours_fixed_32": 229376,
+   "ours_stop_32": 98304,
+   "ours_event_32": 10410.64777671725,
+   "ours_fixed_32_max_agent": 49152,
+   "ours_event_32_max_agent": 2879.681126007748,
+   "evidence_coords_32_own_median": 181.5,
+   "ours_fixed_64": 917504,
+   "ours_stop_64": 393216,
+   "ours_event_64": 38170.96388686661,
+   "ours_fixed_64_max_agent": 196608,
+   "ours_event_64_max_agent": 10738.889676622437,
+   "evidence_coords_64_own_median": 639.0,
+   "flood_ctx": 95941.32782887449,
+   "flood_H": 40742.46181955989,
+   "union_edge_ctx": 38868.52699915247,
+   "union_edge_H": 20212.00032819347,
+   "twopass_ctx": 39210.29026996778,
+   "twopass_H": 18652.90606225896,
+   "twopass_rounds": 6,
+   "diameter": 6
+  },
+  {
+   "house": "r3_i0",
+   "n_edges": 7,
+   "directed": 14,
+   "ours_fixed_32": 229376,
+   "ours_stop_32": 96256,
+   "ours_event_32": 8850.34842375878,
+   "ours_fixed_32_max_agent": 49152,
+   "ours_event_32_max_agent": 2591.4786608622035,
+   "evidence_coords_32_own_median": 147.5,
+   "ours_fixed_64": 917504,
+   "ours_stop_64": 385024,
+   "ours_event_64": 30111.277861352464,
+   "ours_fixed_64_max_agent": 196608,
+   "ours_event_64_max_agent": 8637.399165346606,
+   "evidence_coords_64_own_median": 518.0,
+   "flood_ctx": 60004.20457763219,
+   "flood_H": 25512.23845708165,
+   "union_edge_ctx": 29813.47272491652,
+   "union_edge_H": 13506.023388375103,
+   "twopass_ctx": 30022.189968216968,
+   "twopass_H": 13041.203296293348,
+   "twopass_rounds": 6,
+   "diameter": 6
+  },
+  {
+   "house": "r3_i1",
+   "n_edges": 7,
+   "directed": 14,
+   "ours_fixed_32": 229376,
+   "ours_stop_32": 83968,
+   "ours_event_32": 7465.566223507,
+   "ours_fixed_32_max_agent": 49152,
+   "ours_event_32_max_agent": 2119.4389329276846,
+   "evidence_coords_32_own_median": 140.5,
+   "ours_fixed_64": 917504,
+   "ours_stop_64": 335872,
+   "ours_event_64": 26233.81780898376,
+   "ours_fixed_64_max_agent": 196608,
+   "ours_event_64_max_agent": 7510.109046756914,
+   "evidence_coords_64_own_median": 482.5,
+   "flood_ctx": 61633.53505019279,
+   "flood_H": 26565.95014764072,
+   "union_edge_ctx": 26537.82901098547,
+   "union_edge_H": 13085.252621206366,
+   "twopass_ctx": 26728.976862714124,
+   "twopass_H": 12663.970715906678,
+   "twopass_rounds": 6,
+   "diameter": 5
+  }
+ ]
+}

@@ -1,0 +1,52 @@
+r1_i0 clean 60s
+r2_i1 clean 65s
+r1_i1 clean 76s
+r3_i0 clean 66s
+r2_i0 clean 87s
+r3_i1 clean 78s
+r1_i0 dprop3 136s
+r3_i0 dprop3 126s
+r2_i1 dprop3 141s
+r3_i1 dprop3 150s
+r1_i1 dprop3 171s
+r2_i0 dprop3 182s
+r3_i1 pose_m 209s
+r3_i0 pose_m 210s
+r1_i0 pose_m 223s
+r2_i1 pose_m 238s
+r1_i1 pose_m 267s
+r2_i0 pose_m 273s
+r3_i1 lidar 283s
+r1_i0 lidar 296s
+r3_i0 lidar 290s
+r2_i1 lidar 319s
+r1_i1 lidar 364s
+r3_i1 cam 354s
+r2_i0 lidar 367s
+r1_i0 cam 369s
+r3_i0 cam 361s
+r3_i1 harsh 391s
+r2_i1 cam 399s
+r1_i0 harsh 419s
+r3_i0 harsh 410s
+r2_i0 cam 432s
+r1_i1 cam 434s
+r2_i1 harsh 440s
+r2_i0 harsh 470s
+r1_i1 harsh 474s
+clean     K0 ctx   1354 H+p    573 gz   2688 floor s/v/f 1.000/1.000/1.000 fpr 0.0000 | du221   584 0.888/0.764 desp  1353 1.000/0.999
+          R8 max ctx   2781 floor 1.000/1.000 | sum ctx   2781 H   1521 gz   6018 floor 1.000/1.000/1.000 | du221  1278 0.880/0.770 desp  2780 1.000/1.000
+dprop3    K0 ctx   3313 H+p   2231 gz   6026 floor s/v/f 0.909/0.867/0.756 fpr 0.0081 | du221  1045 0.858/0.629 desp  3311 0.909/0.756
+          R8 max ctx   9924 floor 0.875/0.745 | sum ctx   8442 H   6058 gz  14946 floor 0.949/0.927/0.904 | du221  2454 0.863/0.721 desp  8436 0.950/0.904
+pose_m    K0 ctx   1902 H+p    960 gz   3443 floor s/v/f 0.903/0.836/0.777 fpr 0.0048 | du221   710 0.840/0.587 desp  1899 0.902/0.776
+          R8 max ctx   5595 floor 0.877/0.750 | sum ctx   4715 H   2931 gz   8226 floor 0.940/0.904/0.881 | du221  1757 0.854/0.693 desp  4705 0.940/0.881
+lidar     K0 ctx   1620 H+p    814 gz   3112 floor s/v/f 0.975/0.960/0.917 fpr 0.0012 | du221   657 0.880/0.690 desp  1618 0.974/0.915
+          R8 max ctx   5506 floor 0.843/0.756 | sum ctx   5031 H   3078 gz   8966 floor 0.894/0.832/0.833 | du221  1899 0.810/0.614 desp  5023 0.894/0.832
+cam       K0 ctx   2472 H+p   1529 gz   4570 floor s/v/f 0.918/0.872/0.775 fpr 0.0042 | du221   867 0.856/0.622 desp  2467 0.918/0.774
+          R8 max ctx   7582 floor 0.803/0.627 | sum ctx   6624 H   4664 gz  12024 floor 0.875/0.805/0.756 | du221  2289 0.823/0.621 desp  6616 0.875/0.757
+harsh     K0 ctx   3667 H+p   2556 gz   6578 floor s/v/f 0.841/0.761/0.612 fpr 0.0117 | du221  1162 0.826/0.546 desp  3658 0.841/0.613
+          R8 max ctx  11446 floor 0.682/0.373 | sum ctx   9681 H   6956 gz  16087 floor 0.742/0.589/0.500 | du221  2870 0.751/0.464 desp  9644 0.742/0.501
+
+real	9m14.065s
+user	0m0.031s
+sys	0m0.031s

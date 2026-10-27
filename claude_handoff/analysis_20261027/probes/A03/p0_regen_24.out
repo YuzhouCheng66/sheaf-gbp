@@ -1,0 +1,25 @@
+r1_i0 demo_match True objects 36 10.7s
+r1_i1 demo_match True objects 65 12.4s
+r1_i2 demo_match None objects 32 11.0s
+r1_i3 demo_match None objects 14 16.2s
+r1_i4 demo_match None objects 15 13.5s
+r1_i5 demo_match None objects 33 12.1s
+r1_i6 demo_match None objects 21 15.7s
+r1_i7 demo_match None objects 45 12.4s
+r2_i0 demo_match True objects 51 10.9s
+r2_i1 demo_match True objects 78 10.9s
+r2_i2 demo_match None objects 51 10.8s
+r2_i3 demo_match None objects 70 10.4s
+r2_i4 demo_match None objects 34 10.4s
+r2_i5 demo_match None objects 48 10.5s
+r2_i6 demo_match None objects 36 9.2s
+r2_i7 demo_match None objects 18 12.9s
+r3_i0 demo_match True objects 94 11.3s
+r3_i1 demo_match True objects 86 10.8s
+r3_i2 demo_match None objects 64 10.2s
+r3_i3 demo_match None objects 62 10.6s
+r3_i4 demo_match None objects 62 9.8s
+r3_i5 demo_match None objects 121 10.4s
+r3_i6 demo_match None objects 17 11.1s
+r3_i7 demo_match None objects 64 10.9s
+[('r1_i0', True, 36, 10.7), ('r1_i1', True, 65, 12.4), ('r1_i2', None, 32, 11.0), ('r1_i3', None, 14, 16.2), ('r1_i4', None, 15, 13.5), ('r1_i5', None, 33, 12.1), ('r1_i6', None, 21, 15.7), ('r1_i7', None, 45, 12.4), ('r2_i0', True, 51, 10.9), ('r2_i1', True, 78, 10.9), ('r2_i2', None, 51, 10.8), ('r2_i3', None, 70, 10.4), ('r2_i4', None, 34, 10.4), ('r2_i5', None, 48, 10.5), ('r2_i6', None, 36, 9.2), ('r2_i7', None, 18, 12.9), ('r3_i0', True, 94, 11.3), ('r3_i1', True, 86, 10.8), ('r3_i2', None, 64, 10.2), ('r3_i3', None, 62, 10.6), ('r3_i4', None, 62, 9.8), ('r3_i5', None, 121, 10.4), ('r3_i6', None, 17, 11.1), ('r3_i7', None, 64, 10.9)]

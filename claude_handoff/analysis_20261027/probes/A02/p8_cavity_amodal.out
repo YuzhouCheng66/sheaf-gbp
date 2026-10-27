@@ -1,0 +1,78 @@
+loaded r1_i0 14
+loaded r1_i1 14
+loaded r2_i0 14
+loaded r2_i1 14
+loaded r3_i0 14
+loaded r3_i1 14
+{"house": "r1_i1", "s": 1, "r": 6, "side": 2, "rside": 6, "hits": 1048.0, "greedy": 553.3, "cavity": 227.9, "oracle_amodal": 468.1, "poses_bytes": 40}
+{"house": "r1_i1", "s": 6, "r": 1, "side": 6, "rside": 2, "hits": 1656.5, "greedy": 922.7, "cavity": 686.5, "oracle_amodal": 553.3, "poses_bytes": 120}
+{"house": "r1_i1", "s": 2, "r": 5, "side": 7, "rside": 1, "hits": 1786.2, "greedy": 924.7, "cavity": 741.8, "oracle_amodal": 549.9, "poses_bytes": 140}
+{"house": "r1_i1", "s": 5, "r": 2, "side": 1, "rside": 7, "hits": 965.8, "greedy": 470.2, "cavity": 158.1, "oracle_amodal": 384.7, "poses_bytes": 20}
+{"house": "r1_i1", "s": 0, "r": 4, "side": 7, "rside": 1, "hits": 1765.4, "greedy": 919.3, "cavity": 840.9, "oracle_amodal": 542.6, "poses_bytes": 140}
+{"house": "r1_i1", "s": 4, "r": 0, "side": 1, "rside": 7, "hits": 790.7, "greedy": 615.4, "cavity": 61.1, "oracle_amodal": 433.1, "poses_bytes": 20}
+{"house": "r1_i1", "s": 2, "r": 3, "side": 2, "rside": 6, "hits": 1011.8, "greedy": 577.9, "cavity": 201.2, "oracle_amodal": 462.0, "poses_bytes": 40}
+{"house": "r1_i1", "s": 3, "r": 2, "side": 6, "rside": 2, "hits": 1958.8, "greedy": 939.4, "cavity": 702.8, "oracle_amodal": 564.4, "poses_bytes": 120}
+{"house": "r1_i1", "s": 1, "r": 7, "side": 7, "rside": 1, "hits": 1737.8, "greedy": 957.9, "cavity": 767.6, "oracle_amodal": 543.7, "poses_bytes": 140}
+{"house": "r1_i1", "s": 7, "r": 1, "side": 1, "rside": 7, "hits": 904.3, "greedy": 505.5, "cavity": 189.0, "oracle_amodal": 377.6, "poses_bytes": 20}
+{"house": "r1_i1", "s": 0, "r": 6, "side": 2, "rside": 6, "hits": 867.5, "greedy": 705.9, "cavity": 82.9, "oracle_amodal": 460.9, "poses_bytes": 40}
+{"house": "r1_i1", "s": 6, "r": 0, "side": 6, "rside": 2, "hits": 1886.1, "greedy": 961.8, "cavity": 772.5, "oracle_amodal": 541.9, "poses_bytes": 120}
+{"house": "r1_i1", "s": 3, "r": 6, "side": 3, "rside": 5, "hits": 1249.7, "greedy": 716.1, "cavity": 520.7, "oracle_amodal": 510.6, "poses_bytes": 60}
+{"house": "r1_i1", "s": 6, "r": 3, "side": 5, "rside": 3, "hits": 1201.1, "greedy": 748.0, "cavity": 417.4, "oracle_amodal": 569.3, "poses_bytes": 100}
+{"house": "r2_i0", "s": 0, "r": 4, "side": 6, "rside": 2, "hits": 787.9, "greedy": 458.0, "cavity": 328.9, "oracle_amodal": 349.6, "poses_bytes": 120}
+{"house": "r2_i0", "s": 4, "r": 0, "side": 2, "rside": 6, "hits": 427.2, "greedy": 229.5, "cavity": 139.8, "oracle_amodal": 195.1, "poses_bytes": 40}
+{"house": "r2_i0", "s": 5, "r": 7, "side": 7, "rside": 1, "hits": 701.2, "greedy": 448.8, "cavity": 391.6, "oracle_amodal": 327.5, "poses_bytes": 140}
+{"house": "r2_i0", "s": 7, "r": 5, "side": 1, "rside": 7, "hits": 337.5, "greedy": 258.0, "cavity": 69.6, "oracle_amodal": 249.5, "poses_bytes": 20}
+{"house": "r2_i0", "s": 2, "r": 4, "side": 1, "rside": 7, "hits": 386.1, "greedy": 228.9, "cavity": 52.8, "oracle_amodal": 194.6, "poses_bytes": 20}
+{"house": "r2_i0", "s": 4, "r": 2, "side": 7, "rside": 1, "hits": 747.0, "greedy": 455.4, "cavity": 372.1, "oracle_amodal": 349.5, "poses_bytes": 140}
+{"house": "r2_i0", "s": 3, "r": 5, "side": 5, "rside": 3, "hits": 719.0, "greedy": 393.3, "cavity": 305.9, "oracle_amodal": 290.6, "poses_bytes": 100}
+{"house": "r2_i0", "s": 5, "r": 3, "side": 3, "rside": 5, "hits": 405.8, "greedy": 291.2, "cavity": 162.5, "oracle_amodal": 285.9, "poses_bytes": 60}
+{"house": "r2_i0", "s": 1, "r": 5, "side": 1, "rside": 7, "hits": 341.0, "greedy": 227.1, "cavity": 80.6, "oracle_amodal": 194.1, "poses_bytes": 20}
+{"house": "r2_i0", "s": 5, "r": 1, "side": 7, "rside": 1, "hits": 760.1, "greedy": 438.9, "cavity": 381.5, "oracle_amodal": 356.7, "poses_bytes": 140}
+{"house": "r2_i0", "s": 0, "r": 3, "side": 3, "rside": 5, "hits": 455.2, "greedy": 220.9, "cavity": 147.1, "oracle_amodal": 211.9, "poses_bytes": 60}
+{"house": "r2_i0", "s": 3, "r": 0, "side": 5, "rside": 3, "hits": 771.3, "greedy": 507.6, "cavity": 299.8, "oracle_amodal": 384.2, "poses_bytes": 100}
+{"house": "r2_i0", "s": 3, "r": 6, "side": 7, "rside": 1, "hits": 531.2, "greedy": 306.7, "cavity": 321.8, "oracle_amodal": 320.4, "poses_bytes": 140}
+{"house": "r2_i0", "s": 6, "r": 3, "side": 1, "rside": 7, "hits": 296.9, "greedy": 191.5, "cavity": 168.0, "oracle_amodal": 148.7, "poses_bytes": 20}
+{"house": "r3_i1", "s": 0, "r": 6, "side": 1, "rside": 7, "hits": 146.2, "greedy": 78.2, "cavity": 57.2, "oracle_amodal": 172.7, "poses_bytes": 20}
+{"house": "r3_i1", "s": 6, "r": 0, "side": 7, "rside": 1, "hits": 1318.0, "greedy": 1046.3, "cavity": 1196.1, "oracle_amodal": 678.5, "poses_bytes": 140}
+{"house": "r3_i1", "s": 3, "r": 7, "side": 1, "rside": 7, "hits": 614.7, "greedy": 526.9, "cavity": 369.3, "oracle_amodal": 659.8, "poses_bytes": 20}
+{"house": "r3_i1", "s": 7, "r": 3, "side": 7, "rside": 1, "hits": 1277.5, "greedy": 1024.8, "cavity": 941.8, "oracle_amodal": 645.8, "poses_bytes": 140}
+{"house": "r3_i1", "s": 2, "r": 6, "side": 6, "rside": 2, "hits": 1323.5, "greedy": 1050.0, "cavity": 1183.8, "oracle_amodal": 677.7, "poses_bytes": 120}
+{"house": "r3_i1", "s": 6, "r": 2, "side": 2, "rside": 6, "hits": 191.5, "greedy": 142.2, "cavity": 186.5, "oracle_amodal": 185.4, "poses_bytes": 40}
+{"house": "r3_i1", "s": 1, "r": 2, "side": 1, "rside": 7, "hits": 169.4, "greedy": 111.5, "cavity": 118.3, "oracle_amodal": 160.3, "poses_bytes": 20}
+{"house": "r3_i1", "s": 2, "r": 1, "side": 7, "rside": 1, "hits": 1353.9, "greedy": 1072.4, "cavity": 1097.7, "oracle_amodal": 677.0, "poses_bytes": 140}
+{"house": "r3_i1", "s": 2, "r": 5, "side": 4, "rside": 4, "hits": 286.6, "greedy": 236.3, "cavity": 286.5, "oracle_amodal": 214.4, "poses_bytes": 80}
+{"house": "r3_i1", "s": 5, "r": 2, "side": 4, "rside": 4, "hits": 1278.8, "greedy": 995.2, "cavity": 989.0, "oracle_amodal": 676.9, "poses_bytes": 80}
+{"house": "r3_i1", "s": 4, "r": 7, "side": 1, "rside": 7, "hits": 650.4, "greedy": 498.6, "cavity": 342.7, "oracle_amodal": 404.6, "poses_bytes": 20}
+{"house": "r3_i1", "s": 7, "r": 4, "side": 7, "rside": 1, "hits": 1186.8, "greedy": 1058.0, "cavity": 981.7, "oracle_amodal": 627.9, "poses_bytes": 140}
+{"house": "r3_i1", "s": 5, "r": 7, "side": 5, "rside": 3, "hits": 423.2, "greedy": 323.8, "cavity": 445.8, "oracle_amodal": 306.4, "poses_bytes": 100}
+{"house": "r3_i1", "s": 7, "r": 5, "side": 3, "rside": 5, "hits": 1039.8, "greedy": 870.2, "cavity": 838.3, "oracle_amodal": 744.3, "poses_bytes": 60}
+{
+ "side": {
+  "median": 4.0,
+  "mean": 4.0
+ },
+ "rside": {
+  "median": 4.0,
+  "mean": 4.0
+ },
+ "hits": {
+  "median": 789.305875118165,
+  "mean": 898.9875299386355
+ },
+ "greedy": {
+  "median": 506.5816938052883,
+  "mean": 576.3933063214523
+ },
+ "cavity": {
+  "median": 335.77910322110205,
+  "mean": 443.50428123074926
+ },
+ "oracle_amodal": {
+  "median": 394.65756818000625,
+  "mean": 420.29384796651124
+ },
+ "poses_bytes": {
+  "median": 80.0,
+  "mean": 80.0
+ }
+}

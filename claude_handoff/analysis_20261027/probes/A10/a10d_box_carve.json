@@ -1,0 +1,190 @@
+{
+ "summary": {
+  "paint": {
+   "surface_f1": 0.8551705929177027,
+   "var_occ_f1": 0.787079826887886,
+   "furn_f1": 0.5313226891647537
+  },
+  "render": {
+   "surface_f1": 0.8872366411919286,
+   "var_occ_f1": 0.8363134186240017,
+   "furn_f1": 0.604926521112107
+  },
+  "carved": {
+   "surface_f1": 1.0,
+   "var_occ_f1": 1.0,
+   "furn_f1": 1.0
+  },
+  "paint_fpr": 0.0265386191826482,
+  "render_fpr": 0.0,
+  "carved_fpr": 0.0,
+  "carved_mismatch_total": 0,
+  "render_mismatch_total": 100030,
+  "box_in_F_mean": 0.3966711043759356,
+  "box_in_unknown_mean": 0.35802166084713644
+ },
+ "rows": [
+  {
+   "house": "r1_i0",
+   "instances_visible": 33,
+   "box_vox": 24137,
+   "box_in_F": 0.40489704602891824,
+   "box_in_unknown": 0.3921365538385052,
+   "paint": {
+    "surface_f1": 0.8036564540431944,
+    "var_occ_f1": 0.717208252553604,
+    "furn_f1": 0.4918936803793978
+   },
+   "paint_fpr": 0.0238438323449836,
+   "render": {
+    "surface_f1": 0.8633388095538986,
+    "var_occ_f1": 0.7949133322533614,
+    "furn_f1": 0.5870188370188371
+   },
+   "render_fpr": 0.0,
+   "render_mismatch": 14337,
+   "carved": {
+    "surface_f1": 1.0,
+    "var_occ_f1": 1.0,
+    "furn_f1": 1.0
+   },
+   "carved_fpr": 0.0,
+   "carved_mismatch": 0
+  },
+  {
+   "house": "r1_i1",
+   "instances_visible": 59,
+   "box_vox": 33941,
+   "box_in_F": 0.36542824312778055,
+   "box_in_unknown": 0.38961727703956867,
+   "paint": {
+    "surface_f1": 0.8526557135559595,
+    "var_occ_f1": 0.7533263061593842,
+    "furn_f1": 0.5538484212077669
+   },
+   "paint_fpr": 0.056251515396427705,
+   "render": {
+    "surface_f1": 0.8889477795135015,
+    "var_occ_f1": 0.8200195967201279,
+    "furn_f1": 0.6364556660513309
+   },
+   "render_fpr": 0.0,
+   "render_mismatch": 20207,
+   "carved": {
+    "surface_f1": 1.0,
+    "var_occ_f1": 1.0,
+    "furn_f1": 1.0
+   },
+   "carved_fpr": 0.0,
+   "carved_mismatch": 0
+  },
+  {
+   "house": "r2_i0",
+   "instances_visible": 41,
+   "box_vox": 10353,
+   "box_in_F": 0.4168839949773013,
+   "box_in_unknown": 0.25963488843813387,
+   "paint": {
+    "surface_f1": 0.9053882239466877,
+    "var_occ_f1": 0.8554006968641115,
+    "furn_f1": 0.5732959850606909
+   },
+   "paint_fpr": 0.007252966079971506,
+   "render": {
+    "surface_f1": 0.9376807403123193,
+    "var_occ_f1": 0.9073366523870171,
+    "furn_f1": 0.7471333735666867
+   },
+   "render_fpr": 0.0,
+   "render_mismatch": 6700,
+   "carved": {
+    "surface_f1": 1.0,
+    "var_occ_f1": 1.0,
+    "furn_f1": 1.0
+   },
+   "carved_fpr": 0.0,
+   "carved_mismatch": 0
+  },
+  {
+   "house": "r2_i1",
+   "instances_visible": 70,
+   "box_vox": 37229,
+   "box_in_F": 0.4722662440570523,
+   "box_in_unknown": 0.29514625695022695,
+   "paint": {
+    "surface_f1": 0.7778479733144648,
+    "var_occ_f1": 0.6972691897103894,
+    "furn_f1": 0.45964968664631206
+   },
+   "paint_fpr": 0.03457955689828802,
+   "render": {
+    "surface_f1": 0.808992139388174,
+    "var_occ_f1": 0.7398406574134389,
+    "furn_f1": 0.5233690960660994
+   },
+   "render_fpr": 0.0,
+   "render_mismatch": 31066,
+   "carved": {
+    "surface_f1": 1.0,
+    "var_occ_f1": 1.0,
+    "furn_f1": 1.0
+   },
+   "carved_fpr": 0.0,
+   "carved_mismatch": 0
+  },
+  {
+   "house": "r3_i0",
+   "instances_visible": 48,
+   "box_vox": 13660,
+   "box_in_F": 0.3423133235724744,
+   "box_in_unknown": 0.40285505124450954,
+   "paint": {
+    "surface_f1": 0.9279151507677129,
+    "var_occ_f1": 0.8944040467910211,
+    "furn_f1": 0.5930627570177007
+   },
+   "paint_fpr": 0.01749171980191096,
+   "render": {
+    "surface_f1": 0.931821987074306,
+    "var_occ_f1": 0.9076293038070681,
+    "furn_f1": 0.5795121951219512
+   },
+   "render_fpr": 0.0,
+   "render_mismatch": 14073,
+   "carved": {
+    "surface_f1": 1.0,
+    "var_occ_f1": 1.0,
+    "furn_f1": 1.0
+   },
+   "carved_fpr": 0.0,
+   "carved_mismatch": 0
+  },
+  {
+   "house": "r3_i1",
+   "instances_visible": 56,
+   "box_vox": 18261,
+   "box_in_F": 0.37823777449208695,
+   "box_in_unknown": 0.4087399375718745,
+   "paint": {
+    "surface_f1": 0.8635600418781977,
+    "var_occ_f1": 0.8048704692488063,
+    "furn_f1": 0.5161856046766533
+   },
+   "paint_fpr": 0.01981212457430741,
+   "render": {
+    "surface_f1": 0.8926383913093725,
+    "var_occ_f1": 0.8481409691629956,
+    "furn_f1": 0.5560699588477366
+   },
+   "render_fpr": 0.0,
+   "render_mismatch": 13647,
+   "carved": {
+    "surface_f1": 1.0,
+    "var_occ_f1": 1.0,
+    "furn_f1": 1.0
+   },
+   "carved_fpr": 0.0,
+   "carved_mismatch": 0
+  }
+ ]
+}

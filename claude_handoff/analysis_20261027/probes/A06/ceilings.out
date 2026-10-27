@@ -1,0 +1,38 @@
+r1_i0 done
+r1_i1 done
+r2_i0 done
+r2_i1 done
+r3_i0 done
+r3_i1 done
+
+=== hop 0
+  drop_thin_xy   surf 0.992 var 0.984 furn 0.939
+  drop_thin_z    surf 0.989 var 0.978 furn 0.922
+  drop_thin_all  surf 0.979 var 0.958 furn 0.832
+  shift1         surf 0.935 var 0.874 furn 0.517
+  thicken6       surf 0.896 var 0.824 furn 0.563
+  thicken_h      surf 0.920 var 0.863 furn 0.633
+  thicken_v      surf 0.967 var 0.940 furn 0.823
+  2x2x1_tau0.25       605 B  surf 0.871 var 0.791 furn 0.712  R 1.000 P 0.565 FN/FP 0.00 FPadj 0.80  rec thin_xy 1.00 thin_z 1.00 bulk 1.00
+  2x2x1_tau0.5        581 B  surf 0.887 var 0.812 furn 0.764  R 0.861 P 0.696 FN/FP 0.37 FPadj 0.98  rec thin_xy 0.43 thin_z 0.95 bulk 0.91
+  2x2x1_tau0.75       536 B  surf 0.853 var 0.703 furn 0.638  R 0.491 P 0.983 FN/FP 58.72 FPadj 0.99  rec thin_xy 0.11 thin_z 0.74 bulk 0.50
+  1x1x2_tau0.5        955 B  surf 0.847 var 0.753 furn 0.448  R 1.000 P 0.297 FN/FP 0.00 FPadj 0.13  rec thin_xy 1.00 thin_z 1.00 bulk 1.00
+  2x2x2_tau0.5        436 B  surf 0.763 var 0.641 furn 0.351  R 0.765 P 0.239 FN/FP 0.10 FPadj 0.19  rec thin_xy 0.43 thin_z 0.66 bulk 0.84
+  1x1x4_tau0.5        570 B  surf 0.664 var 0.900 furn 0.685  R 0.743 P 0.636 FN/FP 0.61 FPadj 0.23  rec thin_xy 0.95 thin_z 0.06 bulk 0.85
+  4x4x1_tau0.5        249 B  surf 0.785 var 0.587 furn 0.466  R 0.429 P 0.668 FN/FP 2.67 FPadj 0.67  rec thin_xy 0.09 thin_z 0.72 bulk 0.42
+
+=== hop 8
+  drop_thin_xy   surf 0.992 var 0.986 furn 0.952
+  drop_thin_z    surf 0.988 var 0.981 furn 0.933
+  drop_thin_all  surf 0.978 var 0.964 furn 0.868
+  shift1         surf 0.930 var 0.884 furn 0.566
+  thicken6       surf 0.881 var 0.821 furn 0.567
+  thicken_h      surf 0.909 var 0.861 furn 0.638
+  thicken_v      surf 0.962 var 0.940 furn 0.821
+  2x2x1_tau0.25      1319 B  surf 0.864 var 0.798 furn 0.721  R 1.000 P 0.567 FN/FP 0.00 FPadj 0.82  rec thin_xy 1.00 thin_z 1.00 bulk 1.00
+  2x2x1_tau0.5       1295 B  surf 0.880 var 0.817 furn 0.770  R 0.874 P 0.691 FN/FP 0.32 FPadj 0.98  rec thin_xy 0.40 thin_z 0.96 bulk 0.92
+  2x2x1_tau0.75      1173 B  surf 0.845 var 0.725 furn 0.654  R 0.497 P 0.976 FN/FP 41.40 FPadj 0.99  rec thin_xy 0.10 thin_z 0.73 bulk 0.51
+  1x1x2_tau0.5       1947 B  surf 0.858 var 0.790 furn 0.542  R 1.000 P 0.351 FN/FP 0.00 FPadj 0.17  rec thin_xy 1.00 thin_z 1.00 bulk 1.00
+  2x2x2_tau0.5        942 B  surf 0.770 var 0.673 furn 0.434  R 0.801 P 0.284 FN/FP 0.10 FPadj 0.25  rec thin_xy 0.42 thin_z 0.71 bulk 0.87
+  1x1x4_tau0.5       1115 B  surf 0.705 var 0.914 furn 0.761  R 0.766 P 0.669 FN/FP 0.62 FPadj 0.27  rec thin_xy 0.96 thin_z 0.08 bulk 0.86
+  4x4x1_tau0.5        559 B  surf 0.774 var 0.622 furn 0.488  R 0.445 P 0.565 FN/FP 1.62 FPadj 0.49  rec thin_xy 0.06 thin_z 0.74 bulk 0.44
