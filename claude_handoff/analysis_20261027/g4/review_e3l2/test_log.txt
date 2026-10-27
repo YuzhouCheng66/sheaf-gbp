@@ -1,0 +1,38 @@
+Tue Oct 27 17:46:17 UTC 2026
+ok test_chain_script_guards
+ok test_choose_k_rule
+ok test_e3r_is_special_case
+E3-R train seed 342101: 1 train / 1 holdout houses, 340115 parameters, evidence c:C:\Users\27118\AppData\Local\Temp\tmpijm9jj0q\fit.json:A:cam_nf, load 0s
+upd1 loss 1.72495 grad 1.537 lr 1.00e-03 1s
+upd2 loss 1.27046 grad 1.043 lr 5.00e-04 2s
+  holdout bce 1.32107
+threshold t 1.60 (bin 2080): holdout R8 pooled furn F1 0.1404 free 0.4936 | linear B6_A 0.1227 free 0.3611 | K0 0.1188 (own t 1.60: 0.1188; linear 0.1040, own theta 37: 0.1188) | 1 holdout houses
+E3-R train seed 342101 done: 2 updates (complete), rate 0.03689265251159668 s/update, 2s
+E3-L2 train seed 342101: 1 train / 1 holdout houses, 139860 parameters, evidence c:C:\Users\27118\AppData\Local\Temp\tmpijm9jj0q\fit.json:A:cam_nf, load 0s
+upd1 bce 1.38624 (known 0.69328 occ 0.69295) src 696 bit support 32/32 w 1000.86 grad 0.310 lr 1.00e-03 0s
+upd2 bce 1.38473 (known 0.69287 occ 0.69186) src 703 bit support 32/32 w 1001.56 grad 0.386 lr 8.54e-04 0s
+upd3 bce 1.38261 (known 0.69237 occ 0.69024) src 703 bit support 32/32 w 1001.56 grad 0.575 lr 5.00e-04 0s
+upd4 bce 1.37996 (known 0.69213 occ 0.68783) src 793 bit support 32/32 w 1001.67 grad 0.786 lr 1.46e-04 0s
+  holdout bce known 0.69198 occ 0.68731
+E3-L2 train seed 342101 done: 4 updates (complete), rate 0.03710651397705078 s/update (cv 0.12109666144079775, WARNING window CV 0.121 >= 0.1: rate = median of 2 windows), w 1001.67, snapshot 3, 0s
+{"342101": {"R8": {"free": 0.4935602575896964, "fpr": 0.0, "furn_f1": 0.14042553191489363, "counts": [1073, 2174, 0, 4908, 66, 740, 68]}, "bytes_median": 3813.8592183640394}}
+E3-L2 kselect seed 342101 final: K* 2048 | 128:0.108 192:0.108 256:0.108 384:0.108 512:0.108 768:0.108 1024:0.108 1536:0.108 2048:0.108
+E3-L2 select seed 342101 final: K* 2048 R8 {"128": [0.020000000000003126, -40.0, 0.0, false], "192": [0.020000000000003126, -40.0, 0.0, false], "256": [0.020000000000003126, -40.0, 0.0, false], "384": [0.020000000000003126, -40.0, 0.0, false], "512": [0.020000000000003126, -40.0, 0.0, false], "768": [0.020000000000003126, -40.0, 0.0, false], "1024": [0.020000000000003126, -40.0, 0.0, false], "1536": [0.020000000000003126, -40.0, 0.0, false], "2048": [0.020000000000003126, -40.0, 0.0, false]} K0 fallback True 5s
+E3-L2 kselect seed 342101 upd3: K* 2048 | 128:0.107 192:0.107 256:0.107 384:0.107 512:0.107 768:0.107 1024:0.107 1536:0.107 2048:0.107
+E3-L2 select seed 342101 upd3: K* 2048 R8 {"2048": [0.020000000000003126, -40.0, 0.0, false]} K0 fallback True 5s
+E3-L2 kselect seed 342101 upd3: K* None | 128:0.107 192:0.107 256:0.107 384:0.107 512:0.107 768:0.107 1024:0.107 1536:0.107 2048:0.107
+kselect: no K with median ratio <= 0.12; thresholds at the smallest K 128 for the report (the verdict is INCOMPLETE)
+E3-L2 select seed 342101 upd3: K* 128 R8 {"128": [0.020000000000003126, -40.0, 0.0, false]} K0 fallback True 5s
+ok test_end_to_end_tiny
+ok test_forward_equals_e3l_when_unconstrained
+ok test_gabp_exact_on_selected_cells
+ok test_k_sampling
+ok test_padding_not_in_gabp_and_fixed_shape
+ok test_selected_lamq_at_least_one
+ok test_step_rate
+ok test_threshold_rules
+ok test_topk_and_clamp_ste
+ok test_verdict_d8_59
+13/13 passed
+exit 0
+Tue Oct 27 17:46:49 UTC 2026

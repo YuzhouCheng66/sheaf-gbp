@@ -1,0 +1,6 @@
+manifest sha pin: fired: AssertionError('cache manifest sha 60030a54c0413190f4adad40a72cb6dd376d42a2f6c1a4d961ab4b5de98ab663 != pinned 00000000000000000000000000000000000000000000000000
+pairing (table B vs E3-R 342101): fired: AssertionError('evidence != paired E3-R checkpoint evidence')
+seed not a training seed: fired: AssertionError('training seed 7 not in (342101, 342202)')
+kselect: holdout houses != control file: fired: AssertionError('holdout houses != the control file')
+select: run table != paired control table: fired: AssertionError('run evidence table != paired control table')
+--bytes-max outside the smoke: fired: AssertionError('--bytes-max is for the smoke only')

@@ -1,0 +1,2 @@
+fix_check: 50/50 random cases: forward bit-identical to g4_e3l2.source_topk; gradients identical inside the bounds, one-sided outside
+fix_check M1: 50/50 random cases: Lam_q and selection identical to g4_e3l2; h_q identical on selected cells with 1 <= Lam <= 15

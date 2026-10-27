@@ -1,0 +1,101 @@
+== base (24 updates)
+ 1 loss 1.386 occ 0.693 | grad 0.5 (dec 0.5 enc.net 0.0) | raw Lam sel med 4.67 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.07 |h|max 14 | |z|max 2.8
+ 2 loss 1.386 occ 0.693 | grad 0.5 (dec 0.5 enc.net 0.0) | raw Lam sel med 6.24 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.20 |h|max 18 | |z|max 3.0
+ 3 loss 1.383 occ 0.690 | grad 0.9 (dec 0.9 enc.net 0.0) | raw Lam sel med 7.74 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.39 |h|max 34 | |z|max 4.4
+ 4 loss 1.370 occ 0.676 | grad 3.0 (dec 3.0 enc.net 0.3) | raw Lam sel med 7.42 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.62 |h|max 57 | |z|max 7.4
+ 5 loss 1.335 occ 0.644 | grad 5.8 (dec 5.4 enc.net 1.9) | raw Lam sel med 10.07 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.88 |h|max 138 | |z|max 13.2
+ 6 loss 1.214 occ 0.530 | grad 12.9 (dec 10.2 enc.net 7.4) | raw Lam sel med 15.93 >15.5 0.58 <0.5 0.00 | |h|>7.5 0.98 |h|max 443 | |z|max 24.2
+ 7 loss 1.039 occ 0.360 | grad 28.9 (dec 8.5 enc.net 25.6) | raw Lam sel med 32.77 >15.5 1.00 <0.5 0.00 | |h|>7.5 1.00 |h|max 1367 | |z|max 40.8
+ 8 loss 1.677 occ 0.684 | grad 406.7 (dec 77.2 enc.net 364.0) | raw Lam sel med 51.81 >15.5 1.00 <0.5 0.00 | |h|>7.5 1.00 |h|max 3756 | |z|max 64.7
+ 9 loss 2.962 occ 1.490 | grad 1270.0 (dec 162.8 enc.net 1142.9) | raw Lam sel med 53.68 >15.5 1.00 <0.5 0.00 | |h|>7.5 1.00 |h|max 4410 | |z|max 74.7
+10 loss 4.550 occ 2.233 | grad 1302.2 (dec 263.7 enc.net 1142.8) | raw Lam sel med 41.02 >15.5 1.00 <0.5 0.00 | |h|>7.5 1.00 |h|max 3429 | |z|max 74.9
+11 loss 8.818 occ 4.902 | grad 1352.3 (dec 482.5 enc.net 1106.7) | raw Lam sel med 20.42 >15.5 0.69 <0.5 0.00 | |h|>7.5 0.99 |h|max 1894 | |z|max 70.5
+12 loss 8.265 occ 4.996 | grad 2283.3 (dec 436.8 enc.net 1890.4) | raw Lam sel med 6.60 >15.5 0.00 <0.5 0.00 | |h|>7.5 1.00 |h|max 555 | |z|max 64.8
+13 loss 19.760 occ 12.489 | grad 1111.3 (dec 1084.7 enc.net 209.5) | raw Lam sel med 0.60 >15.5 0.00 <0.5 0.42 | |h|>7.5 0.13 |h|max 32 | |z|max 59.0
+14 loss 4.171 occ 2.308 | grad 269.3 (dec 265.7 enc.net 37.3) | raw Lam sel med 0.07 >15.5 0.00 <0.5 0.94 | |h|>7.5 0.00 |h|max 7 | |z|max 53.8
+15 loss 2.147 occ 1.015 | grad 128.6 (dec 128.5 enc.net 3.4) | raw Lam sel med 0.01 >15.5 0.00 <0.5 0.99 | |h|>7.5 0.00 |h|max 4 | |z|max 50.0
+16 loss 1.675 occ 0.755 | grad 76.9 (dec 76.8 enc.net 0.7) | raw Lam sel med 0.01 >15.5 0.00 <0.5 1.00 | |h|>7.5 0.00 |h|max 2 | |z|max 47.8
+17 loss 1.175 occ 0.426 | grad 27.5 (dec 27.5 enc.net 0.2) | raw Lam sel med 0.01 >15.5 0.00 <0.5 0.99 | |h|>7.5 0.00 |h|max 2 | |z|max 46.4
+18 loss 1.132 occ 0.429 | grad 14.4 (dec 14.4 enc.net 0.1) | raw Lam sel med 0.00 >15.5 0.00 <0.5 1.00 | |h|>7.5 0.00 |h|max 2 | |z|max 45.5
+19 loss 1.134 occ 0.430 | grad 13.0 (dec 13.0 enc.net 0.0) | raw Lam sel med 0.00 >15.5 0.00 <0.5 1.00 | |h|>7.5 0.00 |h|max 1 | |z|max 45.0
+20 loss 1.075 occ 0.377 | grad 5.2 (dec 5.2 enc.net 0.0) | raw Lam sel med 0.00 >15.5 0.00 <0.5 1.00 | |h|>7.5 0.00 |h|max 1 | |z|max 44.7
+21 loss 1.074 occ 0.375 | grad 7.0 (dec 7.0 enc.net 0.0) | raw Lam sel med 0.00 >15.5 0.00 <0.5 1.00 | |h|>7.5 0.00 |h|max 1 | |z|max 44.5
+22 loss 1.039 occ 0.348 | grad 2.6 (dec 2.6 enc.net 0.0) | raw Lam sel med 0.00 >15.5 0.00 <0.5 1.00 | |h|>7.5 0.00 |h|max 1 | |z|max 44.4
+23 loss 1.097 occ 0.399 | grad 10.3 (dec 10.3 enc.net 0.0) | raw Lam sel med 0.01 >15.5 0.00 <0.5 1.00 | |h|>7.5 0.00 |h|max 1 | |z|max 44.2
+24 loss 1.104 occ 0.411 | grad 4.5 (dec 4.5 enc.net 0.0) | raw Lam sel med 0.00 >15.5 0.00 <0.5 1.00 | |h|>7.5 0.00 |h|max 1 | |z|max 44.3
+holdout (known, occ): holdout 0.7012078762054443 0.3608832061290741
+== upper1s (15 updates)
+ 1 loss 1.386 occ 0.693 | grad 0.5 (dec 0.5 enc.net 0.0) | raw Lam sel med 4.67 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.07 |h|max 14 | |z|max 2.8
+ 2 loss 1.386 occ 0.693 | grad 0.5 (dec 0.5 enc.net 0.0) | raw Lam sel med 6.15 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.18 |h|max 17 | |z|max 2.9
+ 3 loss 1.383 occ 0.690 | grad 1.1 (dec 1.1 enc.net 0.0) | raw Lam sel med 6.38 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.26 |h|max 16 | |z|max 2.8
+ 4 loss 1.365 occ 0.670 | grad 4.1 (dec 4.1 enc.net 0.2) | raw Lam sel med 4.44 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.28 |h|max 11 | |z|max 2.5
+ 5 loss 1.286 occ 0.596 | grad 10.7 (dec 10.6 enc.net 1.1) | raw Lam sel med 2.85 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.05 |h|max 9 | |z|max 3.1
+ 6 loss 1.158 occ 0.481 | grad 8.3 (dec 7.9 enc.net 2.2) | raw Lam sel med 1.68 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.00 |h|max 8 | |z|max 4.8
+ 7 loss 1.096 occ 0.386 | grad 10.1 (dec 10.0 enc.net 0.6) | raw Lam sel med 1.03 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.00 |h|max 4 | |z|max 8.2
+ 8 loss 1.430 occ 0.545 | grad 55.0 (dec 54.8 enc.net 3.5) | raw Lam sel med 0.25 >15.5 0.00 <0.5 0.85 | |h|>7.5 0.00 |h|max 2 | |z|max 12.2
+ 9 loss 1.161 occ 0.407 | grad 26.3 (dec 26.3 enc.net 0.7) | raw Lam sel med 0.03 >15.5 0.00 <0.5 0.99 | |h|>7.5 0.00 |h|max 2 | |z|max 16.8
+10 loss 1.100 occ 0.367 | grad 15.5 (dec 15.5 enc.net 0.0) | raw Lam sel med 0.01 >15.5 0.00 <0.5 1.00 | |h|>7.5 0.00 |h|max 1 | |z|max 22.1
+11 loss 1.079 occ 0.375 | grad 7.6 (dec 7.6 enc.net 0.0) | raw Lam sel med 0.00 >15.5 0.00 <0.5 1.00 | |h|>7.5 0.00 |h|max 1 | |z|max 27.4
+12 loss 1.039 occ 0.345 | grad 6.8 (dec 6.8 enc.net 0.0) | raw Lam sel med 0.00 >15.5 0.00 <0.5 1.00 | |h|>7.5 0.00 |h|max 1 | |z|max 32.4
+13 loss 1.044 occ 0.351 | grad 2.6 (dec 2.6 enc.net 0.0) | raw Lam sel med 0.00 >15.5 0.00 <0.5 1.00 | |h|>7.5 0.00 |h|max 1 | |z|max 36.8
+14 loss 1.024 occ 0.338 | grad 1.9 (dec 1.9 enc.net 0.0) | raw Lam sel med 0.00 >15.5 0.00 <0.5 1.00 | |h|>7.5 0.00 |h|max 0 | |z|max 39.9
+15 loss 0.994 occ 0.326 | grad 4.5 (dec 4.5 enc.net 0.0) | raw Lam sel med 0.00 >15.5 0.00 <0.5 1.00 | |h|>7.5 0.00 |h|max 1 | |z|max 42.3
+holdout (known, occ): stopped early by the reviewer
+== both1s (13 updates)
+ 1 loss 1.386 occ 0.693 | grad 0.5 (dec 0.5 enc.net 0.0) | raw Lam sel med 4.67 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.07 |h|max 14 | |z|max 2.8
+ 2 loss 1.386 occ 0.693 | grad 0.5 (dec 0.5 enc.net 0.0) | raw Lam sel med 6.15 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.18 |h|max 17 | |z|max 2.9
+ 3 loss 1.383 occ 0.690 | grad 1.1 (dec 1.1 enc.net 0.0) | raw Lam sel med 6.38 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.26 |h|max 16 | |z|max 2.8
+ 4 loss 1.365 occ 0.670 | grad 4.1 (dec 4.1 enc.net 0.2) | raw Lam sel med 4.44 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.28 |h|max 11 | |z|max 2.5
+ 5 loss 1.286 occ 0.596 | grad 10.7 (dec 10.6 enc.net 1.1) | raw Lam sel med 2.85 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.05 |h|max 9 | |z|max 3.1
+ 6 loss 1.158 occ 0.481 | grad 8.3 (dec 7.9 enc.net 2.2) | raw Lam sel med 1.68 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.00 |h|max 8 | |z|max 4.8
+ 7 loss 1.096 occ 0.386 | grad 10.1 (dec 10.0 enc.net 0.6) | raw Lam sel med 1.03 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.00 |h|max 4 | |z|max 8.2
+ 8 loss 1.430 occ 0.545 | grad 55.0 (dec 54.8 enc.net 3.5) | raw Lam sel med 0.25 >15.5 0.00 <0.5 0.85 | |h|>7.5 0.00 |h|max 2 | |z|max 12.2
+ 9 loss 1.161 occ 0.407 | grad 26.3 (dec 26.3 enc.net 0.6) | raw Lam sel med 0.03 >15.5 0.00 <0.5 0.99 | |h|>7.5 0.00 |h|max 2 | |z|max 16.8
+10 loss 1.100 occ 0.367 | grad 15.5 (dec 15.5 enc.net 0.0) | raw Lam sel med 0.01 >15.5 0.00 <0.5 1.00 | |h|>7.5 0.00 |h|max 1 | |z|max 21.9
+11 loss 1.079 occ 0.375 | grad 7.7 (dec 7.7 enc.net 0.0) | raw Lam sel med 0.00 >15.5 0.00 <0.5 1.00 | |h|>7.5 0.00 |h|max 1 | |z|max 27.2
+12 loss 1.039 occ 0.346 | grad 6.8 (dec 6.8 enc.net 0.0) | raw Lam sel med 0.00 >15.5 0.00 <0.5 1.00 | |h|>7.5 0.00 |h|max 1 | |z|max 31.9
+13 loss 1.044 occ 0.352 | grad 2.6 (dec 2.6 enc.net 0.0) | raw Lam sel med 0.00 >15.5 0.00 <0.5 1.00 | |h|>7.5 0.00 |h|max 1 | |z|max 36.0
+holdout (known, occ): stopped early by the reviewer
+== noclamp (15 updates)
+ 1 loss 1.386 occ 0.693 | grad 0.5 (dec 0.5 enc.net 0.0) | raw Lam sel med 3.86 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.02 |h|max 14 | |z|max 2.8
+ 2 loss 1.385 occ 0.692 | grad 0.8 (dec 0.8 enc.net 0.0) | raw Lam sel med 3.94 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.01 |h|max 11 | |z|max 2.4
+ 3 loss 1.380 occ 0.687 | grad 2.1 (dec 2.1 enc.net 0.1) | raw Lam sel med 4.45 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.11 |h|max 16 | |z|max 2.9
+ 4 loss 1.343 occ 0.651 | grad 8.0 (dec 7.9 enc.net 0.3) | raw Lam sel med 5.38 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.46 |h|max 46 | |z|max 6.4
+ 5 loss 1.045 occ 0.387 | grad 27.3 (dec 27.2 enc.net 1.5) | raw Lam sel med 7.17 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.86 |h|max 153 | |z|max 15.6
+ 6 loss 1.383 occ 0.692 | grad 71.1 (dec 70.9 enc.net 4.6) | raw Lam sel med 9.29 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.95 |h|max 429 | |z|max 33.2
+ 7 loss 1.251 occ 0.587 | grad 59.0 (dec 58.8 enc.net 4.0) | raw Lam sel med 10.49 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.95 |h|max 563 | |z|max 38.5
+ 8 loss 1.038 occ 0.395 | grad 25.2 (dec 25.1 enc.net 1.8) | raw Lam sel med 9.02 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.93 |h|max 469 | |z|max 35.5
+ 9 loss 0.884 occ 0.276 | grad 12.4 (dec 12.3 enc.net 0.4) | raw Lam sel med 7.59 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.89 |h|max 306 | |z|max 28.8
+10 loss 0.934 occ 0.304 | grad 14.0 (dec 14.0 enc.net 1.2) | raw Lam sel med 6.90 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.84 |h|max 253 | |z|max 25.6
+11 loss 0.932 occ 0.312 | grad 13.2 (dec 13.2 enc.net 1.1) | raw Lam sel med 7.30 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.85 |h|max 283 | |z|max 26.4
+12 loss 0.867 occ 0.264 | grad 9.4 (dec 9.4 enc.net 0.8) | raw Lam sel med 8.64 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.90 |h|max 375 | |z|max 30.0
+13 loss 0.826 occ 0.270 | grad 5.7 (dec 5.7 enc.net 0.1) | raw Lam sel med 9.84 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.92 |h|max 544 | |z|max 35.7
+14 loss 0.847 occ 0.289 | grad 9.8 (dec 9.8 enc.net 0.7) | raw Lam sel med 11.64 >15.5 0.24 <0.5 0.00 | |h|>7.5 0.94 |h|max 736 | |z|max 41.2
+15 loss 0.858 occ 0.277 | grad 10.6 (dec 10.6 enc.net 0.8) | raw Lam sel med 12.41 >15.5 0.31 <0.5 0.00 | |h|>7.5 0.94 |h|max 840 | |z|max 43.5
+holdout (known, occ): stopped early by the reviewer
+== cons1s (24 updates)
+ 1 loss 1.386 occ 0.693 | grad 0.5 (dec 0.5 enc.net 0.0) | raw Lam sel med 4.67 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.07 |h|max 14 | |z|max 2.8
+ 2 loss 1.386 occ 0.693 | grad 0.5 (dec 0.5 enc.net 0.0) | raw Lam sel med 6.15 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.18 |h|max 17 | |z|max 2.9
+ 3 loss 1.383 occ 0.690 | grad 1.1 (dec 1.1 enc.net 0.0) | raw Lam sel med 6.38 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.26 |h|max 16 | |z|max 2.8
+ 4 loss 1.365 occ 0.670 | grad 4.1 (dec 4.1 enc.net 0.2) | raw Lam sel med 4.44 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.28 |h|max 11 | |z|max 2.5
+ 5 loss 1.286 occ 0.596 | grad 10.7 (dec 10.6 enc.net 1.1) | raw Lam sel med 2.85 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.05 |h|max 9 | |z|max 3.1
+ 6 loss 1.158 occ 0.481 | grad 8.3 (dec 7.9 enc.net 2.2) | raw Lam sel med 1.68 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.00 |h|max 8 | |z|max 4.8
+ 7 loss 1.098 occ 0.387 | grad 10.3 (dec 10.3 enc.net 0.6) | raw Lam sel med 1.03 >15.5 0.00 <0.5 0.00 | |h|>7.5 0.00 |h|max 4 | |z|max 8.2
+ 8 loss 2.662 occ 1.492 | grad 151.5 (dec 150.6 enc.net 15.6) | raw Lam sel med 0.28 >15.5 0.00 <0.5 0.81 | |h|>7.5 0.00 |h|max 2 | |z|max 12.0
+ 9 loss 2.357 occ 1.388 | grad 133.0 (dec 132.3 enc.net 13.2) | raw Lam sel med 0.14 >15.5 0.00 <0.5 0.93 | |h|>7.5 0.00 |h|max 2 | |z|max 13.4
+10 loss 1.385 occ 0.647 | grad 36.7 (dec 36.4 enc.net 4.2) | raw Lam sel med 0.27 >15.5 0.00 <0.5 0.83 | |h|>7.5 0.00 |h|max 2 | |z|max 13.3
+11 loss 1.222 occ 0.527 | grad 13.1 (dec 13.0 enc.net 2.1) | raw Lam sel med 0.13 >15.5 0.00 <0.5 0.82 | |h|>7.5 0.00 |h|max 2 | |z|max 12.2
+12 loss 1.076 occ 0.385 | grad 3.0 (dec 3.0 enc.net 0.2) | raw Lam sel med 0.20 >15.5 0.00 <0.5 0.75 | |h|>7.5 0.00 |h|max 2 | |z|max 10.5
+13 loss 1.128 occ 0.435 | grad 7.2 (dec 7.1 enc.net 0.7) | raw Lam sel med 0.49 >15.5 0.00 <0.5 0.51 | |h|>7.5 0.00 |h|max 2 | |z|max 9.5
+14 loss 1.121 occ 0.429 | grad 6.8 (dec 6.8 enc.net 0.6) | raw Lam sel med 0.50 >15.5 0.00 <0.5 0.50 | |h|>7.5 0.00 |h|max 1 | |z|max 9.5
+15 loss 1.076 occ 0.386 | grad 5.4 (dec 5.4 enc.net 0.3) | raw Lam sel med 0.40 >15.5 0.00 <0.5 0.62 | |h|>7.5 0.00 |h|max 1 | |z|max 10.0
+16 loss 1.085 occ 0.404 | grad 6.5 (dec 6.5 enc.net 0.1) | raw Lam sel med 0.48 >15.5 0.00 <0.5 0.54 | |h|>7.5 0.00 |h|max 2 | |z|max 10.6
+17 loss 1.027 occ 0.336 | grad 3.8 (dec 3.8 enc.net 0.1) | raw Lam sel med 0.56 >15.5 0.00 <0.5 0.37 | |h|>7.5 0.00 |h|max 2 | |z|max 11.1
+18 loss 1.081 occ 0.357 | grad 17.1 (dec 17.1 enc.net 1.7) | raw Lam sel med 0.31 >15.5 0.00 <0.5 0.75 | |h|>7.5 0.00 |h|max 1 | |z|max 11.6
+19 loss 1.160 occ 0.438 | grad 21.8 (dec 21.6 enc.net 2.8) | raw Lam sel med 0.18 >15.5 0.00 <0.5 0.82 | |h|>7.5 0.00 |h|max 2 | |z|max 11.6
+20 loss 1.134 occ 0.419 | grad 16.6 (dec 16.4 enc.net 2.1) | raw Lam sel med 0.24 >15.5 0.00 <0.5 0.74 | |h|>7.5 0.00 |h|max 1 | |z|max 11.3
+21 loss 1.053 occ 0.368 | grad 5.6 (dec 5.5 enc.net 1.1) | raw Lam sel med 0.55 >15.5 0.00 <0.5 0.43 | |h|>7.5 0.00 |h|max 1 | |z|max 11.0
+22 loss 1.069 occ 0.342 | grad 18.2 (dec 18.1 enc.net 1.5) | raw Lam sel med 0.30 >15.5 0.00 <0.5 0.66 | |h|>7.5 0.00 |h|max 2 | |z|max 10.7
+23 loss 1.035 occ 0.371 | grad 8.9 (dec 8.9 enc.net 0.7) | raw Lam sel med 0.67 >15.5 0.00 <0.5 0.24 | |h|>7.5 0.00 |h|max 1 | |z|max 10.6
+24 loss 1.202 occ 0.485 | grad 22.4 (dec 22.1 enc.net 3.1) | raw Lam sel med 0.26 >15.5 0.00 <0.5 0.75 | |h|>7.5 0.00 |h|max 2 | |z|max 10.5
+holdout (known, occ): holdout 0.6370548009872437 0.3991725742816925
