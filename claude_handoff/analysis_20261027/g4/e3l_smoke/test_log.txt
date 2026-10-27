@@ -1,0 +1,41 @@
+ok test_chain_script_guards
+ok test_closed_form_scope_tiny_precision
+ok test_constants_d8_54
+ok test_dual_step_bounded
+ok test_e3r_is_special_case
+E3-R train seed 342101: 1 train / 1 holdout houses, 340115 parameters, evidence c:C:\Users\27118\AppData\Local\Temp\tmpiopx4lyl\fit.json:A:cam_nf, load 0s
+upd1 loss 1.59285 grad 1.389 lr 1.00e-03 8s
+upd2 loss 1.13391 grad 0.852 lr 5.00e-04 8s
+  holdout bce 1.28878
+threshold t 2.16 (bin 2108): holdout R8 pooled furn F1 0.1322 free 0.5584 | linear B6_A 0.1024 free 0.3201 | K0 0.1176 (own t 2.34: 0.1205; linear 0.1033, own theta 44: 0.1203) | 1 holdout houses
+E3-R train seed 342101 done: 2 updates (complete), rate 0.09145998954772949 s/update, 8s
+E3-L train seed 342101: 1 train / 1 holdout houses, 139942 parameters {'enc': 52889, 'dec': 86970, 'ent': 82}, evidence c:C:\Users\27118\AppData\Local\Temp\tmpiopx4lyl\fit.json:A:cam_nf, load 0s
+upd1 bce 1.38624 (known 0.69328 occ 0.69295) R_meas 683 bit (proxy 632) lam 0.0000 support 32/32 w 1000.87 grad 0.309 lr 1.00e-03 0s
+upd2 bce 1.38496 (known 0.69289 occ 0.69207) R_meas 698 bit (proxy 638) lam 0.0000 support 32/32 w 1000.87 grad 0.412 lr 7.50e-04 0s
+upd3 bce 1.38277 (known 0.69253 occ 0.69023) R_meas 698 bit (proxy 634) lam 0.0000 support 32/32 w 1001.06 grad 0.540 lr 2.50e-04 0s
+  holdout bce known 0.69247 occ 0.68911
+thresholds: {"R8": {"t_known": 0.020000000000003126, "j_known": 2001, "fpr": 0.0, "fpr_max": 0.0015, "t_occ": -40.0, "j_occ": 0, "f1": 0.0, "free": 0.0, "free_min": 0.5584176632934683, "feasible": false, "control_furn_f1": 0.13219094247246022}, "K0": {"t_known": 0.020000000000003126, "j_known": 2001, "fpr": 0.0, "fpr_max": 0.0015, "t_occ": -40.0, "j_occ": 0, "f1": 0.0, "free": 0.0, "free_min": 0.5632102272727273, "feasible": false, "control_furn_f1": 0.12048192771084337}, "holdout_houses": 1, "device": "cpu", "tf32": false}
+E3-L train seed 342101 done: 3 updates (complete), rate 0.0936117172241211 s/update, w 1001.06, lam 0.0000, 1s
+E3-L train seed 342101: 1 train / 1 holdout houses, 139942 parameters {'enc': 52889, 'dec': 86970, 'ent': 82}, evidence c:C:\Users\27118\AppData\Local\Temp\tmpiopx4lyl\fit.json:A:cam_nf, load 0s
+upd1 bce 1.38624 (known 0.69328 occ 0.69295) R_meas 683 bit (proxy 632) lam 0.0000 support 32/32 w 1000.87 grad 0.309 lr 1.00e-03 0s
+upd2 bce 1.38496 (known 0.69289 occ 0.69207) R_meas 698 bit (proxy 638) lam 0.0000 support 32/32 w 1000.87 grad 0.412 lr 7.50e-04 0s
+upd3 bce 1.38277 (known 0.69253 occ 0.69023) R_meas 698 bit (proxy 634) lam 0.0000 support 32/32 w 1001.06 grad 0.540 lr 2.50e-04 0s
+  holdout bce known 0.69247 occ 0.68911
+threshold selection FAILED: KeyError('k0')
+E3-L train seed 342101 done: 3 updates (complete), rate 0.08924102783203125 s/update, w 1001.06, lam 0.0000, 1s, threshold selection FAILED (checkpoint kept; run select later)
+{"R8": {"t_known": 0.020000000000003126, "j_known": 2001, "fpr": 0.0, "fpr_max": 0.0015, "t_occ": -40.0, "j_occ": 0, "f1": 0.0, "free": 0.0, "free_min": 0.5584176632934683, "feasible": false, "control_furn_f1": 0.13219094247246022}, "K0": {"t_known": 0.020000000000003126, "j_known": 2001, "fpr": 0.0, "fpr_max": 0.0015, "t_occ": -40.0, "j_occ": 0, "f1": 0.0, "free": 0.0, "free_min": 0.5632102272727273, "feasible": false, "control_furn_f1": 0.12048192771084337}, "holdout_houses": 1, "device": "cpu", "tf32": false}
+ok test_end_to_end_tiny
+ok test_energy_monotone_descent
+ok test_entropy_model_proxy_vs_wire
+ok test_floor_one_sided_straight_through
+ok test_forward_batch_shapes_and_labels
+ok test_gabp_equals_closed_form
+ok test_naive_belief_sequence_not_monotone
+ok test_quantization_roundtrip_and_ste
+ok test_readout_and_selection_logic
+ok test_subtree_sampling_connected
+ok test_support_constraint
+ok test_verdict_d8_54
+ok test_w_infinity_information_weighted_mean
+ok test_wire_coder_sign_stream_brute_force
+19/19 passed

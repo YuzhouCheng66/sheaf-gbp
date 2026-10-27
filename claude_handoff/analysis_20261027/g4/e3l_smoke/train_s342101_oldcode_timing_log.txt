@@ -1,0 +1,5 @@
+E3-L train seed 342101: 2 train / 1 holdout houses, 552685 parameters {'enc': 209449, 'dec': 343154, 'ent': 81}, evidence c:C:/Users/27118/Desktop/sheaf-gbp/experiments/sheaf-gbp-p6-local-skill/claude_handoff/analysis_20261027/review_E3R/inputs/e1c_fit.json:A:cam_nf, load 0s
+upd4 bce 1.38549 (known 0.69296 occ 0.69253) R_hat 416289 bit lam 0.2041 w 1000.91 grad 5.179 lr 3.94e-04 46s
+upd8 bce 1.36924 (known 0.69255 occ 0.67669) R_hat 401234 bit lam 0.4008 w 1002.91 grad 6.409 lr 7.41e-04 80s
+upd12 bce 1.25001 (known 0.70798 occ 0.54203) R_hat 399497 bit lam 0.5965 w 1005.09 grad 37.610 lr 8.25e-04 146s
+upd16 bce 1.23856 (known 0.70451 occ 0.53404) R_hat 398699 bit lam 0.7919 w 1004.18 grad 11.597 lr 6.91e-04 216s

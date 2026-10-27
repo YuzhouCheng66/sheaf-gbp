@@ -1,0 +1,7 @@
+E3-L train seed 342101: 2 train / 1 holdout houses, 552686 parameters {'enc': 209449, 'dec': 343154, 'ent': 82}, evidence c:C:/Users/27118/Desktop/sheaf-gbp/experiments/sheaf-gbp-p6-local-skill/claude_handoff/analysis_20261027/review_E3R/inputs/e1c_fit.json:A:cam_nf, load 0s
+upd4 bce 1.37569 (known 0.69313 occ 0.68256) R_meas 80869 bit (proxy 149599) lam 0.0010 support 3465/3465 w 1002.02 grad 6.684 lr 8.54e-04 73s
+upd8 bce 1.01767 (known 0.63933 occ 0.37834) R_meas 68609 bit (proxy 349410) lam 0.0050 support 2133/3503 w 1003.21 grad 3.280 lr 3.71e-04 139s
+upd12 bce 1.27530 (known 0.68997 occ 0.58533) R_meas 52423 bit (proxy 29864) lam 0.0090 support 233/3187 w 1003.33 grad 5.527 lr 1.70e-05 198s
+  holdout bce known 0.69827 occ 0.61691
+thresholds: {"R8": {"t_known": 0.28000000000000114, "j_known": 2014, "fpr": 0.006455473908308725, "fpr_max": 0.008399410373887707, "t_occ": -0.46000000000000085, "j_occ": 1977, "f1": 0.0, "free": 0.055064758148140616, "free_min": 0.9982005977675213, "feasible": false, "control_furn_f1": 0.9893813187511922}, "K0": {"t_known": 0.20000000000000284, "j_known": 2010, "fpr": 0.0035198288113114933, "fpr_max": 0.0036251139028345486, "t_occ": -0.3200000000000003, "j_occ": 1984, "f1": 0.0, "free": 0.0336469297053051, "free_min": 0.9947522456829002, "feasible": false, "control_furn_f1": 0.9680126466168348}, "holdout_houses": 1, "device": "cpu", "tf32": false}
+E3-L train seed 342101 done: 12 updates (complete), rate 14.872343182563782 s/update, w 1003.33, lam 0.0090, 244s

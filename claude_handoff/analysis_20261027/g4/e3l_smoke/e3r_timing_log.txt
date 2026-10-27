@@ -1,0 +1,10 @@
+E3-R train seed 342101: 2 train / 1 holdout houses, 340115 parameters, evidence c:C:/Users/27118/Desktop/sheaf-gbp/experiments/sheaf-gbp-p6-local-skill/claude_handoff/analysis_20261027/review_E3R/inputs/e1c_fit.json:A:cam_nf, load 0s
+upd2 loss 0.02238 grad 0.005 lr 3.95e-04 9s
+upd4 loss 0.02341 grad 0.010 lr 7.13e-04 16s
+upd6 loss 0.01652 grad 0.008 lr 7.17e-04 23s
+upd8 loss 0.01909 grad 0.021 lr 5.00e-04 30s
+upd10 loss 0.03109 grad 0.062 lr 2.83e-04 37s
+upd12 loss 0.02169 grad 0.102 lr 1.09e-04 44s
+upd14 loss 0.01890 grad 0.072 lr 1.25e-05 55s
+  holdout bce 0.03734
+E3-R train seed 342101 done: 14 updates (complete), rate 3.95065176486969 s/update, 56s

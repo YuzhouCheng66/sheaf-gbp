@@ -1,0 +1,101 @@
+{
+ "format": 1,
+ "script_sha256": "1d65d9a85f8ef0df4bcdb9f44feba9e1e6cae5f0057a6ec6b097d545ad883970",
+ "noise_panels_sha256": "2313d75bc3ee04515d87469ab9e89e49a3811e1125e39ca0bba839448cc8623f",
+ "data_module_sha256": "4793a3279ebd9564315500721e548ab9dd0e10d8f192df632c9b8ddf2964b61d",
+ "houseexpo_index_sha256": "7b4730cc52689c9044228a6f9bf8e1b4785cb5f6f40f54a422e603c6000101c1",
+ "seeds": [
+  200,
+  201
+ ],
+ "holdout_rule": "TRAIN index % 10 == 9",
+ "p_clean_at_train": 0.1,
+ "houses": [
+  {
+   "house": "TRAIN_r1_i0",
+   "rooms": 1,
+   "index": 0,
+   "holdout": false,
+   "agents": 8,
+   "components": [
+    [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7
+    ]
+   ],
+   "file": "TRAIN_r1_i0.npz",
+   "file_sha256": "329b16e8657746ec14726aa1efcd4e71d871d21757b8b9b4f0dd36b48dfbc08c",
+   "file_bytes": 521036,
+   "world_id": "v420:TRAIN:4e2bb8d2699d2949aad2cb259906329e",
+   "seeds": [
+    200,
+    201
+   ]
+  },
+  {
+   "house": "TRAIN_r1_i1",
+   "rooms": 1,
+   "index": 1,
+   "holdout": false,
+   "agents": 8,
+   "components": [
+    [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7
+    ]
+   ],
+   "file": "TRAIN_r1_i1.npz",
+   "file_sha256": "e2f321b6f3b00ff63a7b7b12318e4a94e215fb0a2449ec90c07f5aaf1334c2c8",
+   "file_bytes": 499974,
+   "world_id": "v420:TRAIN:bea006b08e2292fd688dca5de2c12b41",
+   "seeds": [
+    200,
+    201
+   ]
+  },
+  {
+   "house": "TRAIN_r1_i9",
+   "rooms": 1,
+   "index": 9,
+   "holdout": true,
+   "agents": 8,
+   "components": [
+    [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7
+    ]
+   ],
+   "file": "TRAIN_r1_i9.npz",
+   "file_sha256": "6dcca516f98a3bbe151af0d66198627603a66ce87580073aa98dd137296f8032",
+   "file_bytes": 348312,
+   "world_id": "v420:TRAIN:6c7663e39ce03f2e6f08fee6e7fe7d3f",
+   "seeds": [
+    200,
+    201
+   ]
+  }
+ ],
+ "skipped": [],
+ "failed": [],
+ "n_train": 2,
+ "n_holdout": 1,
+ "total_bytes": 1369322
+}

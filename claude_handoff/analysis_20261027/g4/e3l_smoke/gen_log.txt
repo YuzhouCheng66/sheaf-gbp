@@ -1,0 +1,5 @@
+gen: 3 TRAIN houses to do (3 planned), seeds [200, 201], 3 workers
+[1/3] TRAIN_r1_i9  118s 0.33 MB peak 644 MB  127s
+[2/3] TRAIN_r1_i1  121s 0.48 MB peak 652 MB  130s
+[3/3] TRAIN_r1_i0  131s 0.50 MB peak 663 MB  140s
+manifest claude_handoff/analysis_20261027/g4/e3l_smoke/cache\manifest.json sha256 60030a54c0413190f4adad40a72cb6dd376d42a2f6c1a4d961ab4b5de98ab663: 3 houses (2 train / 1 holdout), 1.3 MB, skipped 0, failed 0
