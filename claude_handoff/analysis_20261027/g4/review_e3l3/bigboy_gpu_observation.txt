@@ -1,0 +1,7 @@
+reviewer observation on bigboy (read-only ssh), 2026-10-27 UTC
+22:38:36  nvidia-smi: GPU0/1 = RTX 6000 Ada (GPU-c471e47c..., GPU-f8dd847a...), GPU2/3 = RTX 3090; no compute apps
+22:38:59  load average 1.60 (12 cores, 125 GB RAM, 107 GB available); /home 70,652 MB free (96 %)
+          another project of the same Unix user (skim): /home/skim/stt_mem (forkserver pool of 13 python processes since ~17:10 UTC;
+          'timeout 1500 python sanity_fusion.py' started 22:37 launching short eval_mem.py / diag_fixed.py jobs)
+22:39:15  nvidia-smi --query-compute-apps: GPU-c471e47c (= GPU 0) pid 573165 /home/skim/stt_mem/code/diag_fixed.py 2,310 MiB, GPU 0 util 23 %
+22:40:42  no compute apps (the short job ended)

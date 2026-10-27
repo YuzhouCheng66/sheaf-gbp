@@ -1,0 +1,65 @@
+{
+ "stage": "select",
+ "seed": 342101,
+ "ckpt": "claude_handoff/analysis_20261027/g4/review_e3l3/smoke/runs/s342101\\checkpoints\\final.pt",
+ "ckpt_sha256": "ea6f90cf3b199341215a54704eda7757049fc3a4f6c6b3b1e6cc46444831561a",
+ "ctrl": "C:\\Users\\27118\\Desktop\\sheaf-gbp\\experiments\\sheaf-gbp-p6-local-skill\\claude_handoff\\analysis_20261027\\g4\\e3l2_smoke\\ctrl_holdout.json",
+ "ctrl_sha256": "cde17af11193d66bd0250b36b10d97f536704e80352b7715a85315c99c2724a2",
+ "houses": [
+  "TRAIN_r1_i9"
+ ],
+ "n_houses": 1,
+ "draws": [
+  "cam_nf_s200",
+  "cam_nf_s201"
+ ],
+ "device": "cpu",
+ "R8": {
+  "j_occ": 1974,
+  "t_occ": -0.519999999999996,
+  "f1": 0.00024169184290030211,
+  "free": 0.9960555476485777,
+  "free_min": 0.9957005977675214,
+  "feasible_occ": true,
+  "fpr": 0.006899410373887706,
+  "control": {
+   "free": 0.9982005977675213,
+   "fpr": 0.006899410373887706,
+   "furn_f1": 0.9893813187511922
+  }
+ },
+ "K0": {
+  "j_occ": 1982,
+  "t_occ": -0.35999999999999943,
+  "f1": 0.0,
+  "free": 0.9937536150921756,
+  "free_min": 0.9922522456829003,
+  "feasible_occ": true,
+  "fpr": 0.0021251139028345485,
+  "control": {
+   "free": 0.9947522456829002,
+   "fpr": 0.0021251139028345485,
+   "furn_f1": 0.9680126466168348
+  },
+  "k0_fallback_r8": false
+ },
+ "known_mismatch": 0,
+ "holdout_bytes": {
+  "median_ratio": 0.140327123073878,
+  "max_ratio": 0.14076776094682625,
+  "n": 2,
+  "report_only": true,
+  "median_bytes": 79798.78184280904
+ },
+ "z": {
+  "z_minus": 0.0,
+  "z_zero": 1.0,
+  "z_plus": 0.0,
+  "z_entropy_bits": 0.0,
+  "tanh_saturation": 0.0,
+  "footprint": 937124
+ },
+ "rule": "known = Lam_b > 0 (not selected); occupancy: pooled free recall >= control NET - 0.25 pp, max furniture F1, ties smallest; infeasible -> smallest bin of max free (flag); K0 the same on single agents, infeasible -> the R8 threshold (k0_fallback_r8)",
+ "script_sha256": "c7523cc82f6da04497843e8b00559408d573e20377a8e7b99cc773771751928c",
+ "seconds": 20.955559015274048
+}
