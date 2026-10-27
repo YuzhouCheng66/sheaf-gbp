@@ -1,0 +1,2 @@
+TRAIN_r3_i0 78s maps, 97s total
+TRAIN_r3_i1 85s maps, 105s total

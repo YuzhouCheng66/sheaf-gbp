@@ -1,0 +1,60 @@
+houses 6 ['s2/r1_i0', 's2/r1_i1', 's2/r2_i0', 's2/r2_i1', 's2/r3_i0', 's2/r3_i1']
+
+own map per agent (median, bytes):
+  b4_total               14908.728202610597
+  b4_pub_total           14953.062912820062
+  known                  1560.2415078958416
+  tern                   3017.6906888528397
+  occ_given_known        1237.6600919779348
+  mag_free               6565.115768573591
+  mag_occ                5707.500269974869
+  mag_total              12354.647484230743
+  clean_known            969.1549627546781
+  clean_tern             1109.2535459423402
+  mix_tern               1841.4844700251533
+  known_noise            718.9122566788288
+  occ_noise              983.2749054222672
+  mag_share              0.8050642654642908
+  n_known                87030.0
+  n_known_xor            2545.5
+  n_occ                  11115.0
+  n_occ_clean            9913.5
+  occ_fp_in_free         1294.0
+  occ_in_clean_unknown   1182.0
+  occ_fn                 494.5
+  hist_L_frac            [0.7815, 0.0443, 0.0368, 0.0001, 0.0148, 0.0268, 0.0448, 0.0509]
+
+[pub] mean over houses of R8 metrics; median bytes per house
+  scheme       furn   tol1   surf   var    fpr     free   | relay   CD(up int+down tern)  CD-innov   own(8 agents)
+  tern_join   0.485  0.689  0.791  0.668  0.0279  0.926  |    69981      nan (nan+nan)       nan     24280  
+  vote_k2     0.731  0.916  0.880  0.795  0.0279  0.977  |   172421    89638 (50633+39534)     91972     24359  
+      vote threshold S > -2: furn 0.235 fpr 0.0279 free 0.832
+      vote threshold S > -1: furn 0.681 fpr 0.0279 free 0.956
+      vote threshold S > 1: furn 0.547 fpr 0.0279 free 0.988
+      vote threshold S > 2: furn 0.321 fpr 0.0279 free 0.994
+  k3_occ      0.732  0.920  0.872  0.786  0.0279  0.966  |   255115   110756 (71532+39190)    114380     34126  
+  k3_free     0.680  0.865  0.853  0.758  0.0279  0.954  |   272608   116784 (77518+39834)    119777     34730  
+  k4          0.737  0.918  0.873  0.786  0.0279  0.963  |   319114   134362 (95927+38375)    138217     44190  
+  k8          0.741  0.920  0.873  0.787  0.0279  0.963  |   430914   181792 (141309+38359)    184123     75243  
+  full_div8   0.743  0.923  0.875  0.789  0.0279  0.964  |   448262   194301 (154319+37969)    196785     92834  
+  full        0.742  0.922  0.874  0.788  0.0279  0.964  |   650697   265207 (221061+37925)    267220    129327  62494.42249421096
+
+[truepose] mean over houses of R8 metrics; median bytes per house
+  scheme       furn   tol1   surf   var    fpr     free   | relay   CD(up int+down tern)  CD-innov   own(8 agents)
+  tern_join   0.599  0.749  0.848  0.754  0.0200  0.948  |    72904      nan (nan+nan)       nan     24748  
+  vote_k2     0.871  0.966  0.943  0.911  0.0200  0.989  |   168259    88379 (49733+37397)     89095     24827  
+      vote threshold S > -2: furn 0.258 fpr 0.0200 free 0.849
+      vote threshold S > -1: furn 0.809 fpr 0.0200 free 0.974
+      vote threshold S > 1: furn 0.687 fpr 0.0200 free 0.996
+      vote threshold S > 2: furn 0.425 fpr 0.0200 free 0.998
+  k3_occ      0.875  0.959  0.943  0.906  0.0200  0.985  |   243913   106369 (68415+36810)    109449     33976  
+  k3_free     0.805  0.911  0.912  0.854  0.0200  0.973  |   267831   117476 (76543+39169)    119239     35656  
+  k4          0.868  0.951  0.938  0.897  0.0200  0.982  |   308482   131733 (92912+36276)    134631     44584  
+  k8          0.871  0.953  0.939  0.899  0.0200  0.983  |   420923   179527 (138857+36293)    180849     76218  
+  full_div8   0.876  0.956  0.942  0.903  0.0200  0.984  |   434654   189975 (150333+35898)    191844     92394  
+  full        0.875  0.955  0.941  0.901  0.0200  0.983  |   626277   256105 (213030+35809)    257795    128751  61101.67056472801
+
+paired vote - full [pub] furn pp: mean -1.14, min -8.38, max +4.18; free recall pp mean +1.32
+
+paired vote - full [truepose] furn pp: mean -0.33, min -2.31, max +3.60; free recall pp mean +0.57
+wrote C:\Users\27118\Desktop\sheaf-gbp\experiments\sheaf-gbp-p6-local-skill\claude_handoff\analysis_20261027\review_E1\rb_probe_out\rb_e1_aggregate_s2.json

@@ -1,0 +1,25 @@
+['probe_out\\TRAIN_r1_i20_s7.json', 'probe_out\\TRAIN_r2_i20_s7.json', 'probe_out\\TRAIN_r3_i20_s7.json']
+clean          V3 R8 F1 1.0000 P 1.000 R 1.000
+clean          V3 K0 F1 1.0000 P 1.000 R 1.000
+clean          V1 R8 F1 1.0000 P 1.000 R 1.000
+clean          V1 K0 F1 1.0000 P 1.000 R 1.000
+sig_only       V3 R8 F1 0.9430 P 0.909 R 0.980
+sig_only       V3 K0 F1 0.8414 P 0.777 R 0.918
+drop_only      V3 R8 F1 0.9987 P 1.000 R 0.997
+drop_only      V3 K0 F1 0.9947 P 1.000 R 0.989
+out_only       V3 R8 F1 0.9999 P 1.000 R 1.000
+out_only       V3 K0 F1 0.9997 P 1.000 R 1.000
+range_only     V3 R8 F1 0.9407 P 0.908 R 0.976
+range_only     V3 K0 F1 0.8332 P 0.770 R 0.907
+pose_only      V3 R8 F1 0.9162 P 0.884 R 0.951
+pose_only      V3 K0 F1 0.8342 P 0.770 R 0.910
+cam_nf         V3 R8 F1 0.8797 P 0.826 R 0.941
+cam_nf         V3 K0 F1 0.7541 P 0.671 R 0.861
+cam_nf         V1 R8 F1 0.3755 P 0.233 R 0.967
+cam_nf         V1 K0 F1 0.2954 P 0.177 R 0.894
+nf_minus_sig   V3 R8 F1 0.9170 P 0.889 R 0.947
+nf_minus_sig   V3 K0 F1 0.8298 P 0.770 R 0.899
+nf_minus_drop  V3 R8 F1 0.8818 P 0.827 R 0.944
+nf_minus_drop  V3 K0 F1 0.7630 P 0.679 R 0.871
+nf_minus_out   V3 R8 F1 0.8795 P 0.825 R 0.941
+nf_minus_out   V3 K0 F1 0.7550 P 0.672 R 0.862

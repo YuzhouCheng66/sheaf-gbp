@@ -1,0 +1,10 @@
+TRAIN_r3_i20 clean 21.1 s R8 furn 1.0 K0 furn 1.0
+TRAIN_r3_i20 sig_only 20.3 s R8 furn 0.9452 K0 furn 0.8801
+TRAIN_r3_i20 drop_only 18.9 s R8 furn 0.9991 K0 furn 0.9967
+TRAIN_r3_i20 out_only 23.0 s R8 furn 1.0 K0 furn 0.9998
+TRAIN_r3_i20 range_only 20.7 s R8 furn 0.9448 K0 furn 0.8747
+TRAIN_r3_i20 pose_only 23.4 s R8 furn 0.9017 K0 furn 0.8511
+TRAIN_r3_i20 cam_nf 22.1 s R8 furn 0.8644 K0 furn 0.7926
+TRAIN_r3_i20 nf_minus_sig 22.2 s R8 furn 0.9009 K0 furn 0.8493
+TRAIN_r3_i20 nf_minus_drop 25.1 s R8 furn 0.864 K0 furn 0.7974
+TRAIN_r3_i20 nf_minus_out 22.9 s R8 furn 0.8643 K0 furn 0.7925

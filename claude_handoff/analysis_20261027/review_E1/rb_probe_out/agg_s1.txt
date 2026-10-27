@@ -1,0 +1,60 @@
+houses 9 ['s1/r1_i0', 's1/r1_i1', 's1/r1_i2', 's1/r2_i0', 's1/r2_i1', 's1/r2_i2', 's1/r3_i0', 's1/r3_i1', 's1/r3_i2']
+
+own map per agent (median, bytes):
+  b4_total               14573.763114990958
+  b4_pub_total           14688.92301965511
+  known                  1536.4436058383387
+  tern                   2816.537974157711
+  occ_given_known        1192.6394281781754
+  mag_free               6238.386800494925
+  mag_occ                5734.388140305119
+  mag_total              11862.575580662007
+  clean_known            993.8230737341024
+  clean_tern             1116.4439829193234
+  mix_tern               1812.2538480657854
+  known_noise            618.7129942027128
+  occ_noise              909.6561542449986
+  mag_share              0.8000986996607051
+  n_known                82660.5
+  n_known_xor            2336.5
+  n_occ                  11211.0
+  n_occ_clean            9589.5
+  occ_fp_in_free         1197.5
+  occ_in_clean_unknown   996.5
+  occ_fn                 432.5
+  hist_L_frac            [0.7761, 0.0457, 0.0385, 0.0001, 0.0151, 0.0267, 0.0458, 0.052]
+
+[pub] mean over houses of R8 metrics; median bytes per house
+  scheme       furn   tol1   surf   var    fpr     free   | relay   CD(up int+down tern)  CD-innov   own(8 agents)
+  tern_join   0.465  0.687  0.770  0.648  0.0293  0.915  |    66534      nan (nan+nan)       nan     23264  
+  vote_k2     0.684  0.888  0.851  0.754  0.0293  0.969  |   154005    88359 (46678+37680)     88898     23344  
+      vote threshold S > -2: furn 0.217 fpr 0.0293 free 0.784
+      vote threshold S > -1: furn 0.646 fpr 0.0293 free 0.951
+      vote threshold S > 1: furn 0.476 fpr 0.0293 free 0.986
+      vote threshold S > 2: furn 0.269 fpr 0.0293 free 0.991
+  k3_occ      0.682  0.887  0.848  0.751  0.0293  0.960  |   240035   111722 (65922+37162)    114074     33257  
+  k3_free     0.647  0.852  0.839  0.738  0.0293  0.951  |   243523   112124 (72769+38480)    114453     31847  
+  k4          0.686  0.886  0.849  0.753  0.0293  0.956  |   291279   132788 (88361+36986)    135343     41891  
+  k8          0.689  0.889  0.849  0.753  0.0293  0.956  |   398162   181474 (131511+36976)    184067     73646  
+  full_div8   0.693  0.892  0.851  0.756  0.0293  0.958  |   415123   194232 (144943+36682)    196925     91947  
+  full        0.692  0.891  0.851  0.756  0.0293  0.957  |   617902   259223 (206783+36783)    260529    125439  57497.530991948646
+
+[truepose] mean over houses of R8 metrics; median bytes per house
+  scheme       furn   tol1   surf   var    fpr     free   | relay   CD(up int+down tern)  CD-innov   own(8 agents)
+  tern_join   0.619  0.784  0.843  0.754  0.0177  0.944  |    68446      nan (nan+nan)       nan     23490  
+  vote_k2     0.870  0.966  0.939  0.908  0.0177  0.987  |   145003    84220 (45331+36203)     86162     23569  
+      vote threshold S > -2: furn 0.241 fpr 0.0177 free 0.801
+      vote threshold S > -1: furn 0.821 fpr 0.0177 free 0.974
+      vote threshold S > 1: furn 0.647 fpr 0.0177 free 0.996
+      vote threshold S > 2: furn 0.421 fpr 0.0177 free 0.998
+  k3_occ      0.876  0.961  0.941  0.906  0.0177  0.984  |   220971   102987 (62505+35270)    107067     33113  
+  k3_free     0.821  0.924  0.917  0.865  0.0177  0.973  |   232204   108817 (72292+37488)    112138     32313  
+  k4          0.870  0.955  0.937  0.898  0.0177  0.981  |   273547   124753 (85827+35561)    128755     41825  
+  k8          0.871  0.955  0.937  0.899  0.0177  0.981  |   381841   173567 (128042+35825)    177572     73737  
+  full_div8   0.875  0.958  0.940  0.903  0.0177  0.982  |   395640   184275 (140236+35450)    188544     90631  
+  full        0.874  0.956  0.939  0.902  0.0177  0.982  |   583822   250273 (199215+35458)    250073    125043  56636.27950701439
+
+paired vote - full [pub] furn pp: mean -0.85, min -5.82, max +1.59; free recall pp mean +1.17
+
+paired vote - full [truepose] furn pp: mean -0.44, min -2.66, max +2.99; free recall pp mean +0.52
+wrote C:\Users\27118\Desktop\sheaf-gbp\experiments\sheaf-gbp-p6-local-skill\claude_handoff\analysis_20261027\review_E1\rb_probe_out\rb_e1_aggregate_s1.json
