@@ -1,0 +1,64 @@
+{
+ "G32_b13.63": {
+  "k0_pooled_median": 330.0176661238796,
+  "conv_pooled_median": 623.3047647102443,
+  "cd_collect_msg_median": 446.80048565014624,
+  "cd_distribute_msg_median": 574.0657052229835,
+  "k0_evid_median": 184.5,
+  "conv_evid_median": 357.5,
+  "cd_up_stalks_median": 251.5,
+  "cd_down_stalks_median": 320.5
+ },
+ "G32_b10.0": {
+  "k0_pooled_median": 246.30079112387966,
+  "conv_pooled_median": 459.95476471024426,
+  "cd_collect_msg_median": 332.6823606501462,
+  "cd_distribute_msg_median": 428.4119552229836,
+  "k0_evid_median": 184.5,
+  "conv_evid_median": 357.5,
+  "cd_up_stalks_median": 251.5,
+  "cd_down_stalks_median": 320.5
+ },
+ "G32_b7.0": {
+  "k0_pooled_median": 177.11329112387966,
+  "conv_pooled_median": 324.95476471024426,
+  "cd_collect_msg_median": 238.36986065014622,
+  "cd_distribute_msg_median": 308.0369552229836,
+  "k0_evid_median": 184.5,
+  "conv_evid_median": 357.5,
+  "cd_up_stalks_median": 251.5,
+  "cd_down_stalks_median": 320.5
+ },
+ "G32_cd_share_collect": 0.47891717047248644,
+ "G64_b13.63": {
+  "k0_pooled_median": 1146.2300848777973,
+  "conv_pooled_median": 2311.8646835268746,
+  "cd_collect_msg_median": 1639.5270794286516,
+  "cd_distribute_msg_median": 2133.690344586462,
+  "k0_evid_median": 658.0,
+  "conv_evid_median": 1340.0,
+  "cd_up_stalks_median": 937.5,
+  "cd_down_stalks_median": 1219.0
+ },
+ "G64_b10.0": {
+  "k0_pooled_median": 846.9819598777972,
+  "conv_pooled_median": 1703.8396835268743,
+  "cd_collect_msg_median": 1214.1364544286516,
+  "cd_distribute_msg_median": 1580.5690945864615,
+  "k0_evid_median": 658.0,
+  "conv_evid_median": 1340.0,
+  "cd_up_stalks_median": 937.5,
+  "cd_down_stalks_median": 1219.0
+ },
+ "G64_b7.0": {
+  "k0_pooled_median": 601.3224722197536,
+  "conv_pooled_median": 1201.3396835268743,
+  "cd_collect_msg_median": 861.2527732987719,
+  "cd_distribute_msg_median": 1123.4440945864615,
+  "k0_evid_median": 658.0,
+  "conv_evid_median": 1340.0,
+  "cd_up_stalks_median": 937.5,
+  "cd_down_stalks_median": 1219.0
+ },
+ "G64_cd_share_collect": 0.47001124256082843
+}

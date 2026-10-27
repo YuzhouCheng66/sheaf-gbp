@@ -1,0 +1,168 @@
+ladder_steps
+  two_cycle
+    inc_16_32_pp: 17.7500
+    inc_32_64_pp: 9.1300
+    gap_ratio_16_32: 0.7090
+    gap_ratio_32_64: 0.7784
+    alpha_16_32: 0.2481
+    alpha_32_64: 0.1807
+  16k
+    inc_16_32_pp: 12.0000
+    inc_32_64_pp: 7.7550
+    gap_ratio_16_32: 0.8273
+    gap_ratio_32_64: 0.8651
+furn_128_extrapolation
+  A_increment_shrinks_as_before: 0.7262
+  B_gap_ratio_trend(+0.07): 0.7281
+  B2_gap_ratio_constant: 0.7503
+  C_16k_increment_ratio: 0.7383
+  D_optimistic_gap_ratio_back_to_16_32: 0.7726
+other_metrics_128_extrapolation
+  R8_surface_VAL
+    x: 0.9087
+    z2: 0.9288
+    gap_ratio: 0.7803
+    next_if_ratio_same: 0.9444
+    next_if_ratio_0p88: 0.9373
+  K0_fresh
+    x: 0.9372
+    z2: 0.9496
+    gap_ratio: 0.8018
+    next_if_ratio_same: 0.9596
+    next_if_ratio_0p88: 0.9557
+  K0_VAL
+    x: 0.9294
+    z2: 0.9429
+    gap_ratio: 0.8082
+    next_if_ratio_same: 0.9539
+    next_if_ratio_0p88: 0.9498
+ladder_at_raw_grid_size
+  alpha=0.25: 0.8388
+  alpha=0.18: 0.8056
+bytes_for_furn_0p99
+  alpha=0.25: 9667338528.0714
+  alpha=0.18: 1775237843136.3752
+byte_multiples
+  3S-X 2KB
+    raw: 0.0156
+    gzip_own: 0.7494
+    ctx_own: 1.4798
+    ctx_union: 0.7280
+    S0_own: 9.3516
+    S0_conv_msg: 5.1072
+    S0_union: 2.8326
+    down2x2x1_union: 1.5815
+  3S-Z2 8KB
+    raw: 0.0625
+    gzip_own: 2.9974
+    ctx_own: 5.9191
+    ctx_union: 2.9122
+    S0_own: 37.4064
+    S0_conv_msg: 20.4289
+    S0_union: 11.3306
+    down2x2x1_union: 6.3259
+  128x128x1 32KB
+    raw: 0.2500
+    gzip_own: 11.9898
+    ctx_own: 23.6763
+    ctx_union: 11.6488
+    S0_own: 149.6256
+    S0_conv_msg: 81.7157
+    S0_union: 45.3223
+    down2x2x1_union: 25.3035
+R_net_per_house_8rounds_14edges
+  3S-X 2KB: 229376
+  3S-Z2 8KB: 917504
+  128x128x1 32KB: 3670016
+marginal_bytes_per_furn_pp
+  S0_lossy_curve: 1.368, 4.524, 10.75, 26.67
+  learned_ladder: 86.54, 549.8, 5035
+learned_over_downsample_ceiling
+  q=4: 1.2048
+  q=2: 0.8821
+noise
+  C1_seed2_V2_pooled_6houses
+    range_only
+      K0: 0.8927
+      R8_sum: 0.9474
+      R8_max: 0.8469
+    pose_only
+      K0: 0.8907
+      R8_sum: 0.9441
+      R8_max: 0.8552
+    cam_nf
+      K0: 0.8309
+      R8_sum: 0.9095
+      R8_max: 0.7798
+    cam
+      K0: None
+      R8_sum: 0.7492
+      R8_max: 0.6263
+  E1review_V3_4houses_seed1
+    range_only
+      K0: 0.7820
+      R8_sum: 0.9287
+      R8_max_occ: 0.7794
+    cam_nf
+      K0: 0.6900
+      R8_sum: 0.8515
+      R8_max_occ: 0.6618
+    cam
+      K0: 0.6900
+      R8_sum: 0.7340
+      R8_max_occ: 0.5521
+  E1review_V2_4houses_seed1
+    range_only
+      K0: 0.8115
+      R8_sum: 0.9476
+      R8_max_occ: 0.8387
+    cam_nf
+      K0: 0.7514
+      R8_sum: 0.9102
+      R8_max_occ: 0.7691
+    cam
+      K0: 0.7514
+      R8_sum: 0.7798
+      R8_max_occ: 0.6237
+  decomposition_V3
+    R8_total_loss_cam_pp: 26.6000
+    R8_range_pp: 7.1300
+    R8_perframe_pose_pp: 7.7200
+    R8_interagent_registration_pp: 11.7500
+    R8_sum_minus_max_cam_pp: 18.1900
+    R8_sum_minus_max_camnf_pp: 18.9700
+    K0_total_loss_camnf_pp: 31.0000
+    K0_range_pp: 21.8000
+    K0_perframe_pose_pp: 9.2000
+  decomposition_V2
+    R8_total_loss_cam_pp: 22.0200
+    R8_range_pp: 5.2400
+    R8_perframe_pose_pp: 3.7400
+    R8_interagent_registration_pp: 13.0400
+    R8_sum_minus_max_cam_pp: 15.6100
+    R8_sum_minus_max_camnf_pp: 14.1100
+    K0_total_loss_camnf_pp: 24.8600
+    K0_range_pp: 18.8500
+    K0_perframe_pose_pp: 6.0100
+  integrator_cost_V2_minus_V3_pp
+    range_only
+      K0: 2.9500
+      R8_sum: 1.8900
+    cam_nf
+      K0: 6.1400
+      R8_sum: 5.8700
+    cam
+      K0: 6.1400
+      R8_sum: 4.5800
+  C1_camnf_sum_by_m: 0.837, 0.9335, 0.9691, 0.9859, 0.9835
+  C1_camnf_max_by_m: 0.8313, 0.8302, 0.7525, 0.6973, 0.5668
+  B4_bytes_per_house_median
+    V3_cam: None
+    V0_cam: 494607.0000
+    V2_cam: 1731282.0000
+clean_learned_vs_noisy_classical_R8_furn
+  threeSZ2_clean_VAL24: 0.6793
+  noisy_cam_sum_V3: 0.7340
+  noisy_cam_sum_V2: 0.7798
+  noisy_camnf_sum_V3: 0.8515
+  noisy_camnf_sum_V2: 0.9102
