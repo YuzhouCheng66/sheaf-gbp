@@ -1,0 +1,171 @@
+jobs 8, failed 0, skipped 0 []; timing {'job_seconds_median': 167.69100189208984, 'job_seconds_max': 175.94329261779785, 'peak_mb_max': 1195.37109375}
+
+== ctrl seed 203: 2 house-jobs, objects/house 36.5, families {'orig': 73}
+  arm           R8furn(E3R) pooled  tol1   free    surf   | zone F1 tol1  n_true | rest F1 fp     | phantoms/house blocks/house
+  B4            0.9173 0.9106 0.9725 0.9821 0.9459 | - - 0 | 0.9106 11736 | 1.00 104.0
+  B6_A          0.9593 0.9564 0.9908 0.9934 0.9716 | - - 0 | 0.9564 3240 | 1.00 81.5
+  B6_B          0.9582 0.9551 0.9903 0.9931 0.9710 | - - 0 | 0.9551 3496 | 1.00 82.5
+  NET_342101    0.9924 0.9918 0.9991 0.9981 0.9951 | - - 0 | 0.9918 480 | 0.00 33.0
+  NET_342202    0.9921 0.9916 0.9979 0.9981 0.9951 | - - 0 | 0.9916 528 | 1.50 34.5
+  flips NET_342101: vs B6_A S<=0 n=1096 prec=0.920 (zone n=0 prec=-); vs B6_B S<=0 n=1096 prec=0.920 (zone n=0 prec=-)
+  flips NET_342202: vs B6_A S<=0 n=1216 prec=0.809 (zone n=0 prec=-); vs B6_B S<=0 n=1216 prec=0.809 (zone n=0 prec=-)
+  kinds B6_A: bathtub - (0), bed 0.953 (3904), bookshelf 0.931 (3120), box 0.959 (480), cabinet 0.988 (2616), cabinet_tall 0.985 (5304), coffee_table 0.943 (1312), counter 0.978 (26952), desk 0.899 (1368), fridge 0.984 (6160), lamp 0.965 (1880), nightstand 0.690 (272), plant 0.927 (3376), round_table 0.969 (3496), sink - (0), sofa 0.971 (7840), toilet 0.267 (64), tv_cabinet 0.763 (1960), wardrobe 0.942 (3264)
+  kinds NET_342101: bathtub - (0), bed 0.997 (3904), bookshelf 0.996 (3120), box 1.000 (480), cabinet 0.997 (2616), cabinet_tall 0.996 (5304), coffee_table 0.967 (1312), counter 0.996 (26952), desk 0.973 (1368), fridge 0.992 (6160), lamp 0.996 (1880), nightstand 0.943 (272), plant 0.963 (3376), round_table 0.998 (3496), sink - (0), sofa 0.997 (7840), toilet 0.500 (64), tv_cabinet 0.982 (1960), wardrobe 0.977 (3264)
+  zone strata B6_A: by height ['-', '-', '-'] by k ['-', '-', '-', '-', '-', '-']
+  zone strata NET_342101: by height ['-', '-', '-'] by k ['-', '-', '-', '-', '-', '-']
+  zone strata B6_B: by height ['-', '-', '-'] by k ['-', '-', '-', '-', '-', '-']
+  zone strata NET_342202: by height ['-', '-', '-'] by k ['-', '-', '-', '-', '-', '-']
+  K0 B6_A: furn 0.8809 zone -
+  K0 NET_342101_K0sep: furn 0.9677 zone -
+  K0 LIN_342101_K0sep: furn 0.8809 zone -
+
+== ctrl seed 204: 2 house-jobs, objects/house 36.5, families {'orig': 73}
+  arm           R8furn(E3R) pooled  tol1   free    surf   | zone F1 tol1  n_true | rest F1 fp     | phantoms/house blocks/house
+  B4            0.9051 0.9007 0.9726 0.9795 0.9400 | - - 0 | 0.9007 13256 | 0.00 117.0
+  B6_A          0.9522 0.9490 0.9902 0.9921 0.9680 | - - 0 | 0.9490 4128 | 0.00 67.5
+  B6_B          0.9506 0.9474 0.9896 0.9918 0.9672 | - - 0 | 0.9474 4400 | 0.00 71.0
+  NET_342101    0.9904 0.9895 0.9986 0.9976 0.9932 | - - 0 | 0.9895 432 | 0.00 34.0
+  NET_342202    0.9903 0.9895 0.9972 0.9974 0.9927 | - - 0 | 0.9895 648 | 0.00 38.0
+  flips NET_342101: vs B6_A S<=0 n=1152 prec=0.903 (zone n=0 prec=-); vs B6_B S<=0 n=1152 prec=0.903 (zone n=0 prec=-)
+  flips NET_342202: vs B6_A S<=0 n=1296 prec=0.802 (zone n=0 prec=-); vs B6_B S<=0 n=1296 prec=0.802 (zone n=0 prec=-)
+  kinds B6_A: bathtub - (0), bed 0.973 (3904), bookshelf 0.910 (3120), box 0.992 (480), cabinet 0.965 (2616), cabinet_tall 0.986 (5304), coffee_table 0.934 (1312), counter 0.971 (26952), desk 0.864 (1368), fridge 0.958 (6160), lamp 0.923 (1880), nightstand 0.750 (272), plant 0.896 (3376), round_table 0.980 (3496), sink - (0), sofa 0.980 (7840), toilet 0.615 (64), tv_cabinet 0.818 (1960), wardrobe 0.884 (3264)
+  kinds NET_342101: bathtub - (0), bed 0.990 (3904), bookshelf 0.997 (3120), box 1.000 (480), cabinet 0.998 (2616), cabinet_tall 0.997 (5304), coffee_table 0.963 (1312), counter 0.996 (26952), desk 0.947 (1368), fridge 0.995 (6160), lamp 0.960 (1880), nightstand 0.930 (272), plant 0.950 (3376), round_table 0.997 (3496), sink - (0), sofa 0.998 (7840), toilet 0.615 (64), tv_cabinet 0.975 (1960), wardrobe 0.966 (3264)
+  zone strata B6_A: by height ['-', '-', '-'] by k ['-', '-', '-', '-', '-', '-']
+  zone strata NET_342101: by height ['-', '-', '-'] by k ['-', '-', '-', '-', '-', '-']
+  zone strata B6_B: by height ['-', '-', '-'] by k ['-', '-', '-', '-', '-', '-']
+  zone strata NET_342202: by height ['-', '-', '-'] by k ['-', '-', '-', '-', '-', '-']
+  K0 B6_A: furn 0.8664 zone -
+  K0 NET_342101_K0sep: furn 0.9580 zone -
+  K0 LIN_342101_K0sep: furn 0.8664 zone -
+
+== novel seed 203: 2 house-jobs, objects/house 33.5, families {'composite': 21, 'ellipsoid': 19, 'wall_shelf': 5, 'clutter': 8, 'rotated': 10, 'pole': 4}
+  arm           R8furn(E3R) pooled  tol1   free    surf   | zone F1 tol1  n_true | rest F1 fp     | phantoms/house blocks/house
+  B4            0.9104 0.9061 0.9703 0.9836 0.9493 | 0.9344 0.9974 55072 | 0.0000 3568 | 0.50 103.5
+  B6_A          0.9502 0.9492 0.9882 0.9951 0.9745 | 0.9571 0.9961 55072 | 0.0000 912 | 0.50 62.5
+  B6_B          0.9494 0.9484 0.9878 0.9949 0.9740 | 0.9568 0.9961 55072 | 0.0000 968 | 0.50 63.5
+  NET_342101    0.9597 0.9595 0.9938 0.9981 0.9902 | 0.9597 0.9939 55072 | 0.0000 24 | 0.00 29.0
+  NET_342202    0.9573 0.9572 0.9932 0.9977 0.9895 | 0.9591 0.9953 55072 | 0.0000 224 | 0.50 31.5
+  flips NET_342101: vs B6_A S<=0 n=1408 prec=0.381 (zone n=1384 prec=0.387); vs B6_B S<=0 n=1408 prec=0.381 (zone n=1384 prec=0.387)
+  flips NET_342202: vs B6_A S<=0 n=2080 prec=0.277 (zone n=1880 prec=0.306); vs B6_B S<=0 n=2080 prec=0.277 (zone n=1880 prec=0.306)
+  kinds B6_A: ball 0.926 (2784), clutter 0.930 (608), coat_rack 0.918 (744), ellipsoid 0.949 (7776), l_shape 0.965 (15648), rot_bed 0.932 (5480), rot_sofa 0.940 (3024), rot_table 0.962 (3384), step_shape 0.969 (15808), wall_shelf 1.000 (224)
+  kinds NET_342101: ball 0.856 (2784), clutter 0.889 (608), coat_rack 0.930 (744), ellipsoid 0.858 (7776), l_shape 0.992 (15648), rot_bed 0.966 (5480), rot_sofa 0.953 (3024), rot_table 0.963 (3384), step_shape 0.994 (15808), wall_shelf 1.000 (224)
+  zone strata B6_A: by height ['0.928', '0.967', '0.972'] by k ['0.000', '0.909', '0.961', '0.981', '0.990', '0.996']
+  zone strata NET_342101: by height ['0.934', '0.969', '0.975'] by k ['0.000', '0.939', '0.956', '0.972', '0.988', '0.988']
+  zone strata B6_B: by height ['0.928', '0.967', '0.972'] by k ['0.000', '0.909', '0.960', '0.982', '0.990', '0.995']
+  zone strata NET_342202: by height ['0.929', '0.970', '0.971'] by k ['0.000', '0.942', '0.956', '0.972', '0.982', '0.984']
+  K0 B6_A: furn 0.8759 zone 0.8915
+  K0 NET_342101_K0sep: furn 0.9349 zone 0.9341
+  K0 LIN_342101_K0sep: furn 0.8759 zone 0.8915
+
+== novel seed 204: 2 house-jobs, objects/house 33.5, families {'composite': 21, 'ellipsoid': 19, 'wall_shelf': 5, 'clutter': 8, 'rotated': 10, 'pole': 4}
+  arm           R8furn(E3R) pooled  tol1   free    surf   | zone F1 tol1  n_true | rest F1 fp     | phantoms/house blocks/house
+  B4            0.8959 0.8948 0.9602 0.9812 0.9440 | 0.9310 0.9972 55072 | 0.0000 4600 | 1.50 108.0
+  B6_A          0.9489 0.9486 0.9863 0.9943 0.9762 | 0.9583 0.9964 55072 | 0.0000 1112 | 1.50 74.0
+  B6_B          0.9477 0.9474 0.9858 0.9942 0.9758 | 0.9575 0.9964 55072 | 0.0000 1168 | 1.50 76.5
+  NET_342101    0.9555 0.9553 0.9925 0.9978 0.9908 | 0.9563 0.9935 55072 | 0.0000 112 | 1.00 31.5
+  NET_342202    0.9516 0.9515 0.9908 0.9974 0.9900 | 0.9550 0.9945 55072 | 0.0000 408 | 0.50 30.0
+  flips NET_342101: vs B6_A S<=0 n=1464 prec=0.322 (zone n=1376 prec=0.343); vs B6_B S<=0 n=1464 prec=0.322 (zone n=1376 prec=0.343)
+  flips NET_342202: vs B6_A S<=0 n=2152 prec=0.230 (zone n=1784 prec=0.278); vs B6_B S<=0 n=2152 prec=0.230 (zone n=1784 prec=0.278)
+  kinds B6_A: ball 0.916 (2784), clutter 0.899 (608), coat_rack 0.928 (744), ellipsoid 0.930 (7776), l_shape 0.972 (15648), rot_bed 0.984 (5480), rot_sofa 0.911 (3024), rot_table 0.960 (3384), step_shape 0.964 (15808), wall_shelf 0.966 (224)
+  kinds NET_342101: ball 0.863 (2784), clutter 0.855 (608), coat_rack 0.946 (744), ellipsoid 0.845 (7776), l_shape 0.996 (15648), rot_bed 0.976 (5480), rot_sofa 0.927 (3024), rot_table 0.964 (3384), step_shape 0.985 (15808), wall_shelf 0.982 (224)
+  zone strata B6_A: by height ['0.931', '0.968', '0.974'] by k ['0.000', '0.928', '0.959', '0.980', '0.991', '0.996']
+  zone strata NET_342101: by height ['0.928', '0.966', '0.974'] by k ['0.000', '0.942', '0.957', '0.969', '0.982', '0.989']
+  zone strata B6_B: by height ['0.930', '0.967', '0.973'] by k ['0.000', '0.928', '0.959', '0.978', '0.990', '0.995']
+  zone strata NET_342202: by height ['0.926', '0.965', '0.980'] by k ['0.000', '0.949', '0.951', '0.969', '0.979', '0.980']
+  K0 B6_A: furn 0.8682 zone 0.8836
+  K0 NET_342101_K0sep: furn 0.9312 zone 0.9305
+  K0 LIN_342101_K0sep: furn 0.8682 zone 0.8836
+
+== scale seed 203: 2 house-jobs, objects/house 43.5, families {'scaled_1.5': 32, 'scaled_0.6': 55}
+  arm           R8furn(E3R) pooled  tol1   free    surf   | zone F1 tol1  n_true | rest F1 fp     | phantoms/house blocks/house
+  B4            0.8981 0.9043 0.9579 0.9774 0.9398 | 0.9295 0.9878 71808 | 0.0000 4080 | 1.00 131.5
+  B6_A          0.9345 0.9382 0.9714 0.9914 0.9689 | 0.9457 0.9813 71808 | 0.0000 1120 | 0.50 80.5
+  B6_B          0.9340 0.9378 0.9713 0.9911 0.9682 | 0.9455 0.9814 71808 | 0.0000 1152 | 0.50 81.5
+  NET_342101    0.9531 0.9558 0.9794 0.9955 0.9855 | 0.9613 0.9866 71808 | 0.0000 816 | 1.00 42.5
+  NET_342202    0.9550 0.9570 0.9839 0.9954 0.9858 | 0.9596 0.9877 71808 | 0.0000 384 | 2.00 47.0
+  flips NET_342101: vs B6_A S<=0 n=3480 prec=0.451 (zone n=2736 prec=0.573); vs B6_B S<=0 n=3480 prec=0.451 (zone n=2736 prec=0.573)
+  flips NET_342202: vs B6_A S<=0 n=3816 prec=0.455 (zone n=3520 prec=0.493); vs B6_B S<=0 n=3816 prec=0.455 (zone n=3520 prec=0.493)
+  kinds B6_A: bathtub - (0), bed 0.945 (560), bookshelf 0.963 (2480), cabinet 0.921 (832), cabinet_tall 0.980 (11168), coffee_table 0.960 (2448), counter 0.984 (14200), desk 0.883 (2248), fridge 0.894 (8032), lamp 0.908 (1328), nightstand 0.927 (704), plant 0.939 (9432), round_table 0.957 (2984), sink 0.568 (1048), sofa 0.986 (7456), toilet 0.845 (536), tv_cabinet 0.996 (1928), wardrobe 0.837 (4672)
+  kinds NET_342101: bathtub - (0), bed 0.993 (560), bookshelf 0.952 (2480), cabinet 0.953 (832), cabinet_tall 0.999 (11168), coffee_table 0.931 (2448), counter 0.990 (14200), desk 0.870 (2248), fridge 0.953 (8032), lamp 0.938 (1328), nightstand 0.989 (704), plant 0.951 (9432), round_table 0.909 (2984), sink 0.904 (1048), sofa 0.998 (7456), toilet 0.893 (536), tv_cabinet 1.000 (1928), wardrobe 0.842 (4672)
+  zone strata B6_A: by height ['0.931', '0.954', '0.945'] by k ['0.000', '0.907', '0.929', '0.978', '0.982', '0.993']
+  zone strata NET_342101: by height ['0.944', '0.966', '0.965'] by k ['0.000', '0.953', '0.963', '0.981', '0.987', '0.985']
+  zone strata B6_B: by height ['0.930', '0.954', '0.945'] by k ['0.000', '0.907', '0.928', '0.979', '0.982', '0.992']
+  zone strata NET_342202: by height ['0.943', '0.971', '0.958'] by k ['0.000', '0.957', '0.952', '0.977', '0.987', '0.986']
+  K0 B6_A: furn 0.8698 zone 0.8912
+  K0 NET_342101_K0sep: furn 0.9282 zone 0.9405
+  K0 LIN_342101_K0sep: furn 0.8698 zone 0.8912
+
+== scale seed 204: 2 house-jobs, objects/house 43.5, families {'scaled_1.5': 32, 'scaled_0.6': 55}
+  arm           R8furn(E3R) pooled  tol1   free    surf   | zone F1 tol1  n_true | rest F1 fp     | phantoms/house blocks/house
+  B4            0.8938 0.8990 0.9680 0.9746 0.9300 | 0.9213 0.9937 71808 | 0.0000 3672 | 0.00 123.0
+  B6_A          0.9307 0.9354 0.9777 0.9902 0.9628 | 0.9411 0.9863 71808 | 0.0000 848 | 0.00 88.0
+  B6_B          0.9296 0.9343 0.9772 0.9898 0.9619 | 0.9405 0.9865 71808 | 0.0000 936 | 0.00 92.0
+  NET_342101    0.9654 0.9674 0.9895 0.9958 0.9853 | 0.9732 0.9963 71808 | 0.0000 864 | 0.50 43.5
+  NET_342202    0.9606 0.9631 0.9896 0.9962 0.9848 | 0.9651 0.9928 71808 | 0.0000 304 | 5.50 53.5
+  flips NET_342101: vs B6_A S<=0 n=4856 prec=0.577 (zone n=4080 prec=0.686); vs B6_B S<=0 n=4856 prec=0.577 (zone n=4080 prec=0.686)
+  flips NET_342202: vs B6_A S<=0 n=3552 prec=0.502 (zone n=3368 prec=0.530); vs B6_B S<=0 n=3552 prec=0.502 (zone n=3368 prec=0.530)
+  kinds B6_A: bathtub - (0), bed 0.986 (560), bookshelf 0.962 (2480), cabinet 0.935 (832), cabinet_tall 0.958 (11168), coffee_table 0.957 (2448), counter 0.979 (14200), desk 0.897 (2248), fridge 0.963 (8032), lamp 0.963 (1328), nightstand 0.960 (704), plant 0.894 (9432), round_table 0.957 (2984), sink 0.770 (1048), sofa 0.950 (7456), toilet 0.667 (536), tv_cabinet 0.986 (1928), wardrobe 0.830 (4672)
+  kinds NET_342101: bathtub - (0), bed 0.993 (560), bookshelf 0.951 (2480), cabinet 0.966 (832), cabinet_tall 0.999 (11168), coffee_table 0.910 (2448), counter 0.999 (14200), desk 0.845 (2248), fridge 0.997 (8032), lamp 0.976 (1328), nightstand 0.977 (704), plant 0.946 (9432), round_table 0.891 (2984), sink 0.919 (1048), sofa 0.990 (7456), toilet 0.961 (536), tv_cabinet 1.000 (1928), wardrobe 0.984 (4672)
+  zone strata B6_A: by height ['0.916', '0.947', '0.948'] by k ['0.000', '0.831', '0.953', '0.972', '0.976', '0.992']
+  zone strata NET_342101: by height ['0.944', '0.978', '0.982'] by k ['0.000', '0.950', '0.974', '0.983', '0.987', '0.984']
+  zone strata B6_B: by height ['0.916', '0.947', '0.947'] by k ['0.000', '0.831', '0.953', '0.972', '0.973', '0.991']
+  zone strata NET_342202: by height ['0.941', '0.975', '0.968'] by k ['0.000', '0.921', '0.968', '0.978', '0.991', '0.981']
+  K0 B6_A: furn 0.8582 zone 0.8853
+  K0 NET_342101_K0sep: furn 0.9321 zone 0.9415
+  K0 LIN_342101_K0sep: furn 0.8582 zone 0.8853
+
+== floating seed 203: 2 house-jobs, objects/house 44.0, families {'wall_shelf': 47, 'hanging': 41}
+  arm           R8furn(E3R) pooled  tol1   free    surf   | zone F1 tol1  n_true | rest F1 fp     | phantoms/house blocks/house
+  B4            0.8443 0.8266 0.8988 0.9815 0.9444 | 0.9362 0.9981 26680 | 0.0000 7280 | 0.00 176.5
+  B6_A          0.9308 0.9255 0.9684 0.9941 0.9760 | 0.9558 0.9973 26680 | 0.0000 1736 | 0.00 113.0
+  B6_B          0.9307 0.9252 0.9678 0.9939 0.9756 | 0.9561 0.9973 26680 | 0.0000 1768 | 0.00 114.5
+  NET_342101    0.9236 0.9245 0.9808 0.9974 0.9902 | 0.9346 0.9916 26680 | 0.0000 600 | 2.50 53.5
+  NET_342202    0.9325 0.9320 0.9868 0.9977 0.9912 | 0.9380 0.9925 26680 | 0.0000 352 | 1.50 53.5
+  flips NET_342101: vs B6_A S<=0 n=2584 prec=0.118 (zone n=2024 prec=0.150); vs B6_B S<=0 n=2584 prec=0.118 (zone n=2024 prec=0.150)
+  flips NET_342202: vs B6_A S<=0 n=2152 prec=0.145 (zone n=1824 prec=0.171); vs B6_B S<=0 n=2152 prec=0.145 (zone n=1824 prec=0.171)
+  kinds B6_A: hanging 0.960 (16336), wall_shelf 0.949 (10344)
+  kinds NET_342101: hanging 0.922 (16336), wall_shelf 0.956 (10344)
+  zone strata B6_A: by height ['-', '-', '0.956'] by k ['0.000', '0.903', '0.942', '0.985', '0.989', '0.996']
+  zone strata NET_342101: by height ['-', '-', '0.935'] by k ['0.000', '0.893', '0.922', '0.960', '0.954', '0.976']
+  zone strata B6_B: by height ['-', '-', '0.956'] by k ['0.000', '0.903', '0.943', '0.985', '0.990', '0.996']
+  zone strata NET_342202: by height ['-', '-', '0.938'] by k ['0.000', '0.904', '0.914', '0.957', '0.964', '0.980']
+  K0 B6_A: furn 0.8248 zone 0.8792
+  K0 NET_342101_K0sep: furn 0.8785 zone 0.8876
+  K0 LIN_342101_K0sep: furn 0.8248 zone 0.8792
+
+== floating seed 204: 2 house-jobs, objects/house 44.0, families {'wall_shelf': 47, 'hanging': 41}
+  arm           R8furn(E3R) pooled  tol1   free    surf   | zone F1 tol1  n_true | rest F1 fp     | phantoms/house blocks/house
+  B4            0.8336 0.8159 0.9008 0.9816 0.9473 | 0.9190 0.9983 26680 | 0.0000 7072 | 0.50 188.5
+  B6_A          0.9316 0.9243 0.9753 0.9941 0.9783 | 0.9463 0.9961 26680 | 0.0000 1256 | 0.50 120.5
+  B6_B          0.9294 0.9222 0.9740 0.9938 0.9777 | 0.9453 0.9961 26680 | 0.0000 1328 | 0.50 121.5
+  NET_342101    0.9275 0.9279 0.9833 0.9970 0.9913 | 0.9364 0.9923 26680 | 0.0000 496 | 2.00 54.0
+  NET_342202    0.9350 0.9343 0.9908 0.9972 0.9923 | 0.9362 0.9923 26680 | 0.0000 112 | 0.50 54.5
+  flips NET_342101: vs B6_A S<=0 n=2400 prec=0.163 (zone n=1920 prec=0.204); vs B6_B S<=0 n=2400 prec=0.163 (zone n=1920 prec=0.204)
+  flips NET_342202: vs B6_A S<=0 n=1992 prec=0.189 (zone n=1888 prec=0.199); vs B6_B S<=0 n=1992 prec=0.189 (zone n=1888 prec=0.199)
+  kinds B6_A: hanging 0.948 (16336), wall_shelf 0.943 (10344)
+  kinds NET_342101: hanging 0.920 (16336), wall_shelf 0.962 (10344)
+  zone strata B6_A: by height ['-', '-', '0.946'] by k ['0.000', '0.882', '0.948', '0.965', '0.980', '0.990']
+  zone strata NET_342101: by height ['-', '-', '0.936'] by k ['0.000', '0.899', '0.923', '0.953', '0.948', '0.979']
+  zone strata B6_B: by height ['-', '-', '0.945'] by k ['0.000', '0.882', '0.944', '0.965', '0.978', '0.990']
+  zone strata NET_342202: by height ['-', '-', '0.936'] by k ['0.000', '0.897', '0.922', '0.957', '0.960', '0.971']
+  K0 B6_A: furn 0.8170 zone 0.8701
+  K0 NET_342101_K0sep: furn 0.8793 zone 0.8834
+  K0 LIN_342101_K0sep: furn 0.8170 zone 0.8701
+
+VERDICT: SMOKE (not a verdict)  reasons []
+ctrl self-check ok=False: 342101_s203 B6_A +3.31 pp OUT; 342202_s203 B6_A +3.28 pp OUT; 342101_s204 B6_A +3.82 pp OUT; 342202_s204 B6_A +3.81 pp OUT
+novel: HARMFUL (max-pairing HARMFUL)
+   342101_s203 vs B6_A: zone +0.27 pp, all +0.96 pp, flip 0.381 (n 1408), phantoms 0.00 vs 0.50, free +0.31 pp -> HARM
+   342202_s203 vs B6_B: zone +0.24 pp, all +0.79 pp, flip 0.277 (n 2080), phantoms 0.50 vs 0.50, free +0.29 pp -> HARM
+   342101_s204 vs B6_A: zone -0.20 pp, all +0.66 pp, flip 0.322 (n 1464), phantoms 1.00 vs 1.50, free +0.35 pp -> HARM
+   342202_s204 vs B6_B: zone -0.25 pp, all +0.39 pp, flip 0.230 (n 2152), phantoms 0.50 vs 1.50, free +0.32 pp -> HARM
+scale: HARMFUL (max-pairing HARMFUL)
+   342101_s203 vs B6_A: zone +1.56 pp, all +1.86 pp, flip 0.451 (n 3480), phantoms 1.00 vs 0.50, free +0.42 pp -> HARM
+   342202_s203 vs B6_B: zone +1.41 pp, all +2.10 pp, flip 0.455 (n 3816), phantoms 2.00 vs 0.50, free +0.44 pp -> HARM
+   342101_s204 vs B6_A: zone +3.22 pp, all +3.47 pp, flip 0.577 (n 4856), phantoms 0.50 vs 0.00, free +0.55 pp -> amb
+   342202_s204 vs B6_B: zone +2.46 pp, all +3.10 pp, flip 0.502 (n 3552), phantoms 5.50 vs 0.00, free +0.64 pp -> HARM
+floating: HARMFUL (max-pairing HARMFUL)
+   342101_s203 vs B6_A: zone -2.11 pp, all -0.72 pp, flip 0.118 (n 2584), phantoms 2.50 vs 0.00, free +0.33 pp -> HARM
+   342202_s203 vs B6_B: zone -1.81 pp, all +0.18 pp, flip 0.145 (n 2152), phantoms 1.50 vs 0.00, free +0.38 pp -> HARM
+   342101_s204 vs B6_A: zone -0.99 pp, all -0.41 pp, flip 0.163 (n 2400), phantoms 2.00 vs 0.50, free +0.29 pp -> HARM
+   342202_s204 vs B6_B: zone -0.91 pp, all +0.57 pp, flip 0.189 (n 1992), phantoms 0.50 vs 0.50, free +0.33 pp -> HARM
