@@ -1,0 +1,14 @@
+2026-10-27T10:05:13Z chain_day7_E3R started pid 1005005 sha256 500ef9963cd38093 prereg D8-44
+2026-10-27T10:05:14Z E3-R import self-check ok /mnt/datasets/yuzhou-sheaf-gbp-research/e3r-pyroot/scripts/mapping_multiroom_data_v293.py /mnt/datasets/yuzhou-sheaf-gbp-research/e3r-pyroot/exploration_grid/occupancy_codec/__init__.py
+2026-10-27T10:05:15Z E3-R D8-44 evidence rule ok: {"e1c_verdict": "LEVER", "evidence": {"342101": "c:/mnt/datasets/yuzhou-sheaf-gbp-research/e3r-ref/e1c_fit.json:A:cam_nf", "342202": "c:/mnt/datasets/yuzhou-sheaf-gbp-research/e3r-ref/e1c_fit.json:B:cam_nf"}, "fit_sha256": "8dd8b1952ead659ca49de1af0ce6b051943cf4aab1559704ab395acb152ea1f2", "summary_sha256": "fcc9fe3a10d98d4ce20081557d15c5c272268052d988857bf99a895d14955011", "problems": []}
+2026-10-27T10:06:15Z E3-R lease start 1793095575 (train deadline +6600, total +7150)
+2026-10-27T10:06:50Z E3-R preflight (exit 0): s/update 0.059844520092010495 load 6.214539527893066s first window 11.645870447158813s -> 40787 updates per seed (same for both seeds; safety 0.90)
+2026-10-27T10:06:50Z E3-R seed 342101 start (40787 updates, evidence c:/mnt/datasets/yuzhou-sheaf-gbp-research/e3r-ref/e1c_fit.json:A:cam_nf, trainer deadline 1793098580, kill at 1793098610)
+2026-10-27T10:48:03Z E3-R seed 342101 done (exit 0): E3-R train seed 342101 done: 40787 updates (complete), rate 0.06005877760391902 s/update, 2471s
+2026-10-27T10:48:03Z E3-R seed 342202 start (40787 updates, evidence c:/mnt/datasets/yuzhou-sheaf-gbp-research/e3r-ref/e1c_fit.json:B:cam_nf, trainer deadline 1793101053, kill at 1793101083)
+2026-10-27T11:29:15Z E3-R seed 342202 done (exit 0): E3-R train seed 342202 done: 40787 updates (complete), rate 0.060054627460620756 s/update, 2471s
+2026-10-27T11:29:15Z E3-R lease over after 4980 s; the GPU is not used again by this chain
+2026-10-27T11:35:55Z E3-R export done (exit 0): 96 jobs with cam_nf reproduced
+2026-10-27T11:43:58Z E3-R eval done (exit 0)
+2026-10-27T11:44:02Z E3-R aggregate (exit 0): E3-R verdict: LEVER
+2026-10-27T11:44:02Z chain_day7_E3R finished
