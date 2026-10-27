@@ -1,0 +1,39 @@
+{
+ "val|s1|asis": {
+  "houses": 2,
+  "furn_f1": {
+   "noreg": 0.7377511088738488,
+   "oracle_yaw": 0.7351429283553643,
+   "oracle_trans": 0.812732317412053,
+   "manhattan": 0.7165958696309929,
+   "truepose": 0.8566160038531314
+  },
+  "recovery": {
+   "oracle_yaw": -0.021942395346742416,
+   "oracle_trans": 0.6308103713150375,
+   "manhattan": -0.1779771836465519
+  }
+ },
+ "val|s1|aligned": {
+  "houses": 2,
+  "furn_f1": {
+   "noreg": 0.7639195007802515,
+   "oracle_yaw": 0.7628733398821623,
+   "oracle_trans": 0.8158065181909144,
+   "manhattan": 0.7208155773055145,
+   "truepose": 0.8573575248520084
+  },
+  "recovery": {
+   "oracle_yaw": -0.01119630801787679,
+   "oracle_trans": 0.5553094463001018,
+   "manhattan": -0.461310305980302
+  }
+ },
+ "val|s1|manhattan_yaw": {
+  "agents": 16,
+  "true_rms_deg": 1.0721554598240244,
+  "err_rms_deg": 0.889327455225063,
+  "err_abs_p90_deg": 1.3900044444915378,
+  "err_abs_max_deg": 2.151240619696147
+ }
+}
