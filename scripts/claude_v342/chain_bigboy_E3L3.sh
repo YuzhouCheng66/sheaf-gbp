@@ -10,6 +10,12 @@
 # ctrl_holdout.json of g4_e3l2 ctrlprep), eval on the EXISTING E3-R export (read only), aggregate against the E3-R summary (control) and the
 # E3-L / E3-L2 (/ E5) summaries (report only). Writes only under ~/claude-sheaf-gbp/ (runs/e3l3, runs/chain_bigboy.log, tmp/).
 # Disk: only checkpoints final.pt and upd6000.pt per seed (~5 MB each), eval job JSONs; total checked against 2 GB at the end.
+# Review M1 (code_review_e3l3.md; another project on the same Unix user runs short GPU jobs): before the preflight AND before the training,
+# GPU 0 and 1 must be free of ANY compute process for 300 s in a row (sampled every 15 s, any process resets the clock); after 3,600 s
+# without such a window the chain logs it and exits INCOMPLETE (never grabs a busy card). During the preflight and the training a
+# record-only monitor writes every 60 s the compute processes on GPU 0 / 1 (pid, name, memory; ours tagged 'own', the rest 'OTHER') to
+# $OUT/gpu_monitor.log (OTHER also to the chain log); it only probes our PIDs with kill -0 and never signals anything.
+# Review S2: the CPU stages run under nice -n 10.
 # The coordinator fills every FILL_* after review; the chain refuses to run otherwise. Never launched by the implementer.
 # Launch (never from an interactive shell that may die):
 #   ssh bigboy 'cd ~/claude-sheaf-gbp/work && (setsid nohup bash scripts/chain_bigboy_E3L3.sh "D8-63" > runs/chain_bigboy_E3L3.out 2>&1 < /dev/null &)'
@@ -33,8 +39,8 @@ E3L2=runs/e3l2                                                           # E3-L2
 OUT=runs/e3l3
 LOG=$HOME/claude-sheaf-gbp/work/runs/chain_bigboy.log
 # ---------------------------------------------------------------- pinned by the coordinator (after review)
-E3L3_SHA=FILL_E3L3_SHA                                                   # scripts/g4_e3l3.py as deployed
-E5_SUM_SHA=FILL_E5_SUM_SHA_OR_none                                       # $REF2/e5_summary.json (local g4/e5/summary.json: b33297e3c7e02c911cffe2b54c2d0e0352de5a7f48be2f0bc773c07fafccb46c), or "none" = not reported
+E3L3_SHA=c7523cc82f6da04497843e8b00559408d573e20377a8e7b99cc773771751928c   # scripts/g4_e3l3.py as deployed (reviewed; unchanged by the review fixes)
+E5_SUM_SHA=b33297e3c7e02c911cffe2b54c2d0e0352de5a7f48be2f0bc773c07fafccb46c # $REF2/e5_summary.json (= local g4/e5/summary.json; QPOST4, report only)
 # ---------------------------------------------------------------- frozen (verified on bigboy 2026-10-27 22:1x UTC; = the E3-L2 chain's pins)
 E3L2_SHA=bab73d647655ecc6504d4ffd738409618bf95cab8089a489a7cb4da28dc3f314    # g4_e3l2.py (E3-L2, frozen; imported read only)
 E3L_SHA=3dc970d8542f794082b28d265d68e0237f3670f2cf2dfd4f754c01c8ac24f6be     # g4_e3l.py (E3-L, frozen)
@@ -60,7 +66,7 @@ EV_342101="c:$REF/e1c_fit.json:A:cam_nf"                                  # D8-6
 EV_342202="c:$REF/e1c_fit.json:B:cam_nf"
 BUDGET=6000                                                                # seconds per training seed, wall clock from process start (load + compile included)
 log(){ echo "$(date -u +%FT%TZ) $*" | tee -a $LOG; }
-incomplete(){ mkdir -p $OUT; echo "{\"verdict\": \"INCOMPLETE: $1\", \"stage\": \"chain\", \"time\": \"$(date -u +%FT%TZ)\"}" > $OUT/summary.json; log "E3-L3 INCOMPLETE: $1"; }
+incomplete(){ local r=${1//\"/\'}; mkdir -p $OUT; echo "{\"verdict\": \"INCOMPLETE: $r\", \"stage\": \"chain\", \"time\": \"$(date -u +%FT%TZ)\"}" > $OUT/summary.json; log "E3-L3 INCOMPLETE: $r"; }
 log "chain_bigboy_E3L3 started pid $$ host $(hostname) sha256 $(sha256sum scripts/chain_bigboy_E3L3.sh | cut -c1-16) prereg $PREREG"
 if grep -q "FILL_" <<<"$E3L3_SHA $E5_SUM_SHA"; then log "ABORT: unfilled FILL_ placeholders (coordinator pins them after review)"; exit 2; fi
 [ "$(hostname)" = "bigboy" ] || { log "ABORT: not on bigboy"; exit 2; }
@@ -107,10 +113,47 @@ U0=$(nvidia-smi -i 0 --query-gpu=uuid --format=csv,noheader); U1=$(nvidia-smi -i
 # ---------------------------------------------------------------- import self-check (same sys.path as every step)
 SELF=$(CUDA_VISIBLE_DEVICES= timeout -k 30 300 $P -B scripts/g4_e3l3.py selfcheck --pyroot $PYROOT 2>&1 | tail -1)
 case "$SELF" in "import self-check ok"*) log "E3-L3 $SELF";; *) log "ABORT: import self-check failed (PYTHONPATH / scripts package): $SELF"; incomplete "import self-check failed"; exit 2;; esac
-# GPU 0 / 1 idle: no compute process on either (other users' jobs on GPU 2 / 3 are ignored); wait and record otherwise
+# >>> gpu-functions (review M1; jobs on GPU 2 / 3 are ignored)
+IDLE_NEED=300; IDLE_STEP=15; IDLE_MAX=3600; MON_STEP=60
 gpus_busy(){ nvidia-smi --query-compute-apps=gpu_uuid --format=csv,noheader | grep -q -e "$U0" -e "$U1"; }
-while gpus_busy; do log "E3-L3: GPU 0 / 1 busy ($(nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader | grep -e "$U0" -e "$U1" | tr '\n' ';')); waiting 300 s"; sleep 300; done
-sleep 30; while gpus_busy; do log "E3-L3: GPU 0 / 1 busy again; waiting 300 s"; sleep 300; done
+gpu_apps(){ nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader | grep -e "$U0" -e "$U1" | sed -e "s/$U0/GPU0/" -e "s/$U1/GPU1/" | tr '\n' ';'; }
+wait_idle(){                     # $1 = label. 0 when GPU 0 and 1 had no compute process for IDLE_NEED s in a row (sampled every IDLE_STEP s), 1 after IDLE_MAX s
+  local t0 since now lastlog=0
+  t0=$(date +%s); since=$t0
+  log "E3-L3 $1: waiting for GPU 0 / 1 to be free of any compute process for $IDLE_NEED s in a row (every $IDLE_STEP s; at most $IDLE_MAX s)"
+  while :; do
+    while gpus_busy; do
+      now=$(date +%s); since=$now
+      if [ $((now-lastlog)) -ge 300 ]; then log "E3-L3 $1: GPU 0 / 1 busy ($(gpu_apps)); idle clock reset"; lastlog=$now; fi
+      [ $((now-t0)) -ge $IDLE_MAX ] && return 1
+      sleep $IDLE_STEP
+    done
+    now=$(date +%s)
+    if [ $((now-since)) -ge $IDLE_NEED ]; then log "E3-L3 $1: GPU 0 / 1 idle for $((now-since)) s in a row (waited $((now-t0)) s)"; return 0; fi
+    [ $((now-t0)) -ge $IDLE_MAX ] && return 1
+    sleep $IDLE_STEP
+  done
+}
+gpu_monitor(){                   # record only: $1 = file, then our PIDs (timeout wrappers). Every MON_STEP s while any lives: compute processes on GPU 0 / 1
+  local f=$1; shift
+  local p alive own uu pid name mem tag n
+  while :; do
+    alive=0; own=" "
+    for p in "$@"; do kill -0 $p 2>/dev/null && alive=1; own="$own$p $(pgrep -P $p | tr '\n' ' ') "; done
+    [ $alive -eq 1 ] || break
+    n=0
+    while IFS=, read -r uu pid name mem; do
+      pid=${pid// /}
+      case "$own" in *" $pid "*) tag=own;; *) tag=OTHER;; esac
+      echo "$(date -u +%FT%TZ) $uu pid $pid${name} ${mem# } $tag" >> $f; n=$((n+1))
+      [ "$tag" = OTHER ] && log "E3-L3 gpu monitor: OTHER process on $uu: pid $pid${name} ${mem# } (record only)"
+    done < <(nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader | grep -e "$U0" -e "$U1" | sed -e "s/$U0/GPU0/" -e "s/$U1/GPU1/")
+    [ $n -eq 0 ] && echo "$(date -u +%FT%TZ) none" >> $f
+    sleep $MON_STEP
+  done
+}
+# <<< gpu-functions
+wait_idle "before the preflight" || { incomplete "GPU 0 / 1 not idle for $IDLE_NEED s in a row within $IDLE_MAX s before the preflight"; exit 3; }
 check_shas
 cat > $OUT/plan.json <<JSON
 {"batch": "E3-L3", "prereg": "$PREREG", "host": "bigboy", "seeds": {"342101": {"gpu": 0, "evidence": "$EV_342101"}, "342202": {"gpu": 1, "evidence": "$EV_342202"}},
@@ -128,7 +171,9 @@ PF1=$!
 CUDA_VISIBLE_DEVICES=1 timeout -k 30 1200 $P -B scripts/g4_e3l3.py train --cache $CACHE --manifest-sha $MAN_SHA --evidence "$EV_342202" --seed 342202 --out $OUT/pf-s342202 --updates 100000 --max-updates 400 --log-every 50 --time-from 200 --probe-every 400 --snap 0 --deadline-epoch $((PFS+1170)) --reserve 0 --expect-gpu 'RTX 6000 Ada' --ctrl-holdout $REF2/ctrl_holdout.json > $OUT/pf-s342202.log 2>&1 &
 PF2=$!
 echo "{\"preflight_pids\": {\"342101\": $PF1, \"342202\": $PF2}}" > $OUT/pf_pids.json
-wait $PF1; PFX1=$?; wait $PF2; PFX2=$?
+gpu_monitor $OUT/gpu_monitor.log $PF1 $PF2 &
+MON=$!
+wait $PF1; PFX1=$?; wait $PF2; PFX2=$?; wait $MON
 pfread(){ $P -c "import json; f=json.load(open('$1/final.json')); print(f['rate_s_per_update'] or 'nan', f['load_seconds'], f['first_window_s'] or 0, f['probe_seconds_max'] or 0, f['rate_cv'] if f['rate_cv'] is not None else 'nan', f['updates_done'])" 2>/dev/null || echo "nan 0 0 0 nan 0"; }
 read R1 L1 W1 Q1 CV1 N1 <<<"$(pfread $OUT/pf-s342101)"
 read R2 L2 W2 Q2 CV2 N2 <<<"$(pfread $OUT/pf-s342202)"
@@ -148,7 +193,7 @@ log "E3-L3 preflight (exit $PFX1 / $PFX2): s/update GPU0 $R1 (cv $CV1, warning: 
 echo "{\"preflight_exit\": [$PFX1, $PFX2], \"rate_s_per_update\": [\"$R1\", \"$R2\"], \"rate_cv\": [\"$CV1\", \"$CV2\"], \"rate_warning\": [\"$PFW1\", \"$PFW2\"], \"load_seconds\": [\"$L1\", \"$L2\"], \"first_window_seconds\": [\"$W1\", \"$W2\"], \"probe_seconds\": [\"$Q1\", \"$Q2\"], \"timed_updates\": \"200-400\", \"updates\": $UPD}" > $OUT/updates.json
 if [ "$UPD" -lt 2000 ]; then incomplete "budget: $UPD updates < 2,000 (preflight exit $PFX1 / $PFX2)"; exit 3; fi
 # ================================================================ training: both seeds in parallel, <= 6,000 s each from process start
-while gpus_busy; do log "E3-L3: GPU 0 / 1 busy before training; waiting 60 s"; sleep 60; done
+wait_idle "before the training" || { incomplete "GPU 0 / 1 not idle for $IDLE_NEED s in a row within $IDLE_MAX s before the training"; exit 3; }
 check_shas
 TS=$(date +%s)
 log "E3-L3 training start: $UPD updates per seed; GPU 0 seed 342101, GPU 1 seed 342202; trainer deadline $((TS+BUDGET-30)) (reserve 60), kill at $((TS+BUDGET)) (+30 s grace)"
@@ -157,7 +202,10 @@ T1=$!
 CUDA_VISIBLE_DEVICES=1 timeout -k 30 $BUDGET $P -B scripts/g4_e3l3.py train --cache $CACHE --manifest-sha $MAN_SHA --evidence "$EV_342202" --seed 342202 --out $OUT/s342202 --updates $UPD --log-every 200 --time-from 200 --probe-every 1000 --snap 6000 --deadline-epoch $((TS+BUDGET-30)) --reserve 60 --expect-gpu 'RTX 6000 Ada' --ctrl-ckpt $E3R/s342202/checkpoints/final.pt --ctrl-holdout $REF2/ctrl_holdout.json > $OUT/s342202.log 2>&1 &
 T2=$!
 echo "{\"train_start_epoch\": $TS, \"pids\": {\"342101\": $T1, \"342202\": $T2}, \"budget_seconds\": $BUDGET}" > $OUT/train_pids.json
-wait $T1; X1=$?; wait $T2; X2=$?
+gpu_monitor $OUT/gpu_monitor.log $T1 $T2 &
+MON=$!
+wait $T1; X1=$?; wait $T2; X2=$?; wait $MON
+log "E3-L3 gpu monitor: $(grep -c ' OTHER$' $OUT/gpu_monitor.log) OTHER samples on GPU 0 / 1 over preflight + training (record only; $OUT/gpu_monitor.log)"
 TE=$(date +%s)
 for s in 342101 342202; do
   RS=$($P -c "import json; d=json.load(open('$OUT/s$s/final.json')); r=d['rate_s_per_update']; print('%d updates (%s), %.4f s/update (%+.0f %% vs preflight max), train %.0f s, total %.0f s of $BUDGET, w %.1f' % (d['updates_done'], 'complete' if d['complete'] else 'TRUNCATED' if d['truncated'] else 'partial', r, 100 * (r / max(float('$R1'), float('$R2')) - 1), d['train_seconds'], d['seconds'], d['w']))" 2>/dev/null || echo "final.json unreadable")
@@ -169,8 +217,8 @@ check_shas
 CTRLH=$REF2/ctrl_holdout.json
 for s in 342101 342202; do
   [ -f $OUT/s$s/checkpoints/final.pt ] || { log "E3-L3 seed $s: no final.pt, no select"; continue; }
-  log "E3-L3 select seed $s start (10 workers x 1 thread, timeout 10,800 s)"
-  CUDA_VISIBLE_DEVICES= timeout -k 30 10800 $P -B scripts/g4_e3l3.py select --run $OUT/s$s --ctrl $CTRLH --workers 10 --threads 1 > $OUT/select_s$s.log 2>&1
+  log "E3-L3 select seed $s start (10 workers x 1 thread, nice 10, timeout 10,800 s)"
+  CUDA_VISIBLE_DEVICES= timeout -k 30 10800 nice -n 10 $P -B scripts/g4_e3l3.py select --run $OUT/s$s --ctrl $CTRLH --workers 10 --threads 1 > $OUT/select_s$s.log 2>&1
   SX=$?; [ $SX -eq 124 ] && log "E3-L3 select seed $s TIMED OUT after 10,800 s"
   log "E3-L3 select seed $s (exit $SX): $(tail -1 $OUT/select_s$s.log)"
 done
@@ -180,12 +228,12 @@ for s in 342101 342202; do
 done
 CKS=${CKS#,}
 if [ -z "$CKS" ]; then incomplete "no trained checkpoint with thresholds"; exit 3; fi
-log "E3-L3 eval start (10 workers x 1 thread, timeout 43,200 s): $CKS"
-CUDA_VISIBLE_DEVICES= timeout -k 30 43200 $P -B scripts/g4_e3l3.py eval --export $EXPORT --out $OUT/eval --ckpt $CKS --workers 10 --threads 1 > $OUT/eval.log 2>&1
+log "E3-L3 eval start (10 workers x 1 thread, nice 10, timeout 43,200 s): $CKS"
+CUDA_VISIBLE_DEVICES= timeout -k 30 43200 nice -n 10 $P -B scripts/g4_e3l3.py eval --export $EXPORT --out $OUT/eval --ckpt $CKS --workers 10 --threads 1 > $OUT/eval.log 2>&1
 EX=$?; [ $EX -eq 124 ] && log "E3-L3 eval TIMED OUT after 43,200 s (missing jobs -> INCOMPLETE)"
 log "E3-L3 eval done (exit $EX): $(tail -1 $OUT/eval.log)"
 E5ARG=""; [ "$E5_SUM_SHA" != "none" ] && E5ARG="--e5-summary $REF2/e5_summary.json"
-CUDA_VISIBLE_DEVICES= timeout -k 30 1800 $P -B scripts/g4_e3l3.py aggregate --out $OUT/eval --runs $OUT/s342101,$OUT/s342202 --control-summary $E3R/eval/summary.json \
+CUDA_VISIBLE_DEVICES= timeout -k 30 1800 nice -n 10 $P -B scripts/g4_e3l3.py aggregate --out $OUT/eval --runs $OUT/s342101,$OUT/s342202 --control-summary $E3R/eval/summary.json \
   --e3l-summary $E3L/eval/summary.json --e3l2-summary $E3L2/eval/summary.json $E5ARG > $OUT/aggregate.log 2>&1
 log "E3-L3 aggregate (exit $?): $(head -1 $OUT/aggregate.log)"
 USE=$(du -sm $OUT | cut -f1)
