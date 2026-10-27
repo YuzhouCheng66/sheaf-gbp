@@ -1,0 +1,35 @@
+{
+ "updates_done": 16,
+ "updates_planned": 16,
+ "max_updates": 0,
+ "truncated": false,
+ "complete": true,
+ "rate_s_per_update": 4.666141539812088,
+ "first_window_s": 18.909510135650635,
+ "first_window_updates": 4,
+ "load_seconds": 0.11656713485717773,
+ "train_seconds": 76.26299142837524,
+ "weights_sha256": "a775fa77fa18626df20af0dcaa2b688e376ee5ea0171556939ea74e135f0ddc1",
+ "checkpoint": "C:/Users/27118/AppData/Local/Temp/claude/C--Users-27118-AppData-Local-Claude-Data-claude-pzs8sxrjxfjjc-scratch-workspaces-7462828b-8825-4be3-955b-e422393bdef0-4bc58eb2-7206-4518-ad18-b22859b86201-scratch-2026-10-23-91f83a/160d1fa0-6b2e-4733-9167-0e4000fcc081/scratchpad/e3r_smoke/runs/s342202\\checkpoints\\final.pt",
+ "checkpoint_sha256": "c1633758c63712fd0631b95498e72e92ddd7e9a81079298c098a1c0cfc3f7e2d",
+ "history_last": {
+  "updates": 16,
+  "train_bce": 0.023505072109401226,
+  "holdout_bce": 0.034411609874989556,
+  "seconds": 80.86386299133301
+ },
+ "threshold": {
+  "t": 0.740000000000002,
+  "j": 2037,
+  "f1": 0.9561138597956692,
+  "free": 0.9941087367586361,
+  "linear_f1": 0.9547150392383893,
+  "linear_free": 0.9941087367586361,
+  "k0_f1": 0.863195094065066,
+  "k0_linear_f1": 0.8808365758754864,
+  "k0_t_sep": 0.21999999999999886,
+  "k0_f1_sep": 0.8808997872124835,
+  "seconds": 8.491151332855225
+ },
+ "seconds": 89.39838981628418
+}

@@ -1,0 +1,22 @@
+{
+ "_source": "OVERNIGHT_REPORT D8-44 (E3-R pre-registration); keys = g4_e3r.DEFAULT_CRITERIA; drafted by the implementer, to be checked by the coordinator before deployment",
+ "judged_panel": "val",
+ "report_panel": "fresh",
+ "judged_tier": "cam_nf",
+ "train_seeds": ["342101", "342202"],
+ "noise_seeds": ["1", "2"],
+ "control_arms": ["B4", "B6_A", "B6_B"],
+ "lever_r8_margin": 0.03,
+ "not_enough_margin": 0.01,
+ "k0_margin": -0.01,
+ "guard_free": 0.005,
+ "guard_surface": 0.005,
+ "guard_fpr": 0.0,
+ "clean_min": 0.99,
+ "calib_slope_range": null,
+ "calib_ece_max": null,
+ "min_updates": 2000,
+ "truncated_blocks_lever": true,
+ "fresh_required": true,
+ "fresh_sign_check": true
+}

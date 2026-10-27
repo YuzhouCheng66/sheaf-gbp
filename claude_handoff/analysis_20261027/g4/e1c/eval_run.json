@@ -1,0 +1,21 @@
+{
+ "fit": "C:\\Users\\27118\\Desktop\\sheaf-gbp\\experiments\\sheaf-gbp-p6-local-skill\\claude_handoff\\analysis_20261027\\g4\\e1c\\fit.json",
+ "fit_sha256": "8dd8b1952ead659ca49de1af0ce6b051943cf4aab1559704ab395acb152ea1f2",
+ "script_sha256": "c905d9e6c2bd8450da2803133c57edf52f7b2fee6055b37d8c5a5a0c8d5876a3",
+ "smoke": false,
+ "args": {
+  "stage": "eval",
+  "out": "../../claude_handoff/analysis_20261027/g4/e1c",
+  "fit": "../../claude_handoff/analysis_20261027/g4/e1c/fit.json",
+  "train_per_stratum": 5,
+  "train_houses": "",
+  "fit_seeds": "101,102",
+  "cache": "C:\\Users\\27118\\AppData\\Local\\Temp\\g4_e1c_cache",
+  "panels": "val,fresh",
+  "seeds": "1,2",
+  "houses": 0,
+  "workers": 4,
+  "no_bytes": false,
+  "smoke": false
+ }
+}
