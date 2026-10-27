@@ -1,0 +1,48 @@
+r1_i0: 36 objects, 48 vertices, world DL 208 B, 5s
+r1_i1: 65 objects, 43 vertices, world DL 306 B, 6s
+r1_i2: 32 objects, 50 vertices, world DL 201 B, 5s
+r1_i3: 14 objects, 22 vertices, world DL 92 B, 7s
+r1_i4: 15 objects, 47 vertices, world DL 138 B, 6s
+r1_i5: 33 objects, 5 vertices, world DL 125 B, 5s
+r1_i6: 21 objects, 31 vertices, world DL 130 B, 6s
+r1_i7: 45 objects, 58 vertices, world DL 264 B, 6s
+r2_i0: 51 objects, 59 vertices, world DL 280 B, 5s
+r2_i1: 78 objects, 73 vertices, world DL 397 B, 5s
+r2_i2: 51 objects, 47 vertices, world DL 262 B, 5s
+r2_i3: 70 objects, 98 vertices, world DL 415 B, 5s
+r2_i4: 34 objects, 89 vertices, world DL 276 B, 5s
+r2_i5: 48 objects, 725 vertices, world DL 1436 B, 5s
+r2_i6: 36 objects, 170 vertices, world DL 422 B, 5s
+r2_i7: 18 objects, 55 vertices, world DL 161 B, 6s
+r3_i0: 94 objects, 140 vertices, world DL 566 B, 5s
+r3_i1: 86 objects, 68 vertices, world DL 422 B, 5s
+r3_i2: 64 objects, 264 vertices, world DL 681 B, 5s
+r3_i3: 62 objects, 124 vertices, world DL 433 B, 5s
+r3_i4: 62 objects, 122 vertices, world DL 426 B, 5s
+r3_i5: 121 objects, 197 vertices, world DL 757 B, 5s
+r3_i6: 17 objects, 86 vertices, world DL 211 B, 5s
+r3_i7: 64 objects, 236 vertices, world DL 634 B, 6s
+{
+ "own": {
+  "n": 192,
+  "ctx_median": 1258.5444121307721,
+  "dl_median": 106.78980108408629,
+  "ratio_ctx_over_dl_median": 11.128589094588502,
+  "objects_median": 14.0,
+  "vertices_median": 29.0
+ },
+ "union8": {
+  "n": 192,
+  "ctx_median": 2116.6332051872287,
+  "dl_median": 306.241647049161,
+  "ratio_ctx_over_dl_median": 6.997107866265911,
+  "objects_median": 36.0,
+  "vertices_median": 60.0
+ },
+ "house": {
+  "n": 24,
+  "dl_world_median": 293.13118270749356,
+  "objects_median": 49.5,
+  "vertices_median": 70.5
+ }
+}
