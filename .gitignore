@@ -41,3 +41,7 @@ demo_web/_local.html
 # derived npz from G4 batches (priors, caches) stay local; repo is public
 claude_handoff/analysis_20261027/g4/**/*.npz
 claude_handoff/analysis_20261027/review_E1/**/*.npz
+claude_handoff/analysis_20261027/review_E3R/inputs/
+claude_handoff/analysis_20261027/review_E3R/**/*.npz
+claude_handoff/analysis_20261027/review_E3R/**/*.pt
+claude_handoff/analysis_20261027/g4/probe_yaw/**/*.npz
