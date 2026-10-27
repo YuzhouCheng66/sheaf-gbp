@@ -1,0 +1,16 @@
+variant generic BAND (0, 32) LINTEL_MAX_FREE 31
+[      0s] G4-E0 g4-e0-1 code sha256 7a338d6919650b3c0f75e7dfeceb23e9909fed81998fedd984b9ed347be0d77b args {'out': 'claude_handoff/analysis_20261027/g4/review_e0/var_generic', 'procs': 1, 'val_limit': 2, 'fresh_limit': 0, 'train_limit': 6, 'wires': 'W3', 'skip_demo_check': True, 'no_render_cache': False, 'fault': None}
+[      0s] scenes VAL 2, fresh 0, trainA 3, trainB 3
+[     41s] trainA TRA:r1:i0 40.7s {'W3': 25.1} mem 598.5 MB render {'hits': 255, 'misses': 8, 'seconds': 15.5}
+[     84s] trainA TRA:r2:i0 42.9s {'W3': 26.2} mem 600.0 MB render {'hits': 243, 'misses': 8, 'seconds': 17.0}
+[    124s] trainA TRA:r3:i0 39.9s {'W3': 24.7} mem 600.0 MB render {'hits': 243, 'misses': 8, 'seconds': 14.8}
+[    165s] trainB TRA:r1:i1 41.8s {'W3': 26.1} mem 600.3 MB render {'hits': 243, 'misses': 8, 'seconds': 15.5}
+[    205s] trainB TRA:r2:i1 39.8s {'W3': 24.1} mem 603.4 MB render {'hits': 258, 'misses': 8, 'seconds': 15.0}
+[    244s] trainB TRA:r3:i1 39.2s {'W3': 23.9} mem 606.2 MB render {'hits': 257, 'misses': 8, 'seconds': 14.9}
+[    244s] prior A: 3 houses, symbols {"w1u": 0, "w1c": 0, "w2u": 0, "w2c": 0, "w3pu": 1720320, "w3pc": 2752512}
+[    244s] prior B: 3 houses, symbols {"w1u": 0, "w1c": 0, "w2u": 0, "w2c": 0, "w3pu": 1703936, "w3pc": 2801664}
+[    294s] VAL VAL:r1:i0 49.6s (fixture 14.8s) {'W3': 34.7} errors 0 crash False mem 648.5 MB render {'hits': 681, 'misses': 8, 'seconds': 14.4}
+[    345s] VAL VAL:r2:i0 50.5s (fixture 15.2s) {'W3': 35.2} errors 0 crash False mem 648.5 MB render {'hits': 707, 'misses': 8, 'seconds': 15.0}
+[    345s] verdict PASS (INCOMPLETE PANELS: smoke run, not a verdict) (criterion i True, best arm W3)
+[    345s] VAL|A|W3: own 221.0 cav 334.0 house CD-c 5363.5 CD-u 5323.5 SYNC-c 9878.0 SYNC-u 38529.0 exact 548/548 residual 0
+[    345s] VAL|B|W3: own 222.5 cav 331.5 house CD-c 5181.5 CD-u 5277.0 SYNC-c 9618.0 SYNC-u 38272.0 exact 548/548 residual 0

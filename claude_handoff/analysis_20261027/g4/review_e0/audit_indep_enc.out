@@ -1,0 +1,4 @@
+[    48s] W1 encoded+decoded 50 messages in 32s, errors so far 0
+[   149s] W2 encoded+decoded 50 messages in 101s, errors so far 0
+[   157s] W3 encoded+decoded 50 messages in 9s, errors so far 0
+[   157s] phase-1 rows 150 exact 150 checks 114 ok 114 render hits 883 misses 8

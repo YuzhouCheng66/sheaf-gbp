@@ -1,0 +1,48 @@
+{
+ "A|cam_nf": {
+  "hist_equal_fit_job": true,
+  "B6_pooled_f1_direct": 0.9370411568409344,
+  "B6_fit": 0.9370411568409344,
+  "B4_pooled_f1_direct": 0.8980782774927055,
+  "B4_fit": 0.8980782774927055,
+  "B6_free_direct": 0.9956040686035816,
+  "B6_free_fit": 0.9956040686035816,
+  "B4_free_direct": 0.9862846940431748,
+  "B4_free_fit": 0.9862846940431748,
+  "S6_range": [
+   -904,
+   973
+  ],
+  "clip_limit": [
+   -4096,
+   4095
+  ],
+  "constraint_binds": false,
+  "theta": 85,
+  "l0q": -39,
+  "tq": 46
+ },
+ "B|cam_nf": {
+  "hist_equal_fit_job": true,
+  "B6_pooled_f1_direct": 0.8917775090689238,
+  "B6_fit": 0.8917775090689238,
+  "B4_pooled_f1_direct": 0.8514795678722404,
+  "B4_fit": 0.8514795678722404,
+  "B6_free_direct": 0.9892690253671562,
+  "B6_free_fit": 0.9892690253671562,
+  "B4_free_direct": 0.9782752002670227,
+  "B4_free_fit": 0.9782752002670227,
+  "S6_range": [
+   -924,
+   722
+  ],
+  "clip_limit": [
+   -4096,
+   4095
+  ],
+  "constraint_binds": false,
+  "theta": 41,
+  "l0q": -36,
+  "tq": 5
+ }
+}
