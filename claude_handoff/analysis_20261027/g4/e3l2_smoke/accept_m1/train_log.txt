@@ -1,0 +1,27 @@
+E3-L2 train seed 342101: 2 train / 1 holdout houses, 552604 parameters, evidence c:C:/Users/27118/Desktop/sheaf-gbp/experiments/sheaf-gbp-p6-local-skill/claude_handoff/analysis_20261027/review_E3R/inputs/e1c_fit.json:A:cam_nf, load 0s
+upd1 bce 1.38635 (known 0.69317 occ 0.69318) src 13198 bit support 594/3184 hq!=0 0.921 clipLam 0.000/0.000 clipH 0.083 Lam~ 4.668 w 999.80 grad 0.498 enc 0.005 lr 2.50e-04 12s
+upd2 bce 1.38561 (known 0.69307 occ 0.69254) src 10559 bit support 489/3432 hq!=0 0.894 clipLam 0.000/0.000 clipH 0.182 Lam~ 6.134 w 1000.14 grad 0.534 enc 0.006 lr 4.98e-04 21s
+upd3 bce 1.38315 (known 0.69366 occ 0.68949) src 11515 bit support 645/3524 hq!=0 0.953 clipLam 0.000/0.000 clipH 0.242 Lam~ 6.437 w 1000.68 grad 1.105 enc 0.034 lr 7.37e-04 32s
+upd4 bce 1.36465 (known 0.69434 occ 0.67031) src 17063 bit support 963/2777 hq!=0 0.982 clipLam 0.000/0.000 clipH 0.195 Lam~ 4.338 w 1001.47 grad 4.084 enc 0.176 lr 9.62e-04 41s
+upd5 bce 1.28554 (known 0.68942 occ 0.59612) src 10588 bit support 583/4122 hq!=0 1.000 clipLam 0.000/0.000 clipH 0.043 Lam~ 2.845 w 1002.29 grad 10.679 enc 1.151 lr 9.33e-04 50s
+upd6 bce 1.15827 (known 0.67744 occ 0.48083) src 11950 bit support 573/2520 hq!=0 0.977 clipLam 0.000/0.000 clipH 0.002 Lam~ 1.627 w 1003.02 grad 8.315 enc 2.465 lr 8.97e-04 59s
+upd7 bce 1.09785 (known 0.71107 occ 0.38678) src 3909 bit support 238/4119 hq!=0 0.937 clipLam 0.000/0.349 clipH 0.000 Lam~ 1.039 w 1003.61 grad 10.315 enc 0.588 lr 8.54e-04 68s
+upd8 bce 2.66084 (known 1.16938 occ 1.49146) src 11435 bit support 838/3180 hq!=0 0.934 clipLam 0.000/0.996 clipH 0.000 Lam~ 0.258 w 1004.04 grad 151.407 enc 16.471 lr 8.04e-04 75s
+upd9 bce 2.35504 (known 0.96815 occ 1.38688) src 9795 bit support 753/3158 hq!=0 0.790 clipLam 0.000/0.997 clipH 0.000 Lam~ 0.141 w 1004.32 grad 132.900 enc 14.023 lr 7.50e-04 84s
+upd10 bce 1.38406 (known 0.73733 occ 0.64673) src 5682 bit support 423/4062 hq!=0 0.651 clipLam 0.000/0.979 clipH 0.000 Lam~ 0.332 w 1004.36 grad 36.623 enc 4.415 lr 6.91e-04 93s
+upd11 bce 1.22204 (known 0.69488 occ 0.52716) src 9054 bit support 703/3156 hq!=0 0.624 clipLam 0.000/0.992 clipH 0.000 Lam~ 0.205 w 1004.25 grad 13.112 enc 2.257 lr 6.29e-04 102s
+upd12 bce 1.07569 (known 0.69111 occ 0.38458) src 7664 bit support 721/3660 hq!=0 0.495 clipLam 0.000/0.967 clipH 0.000 Lam~ 0.283 w 1004.10 grad 3.031 enc 0.211 lr 5.65e-04 111s
+upd13 bce 1.12779 (known 0.69264 occ 0.43515) src 5083 bit support 520/3742 hq!=0 0.391 clipLam 0.000/0.856 clipH 0.000 Lam~ 0.588 w 1004.04 grad 7.173 enc 0.711 lr 5.00e-04 120s
+upd14 bce 1.12070 (known 0.69201 occ 0.42869) src 4103 bit support 421/2781 hq!=0 0.410 clipLam 0.000/0.882 clipH 0.000 Lam~ 0.503 w 1004.03 grad 6.833 enc 0.651 lr 4.35e-04 129s
+upd15 bce 1.07590 (known 0.68959 occ 0.38631) src 5486 bit support 525/3444 hq!=0 0.493 clipLam 0.000/0.974 clipH 0.000 Lam~ 0.368 w 1004.04 grad 5.392 enc 0.349 lr 3.71e-04 137s
+upd16 bce 1.08470 (known 0.68081 occ 0.40389) src 4001 bit support 407/3822 hq!=0 0.476 clipLam 0.000/0.962 clipH 0.000 Lam~ 0.479 w 1004.03 grad 6.540 enc 0.108 lr 3.09e-04 145s
+upd17 bce 1.02692 (known 0.69095 occ 0.33597) src 3024 bit support 255/4014 hq!=0 0.437 clipLam 0.000/0.930 clipH 0.000 Lam~ 0.604 w 1004.03 grad 3.759 enc 0.063 lr 2.50e-04 152s
+upd18 bce 1.08144 (known 0.72387 occ 0.35757) src 5682 bit support 514/3426 hq!=0 0.555 clipLam 0.000/0.983 clipH 0.000 Lam~ 0.337 w 1004.02 grad 17.182 enc 1.730 lr 1.96e-04 162s
+upd19 bce 1.16062 (known 0.72272 occ 0.43790) src 8582 bit support 856/3604 hq!=0 0.628 clipLam 0.000/0.988 clipH 0.000 Lam~ 0.157 w 1004.02 grad 21.841 enc 2.904 lr 1.46e-04 171s
+upd20 bce 1.13467 (known 0.71565 occ 0.41902) src 5135 bit support 512/3100 hq!=0 0.559 clipLam 0.000/0.964 clipH 0.000 Lam~ 0.313 w 1004.01 grad 16.635 enc 2.186 lr 1.03e-04 180s
+upd21 bce 1.05284 (known 0.68466 occ 0.36819) src 3590 bit support 342/3314 hq!=0 0.471 clipLam 0.000/0.931 clipH 0.000 Lam~ 0.553 w 1004.00 grad 5.583 enc 1.097 lr 6.70e-05 187s
+upd22 bce 1.06930 (known 0.72709 occ 0.34221) src 4224 bit support 432/4605 hq!=0 0.531 clipLam 0.000/0.959 clipH 0.000 Lam~ 0.444 w 1003.99 grad 18.207 enc 1.602 lr 3.81e-05 197s
+upd23 bce 1.03512 (known 0.66363 occ 0.37149) src 3850 bit support 343/3182 hq!=0 0.485 clipLam 0.000/0.940 clipH 0.000 Lam~ 0.548 w 1003.98 grad 8.888 enc 0.752 lr 1.70e-05 205s
+upd24 bce 1.20225 (known 0.71705 occ 0.48521) src 8500 bit support 864/3093 hq!=0 0.571 clipLam 0.000/0.976 clipH 0.000 Lam~ 0.253 w 1003.98 grad 22.390 enc 3.262 lr 4.28e-06 214s
+  holdout bce known 0.65447 occ 0.47048
+E3-L2 train seed 342101 done: 24 updates (complete), rate 8.658183193206787 s/update (timing windows from update 4, >= 4: ok; cv 0.07535111454072643), w 1003.98, snapshot 12, 215s

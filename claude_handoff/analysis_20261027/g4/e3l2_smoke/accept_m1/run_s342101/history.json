@@ -1,0 +1,22 @@
+[
+ {
+  "updates": 24,
+  "train_bce": 1.2022537887096405,
+  "train_bce_known": 0.7170487642288208,
+  "train_bce_occ": 0.4852050244808197,
+  "holdout_bce_known": 0.6544661521911621,
+  "holdout_bce_occ": 0.4704786241054535,
+  "w": 1003.982421875,
+  "src_bits": 8499.553393185217,
+  "support_cells": 864.5,
+  "touched_cells": 3093.0,
+  "hq_nonzero": 0.5708501935005188,
+  "lam_clip_hi": 0.0,
+  "lam_clip_lo": 0.9757084846496582,
+  "h_clip": 0.0,
+  "lam_raw_median": 0.2531834840774536,
+  "grad_total": 22.390045166015625,
+  "grad_encoder": 3.2620439529418945,
+  "seconds": 215.45382237434387
+ }
+]

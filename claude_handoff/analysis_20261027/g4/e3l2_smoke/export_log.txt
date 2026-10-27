@@ -1,0 +1,2 @@
+export: 1 jobs (TRAIN), tiers ['clean', 'cam_nf', 'cam'], 1 workers
+[1/1] train_r1_i0_s203 e1_match {'clean': None, 'cam_nf': None, 'cam': None} 67s  71s

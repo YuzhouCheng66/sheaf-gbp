@@ -1,0 +1,172 @@
+{
+ "updates_done": 24,
+ "updates_planned": 24,
+ "max_updates": 0,
+ "truncated": false,
+ "complete": true,
+ "rate_s_per_update": 8.658183193206787,
+ "rate_mean_s_per_update": 8.658183193206787,
+ "rate_cv": 0.07535111454072643,
+ "rate_warning": null,
+ "rate_windows": [
+  [
+   4,
+   5,
+   9.167417287826538
+  ],
+  [
+   5,
+   6,
+   8.996645450592041
+  ],
+  [
+   6,
+   7,
+   9.001542329788208
+  ],
+  [
+   7,
+   8,
+   7.590437173843384
+  ],
+  [
+   8,
+   9,
+   9.043713331222534
+  ],
+  [
+   9,
+   10,
+   8.90042781829834
+  ],
+  [
+   10,
+   11,
+   9.01294493675232
+  ],
+  [
+   11,
+   12,
+   9.043825626373291
+  ],
+  [
+   12,
+   13,
+   8.965123176574707
+  ],
+  [
+   13,
+   14,
+   9.03776216506958
+  ],
+  [
+   14,
+   15,
+   7.415940761566162
+  ],
+  [
+   15,
+   16,
+   7.976545572280884
+  ],
+  [
+   16,
+   17,
+   7.710095405578613
+  ],
+  [
+   17,
+   18,
+   9.173904180526733
+  ],
+  [
+   18,
+   19,
+   9.06931734085083
+  ],
+  [
+   19,
+   20,
+   9.164596557617188
+  ],
+  [
+   20,
+   21,
+   7.618037939071655
+  ],
+  [
+   21,
+   22,
+   9.298052072525024
+  ],
+  [
+   22,
+   23,
+   7.7767510414123535
+  ],
+  [
+   23,
+   24,
+   9.200583696365356
+  ]
+ ],
+ "time_from": 4,
+ "rate_window_start": 4,
+ "rate_window_start_ok": true,
+ "first_window_s": 9.496150493621826,
+ "first_window_updates": 1,
+ "load_seconds": 0.11653399467468262,
+ "train_seconds": 212.8559215068817,
+ "weights_sha256": "dd492b209b10dd0fc3b9922e6be5cd8862d7e6b1fe38db57747f122a340ec4d0",
+ "w": 1003.982421875,
+ "snapshot": {
+  "updates": 12,
+  "path": "claude_handoff/analysis_20261027/g4/e3l2_smoke/accept_m1/run_s342101\\checkpoints\\upd12.pt",
+  "sha256": "f51164e0853b65af49cd3938b6801c3fdb38e3e3cb8f3a3a33b59be13f5aa166"
+ },
+ "rate_measurements": 24,
+ "rate_curve_last": {
+  "measured_bits": 8499.553393185217,
+  "K": [
+   896,
+   1476,
+   627,
+   459
+  ],
+  "support_cells": 864.5,
+  "touched_cells": 3093.0,
+  "agents": 4,
+  "padded": 3,
+  "hq_nonzero": 0.5708501935005188,
+  "lam_clip_hi": 0.0,
+  "lam_clip_lo": 0.9757084846496582,
+  "h_clip": 0.0,
+  "lam_raw_median": 0.2531834840774536,
+  "updates": 24,
+  "grad_total": 22.390045166015625,
+  "grad_encoder": 3.2620439529418945
+ },
+ "checkpoint": "claude_handoff/analysis_20261027/g4/e3l2_smoke/accept_m1/run_s342101\\checkpoints\\final.pt",
+ "checkpoint_sha256": "4d29b6d2a7f3a51c495ab71bcf4fc4ac6db1283709d28fc6ff2a7db78e85a526",
+ "history_last": {
+  "updates": 24,
+  "train_bce": 1.2022537887096405,
+  "train_bce_known": 0.7170487642288208,
+  "train_bce_occ": 0.4852050244808197,
+  "holdout_bce_known": 0.6544661521911621,
+  "holdout_bce_occ": 0.4704786241054535,
+  "w": 1003.982421875,
+  "src_bits": 8499.553393185217,
+  "support_cells": 864.5,
+  "touched_cells": 3093.0,
+  "hq_nonzero": 0.5708501935005188,
+  "lam_clip_hi": 0.0,
+  "lam_clip_lo": 0.9757084846496582,
+  "h_clip": 0.0,
+  "lam_raw_median": 0.2531834840774536,
+  "grad_total": 22.390045166015625,
+  "grad_encoder": 3.2620439529418945,
+  "seconds": 215.45382237434387
+ },
+ "seconds": 215.4993815422058
+}

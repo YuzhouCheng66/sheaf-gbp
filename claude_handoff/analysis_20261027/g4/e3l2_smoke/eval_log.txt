@@ -1,0 +1,2 @@
+E3-L2 eval: 1 jobs, checkpoints ['claude_handoff/analysis_20261027/g4/e3l2_smoke/runs/s342101/checkpoints/final.pt'], snapshots ['claude_handoff/analysis_20261027/g4/e3l2_smoke/runs/s342101/checkpoints/upd8.pt'], 1 workers x 6 threads
+[1/1] train_r1_i0_s203 36s peak 1683 MB  38s

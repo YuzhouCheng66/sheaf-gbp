@@ -1,0 +1,1 @@
+E3-L2 select seed 342101 upd8: K* 2048 R8 {"2048": [7.68, -15.18, 0.0001, false]} K0 fallback True 18s
