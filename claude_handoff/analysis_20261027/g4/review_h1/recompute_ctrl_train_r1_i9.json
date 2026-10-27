@@ -1,0 +1,220 @@
+{
+ "ctrl_train_r1_i9_s203": {
+  "npz": "ctrl_train_r1_i9_s203.npz",
+  "sha_match": true,
+  "comps_match": true,
+  "res": {
+   "B6_A": {
+    "furn_f1_mine": 0.987016168544831,
+    "furn_f1_impl": 0.987016168544831,
+    "free_mine": 0.9958732956607392,
+    "free_impl": 0.9958732956607392,
+    "zone_counts_mine": [
+     0,
+     0,
+     0
+    ],
+    "zone_counts_impl": [
+     0,
+     0,
+     0
+    ],
+    "zone_f1_mine": null,
+    "phantoms_mine": [
+     0.0,
+     0.0,
+     22.0
+    ],
+    "phantoms_impl": [
+     0.0,
+     0.0,
+     22.0
+    ],
+    "phantoms_truth_noslab": 1.0,
+    "phantoms_truth_objonly": 1.0
+   },
+   "B6_B": {
+    "furn_f1_mine": 0.9866666666666667,
+    "furn_f1_impl": 0.9866666666666667,
+    "free_mine": 0.9956140805640521,
+    "free_impl": 0.9956140805640521,
+    "zone_counts_mine": [
+     0,
+     0,
+     0
+    ],
+    "zone_counts_impl": [
+     0,
+     0,
+     0
+    ],
+    "zone_f1_mine": null,
+    "phantoms_mine": [
+     0.0,
+     0.0,
+     23.0
+    ],
+    "phantoms_impl": [
+     0.0,
+     0.0,
+     23.0
+    ],
+    "phantoms_truth_noslab": 2.0,
+    "phantoms_truth_objonly": 2.0
+   },
+   "NET_342101": {
+    "furn_f1_mine": 0.9982838931110566,
+    "furn_f1_impl": 0.9982838931110566,
+    "free_mine": 0.9990875628596609,
+    "free_impl": 0.9990875628596609,
+    "zone_counts_mine": [
+     0,
+     0,
+     0
+    ],
+    "zone_counts_impl": [
+     0,
+     0,
+     0
+    ],
+    "zone_f1_mine": null,
+    "phantoms_mine": [
+     0.0,
+     0.0,
+     22.0
+    ],
+    "phantoms_impl": [
+     0.0,
+     0.0,
+     22.0
+    ],
+    "phantoms_truth_noslab": 0.0,
+    "phantoms_truth_objonly": 0.0
+   },
+   "NET_342202": {
+    "furn_f1_mine": 0.9973085392708588,
+    "furn_f1_impl": 0.9973085392708588,
+    "free_mine": 0.9987039245165639,
+    "free_impl": 0.9987039245165639,
+    "zone_counts_mine": [
+     0,
+     0,
+     0
+    ],
+    "zone_counts_impl": [
+     0,
+     0,
+     0
+    ],
+    "zone_f1_mine": null,
+    "phantoms_mine": [
+     2.0,
+     7.0,
+     24.0
+    ],
+    "phantoms_impl": [
+     2.0,
+     7.0,
+     24.0
+    ],
+    "phantoms_truth_noslab": 2.0,
+    "phantoms_truth_objonly": 2.0
+   },
+   "flip_342101_vs_A": {
+    "mine_weighted": [
+     128,
+     8
+    ],
+    "prec_w": 0.9411764705882353,
+    "mine_unweighted": [
+     16,
+     1
+    ],
+    "impl": [
+     128,
+     8
+    ]
+   },
+   "flip_342101_vs_B": {
+    "mine_weighted": [
+     128,
+     8
+    ],
+    "prec_w": 0.9411764705882353,
+    "mine_unweighted": [
+     16,
+     1
+    ],
+    "impl": [
+     128,
+     8
+    ]
+   },
+   "wrongflip_342101": {
+    "cheb1": 1,
+    "cheb2": 0,
+    "far": 0,
+    "in_zone": 0,
+    "z1_floor_layer": 0,
+    "k1": 1,
+    "k2": 0,
+    "k3p": 0,
+    "n": 1,
+    "gen_occ": 0,
+    "right_cheb1": 0,
+    "right_n": 16
+   },
+   "net_bin_vs_t_diff_342101": 0,
+   "flip_342202_vs_A": {
+    "mine_weighted": [
+     144,
+     104
+    ],
+    "prec_w": 0.5806451612903226,
+    "mine_unweighted": [
+     18,
+     13
+    ],
+    "impl": [
+     144,
+     104
+    ]
+   },
+   "flip_342202_vs_B": {
+    "mine_weighted": [
+     144,
+     104
+    ],
+    "prec_w": 0.5806451612903226,
+    "mine_unweighted": [
+     18,
+     13
+    ],
+    "impl": [
+     144,
+     104
+    ]
+   },
+   "wrongflip_342202": {
+    "cheb1": 6,
+    "cheb2": 0,
+    "far": 7,
+    "in_zone": 0,
+    "z1_floor_layer": 0,
+    "k1": 6,
+    "k2": 0,
+    "k3p": 7,
+    "n": 13,
+    "gen_occ": 0,
+    "right_cheb1": 0,
+    "right_n": 18
+   },
+   "net_bin_vs_t_diff_342202": 0
+  },
+  "ood_voxels": 0,
+  "ood_seen_occ": 0,
+  "ood_seen_occ_in_region": 0,
+  "ood_in_region": 0,
+  "ood_subset_obj": true
+ }
+}

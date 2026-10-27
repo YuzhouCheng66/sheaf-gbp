@@ -1,0 +1,290 @@
+{
+ "novel_train_r2_i9_s203": {
+  "342101": {
+   "flips_by_nearest": {
+    "composite/step_shape": {
+     "right": 26,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "composite/l_shape": {
+     "right": 5,
+     "wrong": 1,
+     "wrong_cheb1": 1
+    },
+    "ellipsoid/ellipsoid": {
+     "right": 4,
+     "wrong": 30,
+     "wrong_cheb1": 30
+    },
+    "rotated/rot_sofa": {
+     "right": 4,
+     "wrong": 1,
+     "wrong_cheb1": 1
+    },
+    "rotated/rot_bed": {
+     "right": 5,
+     "wrong": 7,
+     "wrong_cheb1": 7
+    },
+    "rotated/rot_table": {
+     "right": 0,
+     "wrong": 1,
+     "wrong_cheb1": 1
+    },
+    "ellipsoid/ball": {
+     "right": 0,
+     "wrong": 12,
+     "wrong_cheb1": 12
+    },
+    "pole/coat_rack": {
+     "right": 0,
+     "wrong": 2,
+     "wrong_cheb1": 2
+    },
+    "clutter/clutter": {
+     "right": 0,
+     "wrong": 1,
+     "wrong_cheb1": 1
+    }
+   },
+   "flips_by_height": {
+    "z_layer1": {
+     "right": 5,
+     "wrong": 30
+    },
+    "z<0.9m": {
+     "right": 38,
+     "wrong": 22
+    },
+    "z>=0.9m": {
+     "right": 1,
+     "wrong": 3
+    }
+   },
+   "phantoms": {
+    "net_impl": 0.0,
+    "b6_impl": 1.0,
+    "net_nofloor_tall": 0.0,
+    "b6_nofloor_tall": 1.0,
+    "net_nofloor_all": 0.0,
+    "b6_nofloor_all": 52.0
+   }
+  },
+  "342202": {
+   "flips_by_nearest": {
+    "composite/step_shape": {
+     "right": 28,
+     "wrong": 3,
+     "wrong_cheb1": 1
+    },
+    "composite/l_shape": {
+     "right": 5,
+     "wrong": 1,
+     "wrong_cheb1": 1
+    },
+    "ellipsoid/ellipsoid": {
+     "right": 3,
+     "wrong": 49,
+     "wrong_cheb1": 49
+    },
+    "rotated/rot_sofa": {
+     "right": 4,
+     "wrong": 1,
+     "wrong_cheb1": 1
+    },
+    "rotated/rot_bed": {
+     "right": 5,
+     "wrong": 12,
+     "wrong_cheb1": 12
+    },
+    "pole/coat_rack": {
+     "right": 1,
+     "wrong": 5,
+     "wrong_cheb1": 5
+    },
+    "ellipsoid/ball": {
+     "right": 1,
+     "wrong": 11,
+     "wrong_cheb1": 11
+    },
+    "rotated/rot_table": {
+     "right": 0,
+     "wrong": 7,
+     "wrong_cheb1": 7
+    },
+    "clutter/clutter": {
+     "right": 0,
+     "wrong": 1,
+     "wrong_cheb1": 1
+    }
+   },
+   "flips_by_height": {
+    "z_layer1": {
+     "right": 5,
+     "wrong": 41
+    },
+    "z<0.9m": {
+     "right": 40,
+     "wrong": 43
+    },
+    "z>=0.9m": {
+     "right": 2,
+     "wrong": 6
+    }
+   },
+   "phantoms": {
+    "net_impl": 0.0,
+    "b6_impl": 1.0,
+    "net_nofloor_tall": 0.0,
+    "b6_nofloor_tall": 1.0,
+    "net_nofloor_all": 0.0,
+    "b6_nofloor_all": 53.0
+   }
+  }
+ },
+ "novel_train_r2_i9_s204": {
+  "342101": {
+   "flips_by_nearest": {
+    "composite/l_shape": {
+     "right": 16,
+     "wrong": 3,
+     "wrong_cheb1": 3
+    },
+    "ellipsoid/ball": {
+     "right": 3,
+     "wrong": 10,
+     "wrong_cheb1": 10
+    },
+    "ellipsoid/ellipsoid": {
+     "right": 6,
+     "wrong": 37,
+     "wrong_cheb1": 37
+    },
+    "rotated/rot_sofa": {
+     "right": 4,
+     "wrong": 6,
+     "wrong_cheb1": 5
+    },
+    "composite/step_shape": {
+     "right": 2,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "rotated/rot_table": {
+     "right": 1,
+     "wrong": 1,
+     "wrong_cheb1": 1
+    },
+    "rotated/rot_bed": {
+     "right": 2,
+     "wrong": 8,
+     "wrong_cheb1": 8
+    },
+    "pole/coat_rack": {
+     "right": 1,
+     "wrong": 3,
+     "wrong_cheb1": 3
+    },
+    "clutter/clutter": {
+     "right": 0,
+     "wrong": 1,
+     "wrong_cheb1": 1
+    }
+   },
+   "flips_by_height": {
+    "z<0.9m": {
+     "right": 31,
+     "wrong": 26
+    },
+    "z_layer1": {
+     "right": 1,
+     "wrong": 36
+    },
+    "z>=0.9m": {
+     "right": 3,
+     "wrong": 7
+    }
+   },
+   "phantoms": {
+    "net_impl": 1.0,
+    "b6_impl": 2.0,
+    "net_nofloor_tall": 1.0,
+    "b6_nofloor_tall": 2.0,
+    "net_nofloor_all": 1.0,
+    "b6_nofloor_all": 53.0
+   }
+  },
+  "342202": {
+   "flips_by_nearest": {
+    "composite/l_shape": {
+     "right": 17,
+     "wrong": 2,
+     "wrong_cheb1": 2
+    },
+    "ellipsoid/ball": {
+     "right": 3,
+     "wrong": 10,
+     "wrong_cheb1": 10
+    },
+    "ellipsoid/ellipsoid": {
+     "right": 7,
+     "wrong": 58,
+     "wrong_cheb1": 58
+    },
+    "rotated/rot_sofa": {
+     "right": 4,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "composite/step_shape": {
+     "right": 2,
+     "wrong": 4,
+     "wrong_cheb1": 1
+    },
+    "clutter/clutter": {
+     "right": 1,
+     "wrong": 3,
+     "wrong_cheb1": 3
+    },
+    "rotated/rot_table": {
+     "right": 1,
+     "wrong": 4,
+     "wrong_cheb1": 4
+    },
+    "rotated/rot_bed": {
+     "right": 1,
+     "wrong": 14,
+     "wrong_cheb1": 14
+    },
+    "pole/coat_rack": {
+     "right": 1,
+     "wrong": 3,
+     "wrong_cheb1": 3
+    }
+   },
+   "flips_by_height": {
+    "z<0.9m": {
+     "right": 34,
+     "wrong": 52
+    },
+    "z_layer1": {
+     "right": 1,
+     "wrong": 42
+    },
+    "z>=0.9m": {
+     "right": 2,
+     "wrong": 4
+    }
+   },
+   "phantoms": {
+    "net_impl": 0.0,
+    "b6_impl": 2.0,
+    "net_nofloor_tall": 0.0,
+    "b6_nofloor_tall": 2.0,
+    "net_nofloor_all": 0.0,
+    "b6_nofloor_all": 57.0
+   }
+  }
+ }
+}

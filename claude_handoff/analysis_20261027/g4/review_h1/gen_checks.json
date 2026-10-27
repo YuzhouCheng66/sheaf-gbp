@@ -1,0 +1,92 @@
+{
+ "v420_sha": "4793a3279ebd9564315500721e548ab9dd0e10d8f192df632c9b8ddf2964b61d",
+ "identity_fixture": {
+  "occ": true,
+  "slab": true,
+  "obj": true,
+  "private": true,
+  "positions_m": true,
+  "trajectory_m": true,
+  "reached": true,
+  "edges": true,
+  "world_id": true
+ },
+ "novel_train_r2_i9": {
+  "occ": true,
+  "obj": true,
+  "slab": true,
+  "ood": true,
+  "ood_subset_obj": true,
+  "ood_eq_obj": true,
+  "n_objects": 37,
+  "families": [
+   "clutter",
+   "composite",
+   "ellipsoid",
+   "pole",
+   "rotated",
+   "wall_shelf"
+  ]
+ },
+ "floating_train_r2_i9": {
+  "occ": true,
+  "obj": true,
+  "slab": true,
+  "ood": true,
+  "ood_subset_obj": true,
+  "ood_eq_obj": true,
+  "n_objects": 55,
+  "families": [
+   "hanging",
+   "wall_shelf"
+  ]
+ },
+ "scale_train_r1_i9": {
+  "occ": true,
+  "obj": true,
+  "slab": true,
+  "ood": true,
+  "ood_subset_obj": true,
+  "ood_eq_obj": true,
+  "n_objects": 27,
+  "families": [
+   "scaled_0.6",
+   "scaled_1.5"
+  ]
+ },
+ "ctrl_train_r1_i9": {
+  "occ": true,
+  "obj": true,
+  "slab": true,
+  "ood": true,
+  "ood_subset_obj": true,
+  "ood_eq_obj": null,
+  "n_objects": 20,
+  "families": [
+   "orig"
+  ]
+ },
+ "plan_TRAIN_2_19": {
+  "ctrl": true,
+  "novel": true,
+  "scale": true,
+  "floating": true
+ },
+ "plan_TRAIN_3_29": {
+  "ctrl": true,
+  "novel": true,
+  "scale": true,
+  "floating": true
+ },
+ "obox_vs_polygon": {
+  "boxes": 200,
+  "cells_differing": 0
+ },
+ "test_split": {
+  "ctrl": "ValueError",
+  "novel": "ValueError",
+  "scale": "ValueError",
+  "floating": "ValueError"
+ },
+ "module_for_world_id": "v420ood:floating:TRAIN:39c679aa6a87e4362c9eaabb93dd891e"
+}

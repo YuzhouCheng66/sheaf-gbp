@@ -1,0 +1,130 @@
+{
+ "floating_train_r2_i9_s203": {
+  "342101": {
+   "flips_by_nearest": {
+    "wall_shelf/wall_shelf": {
+     "right": 9,
+     "wrong": 36,
+     "wrong_cheb1": 33
+    },
+    "hanging/hanging": {
+     "right": 12,
+     "wrong": 69,
+     "wrong_cheb1": 61
+    }
+   },
+   "flips_by_height": {
+    "z>=0.9m": {
+     "right": 21,
+     "wrong": 103
+    },
+    "z<0.9m": {
+     "right": 0,
+     "wrong": 2
+    }
+   },
+   "phantoms": {
+    "net_impl": 4.0,
+    "b6_impl": 0.0,
+    "net_nofloor_tall": 4.0,
+    "b6_nofloor_tall": 0.0,
+    "net_nofloor_all": 4.0,
+    "b6_nofloor_all": 63.0
+   }
+  },
+  "342202": {
+   "flips_by_nearest": {
+    "wall_shelf/wall_shelf": {
+     "right": 10,
+     "wrong": 20,
+     "wrong_cheb1": 16
+    },
+    "hanging/hanging": {
+     "right": 11,
+     "wrong": 87,
+     "wrong_cheb1": 69
+    }
+   },
+   "flips_by_height": {
+    "z>=0.9m": {
+     "right": 21,
+     "wrong": 105
+    },
+    "z<0.9m": {
+     "right": 0,
+     "wrong": 2
+    }
+   },
+   "phantoms": {
+    "net_impl": 3.0,
+    "b6_impl": 0.0,
+    "net_nofloor_tall": 3.0,
+    "b6_nofloor_tall": 0.0,
+    "net_nofloor_all": 3.0,
+    "b6_nofloor_all": 65.0
+   }
+  }
+ },
+ "floating_train_r2_i9_s204": {
+  "342101": {
+   "flips_by_nearest": {
+    "wall_shelf/wall_shelf": {
+     "right": 14,
+     "wrong": 26,
+     "wrong_cheb1": 19
+    },
+    "hanging/hanging": {
+     "right": 27,
+     "wrong": 55,
+     "wrong_cheb1": 53
+    }
+   },
+   "flips_by_height": {
+    "z>=0.9m": {
+     "right": 41,
+     "wrong": 80
+    },
+    "z<0.9m": {
+     "right": 0,
+     "wrong": 1
+    }
+   },
+   "phantoms": {
+    "net_impl": 3.0,
+    "b6_impl": 0.0,
+    "net_nofloor_tall": 3.0,
+    "b6_nofloor_tall": 0.0,
+    "net_nofloor_all": 3.0,
+    "b6_nofloor_all": 78.0
+   }
+  },
+  "342202": {
+   "flips_by_nearest": {
+    "wall_shelf/wall_shelf": {
+     "right": 10,
+     "wrong": 16,
+     "wrong_cheb1": 16
+    },
+    "hanging/hanging": {
+     "right": 30,
+     "wrong": 78,
+     "wrong_cheb1": 73
+    }
+   },
+   "flips_by_height": {
+    "z>=0.9m": {
+     "right": 40,
+     "wrong": 94
+    }
+   },
+   "phantoms": {
+    "net_impl": 1.0,
+    "b6_impl": 0.0,
+    "net_nofloor_tall": 1.0,
+    "b6_nofloor_tall": 0.0,
+    "net_nofloor_all": 1.0,
+    "b6_nofloor_all": 79.0
+   }
+  }
+ }
+}

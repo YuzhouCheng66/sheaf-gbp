@@ -1,0 +1,348 @@
+{
+ "scale_train_r1_i9_s203": {
+  "342101": {
+   "flips_by_nearest": {
+    "scaled_1.5/cabinet_tall": {
+     "right": 14,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "scaled_1.5/fridge": {
+     "right": 81,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "scaled_1.5/plant": {
+     "right": 12,
+     "wrong": 23,
+     "wrong_cheb1": 23
+    },
+    "scaled_1.5/round_table": {
+     "right": 1,
+     "wrong": 16,
+     "wrong_cheb1": 14
+    },
+    "scaled_1.5/counter": {
+     "right": 1,
+     "wrong": 1,
+     "wrong_cheb1": 1
+    },
+    "scaled_0.6/plant": {
+     "right": 1,
+     "wrong": 2,
+     "wrong_cheb1": 2
+    },
+    "scaled_0.6/desk": {
+     "right": 0,
+     "wrong": 12,
+     "wrong_cheb1": 12
+    },
+    "scaled_1.5/coffee_table": {
+     "right": 0,
+     "wrong": 43,
+     "wrong_cheb1": 18
+    },
+    "scaled_0.6/coffee_table": {
+     "right": 0,
+     "wrong": 6,
+     "wrong_cheb1": 5
+    }
+   },
+   "flips_by_height": {
+    "z>=0.9m": {
+     "right": 89,
+     "wrong": 15
+    },
+    "z<0.9m": {
+     "right": 18,
+     "wrong": 80
+    },
+    "z_layer1": {
+     "right": 3,
+     "wrong": 8
+    }
+   },
+   "phantoms": {
+    "net_impl": 1.0,
+    "b6_impl": 1.0,
+    "net_nofloor_tall": 1.0,
+    "b6_nofloor_tall": 1.0,
+    "net_nofloor_all": 1.0,
+    "b6_nofloor_all": 5.0
+   }
+  },
+  "342202": {
+   "flips_by_nearest": {
+    "scaled_1.5/cabinet_tall": {
+     "right": 13,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "scaled_1.5/fridge": {
+     "right": 97,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "scaled_0.6/fridge": {
+     "right": 1,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "scaled_1.5/plant": {
+     "right": 12,
+     "wrong": 9,
+     "wrong_cheb1": 9
+    },
+    "scaled_0.6/plant": {
+     "right": 1,
+     "wrong": 2,
+     "wrong_cheb1": 2
+    },
+    "scaled_0.6/desk": {
+     "right": 0,
+     "wrong": 10,
+     "wrong_cheb1": 10
+    },
+    "scaled_1.5/coffee_table": {
+     "right": 0,
+     "wrong": 6,
+     "wrong_cheb1": 3
+    },
+    "scaled_0.6/round_table": {
+     "right": 0,
+     "wrong": 1,
+     "wrong_cheb1": 1
+    },
+    "scaled_1.5/round_table": {
+     "right": 0,
+     "wrong": 128,
+     "wrong_cheb1": 116
+    },
+    "scaled_0.6/coffee_table": {
+     "right": 0,
+     "wrong": 9,
+     "wrong_cheb1": 8
+    }
+   },
+   "flips_by_height": {
+    "z>=0.9m": {
+     "right": 101,
+     "wrong": 116
+    },
+    "z<0.9m": {
+     "right": 20,
+     "wrong": 39
+    },
+    "z_layer1": {
+     "right": 3,
+     "wrong": 10
+    }
+   },
+   "phantoms": {
+    "net_impl": 3.0,
+    "b6_impl": 1.0,
+    "net_nofloor_tall": 3.0,
+    "b6_nofloor_tall": 1.0,
+    "net_nofloor_all": 3.0,
+    "b6_nofloor_all": 5.0
+   }
+  }
+ },
+ "ctrl_train_r1_i9_s203": {
+  "342101": {
+   "flips_by_nearest": {
+    "orig/counter": {
+     "right": 10,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "orig/cabinet": {
+     "right": 3,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "orig/round_table": {
+     "right": 1,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "orig/cabinet_tall": {
+     "right": 2,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "orig/lamp": {
+     "right": 0,
+     "wrong": 1,
+     "wrong_cheb1": 1
+    }
+   },
+   "flips_by_height": {
+    "z>=0.9m": {
+     "right": 2,
+     "wrong": 1
+    },
+    "z<0.9m": {
+     "right": 14,
+     "wrong": 0
+    }
+   },
+   "phantoms": {
+    "net_impl": 0.0,
+    "b6_impl": 0.0,
+    "net_nofloor_tall": 0.0,
+    "b6_nofloor_tall": 0.0,
+    "net_nofloor_all": 0.0,
+    "b6_nofloor_all": 1.0
+   }
+  },
+  "342202": {
+   "flips_by_nearest": {
+    "orig/counter": {
+     "right": 10,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "orig/cabinet": {
+     "right": 5,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "orig/round_table": {
+     "right": 1,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "orig/cabinet_tall": {
+     "right": 2,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "orig/lamp": {
+     "right": 0,
+     "wrong": 7,
+     "wrong_cheb1": 0
+    },
+    "orig/fridge": {
+     "right": 0,
+     "wrong": 6,
+     "wrong_cheb1": 6
+    }
+   },
+   "flips_by_height": {
+    "z>=0.9m": {
+     "right": 2,
+     "wrong": 13
+    },
+    "z<0.9m": {
+     "right": 16,
+     "wrong": 0
+    }
+   },
+   "phantoms": {
+    "net_impl": 2.0,
+    "b6_impl": 0.0,
+    "net_nofloor_tall": 2.0,
+    "b6_nofloor_tall": 0.0,
+    "net_nofloor_all": 2.0,
+    "b6_nofloor_all": 1.0
+   }
+  }
+ },
+ "ctrl_train_r1_i9_s204": {
+  "342101": {
+   "flips_by_nearest": {
+    "orig/counter": {
+     "right": 2,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "orig/cabinet_tall": {
+     "right": 4,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "orig/lamp": {
+     "right": 1,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "orig/cabinet": {
+     "right": 8,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "orig/fridge": {
+     "right": 2,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    }
+   },
+   "flips_by_height": {
+    "z>=0.9m": {
+     "right": 3,
+     "wrong": 0
+    },
+    "z<0.9m": {
+     "right": 14,
+     "wrong": 0
+    }
+   },
+   "phantoms": {
+    "net_impl": 0.0,
+    "b6_impl": 0.0,
+    "net_nofloor_tall": 0.0,
+    "b6_nofloor_tall": 0.0,
+    "net_nofloor_all": 0.0,
+    "b6_nofloor_all": 12.0
+   }
+  },
+  "342202": {
+   "flips_by_nearest": {
+    "orig/counter": {
+     "right": 2,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "orig/cabinet_tall": {
+     "right": 4,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "orig/lamp": {
+     "right": 1,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "orig/cabinet": {
+     "right": 8,
+     "wrong": 0,
+     "wrong_cheb1": 0
+    },
+    "orig/fridge": {
+     "right": 2,
+     "wrong": 9,
+     "wrong_cheb1": 9
+    }
+   },
+   "flips_by_height": {
+    "z>=0.9m": {
+     "right": 3,
+     "wrong": 8
+    },
+    "z<0.9m": {
+     "right": 14,
+     "wrong": 1
+    }
+   },
+   "phantoms": {
+    "net_impl": 0.0,
+    "b6_impl": 0.0,
+    "net_nofloor_tall": 0.0,
+    "b6_nofloor_tall": 0.0,
+    "net_nofloor_all": 0.0,
+    "b6_nofloor_all": 14.0
+   }
+  }
+ }
+}

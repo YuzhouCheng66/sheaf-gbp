@@ -1,0 +1,220 @@
+{
+ "novel_train_r2_i9_s203": {
+  "npz": "novel_train_r2_i9_s203.npz",
+  "sha_match": true,
+  "comps_match": true,
+  "res": {
+   "B6_A": {
+    "furn_f1_mine": 0.9245810055865922,
+    "furn_f1_impl": 0.9245810055865922,
+    "free_mine": 0.9934873132285348,
+    "free_impl": 0.9934873132285348,
+    "zone_counts_mine": [
+     26480,
+     1576,
+     1896
+    ],
+    "zone_counts_impl": [
+     26480,
+     1576,
+     1896
+    ],
+    "zone_f1_mine": 0.9384746243266232,
+    "phantoms_mine": [
+     1.0,
+     1.0,
+     90.0
+    ],
+    "phantoms_impl": [
+     1.0,
+     1.0,
+     90.0
+    ],
+    "phantoms_truth_noslab": 53.0,
+    "phantoms_truth_objonly": 53.0
+   },
+   "B6_B": {
+    "furn_f1_mine": 0.9229483070920997,
+    "furn_f1_impl": 0.9229483070920997,
+    "free_mine": 0.9931919369479706,
+    "free_impl": 0.9931919369479706,
+    "zone_counts_mine": [
+     26496,
+     1640,
+     1880
+    ],
+    "zone_counts_impl": [
+     26496,
+     1640,
+     1880
+    ],
+    "zone_f1_mine": 0.9377123442808607,
+    "phantoms_mine": [
+     1.0,
+     1.0,
+     92.0
+    ],
+    "phantoms_impl": [
+     1.0,
+     1.0,
+     92.0
+    ],
+    "phantoms_truth_noslab": 54.0,
+    "phantoms_truth_objonly": 54.0
+   },
+   "NET_342101": {
+    "furn_f1_mine": 0.9517102615694165,
+    "furn_f1_impl": 0.9517102615694165,
+    "free_mine": 0.9981773122199329,
+    "free_impl": 0.9981773122199329,
+    "zone_counts_mine": [
+     26488,
+     784,
+     1888
+    ],
+    "zone_counts_impl": [
+     26488,
+     784,
+     1888
+    ],
+    "zone_f1_mine": 0.9519838987924094,
+    "phantoms_mine": [
+     0.0,
+     0.0,
+     32.0
+    ],
+    "phantoms_impl": [
+     0.0,
+     0.0,
+     32.0
+    ],
+    "phantoms_truth_noslab": 0.0,
+    "phantoms_truth_objonly": 0.0
+   },
+   "NET_342202": {
+    "furn_f1_mine": 0.9509498157074,
+    "furn_f1_impl": 0.9509498157074,
+    "free_mine": 0.9978243015431609,
+    "free_impl": 0.9978243015431609,
+    "zone_counts_mine": [
+     26832,
+     1128,
+     1544
+    ],
+    "zone_counts_impl": [
+     26832,
+     1128,
+     1544
+    ],
+    "zone_f1_mine": 0.952570292530531,
+    "phantoms_mine": [
+     0.0,
+     0.0,
+     36.0
+    ],
+    "phantoms_impl": [
+     0.0,
+     0.0,
+     36.0
+    ],
+    "phantoms_truth_noslab": 0.0,
+    "phantoms_truth_objonly": 0.0
+   },
+   "flip_342101_vs_A": {
+    "mine_weighted": [
+     352,
+     440
+    ],
+    "prec_w": 0.4444444444444444,
+    "mine_unweighted": [
+     44,
+     55
+    ],
+    "impl": [
+     352,
+     440
+    ]
+   },
+   "flip_342101_vs_B": {
+    "mine_weighted": [
+     352,
+     440
+    ],
+    "prec_w": 0.4444444444444444,
+    "mine_unweighted": [
+     44,
+     55
+    ],
+    "impl": [
+     352,
+     440
+    ]
+   },
+   "wrongflip_342101": {
+    "cheb1": 55,
+    "cheb2": 0,
+    "far": 0,
+    "in_zone": 53,
+    "z1_floor_layer": 30,
+    "k1": 26,
+    "k2": 15,
+    "k3p": 14,
+    "n": 55,
+    "gen_occ": 0,
+    "right_cheb1": 0,
+    "right_n": 44
+   },
+   "net_bin_vs_t_diff_342101": 0,
+   "flip_342202_vs_A": {
+    "mine_weighted": [
+     376,
+     720
+    ],
+    "prec_w": 0.34306569343065696,
+    "mine_unweighted": [
+     47,
+     90
+    ],
+    "impl": [
+     376,
+     720
+    ]
+   },
+   "flip_342202_vs_B": {
+    "mine_weighted": [
+     376,
+     720
+    ],
+    "prec_w": 0.34306569343065696,
+    "mine_unweighted": [
+     47,
+     90
+    ],
+    "impl": [
+     376,
+     720
+    ]
+   },
+   "wrongflip_342202": {
+    "cheb1": 88,
+    "cheb2": 1,
+    "far": 1,
+    "in_zone": 81,
+    "z1_floor_layer": 41,
+    "k1": 43,
+    "k2": 20,
+    "k3p": 27,
+    "n": 90,
+    "gen_occ": 0,
+    "right_cheb1": 0,
+    "right_n": 47
+   },
+   "net_bin_vs_t_diff_342202": 0
+  },
+  "ood_voxels": 10140,
+  "ood_seen_occ": 3759,
+  "ood_seen_occ_in_region": 3547,
+  "ood_in_region": 9154,
+  "ood_subset_obj": true
+ }
+}
