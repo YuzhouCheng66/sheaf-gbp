@@ -1,0 +1,20 @@
+[
+ {
+  "house": "r1_i0",
+  "K0_exact": true,
+  "R8_exact": {
+   "sum": true,
+   "maxabs": true,
+   "max_occ": true
+  }
+ },
+ {
+  "house": "r2_i0",
+  "K0_exact": true,
+  "R8_exact": {
+   "sum": true,
+   "maxabs": true,
+   "max_occ": true
+  }
+ }
+]

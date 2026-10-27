@@ -1,0 +1,13 @@
+ok test_b5_denoiser
+ok test_clean_integration_equals_observe
+ok test_ctx_tern_matches_rate_baselines
+ok test_hull_and_verdict
+ok test_int_coder_is_exact_adaptive_code_length
+ok test_integer_logodds_scale_and_clamp
+ok test_maxabs_is_a_join
+ok test_metrics_match_train_3d_v431
+ok test_noise_injection_statistics
+ok test_octomap_bt_matches_recursive_reference
+ok test_panels_never_touch_test
+ok test_relay_counts_every_agent_once
+all 12 tests passed

@@ -1,0 +1,133 @@
+{
+ "script": "g4_noise_panels.py",
+ "fingerprint": {
+  "b5_conds": [
+   "lidar",
+   "cam",
+   "harsh"
+  ],
+  "b5_conds_sens": [
+   "cam"
+  ],
+  "conds": [
+   "clean",
+   "inter_only",
+   "range_only",
+   "pose_only",
+   "cam_nf",
+   "cam",
+   "lidar",
+   "harsh"
+  ],
+  "data_module_sha256": "4793a3279ebd9564315500721e548ab9dd0e10d8f192df632c9b8ddf2964b61d",
+  "governing": "V3",
+  "houseexpo_index_sha256": "7b4730cc52689c9044228a6f9bf8e1b4785cb5f6f40f54a422e603c6000101c1",
+  "integrators": [
+   "V3",
+   "V1",
+   "V0",
+   "V2"
+  ],
+  "job_format": 2,
+  "s0_rnet": 6066.0,
+  "script_sha256": "2313d75bc3ee04515d87469ab9e89e49a3811e1125e39ca0bba839448cc8623f"
+ },
+ "args": {
+  "out": "../../claude_handoff/analysis_20261027/g4/e1_smoke2",
+  "panels": "val",
+  "seeds": "1",
+  "houses": 2,
+  "conds": "clean,inter_only,range_only,pose_only,cam_nf,cam,lidar,harsh",
+  "b5_conds": "lidar,cam,harsh",
+  "b5_conds_sens": "cam",
+  "workers": 2,
+  "s0_rnet": 6066.0,
+  "houseexpo_json_dir": "C:\\Users\\27118\\Desktop\\sheaf-gbp\\experiments\\sheaf-gbp-p6-local-skill\\claude_handoff\\analysis_20261027\\data\\houseexpo_json",
+  "houseexpo_index": "C:\\Users\\27118\\Desktop\\sheaf-gbp\\experiments\\sheaf-gbp-p6-local-skill\\claude_handoff\\claude_reviews_20261021\\houseexpo_index_v365.json",
+  "aggregate_only": false,
+  "smoke_asserts": true
+ },
+ "conditions": {
+  "clean": {
+   "sigma0": 0.0,
+   "k": 0.0,
+   "p_drop": 0.0,
+   "p_out": 0.0,
+   "pose_t": 0.0,
+   "pose_yaw": 0.0,
+   "inter_t": 0.0,
+   "inter_yaw": 0.0
+  },
+  "inter_only": {
+   "sigma0": 0.0,
+   "k": 0.0,
+   "p_drop": 0.0,
+   "p_out": 0.0,
+   "pose_t": 0.0,
+   "pose_yaw": 0.0,
+   "inter_t": 0.05,
+   "inter_yaw": 1.0
+  },
+  "range_only": {
+   "sigma0": 0.0,
+   "k": 0.015,
+   "p_drop": 0.1,
+   "p_out": 0.005,
+   "pose_t": 0.0,
+   "pose_yaw": 0.0,
+   "inter_t": 0.0,
+   "inter_yaw": 0.0
+  },
+  "pose_only": {
+   "sigma0": 0.0,
+   "k": 0.0,
+   "p_drop": 0.0,
+   "p_out": 0.0,
+   "pose_t": 0.02,
+   "pose_yaw": 0.5,
+   "inter_t": 0.0,
+   "inter_yaw": 0.0
+  },
+  "cam_nf": {
+   "sigma0": 0.0,
+   "k": 0.015,
+   "p_drop": 0.1,
+   "p_out": 0.005,
+   "pose_t": 0.02,
+   "pose_yaw": 0.5,
+   "inter_t": 0.0,
+   "inter_yaw": 0.0
+  },
+  "cam": {
+   "sigma0": 0.0,
+   "k": 0.015,
+   "p_drop": 0.1,
+   "p_out": 0.005,
+   "pose_t": 0.02,
+   "pose_yaw": 0.5,
+   "inter_t": 0.05,
+   "inter_yaw": 1.0
+  },
+  "lidar": {
+   "sigma0": 0.02,
+   "k": 0.0,
+   "p_drop": 0.05,
+   "p_out": 0.0,
+   "pose_t": 0.01,
+   "pose_yaw": 0.2,
+   "inter_t": 0.03,
+   "inter_yaw": 0.5
+  },
+  "harsh": {
+   "sigma0": 0.0,
+   "k": 0.03,
+   "p_drop": 0.2,
+   "p_out": 0.01,
+   "pose_t": 0.03,
+   "pose_yaw": 1.0,
+   "inter_t": 0.1,
+   "inter_yaw": 2.0
+  }
+ },
+ "seconds": 678.7167553901672
+}

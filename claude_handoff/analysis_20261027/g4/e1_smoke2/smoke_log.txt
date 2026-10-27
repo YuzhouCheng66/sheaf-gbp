@@ -1,0 +1,12 @@
+2 jobs, 2 workers
+[1/2] val_r1_i0_s1.json 514 s peak 1179 MB 517s
+[2/2] val_r1_i1_s1.json 676 s peak 1179 MB 678s
+val V3 INCOMPLETE: noise seeds ['1'] != [1, 2]; seed 1: 22 of 24 houses missing | sum [provisional: incomplete] | must be reported [provisional: incomplete]
+   seed 1: a True | B4 R8 furn 0.7378 K0 0.7594 R_net 828892 (136.6 x S0) | B5@1/4 0.7068354473986769 (cc 0.7068354473986769, box 0.7009306603623646) | c: -max_occ +0.2028 -maxabs +0.0772 | d +0.1189
+val V1 NOT JUDGED (sensitivity row V1); readout: INCOMPLETE: noise seeds ['1'] != [1, 2]; seed 1: 22 of 24 houses missing | sum [provisional: incomplete] | not required by (d) [provisional: incomplete]
+   seed 1: a True | B4 R8 furn 0.3886 K0 0.3101 R_net 745921 (123.0 x S0) | B5@1/4 0.4639110722200388 (cc 0.457104522732267, box 0.4632997717110827) | c: -max_occ +0.1303 -maxabs +0.0434 | d +0.0177
+val V0 NOT JUDGED (sensitivity row V0); readout: INCOMPLETE: noise seeds ['1'] != [1, 2]; seed 1: 22 of 24 houses missing | sum [provisional: incomplete] | must be reported [provisional: incomplete]
+   seed 1: a True | B4 R8 furn 0.7551 K0 0.7908 R_net 771254 (127.1 x S0) | B5@1/4 0.7208366750096422 (cc 0.7187271651569452, box 0.7140206526401176) | c: -max_occ +0.1816 -maxabs +0.0720 | d +0.1215
+val V2 NOT JUDGED (sensitivity row V2); readout: INCOMPLETE: noise seeds ['1'] != [1, 2]; seed 1: 22 of 24 houses missing | undecided (c not met) [provisional: incomplete] | must be reported [provisional: incomplete]
+   seed 1: a True | B4 R8 furn 0.7889 K0 0.8087 R_net 2196501 (362.1 x S0) | B5@1/4 0.7475578734686452 (cc 0.7475578734686452, box 0.7325923826558787) | c: -max_occ +0.1984 -maxabs +0.0082 | d +0.1229
+smoke asserts ok
