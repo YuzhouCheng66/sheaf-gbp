@@ -1,0 +1,33 @@
+r1_i1 0 {'mismatch_max': 0, 'mismatch_rand': 0, 'mismatch_union': 0} 4s
+r1_i1 1 {'mismatch_max': 0, 'mismatch_rand': 0, 'mismatch_union': 0} 4s
+r1_i1 2 {'mismatch_max': 0, 'mismatch_rand': 0, 'mismatch_union': 0} 4s
+r1_i1 3 {'mismatch_max': 0, 'mismatch_rand': 0, 'mismatch_union': 0} 4s
+r1_i1 4 {'mismatch_max': 0, 'mismatch_rand': 0, 'mismatch_union': 0} 4s
+r1_i1 5 {'mismatch_max': 0, 'mismatch_rand': 0, 'mismatch_union': 0} 4s
+r1_i1 6 {'mismatch_max': 0, 'mismatch_rand': 0, 'mismatch_union': 0} 4s
+r1_i1 7 {'mismatch_max': 0, 'mismatch_rand': 0, 'mismatch_union': 0} 4s
+r3_i1 0 {'mismatch_max': 0, 'mismatch_rand': 0, 'mismatch_union': 0} 3s
+r3_i1 1 {'mismatch_max': 0, 'mismatch_rand': 0, 'mismatch_union': 0} 3s
+r3_i1 2 {'mismatch_max': 0, 'mismatch_rand': 0, 'mismatch_union': 0} 4s
+r3_i1 3 {'mismatch_max': 0, 'mismatch_rand': 0, 'mismatch_union': 0} 4s
+r3_i1 4 {'mismatch_max': 0, 'mismatch_rand': 0, 'mismatch_union': 0} 3s
+r3_i1 5 {'mismatch_max': 0, 'mismatch_rand': 0, 'mismatch_union': 0} 4s
+r3_i1 6 {'mismatch_max': 0, 'mismatch_rand': 0, 'mismatch_union': 0} 3s
+r3_i1 7 {'mismatch_max': 0, 'mismatch_rand': 0, 'mismatch_union': 0} 4s
+{
+ "max": {
+  "maps": 16,
+  "maps_with_mismatch": 0,
+  "total_mismatch": 0
+ },
+ "rand": {
+  "maps": 16,
+  "maps_with_mismatch": 0,
+  "total_mismatch": 0
+ },
+ "union": {
+  "maps": 16,
+  "maps_with_mismatch": 0,
+  "total_mismatch": 0
+ }
+}

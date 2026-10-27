@@ -1,0 +1,5 @@
+# raw HouseExpo plans and regenerated fixtures copied for local probes: keep out of the public repo
+probes/**/houseexpo_json/
+probes/**/fx/
+probes/**/*.npz
+probes/**/cache_*/

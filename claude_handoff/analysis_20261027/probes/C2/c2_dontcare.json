@@ -1,0 +1,149 @@
+{
+ "summary": {
+  "max": {
+   "maps": 16,
+   "maps_with_mismatch": 0,
+   "total_mismatch": 0
+  },
+  "rand": {
+   "maps": 16,
+   "maps_with_mismatch": 0,
+   "total_mismatch": 0
+  },
+  "union": {
+   "maps": 16,
+   "maps_with_mismatch": 0,
+   "total_mismatch": 0
+  }
+ },
+ "rows": [
+  {
+   "house": "r1_i1",
+   "agent": 0,
+   "unknown_share": 0.7952423095703125,
+   "mismatch_max": 0,
+   "mismatch_rand": 0,
+   "mismatch_union": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 1,
+   "unknown_share": 0.7257194519042969,
+   "mismatch_max": 0,
+   "mismatch_rand": 0,
+   "mismatch_union": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 2,
+   "unknown_share": 0.7211589813232422,
+   "mismatch_max": 0,
+   "mismatch_rand": 0,
+   "mismatch_union": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 3,
+   "unknown_share": 0.7314414978027344,
+   "mismatch_max": 0,
+   "mismatch_rand": 0,
+   "mismatch_union": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 4,
+   "unknown_share": 0.8035926818847656,
+   "mismatch_max": 0,
+   "mismatch_rand": 0,
+   "mismatch_union": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 5,
+   "unknown_share": 0.7519607543945312,
+   "mismatch_max": 0,
+   "mismatch_rand": 0,
+   "mismatch_union": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 6,
+   "unknown_share": 0.7084827423095703,
+   "mismatch_max": 0,
+   "mismatch_rand": 0,
+   "mismatch_union": 0
+  },
+  {
+   "house": "r1_i1",
+   "agent": 7,
+   "unknown_share": 0.7773571014404297,
+   "mismatch_max": 0,
+   "mismatch_rand": 0,
+   "mismatch_union": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 0,
+   "unknown_share": 0.9349517822265625,
+   "mismatch_max": 0,
+   "mismatch_rand": 0,
+   "mismatch_union": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 1,
+   "unknown_share": 0.9322872161865234,
+   "mismatch_max": 0,
+   "mismatch_rand": 0,
+   "mismatch_union": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 2,
+   "unknown_share": 0.9207553863525391,
+   "mismatch_max": 0,
+   "mismatch_rand": 0,
+   "mismatch_union": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 3,
+   "unknown_share": 0.8962574005126953,
+   "mismatch_max": 0,
+   "mismatch_rand": 0,
+   "mismatch_union": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 4,
+   "unknown_share": 0.8876819610595703,
+   "mismatch_max": 0,
+   "mismatch_rand": 0,
+   "mismatch_union": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 5,
+   "unknown_share": 0.908416748046875,
+   "mismatch_max": 0,
+   "mismatch_rand": 0,
+   "mismatch_union": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 6,
+   "unknown_share": 0.9287490844726562,
+   "mismatch_max": 0,
+   "mismatch_rand": 0,
+   "mismatch_union": 0
+  },
+  {
+   "house": "r3_i1",
+   "agent": 7,
+   "unknown_share": 0.8781299591064453,
+   "mismatch_max": 0,
+   "mismatch_rand": 0,
+   "mismatch_union": 0
+  }
+ ]
+}

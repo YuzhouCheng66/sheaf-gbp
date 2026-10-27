@@ -1,0 +1,126 @@
+{
+ "A1": {
+  "S_K0": {
+   "surface_f1": 1.0,
+   "var_occ_f1": 1.0,
+   "furn_f1": 1.0,
+   "fpr": 0.0,
+   "free_recall": 0.0,
+   "acc3": 0.13122847749824287
+  },
+  "S_R8": {
+   "surface_f1": 1.0,
+   "var_occ_f1": 1.0,
+   "furn_f1": 1.0,
+   "fpr": 0.0,
+   "free_recall": 0.0,
+   "acc3": 0.15243403744319636
+  },
+  "ours_K0": {
+   "surface_f1": 0.9175164976945145,
+   "var_occ_f1": 0.8505903608870735,
+   "furn_f1": 0.5241838335155824,
+   "fpr": 0.012166290394689111,
+   "free_recall": 0.9704659901884479,
+   "acc3": 0.9575873120337689
+  },
+  "ours_R8": {
+   "surface_f1": 0.8980198020431907,
+   "var_occ_f1": 0.8283155896346338,
+   "furn_f1": 0.5396810544725149,
+   "fpr": 0.030982932859389606,
+   "free_recall": 0.976949717964251,
+   "acc3": 0.9574034225972857
+  }
+ },
+ "A2": {
+  "rows": 48,
+  "rows_reached8": 48,
+  "mu_mean": 2.872613666347638,
+  "mu_median": 2.823795198028157,
+  "share_ge2_mean": 0.7485972382167367
+ },
+ "B": {
+  "per_message_median": {
+   "own": {
+    "n": 192,
+    "raw": 131072,
+    "gzip": 2590.0,
+    "ctx": 1258.5444121308494,
+    "desc32": 218.60944928698274,
+    "desc44": 198.35944928698274,
+    "ratio_ctx": 5.9006141547893876,
+    "ratio_gzip": 12.436478509230028,
+    "ratio_raw": 599.5720096916349,
+    "ratio_2048": 9.368312651431795,
+    "dl44": 106.78980108408629,
+    "dl32": 127.03980108408629
+   },
+   "edge": {
+    "n": 334,
+    "raw": 131072,
+    "gzip": 3485.0,
+    "ctx": 1657.6857860264945,
+    "desc32": 401.0678149033197,
+    "desc44": 316.8804160287692,
+    "ratio_ctx": 3.9732323696854186,
+    "ratio_gzip": 8.234250712566203,
+    "ratio_raw": 326.80764264909504,
+    "ratio_2048": 5.10636941639211
+   },
+   "union": {
+    "n": 192,
+    "raw": 131072,
+    "gzip": 4214.5,
+    "ctx": 2116.633205187289,
+    "desc32": 722.9948932021401,
+    "desc44": 560.9948932021401,
+    "ratio_ctx": 2.9719637014534532,
+    "ratio_gzip": 6.3108225020833455,
+    "ratio_raw": 181.2907436223371,
+    "ratio_2048": 2.832667869099017,
+    "dl44": 306.241647049161
+   }
+  },
+  "world_dl_kinds": [
+   "house",
+   "own",
+   "union8"
+  ],
+  "network_median_per_house": {
+   "current_fixed": 229376.0,
+   "current_once": 28672.0,
+   "gzip_flood": 139083.0,
+   "gzip_relay": 49014.5,
+   "ctx_flood": 67995.00761682662,
+   "ctx_relay": 23955.821710118365,
+   "desc32_flood": 12291.80227137682,
+   "desc32_relay": 6065.821458895843
+  },
+  "network_mean_per_house": {
+   "current_fixed": 228010.66666666666,
+   "current_once": 28501.333333333332,
+   "gzip_flood": 154370.75,
+   "gzip_relay": 50640.416666666664,
+   "ctx_flood": 72926.95252615648,
+   "ctx_relay": 24154.439765273288,
+   "desc32_flood": 12377.350093507202,
+   "desc32_relay": 6053.118687702162
+  },
+  "factors_median_over_houses": {
+   "protocol_gzip_flood_over_relay": 2.870259902040705,
+   "protocol_ctx_flood_over_relay": 2.9106628344096213,
+   "protocol_desc_flood_over_relay": 1.955336721202069,
+   "coding_relay_gzip_over_desc": 8.467717105974238,
+   "coding_relay_ctx_over_desc": 3.9562706454311893,
+   "coding_flood_gzip_over_desc": 12.259411007086653,
+   "total_gzipflood_over_descrelay": 23.773916693831044,
+   "total_ctxflood_over_descrelay": 11.864592526030316,
+   "current_fixed_over_descrelay": 37.817206373269954,
+   "current_once_over_descrelay": 4.727150796658744,
+   "current_fixed_over_gzipflood": 1.658020366633632,
+   "current_fixed_over_ctxrelay": 9.575150972538989,
+   "raw_flood_over_descrelay": 1210.1506039446385
+  }
+ }
+}
