@@ -1,0 +1,8 @@
+[     0s] A range coder ok
+[    60s] B memoised observe / W2 march / traversal replay ok
+[   499s] C one house exact: 1644 messages, 708 checks, timing {'W1': 85.9, 'W2': 302.4, 'W3': 28.3}
+[   804s] D breakage caught: drop_hit 16 errors, bitflip {'W1': 2, 'W2': 2, 'W3': 2} errors, decoder 1 cm poses 16 errors; 1 cm poses on both ends repaired by 2875 residual entries; verdict INCONCLUSIVE
+[   918s] E demo houses rebuild exactly
+[   918s] F verdict arithmetic ok (fixed cells, INCOMPLETE gates, literal vs A03-definition readings)
+[   961s] G decoder independence ok: 12 messages decoded in a fresh process with PublicCtx only (no memo, no replay), 12 direct W.observe renders
+[   961s] ALL TESTS PASSED

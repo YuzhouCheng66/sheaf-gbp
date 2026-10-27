@@ -1,0 +1,25 @@
+[      0s] G4-E0 g4-e0-1 code sha256 7a338d6919650b3c0f75e7dfeceb23e9909fed81998fedd984b9ed347be0d77b args {'out': 'claude_handoff/analysis_20261027/g4/e0_smoke2', 'procs': 2, 'val_limit': 2, 'fresh_limit': 0, 'train_limit': 6, 'wires': 'W1,W2,W3', 'skip_demo_check': False, 'no_render_cache': False, 'fault': None}
+[      0s] scenes VAL 2, fresh 0, trainA 3, trainB 3
+[     21s] demo {'house': 'r1_i0', 'own': True, 'occ': True, 'slab': True, 'obj': True, 'edges': True, 'reached': True, 'chart': True, 'positions': True, 'ok': True}
+[     23s] demo {'house': 'r1_i1', 'own': True, 'occ': True, 'slab': True, 'obj': True, 'edges': True, 'reached': True, 'chart': True, 'positions': True, 'ok': True}
+[     45s] demo {'house': 'r2_i0', 'own': True, 'occ': True, 'slab': True, 'obj': True, 'edges': True, 'reached': True, 'chart': True, 'positions': True, 'ok': True}
+[     46s] demo {'house': 'r2_i1', 'own': True, 'occ': True, 'slab': True, 'obj': True, 'edges': True, 'reached': True, 'chart': True, 'positions': True, 'ok': True}
+[     69s] demo {'house': 'r3_i0', 'own': True, 'occ': True, 'slab': True, 'obj': True, 'edges': True, 'reached': True, 'chart': True, 'positions': True, 'ok': True}
+[     70s] demo {'house': 'r3_i1', 'own': True, 'occ': True, 'slab': True, 'obj': True, 'edges': True, 'reached': True, 'chart': True, 'positions': True, 'ok': True}
+[    230s] trainA TRA:r2:i0 153.4s {'W1': 30.5, 'W2': 94.5, 'W3': 9.6} mem 1007.6 MB render {'hits': 745, 'misses': 8, 'seconds': 18.3}
+[    246s] trainA TRA:r1:i0 169.9s {'W1': 29.3, 'W2': 113.3, 'W3': 9.8} mem 1077.1 MB render {'hits': 780, 'misses': 9, 'seconds': 19.2}
+[    373s] trainA TRA:r3:i0 136.0s {'W1': 24.6, 'W2': 87.0, 'W3': 8.7} mem 989.4 MB render {'hits': 745, 'misses': 8, 'seconds': 15.9}
+[    386s] trainB TRA:r1:i1 132.6s {'W1': 26.1, 'W2': 79.2, 'W3': 10.2} mem 998.8 MB render {'hits': 745, 'misses': 8, 'seconds': 15.7}
+[    508s] trainB TRA:r2:i1 130.1s {'W1': 22.8, 'W2': 83.7, 'W3': 8.1} mem 1070.4 MB render {'hits': 790, 'misses': 8, 'seconds': 15.0}
+[    522s] trainB TRA:r3:i1 129.3s {'W1': 22.4, 'W2': 84.2, 'W3': 7.6} mem 1027.7 MB render {'hits': 787, 'misses': 8, 'seconds': 14.2}
+[    522s] prior A: 3 houses, symbols {"w1u": 31869928, "w1c": 33149138, "w2u": 14249436, "w2c": 9906650, "w3pu": 1720320, "w3pc": 2752512}
+[    522s] prior B: 3 houses, symbols {"w1u": 31567360, "w1c": 34829064, "w2u": 13409390, "w2c": 9075205, "w3pu": 1703936, "w3pc": 2801664}
+[    752s] VAL VAL:r1:i0 226.2s (fixture 13.2s) {'W1': 49.2, 'W2': 149.0, 'W3': 14.8} errors 0 crash False mem 971.5 MB render {'hits': 2059, 'misses': 8, 'seconds': 12.9}
+[    772s] VAL VAL:r2:i0 246.1s (fixture 13.9s) {'W1': 39.2, 'W2': 180.2, 'W3': 12.8} errors 0 crash False mem 1032.8 MB render {'hits': 2137, 'misses': 8, 'seconds': 13.5}
+[    772s] verdict PASS (INCOMPLETE PANELS: smoke run, not a verdict) (criterion i True, best arm W3)
+[    772s] VAL|A|W1: own 492.5 cav 540.5 house CD-c 9063.5 CD-u 10522.0 SYNC-c 15758.0 SYNC-u 78259.5 exact 548/548 residual 0
+[    772s] VAL|A|W2: own 262.0 cav 354.0 house CD-c 5913.5 CD-u 7582.5 SYNC-c 7273.5 SYNC-u 53392.0 exact 548/548 residual 0
+[    772s] VAL|A|W3: own 195.0 cav 288.5 house CD-c 4537.0 CD-u 4952.5 SYNC-c 7451.5 SYNC-u 35419.0 exact 548/548 residual 0
+[    772s] VAL|B|W1: own 491.5 cav 542.5 house CD-c 9110.5 CD-u 10558.5 SYNC-c 15776.0 SYNC-u 78462.5 exact 548/548 residual 0
+[    772s] VAL|B|W2: own 250.5 cav 333.5 house CD-c 5785.0 CD-u 7226.0 SYNC-c 7170.5 SYNC-u 51267.0 exact 548/548 residual 0
+[    772s] VAL|B|W3: own 194.5 cav 288.0 house CD-c 4451.5 CD-u 4924.0 SYNC-c 7309.0 SYNC-u 35292.0 exact 548/548 residual 0

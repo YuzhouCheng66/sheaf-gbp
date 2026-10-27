@@ -1,0 +1,27 @@
+[      0s] G4-E0 g4-e0-1 code sha256 fc4db14a188d82884ba183e839bf8c45cb01807d47eb983f5bc8a807d72d1937 args {'out': 'claude_handoff/analysis_20261027/g4/e0_smoke3', 'procs': 1, 'val_limit': 1, 'fresh_limit': 0, 'train_limit': 2, 'wires': 'W1,W2,W3', 'skip_demo_check': False, 'no_render_cache': False, 'fault': None}
+[      0s] scenes VAL 1, fresh 0, trainA 1, trainB 1
+[     21s] demo {'house': 'r1_i0', 'own': True, 'occ': True, 'slab': True, 'obj': True, 'edges': True, 'reached': True, 'chart': True, 'positions': True, 'ok': True}
+[     45s] demo {'house': 'r1_i1', 'own': True, 'occ': True, 'slab': True, 'obj': True, 'edges': True, 'reached': True, 'chart': True, 'positions': True, 'ok': True}
+[     67s] demo {'house': 'r2_i0', 'own': True, 'occ': True, 'slab': True, 'obj': True, 'edges': True, 'reached': True, 'chart': True, 'positions': True, 'ok': True}
+[     90s] demo {'house': 'r2_i1', 'own': True, 'occ': True, 'slab': True, 'obj': True, 'edges': True, 'reached': True, 'chart': True, 'positions': True, 'ok': True}
+[    110s] demo {'house': 'r3_i0', 'own': True, 'occ': True, 'slab': True, 'obj': True, 'edges': True, 'reached': True, 'chart': True, 'positions': True, 'ok': True}
+[    133s] demo {'house': 'r3_i1', 'own': True, 'occ': True, 'slab': True, 'obj': True, 'edges': True, 'reached': True, 'chart': True, 'positions': True, 'ok': True}
+[    353s] trainA TRA:r1:i0 219.7s {'W1': 37.3, 'W2': 149.3, 'W3': 11.3} mem 1083.3 MB render {'hits': 780, 'misses': 9, 'seconds': 24.2}
+[    537s] trainB TRA:r1:i1 184.1s {'W1': 31.5, 'W2': 118.9, 'W3': 15.1} mem 1083.3 MB render {'hits': 745, 'misses': 8, 'seconds': 18.4}
+[    537s] prior A: 1 houses, symbols {"w1u": 11028907, "w1c": 8990511, "w2u": 6296945, "w2c": 3725625, "w3pu": 606208, "w3pc": 884736}
+[    537s] prior B: 1 houses, symbols {"w1u": 11493928, "w1c": 13623454, "w2u": 3909525, "w2c": 2616949, "w3pu": 573440, "w3pc": 1015808}
+[    941s] VAL VAL:r1:i0 404.8s (fixture 18.0s) {'W1': 74.9, 'W2': 285.0, 'W3': 26.7} errors 0 crash False mem 1083.3 MB render {'hits': 2059, 'misses': 8, 'seconds': 18.9}
+[    941s] verdict INCOMPLETE (provisional reading FAIL_ii) | literal D8-36 reading (CAV, CD-c): FAIL_ii, best arm W1 | A03-definition reading (uncond converged message, CD-u per house): FAIL | if the arm were fixed to W3: literal FAIL_ii, A03-definition FAIL
+[    941s] criterion i True; incomplete reasons ['--*-limit run', 'panel fresh has no evaluated house (0 skipped)', 'missing panel x prior cells']; houses evaluated {'VAL': 1, 'fresh': 0} skipped {'VAL': 0, 'fresh': 0}; disjoint True
+[    941s] report W1 VAL|A: own 598.0 | literal: CAV 577.5 house CD-c 10217.0 | A03 definition: uncond msg 783.0 house CD-u 11827.0 | realisable distribute msg 849.0
+[    941s] report W1 VAL|B: own 575.5 | literal: CAV 557.5 house CD-c 9983.0 | A03 definition: uncond msg 765.0 house CD-u 11567.0 | realisable distribute msg 827.0
+[    941s] report W2 VAL|A: own 367.0 | literal: CAV 471.5 house CD-c 7987.0 | A03 definition: uncond msg 662.5 house CD-u 9697.0 | realisable distribute msg 721.0
+[    941s] report W2 VAL|B: own 328.5 | literal: CAV 402.0 house CD-c 7093.0 | A03 definition: uncond msg 623.0 house CD-u 9026.0 | realisable distribute msg 628.0
+[    941s] report W3 VAL|A: own 265.0 | literal: CAV 317.5 house CD-c 5452.0 | A03 definition: uncond msg 420.0 house CD-u 6040.0 | realisable distribute msg 524.0
+[    941s] report W3 VAL|B: own 261.0 | literal: CAV 311.5 house CD-c 5167.0 | A03 definition: uncond msg 403.0 house CD-u 5864.0 | realisable distribute msg 491.0
+[    941s] VAL|A|W1: own 598.0 cav 577.5 house CD-c 10217.0 CD-u 11827.0 SYNC-c 19581.0 SYNC-u 89206.0 exact 274/274 residual 0
+[    941s] VAL|A|W2: own 367.0 cav 471.5 house CD-c 7987.0 CD-u 9697.0 SYNC-c 9646.0 SYNC-u 68331.0 exact 274/274 residual 0
+[    941s] VAL|A|W3: own 265.0 cav 317.5 house CD-c 5452.0 CD-u 6040.0 SYNC-c 9742.0 SYNC-u 43647.0 exact 274/274 residual 0
+[    941s] VAL|B|W1: own 575.5 cav 557.5 house CD-c 9983.0 CD-u 11567.0 SYNC-c 18979.0 SYNC-u 87299.0 exact 274/274 residual 0
+[    941s] VAL|B|W2: own 328.5 cav 402.0 house CD-c 7093.0 CD-u 9026.0 SYNC-c 8787.0 SYNC-u 63958.0 exact 274/274 residual 0
+[    941s] VAL|B|W3: own 261.0 cav 311.5 house CD-c 5167.0 CD-u 5864.0 SYNC-c 9341.0 SYNC-u 42585.0 exact 274/274 residual 0

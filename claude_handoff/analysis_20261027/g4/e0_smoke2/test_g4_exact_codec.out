@@ -1,0 +1,7 @@
+[     0s] A range coder ok
+[    25s] B memoised observe / W2 march / traversal replay ok
+[   316s] C one house exact: 1644 messages, 708 checks, timing {'W1': 46.7, 'W2': 207.5, 'W3': 26.6}
+[   872s] D breakage caught: drop_hit 38 errors, bitflip 2 errors, decoder 1 cm poses 38 errors; 1 cm poses on both ends repaired by 6775 residual entries; verdict INCONCLUSIVE
+[   977s] E demo houses rebuild exactly
+[   977s] F verdict arithmetic ok
+[   977s] ALL TESTS PASSED
