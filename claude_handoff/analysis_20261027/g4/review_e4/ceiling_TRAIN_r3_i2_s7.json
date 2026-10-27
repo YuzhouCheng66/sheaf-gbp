@@ -1,0 +1,62 @@
+{
+ "house": "TRAIN_r3_i2",
+ "seed": 7,
+ "observable_tree_edges": {
+  "0-2": {
+   "ok": true,
+   "n_inl": 157,
+   "wfrac": 0.938,
+   "min_eig": 0.459
+  },
+  "2-3": {
+   "ok": false,
+   "n_inl": 28,
+   "wfrac": 0.208,
+   "min_eig": 0.295
+  },
+  "2-6": {
+   "ok": true,
+   "n_inl": 141,
+   "wfrac": 0.893,
+   "min_eig": 0.466
+  },
+  "3-7": {
+   "ok": true,
+   "n_inl": 94,
+   "wfrac": 0.662,
+   "min_eig": 0.415
+  },
+  "4-1": {
+   "ok": false,
+   "n_inl": 45,
+   "wfrac": 0.526,
+   "min_eig": 0.234
+  },
+  "6-4": {
+   "ok": false,
+   "n_inl": 7,
+   "wfrac": 0.046,
+   "min_eig": 0.001
+  },
+  "7-5": {
+   "ok": false,
+   "n_inl": 37,
+   "wfrac": 0.37,
+   "min_eig": 0.063
+  }
+ },
+ "ceiling_pairwise": {
+  "asis": 0.6040983606557377,
+  "aligned": 0.6531972505727973
+ },
+ "recovery": {
+  "asis": {
+   "ceiling_pairwise": -0.275073709976037,
+   "reg": -0.17309032508312047
+  },
+  "aligned": {
+   "ceiling_pairwise": 0.054735564296141834,
+   "reg": 0.1522337158514724
+  }
+ }
+}
