@@ -80,11 +80,11 @@ E3R=runs/e3r                                                             # E3-R 
 OUT=runs/e3l5
 LOG=runs/chain_day8.log
 # ---------------------------------------------------------------- pinned by the coordinator (after review / after the cache is generated)
-E3L5_SHA=FILL_E3L5_SHA                                                     # scripts/g4_e3l5.py as deployed
-MAN5_SHA=FILL_MAN5_SHA                                                     # $CACHE5/manifest.json
-DIV5_SHA=FILL_DIV5_SHA                                                     # $CACHE5/e3l5_div.json
-VER5_SHA=FILL_VER5_SHA                                                     # $CACHE5/verify_orig.json
-CTRLH5_SHA=FILL_CTRLH5_SHA                                                 # $REF5/ctrl_holdout_e3l5.json
+E3L5_SHA=d055eca77b799ad210504fc51a79ae12a11faba9291bd44023bdc1502b543e2a                                                     # scripts/g4_e3l5.py as deployed
+MAN5_SHA=80b8cdc0bb6397ca1d2054e14d1f52fd1addf92b68c12c2e92aef56b52796434                                                     # $CACHE5/manifest.json
+DIV5_SHA=7043a5aa2a95d8bc0dfc4ae6391e0959151d374476a9de35ba708e5a85d19da6                                                     # $CACHE5/e3l5_div.json
+VER5_SHA=2bd3d8da2c81852ec7da1b35727de7fbf634eaaa3a6b21df53e0951de625ae2c                                                     # $CACHE5/verify_orig.json
+CTRLH5_SHA=2f7fbe1d3b4843427b13c8fa76fdb854d657bdec2a9f089ea724b37977b7f8ef                                                 # $REF5/ctrl_holdout_e3l5.json
 # ---------------------------------------------------------------- frozen (verified on uk-linux 2026-10-28 11:2x-11:5x UTC)
 GEN5_SHA=64168499650d0b2a54858cf9faa2aa2e17bbbf6edef233a0f2415e99cccb57a1     # g4_e3l5_gen.py (wrote the cache; imported by nothing here, pinned for provenance)
 DIV_SHA=3286d879f8c3d3578742eda6f78c8a18066f8f23df766b15fe8bd7207e6ef2f5      # mapping_3d_storey_data_v420div.py (generator of the cache)
