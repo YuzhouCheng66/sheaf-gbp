@@ -184,8 +184,8 @@ def test_gate_comparators_detect_differences():
 
 
 # ---------------------------------------------------------------- decision branches (D8-75)
-def _cells(d=0.0, free=0.0, fpr=True, by=True, n=24):
-    return {f'{ts}|{ns}': dict(d_furn=d, d_free=free, fpr_identical=fpr, bytes_identical=by, n_houses=n, houses_same=True)
+def _cells(d=0.0, free=0.0, fpr=True, by=True, n=24, surf=0.0):
+    return {f'{ts}|{ns}': dict(d_furn=d, d_free=free, d_surface=surf, fpr_identical=fpr, bytes_identical=by, n_houses=n, houses_same=True)
             for ts in X.SEEDS for ns in X.GUARD_SEEDS}
 
 
@@ -197,6 +197,10 @@ def test_decide_branches():
     # NO: precision guard
     assert X.decide([], U, good, True, _cells(-0.0031), _cells(0.0))['verdict'] == 'NO'
     assert X.decide([], U, good, True, _cells(0.0, fpr=False), _cells(0.0))['verdict'] == 'NO'
+    assert X.decide([], U, good, True, _cells(0.0, surf=-0.005), _cells(0.0))['verdict'] == 'LEVER'   # exactly -0.5 pp surface passes
+    assert X.decide([], U, good, True, _cells(0.0, surf=-0.0051), _cells(0.0))['verdict'] == 'NO'     # surface guard (D8-75 addendum)
+    c = _cells(0.0); c['342202|3']['d_surface'] = -0.006
+    assert X.decide([], U, good, True, c, _cells(0.0))['verdict'] == 'NO'
     assert X.decide([], U, good, True, _cells(0.0, by=False), _cells(0.0))['verdict'] == 'NO'
     assert X.decide([], U, good, True, _cells(0.0, free=-1e-6), _cells(0.0))['verdict'] == 'NO'
     c = _cells(0.0); c['342202|4']['d_furn'] = -0.004

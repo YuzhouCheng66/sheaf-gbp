@@ -25,6 +25,21 @@
 #   APPROVAL   the UTC time of the user's GPU confirmation (D8-76: 发射前须用户确认算力) -- passed as $2, written into lease.json
 # Launch (never from an interactive shell that may die; one chain per ssh command whose text names only this chain):
 #   timeout 60 ssh uk-linux 'cd /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021 && (setsid nohup bash scripts/chain_day8_E3L5.sh "D8-76" "<APPROVAL UTC>" > runs/chain_day8_E3L5.out 2>&1 < /dev/null &)'
+#   two leases (optional 3rd argument; coordinator request 2026-10-28 ~12:00 UTC, needs the user's OK for TWO 5090 leases):
+#   timeout 60 ssh uk-linux 'cd /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021 && (setsid nohup bash scripts/chain_day8_E3L5.sh "D8-76" "<APPROVAL UTC>" two-leases > runs/chain_day8_E3L5.out 2>&1 < /dev/null &)'
+#
+# MODE two-leases (3rd argument 'two-leases'; without it the chain behaves exactly as the one-lease version above):
+#   lease A = seed 342101, then lease B = seed 342202, each its OWN 7,200 s inclusive lease: own SOLO GPU wait (busy() twice, 60 s apart) and own
+#   preflight (400 updates timed on 200-400); BUDGET2 = 6,000 s for its one seed (load + compile included); train deadline +6,600 s, total
+#   deadline +7,150 s from that lease's start; files lease_A.json / lease_B.json (with user_gpu_approval_utc and seed), updates_A.json /
+#   updates_B.json, lease_end_A.json / lease_end_B.json -- never overwritten. Between the leases the GPU is released (our trainer has exited;
+#   lease B waits for SOLO again); no renewal, no resume.
+#   Update count: pre-registered 9,562, the same fit rule as above (with BUDGET2). Lease A: UPD_A = min(fit_A, 9,562); below 9,562 = the second
+#   difference (written down); < 2,000 -> INCOMPLETE, the chain stops. BOTH SEEDS USE ONE COUNT: lease B reads UPD_A back from updates_A.json;
+#   if B's own preflight fit_B >= UPD_A, seed 342202 runs UPD_A (and carries A's note, if any); if fit_B < UPD_A, it runs fit_B with a
+#   second-difference note saying so and the batch is INCOMPLETE by the existing rule (g4_e3l5 aggregate: the seeds have different update
+#   counts; B's readouts are report only); fit_B < 2,000 -> seed 342202 is not trained (INCOMPLETE). The CPU stages (select -> eval -> h1 ->
+#   aggregate, unchanged) start only after lease B has ended.
 #
 # IF THE COORDINATOR MOVES THIS BATCH TO BIGBOY (notes only; no second chain is written): start from chain_bigboy_E3L3.sh (two RTX 6000 Ada in
 # PARALLEL, GPU 0 = 342101, GPU 1 = 342202, 6,000 s per seed, continuous 300 s idle check on GPU 0 / 1, record-only monitor of other processes,
@@ -48,6 +63,8 @@
 cd /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021 || exit 1
 PREREG="$1"; APPROVAL="$2"
 [ "$PREREG" = "D8-76" ] && [ -n "$APPROVAL" ] || { echo "usage: chain_day8_E3L5.sh D8-76 <user GPU approval UTC>"; exit 2; }
+MODE="${3:-}"
+case "$MODE" in ""|two-leases) ;; *) echo "usage: chain_day8_E3L5.sh D8-76 <user GPU approval UTC> [two-leases]"; exit 2;; esac
 export HOUSEEXPO_JSON_DIR=/mnt/datasets/yuzhou-sheaf-gbp-research/houseexpo-v365/json HOUSEEXPO_INDEX=/mnt/datasets/yuzhou-sheaf-gbp-research/houseexpo-v365/houseexpo_index_v365.json
 export PYTHONPATH=/mnt/datasets/yuzhou-sheaf-gbp-research/e3r-pyroot:/mnt/datasets/yuzhou-sheaf-gbp-research/e3r-pyroot/exploration_grid
 export TMPDIR=/mnt/datasets/yuzhou-sheaf-gbp-research/tmp-claude
@@ -163,6 +180,91 @@ busy(){ pgrep -af "bash scripts/chain_" | grep -v "chain_day8_E3L5" | grep -q . 
 while busy; do sleep 120; done
 sleep 60; while busy; do sleep 120; done
 check_shas
+if [ "$MODE" = "two-leases" ]; then
+# ================================================================ MODE two-leases: lease A = seed 342101, lease B = seed 342202 (see the header)
+BUDGET2=6000                                                               # seconds for the one seed of a lease (load + compile included)
+log "E3-L5 mode two-leases: lease A = 342101, lease B = 342202; each 7,200 s inclusive, own SOLO wait and preflight, $BUDGET2 s per seed; one update count for both seeds (lease A's)"
+lease2(){                                                                       # $1 = A | B, $2 = seed, $3 = evidence spec
+  LS=$1; seed=$2; EV=$3
+  for f in lease_$LS.json updates_$LS.json lease_end_$LS.json pf-s$seed s$seed; do
+    [ -e $OUT/$f ] && { log "ABORT: $OUT/$f exists (never overwrite)"; exit 2; }
+  done
+  check_shas
+  log "E3-L5 lease $LS (seed $seed): waiting until the 5090 is SOLO"
+  while busy; do sleep 120; done
+  sleep 60; while busy; do sleep 120; done
+  check_shas
+  START=$(date +%s); DE=$((START+6600)); DT=$((START+7150))
+  cat > $OUT/lease_$LS.json <<JSON
+{"mode": "two-leases", "lease": "$LS", "seed": $seed, "lease_start_epoch": $START, "train_deadline_epoch": $DE, "total_deadline_epoch": $DT, "inclusive_seconds": 7200,
+ "batch": "E3-L5", "prereg": "$PREREG", "user_gpu_approval_utc": "$APPROVAL", "seeds": [$seed], "per_seed_budget_seconds": $BUDGET2, "updates_prereg": $UPD_PREREG,
+ "updates_rule": "lease A: min(fit_A, $UPD_PREREG) by the E3-L3 rule; lease B: lease A's count (if B cannot fit it: fit_B, second difference, INCOMPLETE)",
+ "single_variable": "TRAIN cache = $CACHE5 (manifest $MAN5_SHA; v420 50 % + train_div 50 %)", "evidence": "$EV",
+ "control": {"e3r": "$E3R/s$seed", "holdout": "$REF5/ctrl_holdout_e3l5.json", "holdout_sha256": "$CTRLH5_SHA", "judged_export": "$EXPORT34",
+             "judged_export_records_sha256": "$E5REC_SHA", "h1_records_sha256": "$H1REC_SHA", "e3l3": "$REF5/e3l3_s$seed", "e7_criteria_sha256": "$E7CRIT_SHA",
+             "e7_summary_sha256": "$E7SUM_SHA"},
+ "trainer": "scripts/g4_e3l5.py train (wraps g4_e3l3.py train)", "g4_e3l5_sha256": "$E3L5_SHA", "g4_e3l3_sha256": "$E3L3_SHA", "g4_e3l2_sha256": "$E3L2_SHA",
+ "g4_e3l_sha256": "$E3L_SHA", "g4_e3r_sha256": "$E3R_SHA", "noise_panels_sha256": "$G_SHA", "pythonpath": "$PYTHONPATH", "pyroot_content_sha256": "$PYR_SHA",
+ "cache": "$CACHE5", "cache_manifest_sha256": "$MAN5_SHA", "e3l5_div_sha256": "$DIV5_SHA", "e1c_fit_sha256": "$FIT_SHA", "chain_sha256": "$(sha scripts/chain_day8_E3L5.sh)",
+ "renewal": "none", "resume": "none"}
+JSON
+  log "E3-L5 lease $LS start $START (seed $seed; train deadline +6600, total +7150); cache $CACHE5 ($MAN5_SHA)"
+  PF=$OUT/pf-s$seed
+  timeout -k 30 600 $P -B scripts/g4_e3l5.py train --prereg-updates $UPD_PREREG --cache $CACHE5 --manifest-sha $MAN5_SHA --evidence "$EV" --seed $seed --out $PF --updates 100000 --max-updates 400 --log-every 50 --time-from 200 --probe-every 400 --snap 0 --deadline-epoch $((START+590)) --reserve 0 --expect-gpu 'RTX 5090' --ctrl-holdout $REF5/ctrl_holdout_e3l5.json > $PF.log 2>&1
+  PFX=$?
+  read RATE LOADS WARM PROBE CV NPF <<<"$($P -c "import json; f=json.load(open('$PF/final.json')); print(f['rate_s_per_update'] or 'nan', f['load_seconds'], f['first_window_s'] or 0, f['probe_seconds_max'] or 0, f['rate_cv'] if f['rate_cv'] is not None else 'nan', f['updates_done'])" 2>/dev/null || echo "nan 0 0 0 nan 0")"
+  PFW=$($P -c "import json; print(json.load(open('$PF/final.json')).get('rate_warning') or 'none')" 2>/dev/null || echo "unreadable")
+  read UPDFIT UPDCAP <<<"$($P -c "
+import math
+r, L_, W_, Q_, n = float('$RATE'), float('$LOADS'), float('$WARM'), float('$PROBE'), int('$NPF')
+ok = math.isfinite(r) and r > 0 and n == 400
+base = $BUDGET2 - 60 - L_ - W_ - 30                         # margin, data load, first window (50 updates + cudnn autotune), save / exit
+u0 = min(math.floor(0.90 * base / r), $UPD_PREREG) if ok else 0
+avail = base - Q_ * (u0 // 1000 + 1)                        # the probes (every 1,000 updates and at the end; record only)
+fit = int(max(0, min(200000, math.floor(0.90 * avail / r)))) if ok else 0
+print(fit, min(fit, $UPD_PREREG))" 2>/dev/null || echo "0 0")"
+  UPD_A=""
+  if [ "$LS" = "A" ]; then
+    UPD=$UPDCAP; SECOND_NOTE=""
+    if [ "$UPD" -lt "$UPD_PREREG" ] && [ "$UPD" -ge 2000 ]; then
+      SECOND_NOTE="second difference (D8-76, two leases): $UPD_PREREG updates do not fit 0.90 x the available time of lease A on the 5090 (preflight $RATE s/update on updates 200-400, load ${LOADS} s, first window ${WARM} s, probe ${PROBE} s, $BUDGET2 s for the seed; fit $UPDFIT) -> both seeds run $UPD updates (E3-L3 rule; lease B uses lease A's count)"
+      log "E3-L5 SECOND DIFFERENCE (lease A): $SECOND_NOTE"
+    fi
+  else
+    UPD_A=$($P -c "import json; print(int(json.load(open('$OUT/updates_A.json'))['updates']))" 2>/dev/null || echo 0)
+    NOTE_A=$($P -c "import json; print(json.load(open('$OUT/updates_A.json')).get('second_difference_note') or '')" 2>/dev/null || echo "")
+    if [ "$UPDFIT" -ge "$UPD_A" ]; then
+      UPD=$UPD_A; SECOND_NOTE="$NOTE_A"                                         # the same count as seed 342101 (and the same note, if any)
+    else
+      UPD=$UPDFIT
+      SECOND_NOTE="second difference (D8-76, two leases): lease B fits only $UPDFIT updates (preflight $RATE s/update on updates 200-400, load ${LOADS} s, first window ${WARM} s, probe ${PROBE} s, $BUDGET2 s for the seed) < lease A's $UPD_A -> seed $seed runs $UPDFIT updates; the two seeds differ in update count -> INCOMPLETE (g4_e3l5 aggregate rule), readouts report only${NOTE_A:+; lease A: $NOTE_A}"
+      log "E3-L5 SECOND DIFFERENCE (lease B): $SECOND_NOTE"
+    fi
+  fi
+  log "E3-L5 lease $LS preflight (exit $PFX): s/update $RATE (updates 200-400, window cv $CV, warning: $PFW) load ${LOADS}s first window ${WARM}s probe ${PROBE}s -> fit $UPDFIT, $UPD updates for seed $seed (pre-registered $UPD_PREREG${UPD_A:+; lease A count $UPD_A}; safety 0.90)"
+  $P -c "import json; json.dump(dict(mode='two-leases', lease='$LS', seed=$seed, preflight_exit=$PFX, rate_s_per_update='$RATE', rate_cv='$CV', rate_warning='$PFW', load_seconds='$LOADS', first_window_seconds='$WARM', probe_seconds='$PROBE', timed_updates='200-400', updates_fit=$UPDFIT, updates=$UPD, updates_prereg=$UPD_PREREG, updates_lease_a=('$UPD_A' or None), second_difference=($UPD < $UPD_PREREG), second_difference_note='''$SECOND_NOTE''' or None), open('$OUT/updates_$LS.json', 'w'), indent=1)" 2>/dev/null || log "E3-L5 WARNING: updates_$LS.json not written"
+  if [ "$UPD" -lt 2000 ]; then
+    END=$(date +%s); echo "{\"lease\": \"$LS\", \"seed\": $seed, \"lease_end_epoch\": $END, \"lease_seconds\": $((END-START)), \"trained\": false}" > $OUT/lease_end_$LS.json
+    incomplete "lease $LS: budget $UPD updates < 2,000 (preflight exit $PFX)"; exit 3
+  fi
+  NOW=$(date +%s); SDT=$((NOW+BUDGET2)); [ $SDT -gt $DT ] && SDT=$DT; SDE=$((SDT-30)); [ $SDE -gt $DE ] && SDE=$DE
+  if [ $((SDE-NOW)) -lt 900 ]; then
+    log "E3-L5 lease $LS seed $seed: only $((SDE-NOW)) s left in the lease -> not run (the verdict will be INCOMPLETE)"
+  else
+    log "E3-L5 lease $LS seed $seed start ($UPD updates, w learnable as E3-L3, evidence $EV, pairing $E3R/s$seed, snapshot 6000, trainer deadline $SDE, kill at $SDT)"
+    timeout -k 30 $((SDT-NOW)) $P -B scripts/g4_e3l5.py train --prereg-updates $UPD_PREREG --second-note "$SECOND_NOTE" --cache $CACHE5 --manifest-sha $MAN5_SHA --evidence "$EV" --seed $seed --out $OUT/s$seed --updates $UPD --log-every 200 --time-from 200 --probe-every 1000 --snap 6000 --deadline-epoch $SDE --reserve 60 --expect-gpu 'RTX 5090' --ctrl-ckpt $E3R/s$seed/checkpoints/final.pt --ctrl-holdout $REF5/ctrl_holdout_e3l5.json > $OUT/s$seed.log 2>&1
+    log "E3-L5 lease $LS seed $seed done (exit $?): $(tail -1 $OUT/s$seed.log)"
+    RS=$($P -c "import json; d=json.load(open('$OUT/s$seed/final.json')); r=d['rate_s_per_update']; print('%d updates (%s), %.4f s/update (%+.0f %% vs preflight), train %.0f s, total %.0f s of $BUDGET2, w %s' % (d['updates_done'], 'complete' if d['complete'] else 'TRUNCATED' if d['truncated'] else 'partial', r, 100 * (r / float('$RATE') - 1), d['train_seconds'], d['seconds'], d['w']))" 2>/dev/null || echo "final.json unreadable")
+    log "E3-L5 lease $LS seed $seed: $RS"
+  fi
+  END=$(date +%s)
+  echo "{\"lease\": \"$LS\", \"seed\": $seed, \"lease_end_epoch\": $END, \"lease_seconds\": $((END-START))}" > $OUT/lease_end_$LS.json
+  log "E3-L5 lease $LS over after $((END-START)) s; GPU released (no renewal, no resume)"
+}
+lease2 A 342101 "$EV_342101"
+lease2 B 342202 "$EV_342202"
+log "E3-L5 both leases over; the GPU is not used again by this chain"
+else
 # ================================================================ the lease (7,200 s inclusive)
 START=$(date +%s); DE=$((START+6600)); DT=$((START+7150))
 cat > $OUT/lease.json <<JSON
@@ -217,6 +319,7 @@ run_seed 342202 "$EV_342202"
 END=$(date +%s)
 echo "{\"lease_end_epoch\": $END, \"lease_seconds\": $((END-START))}" > $OUT/lease_end.json
 log "E3-L5 lease over after $((END-START)) s; the GPU is not used again by this chain"
+fi
 # ================================================================ after the lease: CPU only (<= 10 processes; exports and refs are read, never written)
 check_shas
 CTRLH=$REF5/ctrl_holdout_e3l5.json

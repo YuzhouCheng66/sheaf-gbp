@@ -347,7 +347,7 @@ def test_chain_static():
     assert '--max-updates 400' in s and '--time-from 200' in s and '"inclusive_seconds": 7200' in s
     assert code.index('run_seed 342101') < code.index('run_seed 342202'), 'two seeds sequentially'
     train_lines = [l for l in code.splitlines() if '$P -B scripts/g4_e3l5.py train' in l]
-    assert len(train_lines) == 2 and all('--cache $CACHE5' in l and '--manifest-sha $MAN5_SHA' in l and '--ctrl-holdout $REF5/ctrl_holdout_e3l5.json' in l for l in train_lines)
+    assert len(train_lines) == 4 and all('--cache $CACHE5' in l and '--manifest-sha $MAN5_SHA' in l and '--ctrl-holdout $REF5/ctrl_holdout_e3l5.json' in l for l in train_lines)
     assert 'cache-e3r-v1 ' not in code and 'CACHE=' not in code, 'the E3-R cache must not be the training cache'
     for l in code.splitlines():
         if any(f'g4_e3l5.py {c}' in l for c in ('select', 'eval', 'h1', 'aggregate')):
@@ -363,6 +363,101 @@ def test_chain_static():
     for d in re.findall(r'^(?:OUT|LOG|TMPDIR|CACHE5|REF5|REF4|REF)=(\S+)', s, re.M):
         assert d.startswith('/mnt/datasets/') or d.startswith('runs/'), d
     assert 'cd /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021' in s and 'bigboy' in s.lower()
+
+
+def test_chain_two_leases_static():
+    """the optional 3rd argument 'two-leases' (coordinator request): one seed per lease, own SOLO wait / preflight, two lease files, one count"""
+    s = open(CHAIN, encoding='utf-8').read()
+    code = '\n'.join(l for l in s.splitlines() if not l.lstrip().startswith('#'))
+    assert 'MODE="${3:-}"' in code and 'case "$MODE" in ""|two-leases) ;;' in code
+    i_if = code.index('if [ "$MODE" = "two-leases" ]; then')
+    i_a, i_b = code.index('lease2 A 342101 "$EV_342101"'), code.index('lease2 B 342202 "$EV_342202"')
+    i_else = code.index('\nelse\n', i_b)
+    i_one = code.index('cat > $OUT/lease.json', i_else)
+    i_fi = code.index('log "E3-L5 lease over after $((END-START)) s; the GPU is not used again by this chain"\nfi\n')
+    i_cpu = code.index('CTRLH=$REF5/ctrl_holdout_e3l5.json')
+    assert i_if < i_a < i_b < i_else < i_one < i_fi < i_cpu, 'two-leases branch, then the unchanged one-lease branch, then the shared CPU stages'
+    body = code[code.index('lease2(){'):i_a]
+    assert re.search(r'^BUDGET2=6000\b', s, re.M) and 'SDT=$((NOW+BUDGET2))' in body and 'DE=$((START+6600)); DT=$((START+7150))' in body
+    assert 'cat > $OUT/lease_$LS.json' in body and '"user_gpu_approval_utc": "$APPROVAL"' in body and '"seed": $seed' in body and '"inclusive_seconds": 7200' in body
+    assert '> $OUT/lease_end_$LS.json' in body and "open('$OUT/updates_$LS.json', 'w')" in body
+    assert 'for f in lease_$LS.json updates_$LS.json lease_end_$LS.json pf-s$seed s$seed; do' in body and 'never overwrite' in body
+    assert body.count('while busy; do sleep 120; done') == 2 and '--max-updates 400' in body and '--time-from 200' in body
+    assert "json.load(open('$OUT/updates_A.json'))['updates']" in body and 'if [ "$UPDFIT" -ge "$UPD_A" ]; then' in body and 'INCOMPLETE' in body
+    assert 'pkill' not in body and 'killall' not in body and body.count('timeout -k 30') == 2
+    one = code[i_else:i_fi]                                         # the one-lease branch (default, no 3rd argument)
+    assert 'run_seed 342101 "$EV_342101"\nrun_seed 342202 "$EV_342202"' in one and '"sequential": true, "per_seed_budget_seconds": $BUDGET,' in one
+    assert 'lease2' not in one and 'BUDGET2' not in one
+
+
+def _two_lease_harness(tmp, rate_a, rate_b):
+    """run the chain's lease2() for real in bash with stubs: a fake trainer (writes final.json with the given s/update), no GPU, no sleeps"""
+    s = open(CHAIN, encoding='utf-8').read().splitlines()
+    a = s.index(next(l for l in s if l.startswith('lease2(){')))
+    b = next(j for j in range(a, len(s)) if s[j] == '}')
+    fn = '\n'.join(s[a:b + 1])
+    py = sys.executable.replace('\\', '/')
+    fake = os.path.join(tmp, 'fake_train.py').replace('\\', '/')
+    open(fake, 'w').write(
+        'import argparse, json, os, sys\n'
+        'p = argparse.ArgumentParser(); [p.add_argument(x) for x in ("--out", "--updates", "--max-updates", "--seed", "--second-note")]\n'
+        'a, _ = p.parse_known_args(sys.argv[3:])\n'
+        'mx = int(a.max_updates or 0); n = mx if mx else int(a.updates)\n'
+        'r = float(os.environ["FAKE_RATE_" + a.seed])\n'
+        'os.makedirs(a.out, exist_ok=True)\n'
+        'json.dump(dict(rate_s_per_update=r, load_seconds=30.0, first_window_s=20.0, probe_seconds_max=30.0, rate_cv=0.01, updates_done=n, updates_planned=n,\n'
+        '               complete=True, truncated=False, train_seconds=n * r, seconds=n * r + 50, w=1000.0, second_note=a.second_note), open(os.path.join(a.out, "final.json"), "w"))\n'
+        'print("fake trainer", a.seed, n)\n')
+    wrap = os.path.join(tmp, 'P.sh').replace('\\', '/')
+    open(wrap, 'w', newline='\n').write(f'#!/bin/bash\nif [ "$2" = "scripts/g4_e3l5.py" ]; then exec "{py}" "{fake}" "$@"; fi\nexec "{py}" "$@"\n')
+    out = os.path.join(tmp, 'out').replace('\\', '/')
+    os.makedirs(out)
+    script = '\n'.join([
+        '#!/bin/bash', f'OUT={out}', f'P="bash {wrap}"', 'UPD_PREREG=9562', 'BUDGET2=6000', 'PREREG=D8-76', 'APPROVAL=2026-10-28T12:00Z', 'E3R=runs/e3r',
+        'REF5=ref5', 'CACHE5=cache5', 'MAN5_SHA=m', 'EV_342101=evA', 'EV_342202=evB', f'LOGF={out}/chain.log',
+        'log(){ echo "$*" >> $LOGF; }', 'check_shas(){ :; }', 'busy(){ false; }', 'sleep(){ :; }', 'sha(){ echo x; }',
+        'incomplete(){ echo "{\\"verdict\\": \\"INCOMPLETE: $1\\"}" > $OUT/summary.json; log "INCOMPLETE $1"; }',
+        fn, 'lease2 A 342101 "$EV_342101"', 'lease2 B 342202 "$EV_342202"', 'echo HARNESS_DONE', 'lease2 A 342101 "$EV_342101"', 'echo NOT_REACHED'])
+    sp = os.path.join(tmp, 'h.sh')
+    open(sp, 'w', newline='\n').write(script + '\n')
+    env = dict(os.environ, FAKE_RATE_342101=str(rate_a), FAKE_RATE_342202=str(rate_b))
+    r = subprocess.run([shutil.which('bash'), sp.replace('\\', '/')], capture_output=True, text=True, env=env, timeout=600)
+    return r, out
+
+
+@pytest.mark.skipif(not shutil.which('bash'), reason='bash not available')
+@pytest.mark.parametrize('rate_a, rate_b, exp_a, exp_b, b_incomplete', [
+    (0.3526, 0.3526, 9562, 9562, False),          # both fit the pre-registered count
+    (0.3526, 0.9, 9562, None, True),              # lease B cannot fit lease A's count -> fit_B, second difference, INCOMPLETE
+    (0.7, 0.3526, None, None, False),             # lease A below 9,562 -> second difference; lease B reuses A's count
+])
+def test_chain_two_leases_dry_run(rate_a, rate_b, exp_a, exp_b, b_incomplete):
+    tmp = tempfile.mkdtemp()
+    try:
+        r, out = _two_lease_harness(tmp, rate_a, rate_b)
+        assert 'HARNESS_DONE' in r.stdout and 'NOT_REACHED' not in r.stdout and r.returncode == 2, (r.stdout, r.stderr)   # re-running lease A aborts
+        la, lb = json.load(open(os.path.join(out, 'lease_A.json'))), json.load(open(os.path.join(out, 'lease_B.json')))
+        assert (la['seed'], lb['seed'], la['lease'], lb['lease']) == (342101, 342202, 'A', 'B')
+        assert la['user_gpu_approval_utc'] == lb['user_gpu_approval_utc'] == '2026-10-28T12:00Z' and la['inclusive_seconds'] == 7200
+        assert la['per_seed_budget_seconds'] == 6000 and la['train_deadline_epoch'] - la['lease_start_epoch'] == 6600
+        assert la['total_deadline_epoch'] - la['lease_start_epoch'] == 7150 and lb['lease_start_epoch'] >= la['lease_start_epoch']
+        for x in ('lease_end_A.json', 'lease_end_B.json', 'pf-s342101', 'pf-s342202'):
+            assert os.path.exists(os.path.join(out, x)), x
+        ua, ub = json.load(open(os.path.join(out, 'updates_A.json'))), json.load(open(os.path.join(out, 'updates_B.json')))
+        fa = json.load(open(os.path.join(out, 's342101', 'final.json'))); fb = json.load(open(os.path.join(out, 's342202', 'final.json')))
+        if exp_a is not None:
+            assert ua['updates'] == exp_a
+        assert fa['updates_done'] == ua['updates'] and fb['updates_done'] == ub['updates'] and ub['updates_lease_a'] == str(ua['updates'])
+        if exp_b is not None:
+            assert ub['updates'] == exp_b
+        if b_incomplete:
+            assert ub['updates'] == ub['updates_fit'] < ua['updates'] and 'INCOMPLETE' in ub['second_difference_note'] and fb['second_note'] == ub['second_difference_note']
+        else:
+            assert ub['updates'] == ua['updates'] and (ub['second_difference_note'] or '') == (ua['second_difference_note'] or '')
+            assert ua['second_difference'] == (ua['updates'] < 9562) and (ua['updates'] == 9562 or 'lease B uses lease A' in ua['second_difference_note'])
+        assert 'exists (never overwrite)' in open(os.path.join(out, 'chain.log')).read()
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
 
 
 def test_gen_launcher_static():

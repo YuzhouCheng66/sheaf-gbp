@@ -134,6 +134,7 @@ FORMAT = 1
 RANK = {'HARMFUL': 0, 'AMBIGUOUS': 1, 'SAFE': 2}
 D8_75 = dict(prereg='D8-75', batch='G4-H1G', x_bin_width=XW, n_x_bins=NX, lam_max=LMAX, q_min=Q_NUM / Q_DEN, n_min=N_MIN,
              guard_furn_margin=-0.003,            # gated R8 furniture - ungated >= -0.3 pp (4 VAL cam_nf cells, seeds 3, 4)
+             guard_surface_margin=-0.005,         # gated R8 surface F1 - ungated >= -0.5 pp (same 4 cells; D8-75 addendum, added before the run)
              guard_free='gated free recall >= ungated (1e-12)', guard_fpr='bit-identical (every row and the summary)',
              guard_bytes='bit-identical (every house and the summary median)',
              fresh_demote_mean=-0.003,            # fresh 4-cell mean d furniture < -0.3 pp -> LEVER demoted to AMBIGUOUS
@@ -1142,9 +1143,10 @@ def decide(reasons, h1_ungated, h1_gated, ctrl_ok_gated, val_cells, fresh_cells,
     g = {}
     for k in keys:
         c = val_cells[k]
-        g[k] = dict(furn=bool(c['d_furn'] >= C['guard_furn_margin'] - eps), free=bool(c['d_free'] >= -eps), fpr=bool(c['fpr_identical']),
+        g[k] = dict(furn=bool(c['d_furn'] >= C['guard_furn_margin'] - eps), surface=bool(c['d_surface'] >= C['guard_surface_margin'] - eps),
+                    d_surface=float(c['d_surface']), free=bool(c['d_free'] >= -eps), fpr=bool(c['fpr_identical']),
                     bytes=bool(c['bytes_identical']))
-    guard_ok = all(all(x.values()) for x in g.values())
+    guard_ok = all(x['furn'] and x['surface'] and x['free'] and x['fpr'] and x['bytes'] for x in g.values())
     fresh_mean = float(np.mean([fresh_cells[k]['d_furn'] for k in keys]))
     fresh_ok = bool(fresh_mean >= C['fresh_demote_mean'] - eps)
     out.update(fix=fix, fix_ok=all(fix.values()), guard=g, guard_ok=guard_ok, fresh_mean_d=fresh_mean, fresh_ok=fresh_ok,
