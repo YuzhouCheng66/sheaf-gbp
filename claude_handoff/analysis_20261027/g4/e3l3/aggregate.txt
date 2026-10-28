@@ -1,0 +1,7 @@
+E3-L3 verdict: AMBIGUOUS
+  cell 342101|1: E3-L3 R8 furn 0.9676 vs NET 0.9723 (d -0.0047); bytes 244216 = 0.325 x control; cam d -0.0164; guards {'free': True, 'surface': True, 'fpr': True, 'clean': True, 'k0': True}
+  cell 342101|2: E3-L3 R8 furn 0.9609 vs NET 0.9657 (d -0.0047); bytes 242851 = 0.322 x control; cam d -0.0136; guards {'free': True, 'surface': True, 'fpr': True, 'clean': True, 'k0': True}
+  cell 342202|1: E3-L3 R8 furn 0.9672 vs NET 0.9729 (d -0.0057); bytes 206141 = 0.271 x control; cam d -0.0101; guards {'free': True, 'surface': True, 'fpr': True, 'clean': True, 'k0': True}
+  cell 342202|2: E3-L3 R8 furn 0.9589 vs NET 0.9670 (d -0.0082); bytes 205290 = 0.268 x control; cam d -0.0154; guards {'free': True, 'surface': True, 'fpr': True, 'clean': True, 'k0': True}
+  fresh: {"val_mean_d_furn": -0.005832652365186541, "fresh_mean_d_furn": -0.003325598261897239, "fresh_ok": true, "report_literal_sign_opposite": false}
+  gbp: {"E3L3_342101": {"cf_max": 8.637535131583718e-13, "cf_rel_max": 8.63753513158044e-13, "violations": 0, "components": 294, "steps": 4608, "jobs": 288, "pass": true}, "E3L3_342202": {"cf_max": 1.2051470932306074e-12, "cf_rel_max": 1.2051470932304822e-12, "violations": 0, "components": 294, "steps": 4608, "jobs": 288, "pass": true}} | known mismatch: {"E3L3_342101": 0, "E3L3_342202": 0}
