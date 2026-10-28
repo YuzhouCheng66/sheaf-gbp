@@ -1,0 +1,29 @@
+2026-10-28T12:50:31Z chain_day8_E3L5 started pid 1196221 host yuzhou sha256 8fe21d15f0d87c57 prereg D8-76 approval 2026-10-28T12:50Z
+2026-10-28T12:50:32Z E3-L5 import self-check ok /mnt/datasets/yuzhou-sheaf-gbp-research/e3r-pyroot/scripts/mapping_multiroom_data_v293.py /mnt/datasets/yuzhou-sheaf-gbp-research/e3r-pyroot/exploration_grid/occupancy_codec/__init__.py
+2026-10-28T12:51:33Z E3-L5 mode two-leases: lease A = 342101, lease B = 342202; each 7,200 s inclusive, own SOLO wait and preflight, 6000 s per seed; one update count for both seeds (lease A's)
+2026-10-28T12:51:33Z E3-L5 lease A (seed 342101): waiting until the 5090 is SOLO
+2026-10-28T12:52:33Z E3-L5 lease A start 1793191953 (seed 342101; train deadline +6600, total +7150); cache /mnt/datasets/yuzhou-sheaf-gbp-research/cache-e3l5-div-v1 (80b8cdc0bb6397ca1d2054e14d1f52fd1addf92b68c12c2e92aef56b52796434)
+2026-10-28T12:55:18Z E3-L5 lease A preflight (exit 0): s/update 0.3587711679935455 (updates 200-400, window cv 0.012227315868321561, warning: none) load 6.221937894821167s first window 26.89131808280945s probe 5.219455003738403s -> fit 14611, 9562 updates for seed 342101 (pre-registered 9562; safety 0.90)
+2026-10-28T12:55:18Z E3-L5 lease A seed 342101 start (9562 updates, w learnable as E3-L3, evidence c:/mnt/datasets/yuzhou-sheaf-gbp-research/e3r-ref/e1c_fit.json:A:cam_nf, pairing runs/e3r/s342101, snapshot 6000, trainer deadline 1793198088, kill at 1793198118)
+2026-10-28T13:53:11Z E3-L5 lease A seed 342101 done (exit 0): E3-L5 train seed 342101 done: 9562 / 9562 updates (complete), learned w 1327.91552734375, second difference: no
+2026-10-28T13:53:11Z E3-L5 lease A seed 342101: 9562 updates (complete), 0.3591 s/update (+0 % vs preflight), train 3442 s, total 3471 s of 6000, w 1327.91552734375
+2026-10-28T13:53:11Z E3-L5 lease A over after 3638 s; GPU released (no renewal, no resume)
+2026-10-28T13:53:11Z E3-L5 lease B (seed 342202): waiting until the 5090 is SOLO
+2026-10-28T13:54:11Z E3-L5 lease B start 1793195651 (seed 342202; train deadline +6600, total +7150); cache /mnt/datasets/yuzhou-sheaf-gbp-research/cache-e3l5-div-v1 (80b8cdc0bb6397ca1d2054e14d1f52fd1addf92b68c12c2e92aef56b52796434)
+2026-10-28T13:56:57Z E3-L5 lease B preflight (exit 0): s/update 0.35872713327407835 (updates 200-400, window cv 0.015048483487891954, warning: none) load 6.117224454879761s first window 26.873847007751465s probe 5.146395683288574s -> fit 14615, 9562 updates for seed 342202 (pre-registered 9562; lease A count 9562; safety 0.90)
+2026-10-28T13:56:57Z E3-L5 lease B seed 342202 start (9562 updates, w learnable as E3-L3, evidence c:/mnt/datasets/yuzhou-sheaf-gbp-research/e3r-ref/e1c_fit.json:B:cam_nf, pairing runs/e3r/s342202, snapshot 6000, trainer deadline 1793201787, kill at 1793201817)
+2026-10-28T14:54:33Z E3-L5 lease B seed 342202 done (exit 0): E3-L5 train seed 342202 done: 9562 / 9562 updates (complete), learned w 2017.1910400390625, second difference: no
+2026-10-28T14:54:33Z E3-L5 lease B seed 342202: 9562 updates (complete), 0.3573 s/update (-0 % vs preflight), train 3426 s, total 3455 s of 6000, w 2017.1910400390625
+2026-10-28T14:54:33Z E3-L5 lease B over after 3622 s; GPU released (no renewal, no resume)
+2026-10-28T14:54:33Z E3-L5 both leases over; the GPU is not used again by this chain
+2026-10-28T14:54:33Z E3-L5 select seed 342101 start (learned w + w = 4; 9 workers x 1 thread, nice 10, timeout 14,400 s)
+2026-10-28T14:59:48Z E3-L5 select seed 342101 (exit 0): E3-L3 select seed 342101: R8 t -0.01999999999999602 F1 0.9717 free 0.9975 (min 0.9948, feasible True) | K0 t -0.14000000000000057 fallback False | holdout bytes ratio 0.3031 | 157s E3-L5 select seed 342101 at w = 4: R8 t -0.259999999999998 F1 0.9706 free 0.9974 (min 0.9948, feasible True) | K0 t -0.14000000000000057 fallback False | holdout bytes ratio 0.1299 | 157s 
+2026-10-28T14:59:48Z E3-L5 select seed 342202 start (learned w + w = 4; 9 workers x 1 thread, nice 10, timeout 14,400 s)
+2026-10-28T15:05:03Z E3-L5 select seed 342202 (exit 0): E3-L3 select seed 342202: R8 t 0.46000000000000085 F1 0.7942 free 0.9946 (min 0.9945, feasible True) | K0 t 0.11999999999999744 fallback False | holdout bytes ratio 0.2038 | 156s E3-L5 select seed 342202 at w = 4: R8 t 0.480000000000004 F1 0.7209 free 0.9946 (min 0.9945, feasible True) | K0 t 0.11999999999999744 fallback False | holdout bytes ratio 0.0631 | 157s 
+2026-10-28T15:05:03Z E3-L5 eval (G4-E5 export, VAL noise seeds 3 / 4, tiers cam_nf + clean) start (9 workers x 1 thread, nice 10, timeout 43,200 s): runs/e3l5/s342101,runs/e3l5/s342202
+2026-10-28T15:26:51Z E3-L5 eval done (exit 0): [48/48] val_r3_i7_s4 208s peak 1124 MB  1307s
+2026-10-28T15:26:51Z E3-L5 h1 (G4-H1 VAL exports, 4 variants x 24 houses x seeds 1 / 2) start (9 workers x 1 thread, nice 10, timeout 43,200 s)
+2026-10-28T15:57:39Z E3-L5 h1 done (exit 0): [96/96] scale_val_r3_i7 145s peak 995 MB ok  1847s
+2026-10-28T15:57:41Z E3-L5 aggregate (exit 0): E3-L5 verdict: NOT_ENOUGH
+2026-10-28T15:57:41Z E3-L5 disk: runs/e3l5 60 MB; /mnt/datasets free 1566635 MB
+2026-10-28T15:57:41Z chain_day8_E3L5 finished
