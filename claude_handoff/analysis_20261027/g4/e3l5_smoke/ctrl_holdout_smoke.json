@@ -1,0 +1,110 @@
+{
+ "stage": "ctrlprep",
+ "script_sha256": "bab73d647655ecc6504d4ffd738409618bf95cab8089a489a7cb4da28dc3f314",
+ "e3l_sha256": "3dc970d8542f794082b28d265d68e0237f3670f2cf2dfd4f754c01c8ac24f6be",
+ "cache": "C:\\Users\\27118\\Desktop\\sheaf-gbp\\experiments\\sheaf-gbp-p6-local-skill\\claude_handoff\\analysis_20261027\\probes\\e3l5_smoke\\cache_e3l5",
+ "manifest_sha256": "4ddf0643c0cc7e69d0b7c5735747c40a575a220caf41e086e582c3a8a7c399be",
+ "houses": [
+  "TRAIN_r1_i9"
+ ],
+ "draws": [
+  "cam_nf_s200",
+  "cam_nf_s201",
+  "cam_nf_s202"
+ ],
+ "rule": "E3-R relay: sum + count messages, G.int_ctx_bytes, all directed edges (D8-54); readouts = L.control_holdout (frozen NET + thresholds)",
+ "e3r": {
+  "342101": {
+   "ckpt": "claude_handoff/analysis_20261027/review_E3R/inputs\\s342101\\final.pt",
+   "ckpt_sha256": "1b035fd1b6f0b01b136972505da834a384d61574e148f48e388e7fbbcdfb85cd",
+   "threshold": "claude_handoff/analysis_20261027/review_E3R/inputs\\s342101\\threshold.json",
+   "threshold_sha256": "c2dc9883968c9ce29fcbc95f2ac2728dc9ed29dbf8252c7971ef8b8fec3ef9bf",
+   "table_sha256": "7f209b17d434a4a3346ba194c4ef035a7b19332703d2080590128db5110a10c6"
+  },
+  "342202": {
+   "ckpt": "claude_handoff/analysis_20261027/review_E3R/inputs\\s342202\\final.pt",
+   "ckpt_sha256": "a58b2b059d225ec95b438c56319a6945ac67ca779461db7d2cb059d99b5bb5c4",
+   "threshold": "claude_handoff/analysis_20261027/review_E3R/inputs\\s342202\\threshold.json",
+   "threshold_sha256": "775a0d4874e3d01bf32113395e2b34df74016181b33c3eb4c6e630410e8c14e3",
+   "table_sha256": "406d20a578341ce37ac7a850d507678901de988c9afe0ae7655647c263dce792"
+  }
+ },
+ "bytes": {
+  "342101": {
+   "TRAIN_r1_i9": {
+    "cam_nf_s200": 565166.423006133,
+    "cam_nf_s201": 587445.7636118822,
+    "cam_nf_s202": 582105.7130046426
+   }
+  },
+  "342202": {
+   "TRAIN_r1_i9": {
+    "cam_nf_s200": 574488.367505797,
+    "cam_nf_s201": 595718.9546096163,
+    "cam_nf_s202": 590822.1569563668
+   }
+  }
+ },
+ "readouts": {
+  "342101": {
+   "R8": {
+    "free": 0.9955822511044372,
+    "fpr": 0.007991964720612223,
+    "furn_f1": 0.9411010976807757,
+    "counts": [
+     2331120,
+     2341464,
+     78232,
+     9788832,
+     88136,
+     6744,
+     4288
+    ]
+   },
+   "K0": {
+    "free": 0.9928177931487713,
+    "fpr": 0.002313450242795649,
+    "furn_f1": 0.9056892221453791,
+    "counts": [
+     1081673,
+     1089498,
+     26184,
+     11318160,
+     24882,
+     2197,
+     2985
+    ]
+   }
+  },
+  "342202": {
+   "R8": {
+    "free": 0.9947417513145622,
+    "fpr": 0.007991964720612223,
+    "furn_f1": 0.9328989676764258,
+    "counts": [
+     2329152,
+     2341464,
+     78232,
+     9788832,
+     88200,
+     8464,
+     4224
+    ]
+   },
+   "K0": {
+    "free": 0.992665429399595,
+    "fpr": 0.002313450242795649,
+    "furn_f1": 0.8986522222830151,
+    "counts": [
+     1081507,
+     1089498,
+     26184,
+     11318160,
+     24637,
+     2327,
+     3230
+    ]
+   }
+  }
+ }
+}
