@@ -1,0 +1,171 @@
+{
+ "task": "val_r1_i0_s1",
+ "t0": "2026-10-28T03:45:17Z",
+ "t_frozen_pipeline": 601.1961209774017,
+ "smoke_script_sha256": "eb0836768e79f3393d2fe65be612adda935ca27e15380ddeb12ac55d383b3b5b",
+ "results": {
+  "cam_nf/noreg": {
+   "controls_equal_e6_job": {
+    "B4": true,
+    "B6_A": true,
+    "B6_B": true,
+    "NET_342101": true,
+    "NET_342202": true
+   },
+   "controls_equal_smoke": {
+    "B4": true,
+    "B6_A": true,
+    "B6_B": true,
+    "NET_342101": true,
+    "NET_342202": true
+   },
+   "e3l3_equal_smoke": {
+    "E3L3_342101": {
+     "equal": true,
+     "n_rows": 8,
+     "known_mismatch": 0,
+     "gbp_cf_max": 3.8846703631634227e-13,
+     "gbp_viol": 0
+    },
+    "E3L3_342202": {
+     "equal": true,
+     "n_rows": 8,
+     "known_mismatch": 0,
+     "gbp_cf_max": 1.8807178037150152e-13,
+     "gbp_viol": 0
+    }
+   },
+   "house": {
+    "342101": {
+     "e3": 0.9755819260611592,
+     "net": 0.9746273751280009,
+     "d_pp": 0.09545509331583268
+    },
+    "342202": {
+     "e3": 0.9717229536348025,
+     "net": 0.9719286282532106,
+     "d_pp": -0.020567461840803603
+    }
+   }
+  },
+  "cam/noreg": {
+   "controls_equal_e6_job": {
+    "B4": true,
+    "B6_A": true,
+    "B6_B": true,
+    "NET_342101": true,
+    "NET_342202": true
+   },
+   "controls_equal_smoke": {
+    "B4": true,
+    "B6_A": true,
+    "B6_B": true,
+    "NET_342101": true,
+    "NET_342202": true
+   },
+   "e3l3_equal_smoke": {
+    "E3L3_342101": {
+     "equal": true,
+     "n_rows": 8,
+     "known_mismatch": 0,
+     "gbp_cf_max": 3.8846703631634227e-13,
+     "gbp_viol": 0
+    },
+    "E3L3_342202": {
+     "equal": true,
+     "n_rows": 8,
+     "known_mismatch": 0,
+     "gbp_cf_max": 1.8807178037150152e-13,
+     "gbp_viol": 0
+    }
+   },
+   "house": {
+    "342101": {
+     "e3": 0.915395614871306,
+     "net": 0.9303482587064676,
+     "d_pp": -1.4952643835161594
+    },
+    "342202": {
+     "e3": 0.9054631828978622,
+     "net": 0.9257303766279479,
+     "d_pp": -2.0267193730085675
+    }
+   }
+  },
+  "cam/e6": {
+   "controls_equal_e6_job": {
+    "B4": true,
+    "B6_A": true,
+    "B6_B": true,
+    "NET_342101": true,
+    "NET_342202": true
+   },
+   "controls_equal_smoke": {
+    "B4": true,
+    "B6_A": true,
+    "B6_B": true,
+    "NET_342101": true,
+    "NET_342202": true
+   },
+   "e3l3_equal_smoke": {
+    "E3L3_342101": {
+     "equal": true,
+     "n_rows": 8,
+     "known_mismatch": 0,
+     "gbp_cf_max": 3.8846703631634227e-13,
+     "gbp_viol": 0
+    },
+    "E3L3_342202": {
+     "equal": true,
+     "n_rows": 8,
+     "known_mismatch": 0,
+     "gbp_cf_max": 1.8807178037150152e-13,
+     "gbp_viol": 0
+    }
+   },
+   "house": {
+    "342101": {
+     "e3": 0.9752633989922126,
+     "net": 0.9732326698695951,
+     "d_pp": 0.20307291226174806
+    },
+    "342202": {
+     "e3": 0.9743765728666209,
+     "net": 0.9757486052601617,
+     "d_pp": -0.13720323935407785
+    }
+   }
+  }
+ },
+ "smoke_per_house_pp": {
+  "342101": 0.20307291226174806,
+  "342202": -0.13720323935407785
+ },
+ "islands": {
+  "frozen": [
+   [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ]
+  ],
+  "smoke": [
+   [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ]
+  ]
+ },
+ "t1": "2026-10-28T04:01:07Z"
+}

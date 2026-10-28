@@ -1,0 +1,200 @@
+jobs 4, failed 0, skipped 0, foreign 0, H1-control mismatches 0; timing {'job_seconds_median': 60.03462636470795, 'job_seconds_max': 60.331801652908325, 'file_seconds_median': 29.959739923477173, 'peak_mb_max': 2655.49609375}
+versions: w ['"learned"'] gbp_check ['true'] script ['"dc0f69d7c8ea2']
+
+== ctrl seed 203: 1 houses
+  arm           R8furn  pooled  tol1    free    surf   | zone F1 tol1   n_true | rest fp | phantoms/house  S3-tall
+  B4            0.9653 0.9653 0.9969 0.9870 0.9585 | - - 0 | 1888 | 0.00 0.00
+  B6_A          0.9870 0.9870 0.9998 0.9959 0.9828 | - - 0 | 400 | 0.00 0.00
+  B6_B          0.9867 0.9867 0.9996 0.9956 0.9824 | - - 0 | 456 | 0.00 0.00
+  E3L3_342101   0.9973 0.9973 1.0000 0.9990 0.9964 | - - 0 | 32 | 0.00 0.00
+  E3L3_342202   0.9979 0.9979 1.0000 0.9989 0.9968 | - - 0 | 24 | 0.00 0.00
+  flips E3L3_342101: vs B6_A S<=0 n=136 (voxels 17) prec=0.882; vs B6_B S<=0 n=136 (voxels 17) prec=0.882
+    by family (prec, true/false voxels): orig 0.88 15/2
+    by height: h0-0.3m 0.75 3/1, h0.3-0.9m 1.00 10/0, h>=0.9m 0.67 2/1, layer1 0.00 0/1
+    z -/0/+ share: zone occ [] free []; objzone occ ['0.846', '0.129', '0.025'] free ['0.011', '0.151', '0.838']
+    w [1240.3677978515625] (['learned']) j_occ [1998] known mismatch 0 GaBP cf_max 3.05e-13 violations 0 checked True
+  flips E3L3_342202: vs B6_A S<=0 n=144 (voxels 18) prec=0.944; vs B6_B S<=0 n=144 (voxels 18) prec=0.944
+    by family (prec, true/false voxels): orig 0.94 17/1
+    by height: h0-0.3m 1.00 3/0, h0.3-0.9m 0.93 13/1, h>=0.9m 1.00 1/0, layer1 - 0/0
+    z -/0/+ share: zone occ [] free []; objzone occ ['0.807', '0.167', '0.026'] free ['0.008', '0.076', '0.916']
+    w [1357.7166748046875] (['learned']) j_occ [2006] known mismatch 0 GaBP cf_max 5.06e-13 violations 0 checked True
+
+== ctrl seed 204: 1 houses
+  arm           R8furn  pooled  tol1    free    surf   | zone F1 tol1   n_true | rest fp | phantoms/house  S3-tall
+  B4            0.9407 0.9407 0.9817 0.9855 0.9557 | - - 0 | 3712 | 0.00 0.00
+  B6_A          0.9820 0.9820 0.9972 0.9961 0.9835 | - - 0 | 728 | 0.00 0.00
+  B6_B          0.9809 0.9809 0.9968 0.9958 0.9827 | - - 0 | 816 | 0.00 0.00
+  E3L3_342101   0.9977 0.9977 1.0000 0.9992 0.9969 | - - 0 | 56 | 0.00 0.00
+  E3L3_342202   0.9985 0.9985 1.0000 0.9993 0.9971 | - - 0 | 32 | 0.00 0.00
+  flips E3L3_342101: vs B6_A S<=0 n=112 (voxels 14) prec=0.786; vs B6_B S<=0 n=112 (voxels 14) prec=0.786
+    by family (prec, true/false voxels): orig 0.79 11/3
+    by height: h0-0.3m 0.80 4/1, h0.3-0.9m 0.80 4/1, h>=0.9m 0.75 3/1, layer1 0.00 0/1
+    z -/0/+ share: zone occ [] free []; objzone occ ['0.833', '0.141', '0.026'] free ['0.012', '0.156', '0.832']
+    w [1240.3677978515625] (['learned']) j_occ [1998] known mismatch 0 GaBP cf_max 3.05e-13 violations 0 checked True
+  flips E3L3_342202: vs B6_A S<=0 n=104 (voxels 13) prec=0.846; vs B6_B S<=0 n=104 (voxels 13) prec=0.846
+    by family (prec, true/false voxels): orig 0.85 11/2
+    by height: h0-0.3m 0.80 4/1, h0.3-0.9m 1.00 4/0, h>=0.9m 0.75 3/1, layer1 0.00 0/1
+    z -/0/+ share: zone occ [] free []; objzone occ ['0.809', '0.169', '0.022'] free ['0.009', '0.078', '0.913']
+    w [1357.7166748046875] (['learned']) j_occ [2006] known mismatch 0 GaBP cf_max 5.06e-13 violations 0 checked True
+
+== novel seed 203: 1 houses
+  arm           R8furn  pooled  tol1    free    surf   | zone F1 tol1   n_true | rest fp | phantoms/house  S3-tall
+  B4            0.8545 0.8545 0.9475 0.9778 0.9312 | 0.9005 0.9957 28376 | 3232 | 1.00 1.00
+  B6_A          0.9246 0.9246 0.9784 0.9935 0.9637 | 0.9385 0.9931 28376 | 848 | 1.00 1.00
+  B6_B          0.9229 0.9229 0.9776 0.9932 0.9629 | 0.9377 0.9932 28376 | 904 | 1.00 1.00
+  E3L3_342101   0.9562 0.9562 0.9922 0.9982 0.9910 | 0.9573 0.9933 28376 | 64 | 1.00 1.00
+  E3L3_342202   0.9570 0.9570 0.9926 0.9980 0.9909 | 0.9596 0.9953 28376 | 152 | 0.00 0.00
+  flips E3L3_342101: vs B6_A S<=0 n=840 (voxels 105) prec=0.457; vs B6_B S<=0 n=840 (voxels 105) prec=0.457
+    by family (prec, true/false voxels): composite 0.89 33/4, ellipsoid 0.19 8/34, pole 0.20 1/4, rotated 0.29 6/15
+    by height: h0-0.3m 0.52 28/26, h0.3-0.9m 0.42 19/26, h>=0.9m 0.17 1/5, layer1 0.20 5/20
+    z -/0/+ share: zone occ ['0.811', '0.156', '0.033'] free ['0.029', '0.188', '0.784']; objzone occ ['0.811', '0.156', '0.033'] free ['0.029', '0.188', '0.784']
+    w [1240.3677978515625] (['learned']) j_occ [1998] known mismatch 0 GaBP cf_max 6.43e-13 violations 0 checked True
+  flips E3L3_342202: vs B6_A S<=0 n=944 (voxels 118) prec=0.415; vs B6_B S<=0 n=944 (voxels 118) prec=0.415
+    by family (prec, true/false voxels): clutter 0.00 0/1, composite 0.82 33/7, ellipsoid 0.17 7/34, pole 0.25 1/3, rotated 0.25 8/24
+    by height: h0-0.3m 0.45 25/31, h0.3-0.9m 0.39 22/35, h>=0.9m 0.40 2/3, layer1 0.19 5/22
+    z -/0/+ share: zone occ ['0.783', '0.183', '0.034'] free ['0.022', '0.133', '0.844']; objzone occ ['0.783', '0.183', '0.034'] free ['0.022', '0.133', '0.844']
+    w [1357.7166748046875] (['learned']) j_occ [2006] known mismatch 0 GaBP cf_max 3.91e-13 violations 0 checked True
+
+== novel seed 204: 1 houses
+  arm           R8furn  pooled  tol1    free    surf   | zone F1 tol1   n_true | rest fp | phantoms/house  S3-tall
+  B4            0.8717 0.8717 0.9493 0.9779 0.9342 | 0.9160 0.9957 28376 | 2992 | 2.00 2.00
+  B6_A          0.9375 0.9375 0.9823 0.9934 0.9710 | 0.9498 0.9953 28376 | 736 | 2.00 2.00
+  B6_B          0.9356 0.9356 0.9815 0.9932 0.9705 | 0.9487 0.9953 28376 | 784 | 2.00 2.00
+  E3L3_342101   0.9536 0.9536 0.9909 0.9978 0.9913 | 0.9545 0.9919 28376 | 56 | 3.00 3.00
+  E3L3_342202   0.9567 0.9567 0.9935 0.9978 0.9916 | 0.9570 0.9938 28376 | 16 | 1.00 1.00
+  flips E3L3_342101: vs B6_A S<=0 n=704 (voxels 88) prec=0.420; vs B6_B S<=0 n=704 (voxels 88) prec=0.420
+    by family (prec, true/false voxels): clutter 0.00 0/1, composite 0.86 18/3, ellipsoid 0.24 12/38, pole 0.50 1/1, rotated 0.43 6/8
+    by height: h0-0.3m 0.36 14/25, h0.3-0.9m 0.46 21/25, h>=0.9m 0.67 2/1, layer1 0.00 0/17
+    z -/0/+ share: zone occ ['0.789', '0.177', '0.035'] free ['0.030', '0.181', '0.789']; objzone occ ['0.789', '0.177', '0.035'] free ['0.030', '0.181', '0.789']
+    w [1240.3677978515625] (['learned']) j_occ [1998] known mismatch 0 GaBP cf_max 6.43e-13 violations 0 checked True
+  flips E3L3_342202: vs B6_A S<=0 n=688 (voxels 86) prec=0.407; vs B6_B S<=0 n=688 (voxels 86) prec=0.407
+    by family (prec, true/false voxels): clutter 0.50 1/1, composite 0.94 16/1, ellipsoid 0.27 13/35, pole 0.33 1/2, rotated 0.25 4/12
+    by height: h0-0.3m 0.34 14/27, h0.3-0.9m 0.49 19/20, h>=0.9m 0.33 2/4, layer1 0.00 0/23
+    z -/0/+ share: zone occ ['0.757', '0.207', '0.035'] free ['0.024', '0.125', '0.851']; objzone occ ['0.757', '0.207', '0.035'] free ['0.024', '0.125', '0.851']
+    w [1357.7166748046875] (['learned']) j_occ [2006] known mismatch 0 GaBP cf_max 3.91e-13 violations 0 checked True
+
+== scale seed 203: 1 houses
+  arm           R8furn  pooled  tol1    free    surf   | zone F1 tol1   n_true | rest fp | phantoms/house  S3-tall
+  B4            0.9502 0.9502 0.9903 0.9839 0.9536 | 0.9585 0.9988 41008 | 728 | 1.00 1.00
+  B6_A          0.9618 0.9618 0.9867 0.9954 0.9770 | 0.9635 0.9885 41008 | 144 | 1.00 1.00
+  B6_B          0.9619 0.9619 0.9867 0.9950 0.9764 | 0.9638 0.9886 41008 | 152 | 1.00 1.00
+  E3L3_342101   0.9853 0.9853 0.9985 0.9988 0.9929 | 0.9853 0.9985 41008 | 0 | 0.00 0.00
+  E3L3_342202   0.9860 0.9860 0.9965 0.9988 0.9931 | 0.9861 0.9966 41008 | 8 | 1.00 1.00
+  flips E3L3_342101: vs B6_A S<=0 n=1760 (voxels 220) prec=0.859; vs B6_B S<=0 n=1760 (voxels 220) prec=0.859
+    by family (prec, true/false voxels): scaled_0.6 0.12 2/15, scaled_1.5 0.92 187/16
+    by height: h0-0.3m 0.64 21/12, h0.3-0.9m 0.70 38/16, h>=0.9m 0.98 130/3, layer1 0.62 5/3
+    z -/0/+ share: zone occ ['0.792', '0.173', '0.034'] free ['0.014', '0.143', '0.843']; objzone occ ['0.792', '0.173', '0.034'] free ['0.014', '0.143', '0.843']
+    w [1240.3677978515625] (['learned']) j_occ [1998] known mismatch 0 GaBP cf_max 7.33e-13 violations 0 checked True
+  flips E3L3_342202: vs B6_A S<=0 n=1728 (voxels 216) prec=0.856; vs B6_B S<=0 n=1728 (voxels 216) prec=0.856
+    by family (prec, true/false voxels): scaled_0.6 0.20 2/8, scaled_1.5 0.89 183/23
+    by height: h0-0.3m 0.80 20/5, h0.3-0.9m 0.59 38/26, h>=0.9m 1.00 127/0, layer1 0.83 5/1
+    z -/0/+ share: zone occ ['0.762', '0.199', '0.039'] free ['0.010', '0.098', '0.891']; objzone occ ['0.762', '0.199', '0.039'] free ['0.010', '0.098', '0.891']
+    w [1357.7166748046875] (['learned']) j_occ [2006] known mismatch 0 GaBP cf_max 5.94e-13 violations 0 checked True
+
+== scale seed 204: 1 houses
+  arm           R8furn  pooled  tol1    free    surf   | zone F1 tol1   n_true | rest fp | phantoms/house  S3-tall
+  B4            0.9364 0.9364 0.9880 0.9792 0.9414 | 0.9458 0.9976 41008 | 848 | 0.00 0.00
+  B6_A          0.9616 0.9616 0.9952 0.9928 0.9719 | 0.9638 0.9974 41008 | 184 | 0.00 0.00
+  B6_B          0.9609 0.9609 0.9952 0.9922 0.9707 | 0.9632 0.9976 41008 | 200 | 0.00 0.00
+  E3L3_342101   0.9880 0.9880 0.9980 0.9991 0.9943 | 0.9881 0.9981 41008 | 8 | 0.00 0.00
+  E3L3_342202   0.9893 0.9893 0.9965 0.9990 0.9940 | 0.9894 0.9966 41008 | 8 | 0.00 0.00
+  flips E3L3_342101: vs B6_A S<=0 n=1008 (voxels 126) prec=0.786; vs B6_B S<=0 n=1008 (voxels 126) prec=0.786
+    by family (prec, true/false voxels): scaled_0.6 0.58 15/11, scaled_1.5 0.84 84/16
+    by height: h0-0.3m 0.60 12/8, h0.3-0.9m 0.67 36/18, h>=0.9m 0.98 51/1, layer1 0.60 3/2
+    z -/0/+ share: zone occ ['0.796', '0.171', '0.032'] free ['0.012', '0.156', '0.833']; objzone occ ['0.796', '0.171', '0.032'] free ['0.012', '0.156', '0.833']
+    w [1240.3677978515625] (['learned']) j_occ [1998] known mismatch 0 GaBP cf_max 7.33e-13 violations 0 checked True
+  flips E3L3_342202: vs B6_A S<=0 n=1008 (voxels 126) prec=0.762; vs B6_B S<=0 n=1008 (voxels 126) prec=0.762
+    by family (prec, true/false voxels): scaled_0.6 0.54 15/13, scaled_1.5 0.83 81/17
+    by height: h0-0.3m 0.60 12/8, h0.3-0.9m 0.61 35/22, h>=0.9m 1.00 49/0, layer1 0.43 3/4
+    z -/0/+ share: zone occ ['0.774', '0.192', '0.034'] free ['0.011', '0.103', '0.886']; objzone occ ['0.774', '0.192', '0.034'] free ['0.011', '0.103', '0.886']
+    w [1357.7166748046875] (['learned']) j_occ [2006] known mismatch 0 GaBP cf_max 5.94e-13 violations 0 checked True
+
+== floating seed 203: 1 houses
+  arm           R8furn  pooled  tol1    free    surf   | zone F1 tol1   n_true | rest fp | phantoms/house  S3-tall
+  B4            0.7731 0.7731 0.8405 0.9767 0.9330 | 0.9225 0.9978 15744 | 6288 | 0.00 0.00
+  B6_A          0.9029 0.9029 0.9534 0.9928 0.9700 | 0.9434 0.9964 15744 | 1400 | 0.00 0.00
+  B6_B          0.9022 0.9022 0.9527 0.9927 0.9696 | 0.9434 0.9964 15744 | 1424 | 0.00 0.00
+  E3L3_342101   0.9421 0.9421 0.9856 0.9986 0.9928 | 0.9421 0.9856 15744 | 0 | 0.00 0.00
+  E3L3_342202   0.9377 0.9377 0.9859 0.9986 0.9927 | 0.9384 0.9866 15744 | 24 | 1.00 1.00
+  flips E3L3_342101: vs B6_A S<=0 n=440 (voxels 55) prec=0.309; vs B6_B S<=0 n=440 (voxels 55) prec=0.309
+    by family (prec, true/false voxels): hanging 0.18 6/28, wall_shelf 0.52 11/10
+    by height: h0-0.3m - 0/0, h0.3-0.9m - 0/0, h>=0.9m 0.31 17/38, layer1 - 0/0
+    z -/0/+ share: zone occ ['0.819', '0.155', '0.025'] free ['0.027', '0.216', '0.757']; objzone occ ['0.819', '0.155', '0.025'] free ['0.027', '0.216', '0.757']
+    w [1240.3677978515625] (['learned']) j_occ [1998] known mismatch 0 GaBP cf_max 3.92e-13 violations 0 checked True
+  flips E3L3_342202: vs B6_A S<=0 n=480 (voxels 60) prec=0.317; vs B6_B S<=0 n=480 (voxels 60) prec=0.317
+    by family (prec, true/false voxels): hanging 0.22 9/32, wall_shelf 0.53 10/9
+    by height: h0-0.3m - 0/0, h0.3-0.9m - 0/0, h>=0.9m 0.32 19/41, layer1 - 0/0
+    z -/0/+ share: zone occ ['0.784', '0.184', '0.031'] free ['0.023', '0.142', '0.835']; objzone occ ['0.784', '0.184', '0.031'] free ['0.023', '0.142', '0.835']
+    w [1357.7166748046875] (['learned']) j_occ [2006] known mismatch 0 GaBP cf_max 5.94e-13 violations 0 checked True
+
+== floating seed 204: 1 houses
+  arm           R8furn  pooled  tol1    free    surf   | zone F1 tol1   n_true | rest fp | phantoms/house  S3-tall
+  B4            0.7617 0.7617 0.8627 0.9740 0.9283 | 0.8888 0.9978 15744 | 5616 | 0.00 0.00
+  B6_A          0.8929 0.8929 0.9619 0.9918 0.9705 | 0.9223 0.9939 15744 | 1024 | 0.00 0.00
+  B6_B          0.8909 0.8909 0.9611 0.9916 0.9698 | 0.9211 0.9939 15744 | 1056 | 0.00 0.00
+  E3L3_342101   0.9297 0.9297 0.9879 0.9971 0.9917 | 0.9300 0.9882 15744 | 8 | 0.00 0.00
+  E3L3_342202   0.9244 0.9244 0.9879 0.9970 0.9914 | 0.9247 0.9882 15744 | 8 | 1.00 1.00
+  flips E3L3_342101: vs B6_A S<=0 n=744 (voxels 93) prec=0.430; vs B6_B S<=0 n=744 (voxels 93) prec=0.430
+    by family (prec, true/false voxels): hanging 0.41 30/43, wall_shelf 0.50 10/10
+    by height: h0-0.3m - 0/0, h0.3-0.9m - 0/0, h>=0.9m 0.43 40/53, layer1 - 0/0
+    z -/0/+ share: zone occ ['0.784', '0.187', '0.029'] free ['0.037', '0.221', '0.743']; objzone occ ['0.784', '0.187', '0.029'] free ['0.037', '0.221', '0.743']
+    w [1240.3677978515625] (['learned']) j_occ [1998] known mismatch 0 GaBP cf_max 3.92e-13 violations 0 checked True
+  flips E3L3_342202: vs B6_A S<=0 n=768 (voxels 96) prec=0.333; vs B6_B S<=0 n=768 (voxels 96) prec=0.333
+    by family (prec, true/false voxels): hanging 0.30 21/49, wall_shelf 0.42 11/15
+    by height: h0-0.3m - 0/0, h0.3-0.9m - 0/0, h>=0.9m 0.33 32/64, layer1 - 0/0
+    z -/0/+ share: zone occ ['0.755', '0.206', '0.038'] free ['0.034', '0.144', '0.822']; objzone occ ['0.755', '0.206', '0.038'] free ['0.034', '0.144', '0.822']
+    w [1357.7166748046875] (['learned']) j_occ [2006] known mismatch 0 GaBP cf_max 5.94e-13 violations 0 checked True
+
+VERDICT: SMOKE (not a verdict)  reasons []
+ctrl self-check [+4.3, +8.6] pp ok=False: 342101_s203 B6_A +1.03 pp OUT; 342202_s203 B6_A +1.09 pp OUT; 342101_s204 B6_A +1.57 pp OUT; 342202_s204 B6_A +1.66 pp OUT
+novel: HARMFUL (max-pairing HARMFUL)
+   342101_s203 vs B6_A: zone +1.88 pp, all +3.16 pp, flip 0.457 (voxels 105), phantoms 1.00 vs 1.00, free +0.48 pp -> HARM
+      report only ctrl same ckpt/seed: flip 0.882, phantoms 0.00 vs 0.00
+      report only zone dF1 by family vs B6: clutter -4.66 (440), composite +4.13 (13184), ellipsoid -3.46 (4440), pole +3.54 (744), rotated +1.23 (9704), wall_shelf -9.09 (48)
+      report only z share shift vs ctrl objzone (true free voxels -/0/+): ['0.017', '0.037', '-0.054'] (true occupied): ['-0.035', '0.026', '0.008']
+   342202_s203 vs B6_B: zone +2.19 pp, all +3.41 pp, flip 0.415 (voxels 118), phantoms 0.00 vs 1.00, free +0.48 pp -> HARM
+      report only ctrl same ckpt/seed: flip 0.944, phantoms 0.00 vs 0.00
+      report only zone dF1 by family vs B6: clutter +0.52 (440), composite +4.10 (13184), ellipsoid -4.94 (4440), pole +3.91 (744), rotated +2.77 (9704), wall_shelf -20.00 (48)
+      report only z share shift vs ctrl objzone (true free voxels -/0/+): ['0.015', '0.057', '-0.071'] (true occupied): ['-0.023', '0.016', '0.008']
+   342101_s204 vs B6_A: zone +0.47 pp, all +1.61 pp, flip 0.420 (voxels 88), phantoms 3.00 vs 2.00, free +0.44 pp -> HARM
+      report only ctrl same ckpt/seed: flip 0.786, phantoms 0.00 vs 0.00
+      report only zone dF1 by family vs B6: clutter -2.34 (440), composite +2.58 (13184), ellipsoid -3.27 (4440), pole +2.40 (744), rotated -0.73 (9704), wall_shelf +5.19 (48)
+      report only z share shift vs ctrl objzone (true free voxels -/0/+): ['0.018', '0.026', '-0.043'] (true occupied): ['-0.045', '0.036', '0.009']
+   342202_s204 vs B6_B: zone +0.83 pp, all +2.11 pp, flip 0.407 (voxels 86), phantoms 1.00 vs 2.00, free +0.47 pp -> HARM
+      report only ctrl same ckpt/seed: flip 0.846, phantoms 0.00 vs 0.00
+      report only zone dF1 by family vs B6: clutter +0.66 (440), composite +2.73 (13184), ellipsoid -4.30 (4440), pole +0.69 (744), rotated +0.69 (9704), wall_shelf +5.19 (48)
+      report only z share shift vs ctrl objzone (true free voxels -/0/+): ['0.015', '0.047', '-0.062'] (true occupied): ['-0.052', '0.038', '0.014']
+scale: SAFE (max-pairing SAFE)
+   342101_s203 vs B6_A: zone +2.18 pp, all +2.35 pp, flip 0.859 (voxels 220), phantoms 0.00 vs 1.00, free +0.34 pp -> SAFE
+      report only ctrl same ckpt/seed: flip 0.882, phantoms 0.00 vs 0.00
+      report only zone dF1 by family vs B6: scaled_0.6 -0.70 (5648), scaled_1.5 +2.66 (35456)
+      report only z share shift vs ctrl objzone (true free voxels -/0/+): ['0.002', '-0.008', '0.006'] (true occupied): ['-0.054', '0.044', '0.010']
+   342202_s203 vs B6_B: zone +2.23 pp, all +2.40 pp, flip 0.856 (voxels 216), phantoms 1.00 vs 1.00, free +0.38 pp -> SAFE
+      report only ctrl same ckpt/seed: flip 0.944, phantoms 0.00 vs 0.00
+      report only zone dF1 by family vs B6: scaled_0.6 +0.04 (5648), scaled_1.5 +2.60 (35456)
+      report only z share shift vs ctrl objzone (true free voxels -/0/+): ['0.003', '0.022', '-0.024'] (true occupied): ['-0.045', '0.032', '0.013']
+   342101_s204 vs B6_A: zone +2.44 pp, all +2.65 pp, flip 0.786 (voxels 126), phantoms 0.00 vs 0.00, free +0.63 pp -> SAFE
+      report only ctrl same ckpt/seed: flip 0.786, phantoms 0.00 vs 0.00
+      report only zone dF1 by family vs B6: scaled_0.6 +1.18 (5648), scaled_1.5 +2.65 (35456)
+      report only z share shift vs ctrl objzone (true free voxels -/0/+): ['-0.001', '0.000', '0.001'] (true occupied): ['-0.037', '0.031', '0.006']
+   342202_s204 vs B6_B: zone +2.62 pp, all +2.85 pp, flip 0.762 (voxels 126), phantoms 0.00 vs 0.00, free +0.68 pp -> SAFE
+      report only ctrl same ckpt/seed: flip 0.846, phantoms 0.00 vs 0.00
+      report only zone dF1 by family vs B6: scaled_0.6 +1.10 (5648), scaled_1.5 +2.87 (35456)
+      report only z share shift vs ctrl objzone (true free voxels -/0/+): ['0.002', '0.025', '-0.027'] (true occupied): ['-0.035', '0.023', '0.013']
+floating: HARMFUL (max-pairing HARMFUL)
+   342101_s203 vs B6_A: zone -0.12 pp, all +3.93 pp, flip 0.309 (voxels 55), phantoms 0.00 vs 0.00, free +0.58 pp -> HARM
+      report only ctrl same ckpt/seed: flip 0.882, phantoms 0.00 vs 0.00
+      report only zone dF1 by family vs B6: hanging -0.84 (9064), wall_shelf +0.86 (6680)
+      report only z share shift vs ctrl objzone (true free voxels -/0/+): ['0.016', '0.065', '-0.080'] (true occupied): ['-0.026', '0.026', '0.000']
+   342202_s203 vs B6_B: zone -0.50 pp, all +3.54 pp, flip 0.317 (voxels 60), phantoms 1.00 vs 0.00, free +0.59 pp -> HARM
+      report only ctrl same ckpt/seed: flip 0.944, phantoms 0.00 vs 0.00
+      report only zone dF1 by family vs B6: hanging -0.79 (9064), wall_shelf -0.10 (6680)
+      report only z share shift vs ctrl objzone (true free voxels -/0/+): ['0.016', '0.065', '-0.081'] (true occupied): ['-0.023', '0.017', '0.005']
+   342101_s204 vs B6_A: zone +0.77 pp, all +3.69 pp, flip 0.430 (voxels 93), phantoms 0.00 vs 0.00, free +0.53 pp -> HARM
+      report only ctrl same ckpt/seed: flip 0.786, phantoms 0.00 vs 0.00
+      report only zone dF1 by family vs B6: hanging -0.33 (9064), wall_shelf +2.26 (6680)
+      report only z share shift vs ctrl objzone (true free voxels -/0/+): ['0.024', '0.065', '-0.089'] (true occupied): ['-0.049', '0.047', '0.003']
+   342202_s204 vs B6_B: zone +0.35 pp, all +3.35 pp, flip 0.333 (voxels 96), phantoms 1.00 vs 0.00, free +0.55 pp -> HARM
+      report only ctrl same ckpt/seed: flip 0.846, phantoms 0.00 vs 0.00
+      report only zone dF1 by family vs B6: hanging +0.16 (9064), wall_shelf +0.60 (6680)
+      report only z share shift vs ctrl objzone (true free voxels -/0/+): ['0.025', '0.067', '-0.091'] (true occupied): ['-0.054', '0.037', '0.017']

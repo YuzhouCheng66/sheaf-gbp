@@ -1,0 +1,8 @@
+expected 2, failed 0, missing 0, gate failed 0, known mismatch 0, GaBP failed 0; versions w ['"learned"']
+val s1 342101: E3L3(e6) 0.9277 vs NET(e6) 0.9318 d -0.40 pp | E3L3 e6 - noreg +4.54 pp (NET +3.13) | free -0.07 pp | harm 0/2 []
+    report only: island loss (truepose - e6) E3L3 4.98 NET 4.83 B6 3.84 pp; paired pooled d -0.47 pp (E3L3 0.9228 NET 0.9275), paired row d -0.40; noreg d -1.82, cam_nf d -0.25
+    by islands: 1: 1 houses +0.20 pp, 4: 1 houses -1.01 pp
+val s1 342202: E3L3(e6) 0.9266 vs NET(e6) 0.9327 d -0.62 pp | E3L3 e6 - noreg +4.57 pp (NET +3.46) | free -0.05 pp | harm 0/2 []
+    report only: island loss (truepose - e6) E3L3 4.88 NET 4.47 B6 3.75 pp; paired pooled d -0.69 pp (E3L3 0.9217 NET 0.9286), paired row d -0.62; noreg d -1.72, cam_nf d -0.21
+    by islands: 1: 1 houses -0.14 pp, 4: 1 houses -1.09 pp
+VERDICT: {"verdict": "INCOMPLETE", "reasons": ["SMOKE: not a verdict (subset of tasks)"]}

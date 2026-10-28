@@ -1,0 +1,344 @@
+{
+ "ctrl_train_r1_i19_s203.npz": {
+  "E3L3_342101": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "E3L3_342202": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "B4": true,
+  "B6_A": true,
+  "B6_B": true
+ },
+ "ctrl_train_r1_i39_s203.npz": {
+  "E3L3_342101": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "E3L3_342202": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "B4": true,
+  "B6_A": true,
+  "B6_B": true
+ },
+ "ctrl_train_r2_i19_s203.npz": {
+  "E3L3_342101": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "E3L3_342202": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "B4": true,
+  "B6_A": true,
+  "B6_B": true
+ },
+ "ctrl_train_r2_i29_s203.npz": {
+  "E3L3_342101": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "E3L3_342202": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "B4": true,
+  "B6_A": true,
+  "B6_B": true
+ },
+ "ctrl_train_r3_i19_s203.npz": {
+  "E3L3_342101": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "E3L3_342202": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "B4": true,
+  "B6_A": true,
+  "B6_B": true
+ },
+ "ctrl_train_r3_i29_s203.npz": {
+  "E3L3_342101": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "E3L3_342202": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "B4": true,
+  "B6_A": true,
+  "B6_B": true
+ },
+ "floating_train_r1_i19_s203.npz": {
+  "E3L3_342101": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "E3L3_342202": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "B4": true,
+  "B6_A": true,
+  "B6_B": true
+ },
+ "floating_train_r1_i39_s203.npz": {
+  "E3L3_342101": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "E3L3_342202": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "B4": true,
+  "B6_A": true,
+  "B6_B": true
+ },
+ "floating_train_r2_i19_s203.npz": {
+  "E3L3_342101": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "E3L3_342202": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "B4": true,
+  "B6_A": true,
+  "B6_B": true
+ },
+ "floating_train_r2_i29_s203.npz": {
+  "E3L3_342101": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "E3L3_342202": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "B4": true,
+  "B6_A": true,
+  "B6_B": true
+ },
+ "floating_train_r3_i19_s203.npz": {
+  "E3L3_342101": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "E3L3_342202": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "B4": true,
+  "B6_A": true,
+  "B6_B": true
+ },
+ "floating_train_r3_i29_s203.npz": {
+  "E3L3_342101": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "E3L3_342202": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "B4": true,
+  "B6_A": true,
+  "B6_B": true
+ },
+ "novel_train_r1_i19_s203.npz": {
+  "E3L3_342101": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "E3L3_342202": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "B4": true,
+  "B6_A": true,
+  "B6_B": true
+ },
+ "novel_train_r1_i39_s203.npz": {
+  "E3L3_342101": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "E3L3_342202": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "B4": true,
+  "B6_A": true,
+  "B6_B": true
+ },
+ "novel_train_r2_i19_s203.npz": {
+  "E3L3_342101": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "E3L3_342202": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "B4": true,
+  "B6_A": true,
+  "B6_B": true
+ },
+ "novel_train_r2_i29_s203.npz": {
+  "E3L3_342101": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "E3L3_342202": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "B4": true,
+  "B6_A": true,
+  "B6_B": true
+ },
+ "novel_train_r3_i19_s203.npz": {
+  "E3L3_342101": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "E3L3_342202": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "B4": true,
+  "B6_A": true,
+  "B6_B": true
+ },
+ "novel_train_r3_i29_s203.npz": {
+  "E3L3_342101": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "E3L3_342202": {
+   "zones": true,
+   "families": true,
+   "phantoms": true,
+   "flips": true,
+   "rows": true
+  },
+  "B4": true,
+  "B6_A": true,
+  "B6_B": true
+ }
+}

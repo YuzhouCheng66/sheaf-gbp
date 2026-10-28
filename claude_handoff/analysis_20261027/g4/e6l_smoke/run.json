@@ -1,0 +1,31 @@
+{
+ "script": "g4_e6_e3l3.py",
+ "script_sha256": "eb0836768e79f3393d2fe65be612adda935ca27e15380ddeb12ac55d383b3b5b",
+ "hl_sha256": "dc0f69d7c8ea2b2a8513fa2c04095664ebd7eaf0f1c0637d497943b57537da57",
+ "frozen": {
+  "g4_ood_panel": "3a6959da19eec5326f9a17e583d58e6ab1b12fd2a2c398172b61ace36a49ce23",
+  "mapping_3d_storey_data_v420ood": "9e1c7c2aac5ddd3e53ed5035a3db707d87c1a1026987ece782796b39f4e1f92c",
+  "g4_e3l3": "c7523cc82f6da04497843e8b00559408d573e20377a8e7b99cc773771751928c",
+  "g4_e3l2": "bab73d647655ecc6504d4ffd738409618bf95cab8089a489a7cb4da28dc3f314",
+  "g4_e3l": "3dc970d8542f794082b28d265d68e0237f3670f2cf2dfd4f754c01c8ac24f6be",
+  "g4_e3r": "1d65d9a85f8ef0df4bcdb9f44feba9e1e6cae5f0057a6ec6b097d545ad883970",
+  "g4_noise_panels": "2313d75bc3ee04515d87469ab9e89e49a3811e1125e39ca0bba839448cc8623f",
+  "g4_island_compose": "b7438b987c15ff4a4cc4d9c204763a11dd49d74cb18cb9aae793936b4917c8d8",
+  "g4_registration": "e9574c7eff5e1400b0bd901e0befc3abb65520d1612e8efbeade80307b5899fe"
+ },
+ "args": {
+  "out": "C:/Users/27118/Desktop/sheaf-gbp/experiments/sheaf-gbp-p6-local-skill/claude_handoff/analysis_20261027/g4/e6l_smoke",
+  "jobs": "val_r1_i0_s1,val_r2_i3_s1",
+  "formal": false,
+  "workers": 2,
+  "threads": 1,
+  "aggregate_only": false,
+  "w": "learned",
+  "w_thr": "",
+  "no_gbp_check": false
+ },
+ "n_todo": 2,
+ "start_utc": "2026-10-28T03:30:42Z",
+ "end_utc": "2026-10-28T03:34:03Z",
+ "wall_seconds": 201.08089089393616
+}
