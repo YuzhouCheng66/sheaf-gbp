@@ -35,7 +35,7 @@ E3R=runs/e3r                                                             # E3-R 
 OUT=runs/e3l4
 LOG=runs/chain_day8.log
 # ---------------------------------------------------------------- pinned by the coordinator (after review)
-W_STAR=FILL_W_STAR                                                                        # G4-E7 step 0 (TRAIN only), one of 3 / 4 / 6 / 8
+W_STAR=4                                                                        # G4-E7 step 0 (TRAIN only), one of 3 / 4 / 6 / 8
 E3L4_SHA=54428ba6b4ccddf0445c9e1f6fa63e35950dd3905046e89546c10f51aa9f857b    # scripts/g4_e3l4.py as deployed (re-pin if the review changes it)
 # ---------------------------------------------------------------- frozen (verified on uk-linux 2026-10-28 03:2x UTC)
 E3L3_SHA=c7523cc82f6da04497843e8b00559408d573e20377a8e7b99cc773771751928c    # g4_e3l3.py (E3-L3 as run on bigboy; imported read only)
