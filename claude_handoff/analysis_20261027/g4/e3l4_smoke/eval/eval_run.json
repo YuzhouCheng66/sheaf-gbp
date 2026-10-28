@@ -1,0 +1,19 @@
+{
+ "stage": "eval",
+ "batch": "E3-L4",
+ "prereg": "D8-68",
+ "w_star": 4.0,
+ "export": "C:\\Users\\27118\\Desktop\\sheaf-gbp\\experiments\\sheaf-gbp-p6-local-skill\\claude_handoff\\analysis_20261027\\g4\\e3l2_smoke\\export_train",
+ "expect_seeds": [
+  203
+ ],
+ "seeds": [
+  203
+ ],
+ "ckpts": {
+  "claude_handoff/analysis_20261027/g4/e3l4_smoke/runs/s342101/checkpoints/final.pt": "65f113ff48f66055cfdbabe75e84737bd1a5678f2f91c3ad66e8a36a6753eaab"
+ },
+ "script_sha256": "54428ba6b4ccddf0445c9e1f6fa63e35950dd3905046e89546c10f51aa9f857b",
+ "g4_e3l3_sha256": "c7523cc82f6da04497843e8b00559408d573e20377a8e7b99cc773771751928c",
+ "utc": "2026-10-28T03:37:50Z"
+}
