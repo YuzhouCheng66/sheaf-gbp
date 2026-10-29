@@ -4088,3 +4088,15 @@ QPOST4 正好落在用户的能量形式里：
 - **只报告**：答案段在对方手里的 EM；缺席曲线 p ∈ {0, .3, .6, 1}（p = 1 时 S1 逐数等于 B0，断言）；融合前分歧 ‖z_1 − z_2‖ 与对错的相关；λ 与答案熵的相关；每题字节与发送端时延；文字预算扫描 {16, 64, 256}；R = 2。
 - **算力**（估计，实现后按实测重估，不引用预热前速率）：24 次训练，每次 35–50 分钟，约 8–10 个 5090 租约，分多天；不阻塞的臂（T0、预算扫描、L 扫描）放 bigboy。数据只在本地与 `/mnt/datasets`，不进仓库。
 - **下一步**：实现与单测（断言 C、GBP 消息与直接解一致、缺席 p = 1 等于 B0）→ 独立审查 → 请用户确认 GPU → 发射。
+
+## D8-83. 批次 L1 实现与整夜交接记录（第一部分：算力批准与环境，2026-10-29 18:46 UTC；实现进行中，未发射）
+
+- **用户指示链**（原话）：18:19 UTC"按默认定稿"→"开始实现"→"尽快推进实验"→ 关于 Llama 受限："接受，帮我处理好"→"已登录，你来填"→ 问是否足够开始整夜实验并交接："那足够的模型，数据和信息来开始整夜实验了吗？我要交接给你不回复了。"→ 对算力与回退方案的批准（约 18:42 UTC）：**"5090+bigboy，可换模型"**，对应我给出的选项：uk-linux 5090 今晚连续租约到明早（最多 6 个），bigboy GPU 0/1 只跑不阻塞的臂；Llama 到异构臂开跑时还没批就换 SmolLM2-1.7B-Instruct 并写附录；发射。
+- **Llama 3.2 许可**：uk-linux 上的 HF 账号对 `meta-llama/Llama-3.2-1B-Instruct` 为 403（许可未接受）。内置浏览器面板里用户自己登录并提交了 Meta 的访问表单（约 18:36 UTC，页面显示"已提交，等待审核"）；到 18:42 UTC 仍是 403。我没有接触任何密码或令牌。
+- **回退模型**：`HuggingFaceTB/SmolLM2-1.7B-Instruct`（Apache 2.0；24 层，d = 2048，Llama 架构，自有 BPE 分词器，词表 49,152）——与 Qwen3-1.7B 仍是异构对。权重已开始预取到 `/mnt/datasets/yuzhou-sheaf-gbp-research/hf-cache/hub`。若启用，将以附录记录，并把设计稿第 10 节第 3 点的决定标为被替代。
+- **数据**：官方站点 `curtis.ml.cmu.edu` 从 uk-linux 解析不到（curl: Could not resolve host）。改用 HF 镜像 `hotpotqa/hotpot_qa`（config distractor），用 `scripts/claude_v342/l1_hotpot_from_hf.py`（sha256 前缀 08772a8b）转回官方 JSON 布局：train 90,447 题，sha256 `09bddf49…84cf75`；dev distractor 7,405 题，sha256 `1400afec…259ce0751`（完整值在 `$W/hotpot/hf_source.json`）。数据只在 uk-linux 本地，不进仓库。
+- **模型权重**：Qwen3-1.7B 已缓存（快照 70d244cc）。
+- **算力实况（18:43 UTC）**：uk-linux 5090 空闲（356 MiB）。bigboy GPU 0、1 都被他人占用（40.4 GB / 14.7 GB 68 %），`/home` 已用 99 %（剩 28 GB），且 `~/claude-sheaf-gbp` 下没有找到带 torch 的 Python —— 今晚不依赖 bigboy，所有臂排在 5090 上；bigboy 空闲且环境确认后才用（规则：等空闲、不抢占、不改 conda 环境）。
+- **代码进度**：`l1_fusion.py`（直接解 / 同步 GaBP 真发消息 / 缺席 / fp16 线路 / 树直径 / 边残差 / 字节数）与 `test_l1_fusion.py` 12/12 通过。修了一处：缺席时的信念原来算成 (λz)/λ，与 z 不逐位相等，改写为 z + (H − P·z)/(λ + P) 后严格等于自身；GBP 与直接解的比较容差定为 rtol 1e-4 / atol 1e-5（λ 跨 1e-3…1e3 时 float32 的合理误差；流水线中的 C 断言用 1e-4·(1 + max|x|)）。数据/判决（`l1_data.py`、`l1_aggregate.py`）与模型/训练/文字臂/链（`l1_model.py`、`l1_train.py`、`l1_text.py`、`chain_day9_L1.sh`）由两个子代理实现中，之后：全部单测 → 我读关键代码 → 独立审查 → 部署 → GPU 冒烟测步时 → 发射。
+- **本地测试环境**：CPU venv（torch CPU、transformers 4.52.4、peft 0.19.1，与 uk-linux 的 jax-gpu 环境同版本），路径 `C:\Users\27118\AppData\Local\Temp\claude\venv-l1`；会话临时目录的长路径使 `python -m venv` 失败（WinError 267），故用短路径。
+- **今晚的纪律**：第 0 阶段先跑，P0 不过链自动停、不碰设计；每个租约的启动与结束、每臂预热后的实测步时都以 `date -u` 记录；两个种子都跑；结果原样写入 D8-84；仓库只提交代码与报告。
