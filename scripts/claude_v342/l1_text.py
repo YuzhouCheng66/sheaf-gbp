@@ -8,13 +8,26 @@ T  (design section 4): per model a SENDER LoRA trained one epoch to write l1_dat
    EM / F1 overall, per agent, per model, by answer_owner; the budget sweep {16, 64, 256} (16 = the 64-token messages cut to 16
    tokens; 256 = generated with max_new_tokens 256 at evaluation only); the absence curve with the EMPTY message (design 5: "T 用空消息");
    sender latency = wall time of message generation per example and the decode steps. R = 2 is not required for the text arm.
+   The T arm does not fit one 7,200 s lease as a single job (5090 smoke: ~180 min), so it runs in PHASES (--phase), each its own run dir:
+     sender    train the senders, generate the --budget messages for the stage-2 subset, VAL and fresh -> <out>/trainable.pt (senders),
+               <out>/messages.json (texts, token ids, token counts per split, the subset indices), <out>/summary_sender.json; NEVER summary.json
+     receiver  --sender-from <sender run dir> (same pair and seed; its trainable.pt / messages.json sha256 are recorded): stage 1 + stage 2
+               from the stored messages, evaluation at the budgets <= --budget ({16, 64}: 16 by truncating the stored 64-token ids),
+               the absence curve -> <out>/summary.json (arm "T", budgets [16, 64], "sweep256": "pending"), <out>/trainable.pt (receivers; T0
+               loads it), <out>/log.txt. This is the T-<pair>-s<seed> directory the aggregator reads.
+     sweep256  --sender-from + --receiver-from: --sweep-budget (256) messages for VAL / fresh with the trained senders, evaluated with the
+               trained receivers -> <out>/summary_sweep256.json (and messages_256.json); NEVER summary.json
+     all       (default) everything in one run: the unit tests' path; summary.json has budgets [16, 64, 256] and "sweep256": "included".
 T0: no sender training: the frozen base model writes <= budget tokens from text_sender_prompt (zero-shot); the messages go to T's trained
-   receivers (--receiver-from <T run dir>, its trainable.pt); own summary.json with arm "T0".
+   receivers (--receiver-from <T receiver-phase or all-phase run dir>, its trainable.pt); own summary.json with arm "T0"; --budgets 16,64
+   is what the chain passes (256 still works when asked). --phase does not apply to T0.
 Usage:
-  python -B scripts/claude_v342/l1_text.py --arm T  --pair hetero --seed 342101 --train T.jsonl --val V.jsonl --fresh F.jsonl --out DIR
-  python -B scripts/claude_v342/l1_text.py --arm T0 --pair hetero --seed 342101 ... --out DIR0 --receiver-from DIR
-Writes <out>/summary.json, <out>/trainable.pt ({'sender': {model: state}, 'receiver': {model: state}}), <out>/messages.json (the generated
-messages of VAL / fresh; stays under the run dir, never in the repo), <out>/log.txt. Never overwrites a summary.json.
+  python -B scripts/claude_v342/l1_text.py --arm T --phase sender   --pair hetero --seed 342101 --train T.jsonl --val V.jsonl --fresh F.jsonl --out DIRS
+  python -B scripts/claude_v342/l1_text.py --arm T --phase receiver --pair hetero --seed 342101 ... --out DIR  --sender-from DIRS
+  python -B scripts/claude_v342/l1_text.py --arm T --phase sweep256 --pair hetero --seed 342101 ... --out DIRW --sender-from DIRS --receiver-from DIR
+  python -B scripts/claude_v342/l1_text.py --arm T0 --pair hetero --seed 342101 ... --out DIR0 --receiver-from DIR --budgets 16,64
+Every output stays under the run dir (never in the repo). A run never overwrites its own final file (summary.json / summary_sender.json /
+summary_sweep256.json). --deadline-epoch E stops with INCOMPLETE.json (exit 3) instead of overrunning a lease.
 """
 import os
 import sys
@@ -41,7 +54,14 @@ STAGE2_STEPS = 625            # 5,000 examples at batch 8
 STAGE2_EXAMPLES = 5000
 BUDGET = 64
 BUDGETS = (16, 64, 256)
+SWEEP_BUDGET = 256
 TEXT_ARMS = ('T', 'T0')
+PHASES = ('all', 'sender', 'receiver', 'sweep256')
+SENDER_SUMMARY = 'summary_sender.json'
+SWEEP_SUMMARY = 'summary_sweep256.json'
+MESSAGES = 'messages.json'
+FINAL_FILE = {'all': 'summary.json', 'sender': SENDER_SUMMARY, 'receiver': 'summary.json', 'sweep256': SWEEP_SUMMARY}
+SCRIPTS = ('l1_model.py', 'l1_text.py', 'l1_train.py', 'l1_fusion.py', 'l1_data.py')
 
 
 class Roles(nn.Module):
@@ -91,7 +111,7 @@ def gold_message(tok, ex, i, budget):
 
 @torch.no_grad()
 def generate_messages(senders, examples, budget, eval_batch, deadline=None, log=None, label=''):
-    """-> dict(ids [i][b] (sender token ids, cut at EOS), texts [i][b], seconds_per_example, decode_steps_mean, new_tokens_mean)"""
+    """-> dict(ids [i][b] (sender token ids, cut at EOS), texts [i][b], seconds_per_example, decode_steps_mean, budget, n)"""
     senders.eval()
     dev = senders.device
     ids = [[None] * len(examples) for _ in range(M.N_AGENTS)]
@@ -112,12 +132,28 @@ def generate_messages(senders, examples, budget, eval_batch, deadline=None, log=
             log(f'messages {label}: {(bi + 1) * eval_batch} examples')
     texts = [[truncate_ids(senders.agent(i).tok, r, budget) for r in ids[i]] for i in range(M.N_AGENTS)]
     return dict(ids=ids, texts=texts, seconds_per_example=t_all / max(1, len(examples)), decode_steps_mean=float(np.mean(steps)) if steps else None,
-                budget=budget, n=len(examples))
+                budget=int(budget), n=len(examples))
 
 
-def messages_at_budget(toks, gen, budget):
-    """the generated messages cut to a SMALLER budget (token ids of the sender's tokenizer; toks[i] = sender i's tokenizer)"""
-    return [[truncate_ids(toks[i], r, budget) for r in gen['ids'][i]] for i in range(M.N_AGENTS)]
+def message_record(gen):
+    """what messages.json stores per split and budget"""
+    return dict(budget=gen['budget'], n=gen['n'], texts=gen['texts'], token_ids=gen['ids'], n_tokens=[[len(r) for r in gen['ids'][i]] for i in range(M.N_AGENTS)],
+                seconds_per_example=gen['seconds_per_example'], decode_steps_mean=gen['decode_steps_mean'])
+
+
+def texts_from_record(rec, toks, budget):
+    """the stored messages at a budget <= the stored one (smaller budgets: the stored token ids cut with the sender's tokenizer toks[i])"""
+    if budget > rec['budget']:
+        raise ValueError(f'budget {budget} > stored {rec["budget"]}')
+    if budget == rec['budget']:
+        return rec['texts']
+    return [[truncate_ids(toks[i], r, budget) for r in rec['token_ids'][i]] for i in range(M.N_AGENTS)]
+
+
+def message_f1(texts, examples):
+    """token F1 of the generated messages against the gold sender targets: overall and per agent"""
+    per = [[float(M.DATA.f1_score(texts[i][j], M.DATA.text_sender_target(ex, i))) for j, ex in enumerate(examples)] for i in range(M.N_AGENTS)]
+    return dict(overall=float(np.mean([x for p in per for x in p])) if examples else None, agent=[float(np.mean(p)) if p else None for p in per])
 
 
 @torch.no_grad()
@@ -159,16 +195,20 @@ def eval_text(receivers, examples, messages, eval_batch, max_new_tokens, drop_p=
     return out
 
 
+# ================================================================ the phases
 def build_parser():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0], allow_abbrev=False)
     ap.add_argument('--arm', required=True, choices=TEXT_ARMS)
+    ap.add_argument('--phase', default='all', choices=PHASES, help='T only: all (one run) | sender | receiver | sweep256')
     ap.add_argument('--pair', required=True, choices=tuple(M.MODELS))
     ap.add_argument('--seed', type=int, required=True)
     ap.add_argument('--train', required=True); ap.add_argument('--val', required=True); ap.add_argument('--fresh', required=True)
     ap.add_argument('--out', required=True)
-    ap.add_argument('--receiver-from', default=None, help='T0: the T run directory (its trainable.pt holds the receivers)')
+    ap.add_argument('--sender-from', default=None, help='receiver / sweep256: the sender-phase run dir (trainable.pt + messages.json)')
+    ap.add_argument('--receiver-from', default=None, help='T0 / sweep256: the receiver-phase (or all-phase) run dir (its trainable.pt holds the receivers)')
     ap.add_argument('--budget', type=int, default=BUDGET)
-    ap.add_argument('--budgets', default=','.join(str(b) for b in BUDGETS), help='text-budget sweep (report only)')
+    ap.add_argument('--budgets', default=','.join(str(b) for b in BUDGETS), help='text-budget sweep (report only); the receiver phase keeps those <= --budget')
+    ap.add_argument('--sweep-budget', type=int, default=SWEEP_BUDGET, help='sweep256: the long budget generated at evaluation only')
     ap.add_argument('--steps', type=int, default=EPOCH_STEPS, help='sender epoch and receiver stage-1 epoch')
     ap.add_argument('--stage2-steps', type=int, default=STAGE2_STEPS)
     ap.add_argument('--stage2-examples', type=int, default=STAGE2_EXAMPLES)
@@ -189,6 +229,7 @@ def build_parser():
     ap.add_argument('--no-grad-ckpt', action='store_true')
     ap.add_argument('--log-every', type=int, default=50)
     ap.add_argument('--deadline-epoch', type=float, default=0.0)
+    ap.add_argument('--debug-deadline-at', default=None, choices=('readouts',), help='tests only: deadline in the past right before the readouts')
     ap.add_argument('--keep-preds', action='store_true')
     ap.add_argument('--allow-fallback-data', action='store_true')
     return ap
@@ -199,155 +240,425 @@ def incomplete(out, reason, log):
     log(f'L1 INCOMPLETE: {reason}')
 
 
+def release(device):
+    gc.collect()
+    if device.type == 'cuda':
+        torch.cuda.empty_cache()
+
+
+def make_roles(C, role, lora, state=None):
+    """senders (tiny_s) or receivers (tiny_r) of this run; state = {model name: trainable state} to load (LoRA)"""
+    a = C['args']
+    r = build_roles(a.pair, C['device'], C['tiny_s'] if role == 'sender' else C['tiny_r'], lora=lora, hf_cache=a.hf_cache, grad_ckpt=not a.no_grad_ckpt,
+                    max_ctx=a.max_ctx_tokens, **C['lora_kw'])
+    if state is not None:
+        for ag in r.agents:
+            if ag.name not in state:
+                raise SystemExit(f'{role}: no saved state for model {ag.name} (saved: {sorted(state)})')
+            missing = M.load_trainable_state(ag, state[ag.name])
+            if missing:
+                raise SystemExit(f'{role} {ag.name}: {len(missing)} parameters missing in the checkpoint')
+    C['log'](f'{role}s: {[ag.name for ag in r.agents]} lora {lora}{" (loaded)" if state is not None else ""}')
+    return r
+
+
+def load_ckpt(C, path, phases, key):
+    """a T trainable.pt of this pair / seed / LoRA config holding `key` ('sender' / 'receiver') from one of `phases`"""
+    a = C['args']
+    p = os.path.join(path, 'trainable.pt')
+    if not os.path.isfile(p):
+        raise SystemExit(f'{p}: missing')
+    ck = torch.load(p, map_location='cpu', weights_only=False)
+    if not isinstance(ck, dict) or ck.get('arm') != 'T':
+        raise SystemExit(f'{p}: not a T checkpoint')
+    if ck.get('phase', 'all') not in phases:
+        raise SystemExit(f'{p}: phase {ck.get("phase", "all")}, need one of {phases}')
+    if ck.get('pair') != a.pair or int(ck.get('seed', -1)) != a.seed:
+        raise SystemExit(f'{p}: pair / seed {ck.get("pair")} / {ck.get("seed")} != this run {a.pair} / {a.seed}')
+    if ck.get('lora') != C['lora_kw']:
+        raise SystemExit(f'{p}: LoRA config {ck.get("lora")} != {C["lora_kw"]}')
+    if not ck.get(key):
+        raise SystemExit(f'{p}: no {key} state')
+    return ck, dict(path=os.path.abspath(path), trainable_sha256=M.file_sha256(p), phase=ck.get('phase', 'all'), seed=ck.get('seed'))
+
+
+def subset_of(C):
+    a = C['args']
+    idx = M.epoch_order(len(C['train']), a.seed + 7)[:a.stage2_examples]                 # the fixed seeded stage-2 subset of TRAIN
+    return idx, [C['train'][j] for j in idx]
+
+
+def train_senders(C, senders):
+    a, log = C['args'], C['log']
+
+    def step(batch):
+        losses = [senders.agent(i).loss(senders.pieces(batch, i, 'sender', target='sender'))[0] for i in range(M.N_AGENTS)]
+        return torch.stack(losses).mean(), dict(loss_agent=[float(l.detach()) for l in losses])
+    tr = M.train_steps(senders, step, M.batch_stream(C['train'], a.batch, a.seed), a.steps, a.lr_lora, a.lr_lora, a.warmup, a.clip, C['device'], log,
+                       a.log_every, C['deadline'], label=f'T-sender/{a.pair}/s{a.seed}', weight_decay=a.weight_decay)
+    tr['truncation'] = dict(senders.trunc)
+    log(f'senders trained: {tr["steps_done"]} steps in {tr["seconds"]:.0f} s, step time post warm-up {tr["step_time_post_warmup_s"]}')
+    return tr
+
+
+def train_receivers(C, receivers, subset, subset_msgs, toks):
+    """stage 1 (gold messages of the other agent, cut with the sender tokenizer toks) then stage 2 (the stored predicted messages of the subset)"""
+    a, log = C['args'], C['log']
+    gold_cache = {}
+
+    def gold_for(ex, i):
+        key = (ex.get('id'), i)
+        if key not in gold_cache:
+            gold_cache[key] = gold_message(toks[i], ex, i, a.budget)
+        return gold_cache[key]
+
+    def stage1_step(batch):
+        losses = [receivers.agent(i).loss(receivers.pieces(batch, i, 'receiver', messages=[gold_for(ex, 1 - i) for ex in batch]))[0] for i in range(M.N_AGENTS)]
+        return torch.stack(losses).mean(), dict(loss_agent=[float(l.detach()) for l in losses])
+    out = dict(stage1=M.train_steps(receivers, stage1_step, M.batch_stream(C['train'], a.batch, a.seed + 1), a.steps, a.lr_lora, a.lr_lora, a.warmup, a.clip,
+                                    C['device'], log, a.log_every, C['deadline'], label=f'T-receiver-stage1/{a.pair}/s{a.seed}', weight_decay=a.weight_decay))
+    pos = {ex.get('id'): j for j, ex in enumerate(subset)}
+
+    def stage2_step(batch):
+        losses = [receivers.agent(i).loss(receivers.pieces(batch, i, 'receiver', messages=[subset_msgs[1 - i][pos[ex.get('id')]] for ex in batch]))[0] for i in range(M.N_AGENTS)]
+        return torch.stack(losses).mean(), dict(loss_agent=[float(l.detach()) for l in losses])
+    out['stage2'] = M.train_steps(receivers, stage2_step, M.batch_stream(subset, a.batch, a.seed + 2), a.stage2_steps, a.lr_lora, a.lr_lora, a.warmup, a.clip,
+                                  C['device'], log, a.log_every, C['deadline'], label=f'T-receiver-stage2/{a.pair}/s{a.seed}', weight_decay=a.weight_decay)
+    out['truncation'] = dict(receivers.trunc)
+    return out
+
+
+def evaluate(C, receivers, msgs, budgets, main, absence=True):
+    """VAL then fresh at the main budget (the criterion metric; a Deadline here propagates = INCOMPLETE), then the readouts under the soft
+    deadline: the other budgets (VAL, fresh per budget) and the absence curve p in {.3, .6, 1} at the main budget (a Deadline there is caught).
+    msgs[split][budget] = [[messages by agent 0], [by agent 1]].
+    -> (budget sweep {split: {str(b): block}} holding the complete entries, absence curve {str(p): block} or None, where the readouts stopped or None)"""
+    a, log = C['args'], C['log']
+    sweep = {'val': {}, 'fresh': {}}
+
+    def one(split, b, p=0.0, keep=False):
+        r = eval_text(receivers, C[split], msgs[split][b], a.eval_batch, a.max_new_tokens, p, a.seed, C['deadline'], keep, log, label=f'{split} b{b}' + (f' absence p{p}' if p else ''))
+        if p:
+            log(f'VAL absence p={p} (budget {b}): EM {r["em"]:.2f} dropped {r["n_messages_dropped"]}/{r["n_messages"]}')
+        else:
+            log(f'{split} budget {b}: EM {r["em"]:.2f} F1 {r["f1"]:.2f} agents {r["em_agent"]} owner {[(k, x["em"]) for k, x in r["em_by_owner"].items()]} '
+                f'msg F1 vs gold {r["message_f1_vs_gold"]}')
+        return r
+    for split in ('val', 'fresh'):
+        sweep[split][str(main)] = one(split, main, keep=a.keep_preds)
+    if a.debug_deadline_at == 'readouts':
+        C['deadline'] = time.time() - 1.0
+        log('debug: deadline moved into the past before the readouts')
+    absence_out = {str(0.0): sweep['val'][str(main)]} if absence else None
+    where = None
+    try:
+        for b in budgets:
+            if b == main:
+                continue
+            for split in ('val', 'fresh'):
+                where = f'budget {b} {split}'
+                sweep[split][str(b)] = one(split, b)
+        if absence:
+            for p in C['ps']:
+                if p == 0.0:
+                    continue
+                where = f'absence p={p}'
+                absence_out[str(p)] = one('val', main, p)
+        where = None
+    except M.Deadline as e:
+        log(f'readouts stopped at {where}: {e}')
+        where = f'{where}: {e}'
+    return sweep, absence_out, where
+
+
+def budgets_done(sweep, budgets):
+    return [b for b in budgets if all(str(b) in sweep[s] for s in ('val', 'fresh'))]
+
+
+def gen_splits(C, senders, budget, splits=('val', 'fresh'), label=''):
+    return {s: generate_messages(senders, C[s], budget, C['args'].eval_batch, C['deadline'], C['log'], label=f'{s} b{budget}{label}') for s in splits}
+
+
+def timing_of(gen):
+    return dict(seconds_per_example=gen['seconds_per_example'], decode_steps_mean=gen['decode_steps_mean'])
+
+
+def base_summary(C, phase, **kw):
+    a = C['args']
+    s = dict(arm=a.arm, phase=phase, pair=a.pair, seed=a.seed, model=None, batch_name=M.BATCH, prereg=M.PREREG, budget=a.budget,
+             config=dict(vars(a), lora_targets=list(M.LORA_TARGETS), device=str(C['device']), torch=torch.__version__,
+                         data_api='fallback' if M.DATA_IS_FALLBACK else 'l1_data'),
+             scripts_sha=M.scripts_sha(SCRIPTS), utc_end=M.utc(), pid=os.getpid())
+    if C['device'].type == 'cuda':
+        s['peak_gpu_gb'] = torch.cuda.max_memory_allocated(C['device']) / 2 ** 30
+        s['config']['gpu'] = torch.cuda.get_device_name(C['device'])
+    s.update(kw)
+    return s
+
+
+def write_final(C, phase, summary):
+    a, log = C['args'], C['log']
+    path = os.path.join(a.out, FINAL_FILE[phase])
+    M.jdump(summary, path)
+    log(f'l1_text done: {a.arm} {phase} {a.pair} s{a.seed} -> {path} total {time.time() - C["t_start"]:.0f} s')
+
+
+def pop_preds(C, sweep, absence, budget):
+    a = C['args']
+    if not a.keep_preds:
+        return
+    for split in ('val', 'fresh'):
+        r = sweep[split].get(str(budget))
+        if r and 'records' in r:
+            M.jdump(r.pop('records'), os.path.join(a.out, f'preds_{split}.json'))
+    for p, r in (absence or {}).items():
+        if 'records' in r:
+            M.jdump(r.pop('records'), os.path.join(a.out, f'preds_val_p{p}.json'))
+
+
+# ---------------------------------------------------------------- phase sender
+def run_sender(C):
+    a, log = C['args'], C['log']
+    t0 = time.time()
+    senders = make_roles(C, 'sender', lora=True)
+    load_s = time.time() - t0
+    tr = train_senders(C, senders)
+    t1 = time.time()
+    sub_idx, subset = subset_of(C)
+    gens = gen_splits(C, senders, a.budget)
+    gens['subset'] = generate_messages(senders, subset, a.budget, a.eval_batch, C['deadline'], log, label=f'stage-2 subset b{a.budget}')
+    msg_s = time.time() - t1
+    state = {ag.name: M.trainable_state(ag) for ag in senders.agents}
+    models = [ag.name for ag in senders.agents]
+    torch.save(dict(arm='T', phase='sender', pair=a.pair, seed=a.seed, models=models, sender=state, lora=C['lora_kw'], config=vars(a)), os.path.join(a.out, 'trainable.pt'))
+    mj = dict(arm='T', phase='sender', pair=a.pair, seed=a.seed, budget=a.budget, models=models, n_train=len(C['train']),
+              val={str(a.budget): message_record(gens['val'])}, fresh={str(a.budget): message_record(gens['fresh'])},
+              subset=dict(message_record(gens['subset']), idx=sub_idx, example_ids=[ex.get('id') for ex in subset]),
+              timing={s: {str(a.budget): timing_of(gens[s])} for s in ('val', 'fresh', 'subset')})
+    M.jdump(mj, os.path.join(a.out, MESSAGES))
+    stats = {}
+    for s, exs in (('val', C['val']), ('fresh', C['fresh']), ('subset', subset)):
+        f1 = message_f1(gens[s]['texts'], exs)
+        stats[s] = dict(n=gens[s]['n'], budget=a.budget, seconds_per_example=gens[s]['seconds_per_example'], decode_steps_mean=gens[s]['decode_steps_mean'],
+                        n_tokens_mean=float(np.mean([len(r) for i in range(M.N_AGENTS) for r in gens[s]['ids'][i]])) if exs else None,
+                        message_f1_vs_gold=f1['overall'], message_f1_vs_gold_agent=f1['agent'])
+    log(f'messages: VAL sender latency {stats["val"]["seconds_per_example"]:.4f} s/example, decode steps {stats["val"]["decode_steps_mean"]}, '
+        f'msg F1 vs gold {stats["val"]["message_f1_vs_gold"]}')
+    write_final(C, 'sender', base_summary(C, 'sender', models=models, sender_train=tr, messages=stats, subset=dict(n=len(subset), seed=a.seed + 7),
+                                          val=dict(sender_latency_s_per_example=stats['val']['seconds_per_example'], sender_decode_steps_mean=stats['val']['decode_steps_mean'],
+                                                   message_f1_vs_gold=stats['val']['message_f1_vs_gold']),
+                                          params=M.count_params(senders), complete=True,
+                                          timings=dict(load_s=load_s, train_s=tr['seconds'], messages_s=msg_s, total_s=time.time() - C['t_start'],
+                                                       step_time_post_warmup_s=tr['step_time_post_warmup_s'], timing_warmup_steps=M.TIMING_WARMUP_STEPS)))
+
+
+# ---------------------------------------------------------------- phase receiver
+def load_sender_run(C):
+    a = C['args']
+    if not a.sender_from:
+        raise SystemExit(f'--phase {a.phase} needs --sender-from <sender-phase run dir>')
+    ck, info = load_ckpt(C, a.sender_from, ('sender', 'all'), 'sender')
+    mp = os.path.join(a.sender_from, MESSAGES)
+    if not os.path.isfile(mp):
+        raise SystemExit(f'{mp}: missing')
+    mj = M.jload(mp)
+    if mj.get('pair') != a.pair or int(mj.get('seed', -1)) != a.seed:
+        raise SystemExit(f'{mp}: pair / seed {mj.get("pair")} / {mj.get("seed")} != this run')
+    if int(mj.get('budget', -1)) != a.budget:
+        raise SystemExit(f'{mp}: stored budget {mj.get("budget")} != --budget {a.budget}')
+    info['messages_sha256'] = M.file_sha256(mp)
+    sp = os.path.join(a.sender_from, SENDER_SUMMARY)
+    info['summary_sender'] = {k: v for k, v in M.jload(sp).items() if k in ('messages', 'timings', 'sender_train', 'scripts_sha')} if os.path.isfile(sp) else None
+    return ck, mj, info
+
+
+def run_receiver(C):
+    a, log = C['args'], C['log']
+    ck, mj, info = load_sender_run(C)
+    del ck
+    sub = mj['subset']
+    if 'idx' not in sub or any(j >= len(C['train']) for j in sub['idx']) or [C['train'][j].get('id') for j in sub['idx']] != sub['example_ids']:
+        raise SystemExit(f'{a.sender_from}/{MESSAGES}: the stage-2 subset does not match --train (different train file or --limit-train)')
+    subset = [C['train'][j] for j in sub['idx']]
+    log(f'sender run {a.sender_from}: trainable {info["trainable_sha256"][:12]} messages {info["messages_sha256"][:12]}; subset {len(subset)}')
+    budgets = [b for b in C['budgets'] if b <= a.budget]
+    skipped = [b for b in C['budgets'] if b > a.budget]
+    if skipped:
+        log(f'budgets {skipped} > {a.budget} are left to --phase sweep256')
+    t0 = time.time()
+    receivers = make_roles(C, 'receiver', lora=True)
+    load_s = time.time() - t0
+    toks = {i: receivers.agent(i).tok for i in range(M.N_AGENTS)}                              # = the sender tokenizers (same base models)
+    msgs = {s: {b: texts_from_record(mj[s][str(a.budget)], toks, b) for b in budgets} for s in ('val', 'fresh')}
+    subset_msgs = texts_from_record(sub, toks, a.budget)
+    rec_tr = train_receivers(C, receivers, subset, subset_msgs, toks)
+    state = {ag.name: M.trainable_state(ag) for ag in receivers.agents}
+    torch.save(dict(arm='T', phase='receiver', pair=a.pair, seed=a.seed, models=[ag.name for ag in receivers.agents], receiver=state, lora=C['lora_kw'], config=vars(a),
+                    sender_from={k: info[k] for k in ('path', 'trainable_sha256', 'messages_sha256')}), os.path.join(a.out, 'trainable.pt'))
+    t_eval = time.time()
+    sweep, absence, where = evaluate(C, receivers, msgs, budgets, a.budget, absence=True)
+    for s in ('val', 'fresh'):
+        for b in budgets:
+            if str(b) in sweep[s]:
+                sweep[s][str(b)]['sender'] = mj['timing'][s][str(a.budget)] if b == a.budget else dict(derived_from_budget=a.budget)
+    pop_preds(C, sweep, absence, a.budget)
+    v, f = sweep['val'][str(a.budget)], sweep['fresh'][str(a.budget)]
+    for d in (v, f):
+        d['sender_latency_s_per_example'] = d['sender']['seconds_per_example']
+        d['sender_decode_steps_mean'] = d['sender']['decode_steps_mean']
+        d['wire_bytes_per_example'] = None
+    # no c_assert key: the text arms run no fusion (l1_aggregate treats any non-True c_assert as a failure)
+    write_final(C, 'receiver', base_summary(C, 'receiver', val=v, fresh=f, budgets=budgets, budgets_done=budgets_done(sweep, budgets), budget_sweep=sweep, sweep256='pending',
+                                            absence=absence, readouts_incomplete=where, complete=True,
+                                            agents=[ag.name for ag in receivers.agents], sender_from=info, receiver_train=rec_tr, params=M.count_params(receivers),
+                                            timings=dict(load_s=load_s, eval_s=time.time() - t_eval, total_s=time.time() - C['t_start'],
+                                                         step_time_post_warmup_s=dict(receiver_stage1=rec_tr['stage1']['step_time_post_warmup_s'],
+                                                                                      receiver_stage2=rec_tr['stage2']['step_time_post_warmup_s']))))
+
+
+# ---------------------------------------------------------------- phase sweep256
+def run_sweep(C):
+    a, log = C['args'], C['log']
+    if not a.receiver_from:
+        raise SystemExit('--phase sweep256 needs --sender-from and --receiver-from')
+    sck, sinfo = load_ckpt(C, a.sender_from, ('sender', 'all'), 'sender') if a.sender_from else (None, None)
+    if sck is None:
+        raise SystemExit('--phase sweep256 needs --sender-from <sender-phase run dir>')
+    rck, rinfo = load_ckpt(C, a.receiver_from, ('receiver', 'all'), 'receiver')
+    b = a.sweep_budget
+    t0 = time.time()
+    senders = make_roles(C, 'sender', lora=True, state=sck['sender'])
+    del sck
+    gens = gen_splits(C, senders, b)
+    senders = None
+    release(C['device'])
+    M.jdump(dict(arm='T', phase='sweep256', pair=a.pair, seed=a.seed, budget=b, val={str(b): message_record(gens['val'])}, fresh={str(b): message_record(gens['fresh'])},
+                 timing={s: {str(b): timing_of(gens[s])} for s in ('val', 'fresh')}), os.path.join(a.out, f'messages_{b}.json'))
+    receivers = make_roles(C, 'receiver', lora=True, state=rck['receiver'])
+    del rck
+    load_s = time.time() - t0
+    t_eval = time.time()
+    sweep, _, where = evaluate(C, receivers, {s: {b: gens[s]['texts']} for s in ('val', 'fresh')}, [b], b, absence=False)
+    for s in ('val', 'fresh'):
+        sweep[s][str(b)]['sender'] = timing_of(gens[s])
+        sweep[s][str(b)]['sender_latency_s_per_example'] = gens[s]['seconds_per_example']
+        sweep[s][str(b)]['sender_decode_steps_mean'] = gens[s]['decode_steps_mean']
+    write_final(C, 'sweep256', base_summary(C, 'sweep256', sweep_budget=b, val=sweep['val'][str(b)], fresh=sweep['fresh'][str(b)], budget_sweep=sweep, complete=True,
+                                            readouts_incomplete=where, sender_from=sinfo, receiver_from=rinfo, agents=[ag.name for ag in receivers.agents],
+                                            timings=dict(load_s=load_s, eval_s=time.time() - t_eval, total_s=time.time() - C['t_start'])))
+
+
+# ---------------------------------------------------------------- phase all (one run) and T0
+def run_all_or_t0(C):
+    a, log = C['args'], C['log']
+    t0 = time.time()
+    senders = make_roles(C, 'sender', lora=(a.arm == 'T'))
+    load_s = time.time() - t0
+    sender_tr = train_senders(C, senders) if a.arm == 'T' else None
+    sub_idx, subset = subset_of(C)
+    gens = {s: {a.budget: g} for s, g in gen_splits(C, senders, a.budget).items()}
+    for b in C['budgets']:
+        if b > a.budget:
+            for s, g in gen_splits(C, senders, b).items():
+                gens[s][b] = g
+    if a.arm == 'T':
+        gens['subset'] = {a.budget: generate_messages(senders, subset, a.budget, a.eval_batch, C['deadline'], log, label=f'stage-2 subset b{a.budget}')}
+    sender_state = {ag.name: M.trainable_state(ag) for ag in senders.agents} if a.arm == 'T' else None
+    models = [ag.name for ag in senders.agents]
+    toks = {i: senders.agent(i).tok for i in range(M.N_AGENTS)}
+    msgs = {s: {b: (gens[s][b]['texts'] if b in gens[s] else texts_from_record(message_record(gens[s][a.budget]), toks, b)) for b in C['budgets']} for s in ('val', 'fresh')}
+    mj = dict(arm=a.arm, phase='all', pair=a.pair, seed=a.seed, budget=a.budget, models=models, n_train=len(C['train']),
+              val={str(b): message_record(g) for b, g in gens['val'].items()}, fresh={str(b): message_record(g) for b, g in gens['fresh'].items()},
+              timing={s: {str(b): timing_of(g) for b, g in gens[s].items()} for s in gens})
+    if a.arm == 'T':
+        mj['subset'] = dict(message_record(gens['subset'][a.budget]), idx=sub_idx, example_ids=[ex.get('id') for ex in subset])
+    M.jdump(mj, os.path.join(a.out, MESSAGES))
+    log(f'messages: VAL {a.budget}-token sender latency {gens["val"][a.budget]["seconds_per_example"]:.4f} s/example, decode steps {gens["val"][a.budget]["decode_steps_mean"]}')
+    senders = None                                                       # one base copy per model at a time
+    release(C['device'])
+    rec_tr = {}
+    if a.arm == 'T':
+        receivers = make_roles(C, 'receiver', lora=True)
+        rec_tr = train_receivers(C, receivers, subset, gens['subset'][a.budget]['texts'], toks)
+        torch.save(dict(arm='T', phase='all', pair=a.pair, seed=a.seed, models=models, sender=sender_state, receiver={ag.name: M.trainable_state(ag) for ag in receivers.agents},
+                        lora=C['lora_kw'], config=vars(a)), os.path.join(a.out, 'trainable.pt'))
+    else:
+        rck, rinfo = load_ckpt(C, a.receiver_from, ('receiver', 'all'), 'receiver')
+        receivers = make_roles(C, 'receiver', lora=True, state=rck['receiver'])
+        del rck
+        rec_tr['loaded_from'] = rinfo
+    t_eval = time.time()
+    sweep, absence, where = evaluate(C, receivers, msgs, C['budgets'], a.budget, absence=True)
+    for s in ('val', 'fresh'):
+        for b in C['budgets']:
+            if str(b) in sweep[s]:
+                sweep[s][str(b)]['sender'] = timing_of(gens[s][b]) if b in gens[s] else dict(derived_from_budget=a.budget)
+    pop_preds(C, sweep, absence, a.budget)
+    v, f = sweep['val'][str(a.budget)], sweep['fresh'][str(a.budget)]
+    for d in (v, f):
+        d['sender_latency_s_per_example'] = d['sender']['seconds_per_example']
+        d['sender_decode_steps_mean'] = d['sender']['decode_steps_mean']
+        d['wire_bytes_per_example'] = None
+    done = budgets_done(sweep, C['budgets'])
+    # no c_assert key: the text arms run no fusion (l1_aggregate treats any non-True c_assert as a failure)
+    write_final(C, 'all', base_summary(C, 'all', val=v, fresh=f, budgets=list(C['budgets']), budgets_done=done, budget_sweep=sweep,
+                                       sweep256='included' if any(b > a.budget for b in done) else 'pending', absence=absence, readouts_incomplete=where, complete=True,
+                                       agents=[ag.name for ag in receivers.agents], sender_train=sender_tr, receiver_train=rec_tr, params=M.count_params(receivers),
+                                       timings=dict(load_s=load_s, eval_s=time.time() - t_eval, total_s=time.time() - C['t_start'],
+                                                    messages={s: {str(b): timing_of(g) for b, g in gens[s].items()} for s in ('val', 'fresh')},
+                                                    step_time_post_warmup_s=dict(sender=(sender_tr or {}).get('step_time_post_warmup_s'),
+                                                                                 receiver_stage1=(rec_tr.get('stage1') or {}).get('step_time_post_warmup_s'),
+                                                                                 receiver_stage2=(rec_tr.get('stage2') or {}).get('step_time_post_warmup_s')))))
+
+
 def main(argv=None):
     args = build_parser().parse_args(argv)
     t_start = time.time()
+    phase = args.phase
+    if args.arm == 'T0':
+        if phase != 'all':
+            raise SystemExit('T0 has no phases (--phase applies to T only)')
+        if not args.receiver_from:
+            raise SystemExit('T0 needs --receiver-from <T receiver-phase (or all-phase) run dir>')
+    if phase == 'receiver' and not args.sender_from:
+        raise SystemExit('--phase receiver needs --sender-from <sender-phase run dir>')
+    if phase == 'sweep256' and not (args.sender_from and args.receiver_from):
+        raise SystemExit('--phase sweep256 needs --sender-from <sender-phase run dir> and --receiver-from <receiver-phase run dir>')
     os.makedirs(args.out, exist_ok=True)
-    sp = os.path.join(args.out, 'summary.json')
-    if os.path.exists(sp):
-        raise SystemExit(f'{sp} exists (never overwrite)')
+    final = os.path.join(args.out, FINAL_FILE[phase])
+    if os.path.exists(final):
+        raise SystemExit(f'{final} exists (never overwrite)')
     log = M.Log(os.path.join(args.out, 'log.txt'))
-    log(f'l1_text start pid {os.getpid()} host {platform.node()} arm {args.arm} pair {args.pair} seed {args.seed} out {args.out}')
+    log(f'l1_text start pid {os.getpid()} host {platform.node()} arm {args.arm} phase {phase} pair {args.pair} seed {args.seed} out {args.out}')
     if M.DATA_IS_FALLBACK and not (args.tiny or args.allow_fallback_data):
         raise SystemExit('l1_data.py not importable: a formal run needs it')
-    if args.arm == 'T0' and not args.receiver_from:
-        raise SystemExit('T0 needs --receiver-from <T run dir>')
     budgets = sorted({int(b) for b in args.budgets.split(',') if b.strip()} | {args.budget})
     M.seed_all(args.seed)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    deadline = args.deadline_epoch or None
     train = M.DATA.read_jsonl(args.train); val = M.DATA.read_jsonl(args.val); fresh = M.DATA.read_jsonl(args.fresh)
     if args.limit_train:
         train = train[:args.limit_train]
     if args.limit_eval:
         val, fresh = val[:args.limit_eval], fresh[:args.limit_eval]
-    log(f'device {device}; data train {len(train)} val {len(val)} fresh {len(fresh)}; budget {args.budget} sweep {budgets}')
+    log(f'device {device}; data train {len(train)} val {len(val)} fresh {len(fresh)}; budget {args.budget} sweep {budgets}; data api '
+        f'{"FALLBACK" if M.DATA_IS_FALLBACK else "l1_data"}')
     # --tiny: separate (identically initialised) tiny model objects per role, so the receiver LoRA never shares layers with the sender's
-    tiny_s = M.tiny_models(train + val + fresh, args.seed) if args.tiny else None
-    tiny_r = M.tiny_models(train + val + fresh, args.seed) if args.tiny else None
-    lora_kw = dict(lora_r=args.lora_r, lora_alpha=args.lora_alpha, lora_dropout=args.lora_dropout)
-    ekw = dict(eval_batch=args.eval_batch, deadline=deadline, log=log)
-    sub_idx = M.epoch_order(len(train), args.seed + 7)[:args.stage2_examples]                   # the fixed seeded stage-2 subset
-    subset = [train[j] for j in sub_idx]
-    gen = {}
-    sender_tr, msg_timing = None, {}
-    t0 = time.time()
+    C = dict(args=args, log=log, device=device, deadline=args.deadline_epoch or None, train=train, val=val, fresh=fresh, budgets=budgets, t_start=t_start,
+             tiny_s=M.tiny_models(train + val + fresh, args.seed) if args.tiny else None, tiny_r=M.tiny_models(train + val + fresh, args.seed) if args.tiny else None,
+             lora_kw=dict(lora_r=args.lora_r, lora_alpha=args.lora_alpha, lora_dropout=args.lora_dropout),
+             ps=[float(x) for x in args.absence_ps.split(',') if x.strip()])
     try:
-        # ---------------------------------------------------------------- senders
-        senders = build_roles(args.pair, device, tiny_s, lora=(args.arm == 'T'), hf_cache=args.hf_cache, grad_ckpt=not args.no_grad_ckpt, max_ctx=args.max_ctx_tokens, **lora_kw)
-        load_s = time.time() - t0
-        log(f'senders: {[a.name for a in senders.agents]} lora {args.arm == "T"} load {load_s:.0f} s')
-        if args.arm == 'T':
-            def sender_step(batch):
-                losses = [senders.agent(i).loss(senders.pieces(batch, i, 'sender', target='sender'))[0] for i in range(M.N_AGENTS)]
-                loss = torch.stack(losses).mean()
-                return loss, dict(loss_agent=[float(l.detach()) for l in losses])
-            sender_tr = M.train_steps(senders, sender_step, M.batch_stream(train, args.batch, args.seed), args.steps, args.lr_lora, args.lr_lora,
-                                      args.warmup, args.clip, device, log, args.log_every, deadline, label=f'T-sender/{args.pair}/s{args.seed}', weight_decay=args.weight_decay)
-            sender_tr['truncation'] = dict(senders.trunc)
-            log(f'senders trained: {sender_tr["steps_done"]} steps, step time post warm-up {sender_tr["step_time_post_warmup_s"]}')
-            gen['subset'] = generate_messages(senders, subset, args.budget, label='stage-2 subset', **ekw)
-        for split, exs in (('val', val), ('fresh', fresh)):
-            gen[split] = {args.budget: generate_messages(senders, exs, args.budget, label=f'{split} b{args.budget}', **ekw)}
-            for b in budgets:
-                if b > args.budget:
-                    gen[split][b] = generate_messages(senders, exs, b, label=f'{split} b{b}', **ekw)
-            msg_timing[split] = {str(b): dict(seconds_per_example=g['seconds_per_example'], decode_steps_mean=g['decode_steps_mean']) for b, g in gen[split].items()}
-        sender_state = {a.name: M.trainable_state(a) for a in senders.agents} if args.arm == 'T' else None
-        sender_toks = {i: senders.agent(i).tok for i in range(M.N_AGENTS)}                             # only the tokenizers survive the senders
-        msgs = {split: {b: (gen[split][b]['texts'] if b in gen[split] else messages_at_budget(sender_toks, gen[split][args.budget], b)) for b in budgets} for split in ('val', 'fresh')}
-        if args.arm == 'T':
-            msgs['subset'] = gen['subset']['texts']
-        M.jdump(dict(val=msgs['val'], fresh=msgs['fresh'], budget=args.budget, timing=msg_timing), os.path.join(args.out, 'messages.json'))
-        log(f'messages: VAL {args.budget}-token sender latency {msg_timing["val"][str(args.budget)]["seconds_per_example"]:.4f} s/example, '
-            f'decode steps {msg_timing["val"][str(args.budget)]["decode_steps_mean"]}')
-        gold_cache = {}
-
-        def gold_for(ex, i):
-            key = (ex.get('id'), i)
-            if key not in gold_cache:
-                gold_cache[key] = gold_message(sender_toks[i], ex, i, args.budget)
-            return gold_cache[key]
-        # drop the sender models before the receivers are built (one base copy per model at a time)
-        del senders, tiny_s
-        gc.collect()
-        if device.type == 'cuda':
-            torch.cuda.empty_cache()
-        # ---------------------------------------------------------------- receivers
-        receivers = build_roles(args.pair, device, tiny_r, lora=True, hf_cache=args.hf_cache, grad_ckpt=not args.no_grad_ckpt, max_ctx=args.max_ctx_tokens, **lora_kw)
-        rec_tr = {}
-        if args.arm == 'T':
-            def stage1_step(batch):
-                losses = [receivers.agent(i).loss(receivers.pieces(batch, i, 'receiver', messages=[gold_for(ex, 1 - i) for ex in batch]))[0] for i in range(M.N_AGENTS)]
-                return torch.stack(losses).mean(), dict(loss_agent=[float(l.detach()) for l in losses])
-            rec_tr['stage1'] = M.train_steps(receivers, stage1_step, M.batch_stream(train, args.batch, args.seed + 1), args.steps, args.lr_lora, args.lr_lora, args.warmup,
-                                             args.clip, device, log, args.log_every, deadline, label=f'T-receiver-stage1/{args.pair}/s{args.seed}', weight_decay=args.weight_decay)
-            pos = {ex.get('id'): j for j, ex in enumerate(subset)}
-
-            def stage2_step(batch):
-                losses = [receivers.agent(i).loss(receivers.pieces(batch, i, 'receiver', messages=[msgs['subset'][1 - i][pos[ex.get('id')]] for ex in batch]))[0] for i in range(M.N_AGENTS)]
-                return torch.stack(losses).mean(), dict(loss_agent=[float(l.detach()) for l in losses])
-            rec_tr['stage2'] = M.train_steps(receivers, stage2_step, M.batch_stream(subset, args.batch, args.seed + 2), args.stage2_steps, args.lr_lora, args.lr_lora, args.warmup,
-                                             args.clip, device, log, args.log_every, deadline, label=f'T-receiver-stage2/{args.pair}/s{args.seed}', weight_decay=args.weight_decay)
-            rec_tr['truncation'] = dict(receivers.trunc)
-            receiver_state = {a.name: M.trainable_state(a) for a in receivers.agents}
-            torch.save(dict(arm='T', pair=args.pair, seed=args.seed, sender=sender_state, receiver=receiver_state, lora=lora_kw, config=vars(args)),
-                       os.path.join(args.out, 'trainable.pt'))
+        if args.arm == 'T0' or phase == 'all':
+            run_all_or_t0(C)
+        elif phase == 'sender':
+            run_sender(C)
+        elif phase == 'receiver':
+            run_receiver(C)
         else:
-            ck = torch.load(os.path.join(args.receiver_from, 'trainable.pt'), map_location='cpu', weights_only=False)
-            if ck.get('arm') != 'T' or ck.get('pair') != args.pair:
-                raise SystemExit(f'--receiver-from {args.receiver_from}: not a T run of pair {args.pair}')
-            if ck.get('lora') != lora_kw:
-                raise SystemExit(f'LoRA config {ck.get("lora")} of the T run != {lora_kw}')
-            for a in receivers.agents:
-                missing = M.load_trainable_state(a, ck['receiver'][a.name])
-                if missing:
-                    raise SystemExit(f'receiver {a.name}: {len(missing)} parameters missing in the T checkpoint')
-            rec_tr['loaded_from'] = dict(path=os.path.abspath(args.receiver_from), seed=ck.get('seed'), trainable_sha256=M.file_sha256(os.path.join(args.receiver_from, 'trainable.pt')))
-            log(f'receivers loaded from {args.receiver_from} (T seed {ck.get("seed")})')
-        # ---------------------------------------------------------------- evaluation
-        t_eval = time.time()
-        sweep = {'val': {}, 'fresh': {}}
-        for split, exs in (('val', val), ('fresh', fresh)):
-            for b in budgets:
-                sweep[split][str(b)] = eval_text(receivers, exs, msgs[split][b], args.eval_batch, args.max_new_tokens, 0.0, args.seed, deadline, args.keep_preds and b == args.budget, log,
-                                                 label=f'{split} b{b}')
-                sweep[split][str(b)]['sender'] = msg_timing[split].get(str(b)) or dict(derived_from_budget=args.budget)
-                log(f'{split} budget {b}: EM {sweep[split][str(b)]["em"]:.2f} F1 {sweep[split][str(b)]["f1"]:.2f} agents {sweep[split][str(b)]["em_agent"]} '
-                    f'owner {[(k, x["em"]) for k, x in sweep[split][str(b)]["em_by_owner"].items()]} msg F1 vs gold {sweep[split][str(b)]["message_f1_vs_gold"]}')
-        absence = {}
-        for p in [float(x) for x in args.absence_ps.split(',') if x.strip()]:
-            absence[str(p)] = sweep['val'][str(args.budget)] if p == 0.0 else eval_text(receivers, val, msgs['val'][args.budget], args.eval_batch, args.max_new_tokens, p, args.seed, deadline,
-                                                                                    False, log, label=f'val absence p{p}')
-            log(f'VAL absence p={p}: EM {absence[str(p)]["em"]:.2f} dropped {absence[str(p)]["n_messages_dropped"]}/{absence[str(p)]["n_messages"]}')
-        eval_s = time.time() - t_eval
+            run_sweep(C)
     except M.Deadline as e:
         incomplete(args.out, str(e), log)
         return 3
-    v, f = sweep['val'][str(args.budget)], sweep['fresh'][str(args.budget)]
-    for d in (v, f):
-        d['sender_latency_s_per_example'] = d['sender']['seconds_per_example']
-        d['sender_decode_steps_mean'] = d['sender']['decode_steps_mean']
-        d['wire_bytes_per_example'] = None                                                  # text: ~ message chars (report message_chars_mean)
-    if args.keep_preds:
-        M.jdump(v.pop('records'), os.path.join(args.out, 'preds_val.json'))
-        M.jdump(f.pop('records'), os.path.join(args.out, 'preds_fresh.json'))
-    # no c_assert key: the text arms run no fusion (l1_aggregate treats any non-True c_assert as a failure)
-    summary = dict(arm=args.arm, pair=args.pair, seed=args.seed, model=None, batch_name=M.BATCH, prereg=M.PREREG, val=v, fresh=f,
-                   budget=args.budget, budget_sweep=sweep, absence=absence, complete=True, agents=[a.name for a in receivers.agents],
-                   sender_train=sender_tr, receiver_train=rec_tr, params=M.count_params(receivers),
-                   timings=dict(load_s=load_s, eval_s=eval_s, total_s=time.time() - t_start, messages=msg_timing,
-                                step_time_post_warmup_s=dict(sender=(sender_tr or {}).get('step_time_post_warmup_s'),
-                                                             receiver_stage1=(rec_tr.get('stage1') or {}).get('step_time_post_warmup_s'),
-                                                             receiver_stage2=(rec_tr.get('stage2') or {}).get('step_time_post_warmup_s'))),
-                   config=dict(vars(args), lora_targets=list(M.LORA_TARGETS), device=str(device), torch=torch.__version__,
-                               data_api='fallback' if M.DATA_IS_FALLBACK else 'l1_data', budgets=budgets, stage2_subset_n=len(subset)),
-                   scripts_sha=M.scripts_sha(('l1_model.py', 'l1_text.py', 'l1_train.py', 'l1_fusion.py', 'l1_data.py')), utc_end=M.utc(), pid=os.getpid())
-    if device.type == 'cuda':
-        summary['timings']['peak_gpu_gb'] = torch.cuda.max_memory_allocated(device) / 2 ** 30
-        summary['config']['gpu'] = torch.cuda.get_device_name(device)
-    M.jdump(summary, sp)
-    log(f'l1_text done: {args.arm} {args.pair} s{args.seed} VAL EM {v["em"]:.2f} fresh EM {f["em"]:.2f} total {time.time() - t_start:.0f} s')
     return 0
 
 

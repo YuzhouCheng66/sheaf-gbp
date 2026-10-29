@@ -167,7 +167,12 @@ def test_b0_b4_insert_nothing_and_truncation_counts():
     ag = b4.agents[0]
     full = len(p)
     (p3, s3, _), tr3 = M.make_pieces(ag, EXAMPLES[0], None, 'B4', max_ctx=full - 6)
-    assert tr3 in (1, 2) and len(p3) + len(s3) <= full - 6
+    assert tr3 == 1 and len(p3) + len(s3) <= full - 6 and p3[-3:] == p[-3:], 'paragraphs are shrunk; the question and "Answer:" at the tail survive'
+    (p5, _, _), tr5 = M.make_pieces(ag, EXAMPLES[0], None, 'B4', max_ctx=full - 14)
+    assert tr5 == 1 and len(p5) <= full - 14 and p5[-3:] == p[-3:]
+    for i in (0, 1):                                                       # latent mode: the suffix (question) is never touched by any cut
+        (pl, sl, _), trl = M.make_pieces(pair.agent(i), EXAMPLES[1], i, 'latent', max_ctx=len(M.make_pieces(pair.agent(i), EXAMPLES[1], i, 'latent')[0][0]) - 2)
+        assert trl >= 1 and sl == pair.agent(i).ids(M.DATA.latent_prompt(EXAMPLES[1], i)[1])
     (p4, _, _), tr4 = M.make_pieces(ag, EXAMPLES[0], 0, 'latent', max_ctx=10 ** 6)
     assert tr4 == 0
     loss, info = b4.step(EXAMPLES[:2], 'B4')
@@ -278,6 +283,7 @@ def test_eval_messages_gbp_equals_direct_and_p1_falls_back_to_own_z():
         assert torch.allclose(x_one[0], z[0], atol=1e-6) and torch.allclose(x_one[1], x[1], atol=1e-5)
     r0 = M.eval_latent(pair, EXAMPLES[:3], drop_p=0.0, eval_batch=2, seed=1, max_new_tokens=3)
     assert r0['c_assert'] is True and r0['c_assert_detail']['max_abs_diff'] <= r0['c_assert_detail']['tol'] and r0['n_messages_dropped'] == 0
+    assert r0['c_assert_detail']['dtype'] == 'float64' and r0['c_assert_detail']['max_abs_diff_wire_vs_direct'] is not None  # review M1
     assert r0['gbp_rounds'] == 1 and r0['wire_bytes_per_example'] == 2 * FU.wire_bytes(K, DE) and r0['sender_latency_s_per_example'] > 0
     assert r0['n'] == 3 and r0['n_records'] == 6 and len(r0['em_agent']) == 2 and set(r0['em_model']) == {'tiny-a', 'tiny-b'}
     assert set(r0['em_by_owner']) == {'own', 'other', 'none', 'all'} and r0['em_by_owner']['own']['n'] == 2 and r0['em_by_owner']['other']['n'] == 2 and r0['em_by_owner']['none']['n'] == 2
@@ -437,20 +443,152 @@ def test_l1_text_tiny_runs_t_and_t0_end_to_end(data_dir):
     _run([TEXT, '--arm', 'T', '--out', out, '--steps', '2', '--stage2-steps', '1', '--stage2-examples', '4'] + common)
     s = json.load(open(os.path.join(out, 'summary.json'), encoding='utf-8'))
     _validate(s, 'T', 'hetero', 5)
-    assert s['arm'] == 'T' and 'c_assert' not in s and s['budget'] == 4 and list(s['budget_sweep']['val']) == ['2', '4', '6'] and list(s['absence']) == ['0.0', '0.3', '0.6', '1.0']
+    assert s['arm'] == 'T' and s['phase'] == 'all' and 'c_assert' not in s and s['budget'] == 4 and sorted(s['budget_sweep']['val']) == ['2', '4', '6']
+    assert list(s['absence']) == ['0.0', '0.3', '0.6', '1.0'] and s['sweep256'] == 'included' and s['budgets_done'] == [2, 4, 6] and s['readouts_incomplete'] is None
     assert s['sender_train']['steps_done'] == 2 and s['receiver_train']['stage1']['steps_done'] == 2 and s['receiver_train']['stage2']['steps_done'] == 1
     assert s['val']['sender_latency_s_per_example'] > 0 and s['val']['sender_decode_steps_mean'] >= 1 and s['val']['message_f1_vs_gold'] is not None
     assert s['budget_sweep']['val']['6']['sender']['seconds_per_example'] > 0 and 'derived_from_budget' in s['budget_sweep']['val']['2']['sender']
     ck = torch.load(os.path.join(out, 'trainable.pt'), map_location='cpu', weights_only=False)
-    assert set(ck['sender']) == {'tiny-a', 'tiny-b'} == set(ck['receiver']) and all('lora_' in n for st in ck['receiver'].values() for n in st)
+    assert ck['phase'] == 'all' and set(ck['sender']) == {'tiny-a', 'tiny-b'} == set(ck['receiver']) and all('lora_' in n for st in ck['receiver'].values() for n in st)
     msgs = json.load(open(os.path.join(out, 'messages.json'), encoding='utf-8'))
-    assert len(msgs['val']['4']) == 2 and len(msgs['val']['4'][0]) == 3
+    assert len(msgs['val']['4']['texts']) == 2 and len(msgs['val']['4']['texts'][0]) == 3 and len(msgs['val']['6']['token_ids'][1]) == 3 and len(msgs['subset']['idx']) == 4
     out0 = os.path.join(data_dir, 'T0-hetero-s5')
     _run([TEXT, '--arm', 'T0', '--out', out0, '--receiver-from', out] + common)
     s0 = json.load(open(os.path.join(out0, 'summary.json'), encoding='utf-8'))
     _validate(s0, 'T0', 'hetero', 5)
     assert s0['arm'] == 'T0' and 'c_assert' not in s0 and s0['sender_train'] is None and s0['receiver_train']['loaded_from']['path'] == os.path.abspath(out) and s0['val']['n'] == 3
-    assert not os.path.exists(os.path.join(out0, 'trainable.pt'))
+    assert s0['budgets'] == [2, 4, 6] and not os.path.exists(os.path.join(out0, 'trainable.pt'))
+
+
+def _sha(p):
+    return M.file_sha256(p)
+
+
+def test_l1_text_phases_sender_receiver_sweep_and_t0(data_dir):
+    """the lease-sized T jobs: --phase sender -> receiver (--sender-from) -> sweep256 (--sender-from --receiver-from), then T0 with --budgets"""
+    base = ['--pair', 'hetero', '--seed', '6', '--train', os.path.join(data_dir, 'train.jsonl'), '--val', os.path.join(data_dir, 'val.jsonl'), '--fresh',
+            os.path.join(data_dir, 'fresh.jsonl'), '--tiny', '--batch', '2', '--eval-batch', '2', '--max-new-tokens', '2', '--budget', '4', '--sweep-budget', '6',
+            '--warmup', '1', '--log-every', '1']
+    ds, dr, dw, d0 = (os.path.join(data_dir, n) for n in ('Tsend-hetero-s6', 'T-hetero-s6', 'Tsweep-hetero-s6', 'T0-hetero-s6'))
+    # sender phase
+    _run([TEXT, '--arm', 'T', '--phase', 'sender', '--out', ds, '--steps', '2', '--stage2-examples', '4', '--budgets', '2,4,6'] + base)
+    assert os.path.exists(os.path.join(ds, 'summary_sender.json')) and os.path.exists(os.path.join(ds, 'messages.json')) and os.path.exists(os.path.join(ds, 'trainable.pt'))
+    assert not os.path.exists(os.path.join(ds, 'summary.json'))
+    ss = json.load(open(os.path.join(ds, 'summary_sender.json'), encoding='utf-8'))
+    assert ss['arm'] == 'T' and ss['phase'] == 'sender' and ss['sender_train']['steps_done'] == 2 and ss['val']['sender_latency_s_per_example'] > 0
+    assert set(ss['messages']) == {'val', 'fresh', 'subset'} and ss['messages']['val']['decode_steps_mean'] >= 1 and ss['messages']['val']['message_f1_vs_gold'] is not None
+    assert 'scripts_sha' in ss and ss['scripts_sha']['l1_text.py'] == _sha(TEXT)
+    ck = torch.load(os.path.join(ds, 'trainable.pt'), map_location='cpu', weights_only=False)
+    assert ck['phase'] == 'sender' and set(ck['sender']) == {'tiny-a', 'tiny-b'} and 'receiver' not in ck
+    mj = json.load(open(os.path.join(ds, 'messages.json'), encoding='utf-8'))
+    assert mj['budget'] == 4 and len(mj['subset']['idx']) == 4 and len(mj['subset']['example_ids']) == 4 and set(mj['val']) == {'4'}
+    assert len(mj['val']['4']['texts'][0]) == 3 and len(mj['fresh']['4']['token_ids'][1]) == 2 and len(mj['val']['4']['n_tokens'][0]) == 3
+    # receiver phase without --sender-from fails clearly
+    env = dict(os.environ, CUDA_VISIBLE_DEVICES='')
+    r = subprocess.run([sys.executable, '-B', TEXT, '--arm', 'T', '--phase', 'receiver', '--out', os.path.join(data_dir, 'T-bad')] + base, capture_output=True, text=True, env=env)
+    assert r.returncode != 0 and '--sender-from' in (r.stderr + r.stdout)
+    # receiver phase
+    _run([TEXT, '--arm', 'T', '--phase', 'receiver', '--out', dr, '--sender-from', ds, '--steps', '2', '--stage2-steps', '1', '--budgets', '2,4,6'] + base)
+    s = json.load(open(os.path.join(dr, 'summary.json'), encoding='utf-8'))
+    _validate(s, 'T', 'hetero', 6)
+    assert s['phase'] == 'receiver' and s['budgets'] == [2, 4] and s['budgets_done'] == [2, 4] and s['sweep256'] == 'pending' and s['readouts_incomplete'] is None
+    assert sorted(s['budget_sweep']['val']) == ['2', '4'] and list(s['absence']) == ['0.0', '0.3', '0.6', '1.0'] and 'c_assert' not in s
+    assert s['sender_from']['trainable_sha256'] == _sha(os.path.join(ds, 'trainable.pt')) and s['sender_from']['messages_sha256'] == _sha(os.path.join(ds, 'messages.json'))
+    assert s['sender_from']['path'] == os.path.abspath(ds) and s['sender_from']['summary_sender']['messages']['val']['decode_steps_mean'] >= 1
+    assert s['receiver_train']['stage1']['steps_done'] == 2 and s['receiver_train']['stage2']['steps_done'] == 1 and s['val']['sender_latency_s_per_example'] > 0
+    ckr = torch.load(os.path.join(dr, 'trainable.pt'), map_location='cpu', weights_only=False)
+    assert ckr['phase'] == 'receiver' and set(ckr['receiver']) == {'tiny-a', 'tiny-b'} and 'sender' not in ckr
+    # sweep256 phase
+    _run([TEXT, '--arm', 'T', '--phase', 'sweep256', '--out', dw, '--sender-from', ds, '--receiver-from', dr, '--budgets', '2,4,6'] + base)
+    assert os.path.exists(os.path.join(dw, 'summary_sweep256.json')) and not os.path.exists(os.path.join(dw, 'summary.json')) and not os.path.exists(os.path.join(dw, 'trainable.pt'))
+    sw = json.load(open(os.path.join(dw, 'summary_sweep256.json'), encoding='utf-8'))
+    assert sw['phase'] == 'sweep256' and sw['sweep_budget'] == 6 and 0 <= sw['val']['em'] <= 100 and sw['val']['sender_latency_s_per_example'] > 0 and sw['fresh']['n'] == 2
+    assert sw['sender_from']['trainable_sha256'] == _sha(os.path.join(ds, 'trainable.pt')) and sw['receiver_from']['trainable_sha256'] == _sha(os.path.join(dr, 'trainable.pt'))
+    assert os.path.exists(os.path.join(dw, 'messages_6.json'))
+    # T0 from the receiver-phase dir with the chain's --budgets 16,64 (here 2,4)
+    _run([TEXT, '--arm', 'T0', '--out', d0, '--receiver-from', dr, '--budgets', '2,4'] + base)
+    s0 = json.load(open(os.path.join(d0, 'summary.json'), encoding='utf-8'))
+    _validate(s0, 'T0', 'hetero', 6)
+    assert s0['budgets'] == [2, 4] and s0['sweep256'] == 'pending' and s0['receiver_train']['loaded_from']['phase'] == 'receiver' and s0['sender_train'] is None
+    # a phase never overwrites its final file; sweep256 refuses a missing --receiver-from
+    r = subprocess.run([sys.executable, '-B', TEXT, '--arm', 'T', '--phase', 'sender', '--out', ds] + base, capture_output=True, text=True, env=env)
+    assert r.returncode != 0 and 'never overwrite' in (r.stderr + r.stdout)
+    r = subprocess.run([sys.executable, '-B', TEXT, '--arm', 'T', '--phase', 'sweep256', '--out', os.path.join(data_dir, 'Tsweep-bad'), '--sender-from', ds] + base,
+                       capture_output=True, text=True, env=env)
+    assert r.returncode != 0 and '--receiver-from' in (r.stderr + r.stdout)
+
+
+def test_l1_train_b4_per_model_runs_and_merge(data_dir):
+    """the hetero B4 of the chain: two --model runs (valid per-model summaries) + --merge-b4 -> the B4-<pair>-s<seed> summary the aggregator reads"""
+    common = ['--arm', 'B4', '--pair', 'hetero', '--seed', '4', '--train', os.path.join(data_dir, 'train.jsonl'), '--val', os.path.join(data_dir, 'val.jsonl'), '--fresh',
+              os.path.join(data_dir, 'fresh.jsonl'), '--steps', '2', '--batch', '2', '--eval-batch', '3', '--tiny', '--max-new-tokens', '2', '--warmup', '1']
+    dq, dl, dm = (os.path.join(data_dir, n) for n in ('B4q-hetero-s4', 'B4l-hetero-s4', 'B4-hetero-s4'))
+    parts = {}
+    for d, model in ((dq, 'tiny-a'), (dl, 'tiny-b')):
+        _run([TRAIN, '--out', d, '--model', model] + common)
+        parts[model] = json.load(open(os.path.join(d, 'summary.json'), encoding='utf-8'))
+        _validate(parts[model], 'B4', 'hetero', 4)
+        assert parts[model]['model'] == model and parts[model]['models'] == [model] and list(parts[model]['val']['em_model']) == [model] and len(parts[model]['val']['em_agent']) == 1
+    _run([TRAIN, '--merge-b4', dq, dl, '--out', dm])
+    m = json.load(open(os.path.join(dm, 'summary.json'), encoding='utf-8'))
+    _validate(m, 'B4', 'hetero', 4)
+    assert m['merged'] is True and m['models'] == ['tiny-a', 'tiny-b'] and m['model'] is None and 'c_assert' not in m and m['absence'] is None
+    assert list(m['val']['em_model']) == ['tiny-a', 'tiny-b'] and list(m['fresh']['em_model']) == ['tiny-a', 'tiny-b'] and len(m['val']['em_agent']) == 2
+    for model in ('tiny-a', 'tiny-b'):
+        assert m['val']['em_model'][model] == parts[model]['val']['em'] and m['fresh']['f1_model'][model] == parts[model]['fresh']['f1']
+        assert m['parts'][model]['summary_sha256'] == _sha(os.path.join(dq if model == 'tiny-a' else dl, 'summary.json'))
+        assert m['config']['parts'][model]['model'] == model and model in m['train'] and model in m['timings']
+    assert abs(m['val']['em'] - (parts['tiny-a']['val']['em'] + parts['tiny-b']['val']['em']) / 2) < 1e-9 and m['val']['em_by_owner']['all']['n'] == 6
+    assert m['scripts_sha'] == parts['tiny-a']['scripts_sha'] and set(m['val']['per_model']) == {'tiny-a', 'tiny-b'} and m['steps'] == 2
+    mf = json.load(open(os.path.join(dm, 'merged_from.json'), encoding='utf-8'))
+    assert set(mf['parts']) == {'tiny-a', 'tiny-b'} and mf['seed'] == 4
+    env = dict(os.environ, CUDA_VISIBLE_DEVICES='')
+    # never overwrite the merged summary
+    r = subprocess.run([sys.executable, '-B', TRAIN, '--merge-b4', dq, dl, '--out', dm], capture_output=True, text=True, env=env)
+    assert r.returncode != 0 and 'never overwrite' in (r.stderr + r.stdout)
+    # mismatched seed, same model twice, a multi-model part: non-zero exit, nothing written
+    bad = os.path.join(data_dir, 'B4l-hetero-s5-bad')
+    os.makedirs(bad, exist_ok=True)
+    s5 = dict(parts['tiny-b'], seed=5)
+    with open(os.path.join(bad, 'summary.json'), 'w', encoding='utf-8') as fh:
+        json.dump(s5, fh)
+    for args_, msg in (([dq, bad], 'seed differs'), ([dq, dq], 'two different single models'), ([os.path.join(data_dir, 'B4-hetero-s3'), dl], 'not a single-model B4 run')):
+        out = os.path.join(data_dir, 'B4-merge-bad')
+        r = subprocess.run([sys.executable, '-B', TRAIN, '--merge-b4'] + args_ + ['--out', out], capture_output=True, text=True, env=env)
+        assert r.returncode != 0 and msg in (r.stderr + r.stdout), (msg, r.stderr[-500:])
+        assert not os.path.exists(os.path.join(out, 'summary.json'))
+
+
+def test_l1_train_soft_deadline_in_readouts_then_eval_only(data_dir):
+    """a Deadline during the readouts keeps summary.json (readouts_incomplete), exit 0; --eval-only recomputes them into readouts.json;
+    a Deadline during training means INCOMPLETE.json and no summary.json"""
+    out = os.path.join(data_dir, 'S1-hetero-s9')
+    common = ['--pair', 'hetero', '--seed', '9', '--train', os.path.join(data_dir, 'train.jsonl'), '--val', os.path.join(data_dir, 'val.jsonl'), '--fresh',
+              os.path.join(data_dir, 'fresh.jsonl'), '--batch', '2', '--eval-batch', '2', '--tiny', '--k', '4', '--d-e', '8', '--n-heads', '2', '--max-new-tokens', '2',
+              '--warmup', '1']
+    _run([TRAIN, '--arm', 'S1', '--out', out, '--steps', '2', '--debug-deadline-at', 'readouts'] + common)
+    s = json.load(open(os.path.join(out, 'summary.json'), encoding='utf-8'))
+    _validate(s, 'S1', 'hetero', 9)
+    assert s['readouts_incomplete'] and s['readouts_incomplete'].startswith('absence p=0.3') and list(s['absence']) == ['0.0'] and s['c_assert'] is True
+    assert s['complete'] is True and s['trainable_sha256'] == _sha(os.path.join(out, 'trainable.pt')) and not os.path.exists(os.path.join(out, 'INCOMPLETE.json'))
+    before = _sha(os.path.join(out, 'summary.json'))
+    _run([TRAIN, '--eval-only', out])
+    ro = json.load(open(os.path.join(out, 'readouts.json'), encoding='utf-8'))
+    assert ro['eval_only'] is True and sorted(ro['absence']) == ['0.3', '0.6', '1.0'] and ro['readouts_incomplete'] is None and ro['arm'] == 'S1' and ro['seed'] == 9
+    assert ro['trainable_sha256'] == _sha(os.path.join(out, 'trainable.pt')) and all('em' in v and v['n_messages_dropped'] >= 0 for v in ro['absence'].values())
+    assert ro['absence']['1.0']['n_messages_dropped'] == 6 and ro['absence']['1.0']['absence_p1_detail']['equal'] is True
+    assert _sha(os.path.join(out, 'summary.json')) == before, 'eval-only must never touch summary.json'
+    assert os.path.exists(os.path.join(out, 'log_readouts.txt'))
+    # a deadline in the past during training -> INCOMPLETE.json, exit 3, no summary.json
+    out2 = os.path.join(data_dir, 'S1-hetero-s9-late')
+    env = dict(os.environ, CUDA_VISIBLE_DEVICES='')
+    r = subprocess.run([sys.executable, '-B', TRAIN, '--arm', 'S1', '--out', out2, '--steps', '2', '--deadline-epoch', '1'] + common, capture_output=True, text=True, env=env)
+    assert r.returncode == 3 and os.path.exists(os.path.join(out2, 'INCOMPLETE.json')) and not os.path.exists(os.path.join(out2, 'summary.json'))
+    # B0 has no readouts: eval-only only writes the note
+    outb = os.path.join(data_dir, 'B0-same-s3')
+    _run([TRAIN, '--eval-only', outb])
+    rb = json.load(open(os.path.join(outb, 'readouts.json'), encoding='utf-8'))
+    assert rb['absence'] is None and 'note' in rb
 
 
 # ---------------------------------------------------------------- 6. the chain (static)
@@ -479,16 +617,58 @@ def test_chain_static():
     i0 = code.index('stage0_jobs()'); i1 = code.index('stage1_jobs()')
     assert i0 < i1
     body = code[i1:code.index('if [ ! -f $RUNS/STAGE0_PASS ] && [ ! -f $RUNS/STAGE0_FAIL ]; then')]
-    order = ['T-hetero-s$s $EST_TEXT', 'U-hetero-s$s $EST_LATENT', 'S1-hetero-s$s $EST_LATENT', 'S1L1-hetero-s$s $EST_LATENT', 'T0-hetero-s$s $EST_T0',
-             'B0-same-s$s $EST_BASE', 'B4-same-s$s $EST_B4', 'T-same-s$s $EST_TEXT', 'S1-same-s$s $EST_LATENT']
+    order = ['S1-hetero-s$s $EST_LATENT', 'tsend hetero $s; trecv hetero $s', 'U-hetero-s$s $EST_LATENT', 'S1L1-hetero-s$s $EST_LATENT', 't0 hetero $s',
+             'B0-same-s$s $EST_BASE', 'B4-same-s$s $EST_B4', 'tsend same $s; trecv same $s', 'S1-same-s$s $EST_LATENT', 'tsweep hetero $s', 'tsweep same $s']
     pos = [body.index(o) for o in order]
-    assert pos == sorted(pos), 'stage-1 job order'
-    stage0 = code[i0:i1]
-    assert 'B0-hetero-s$s $EST_BASE' in stage0 and 'B4-hetero-s$s $EST_B4' in stage0 and '--model' not in stage0, 'one B4 run per seed holds both hetero models'
+    assert pos == sorted(pos), 'stage-1 job order: S1 first, Tsend / T per seed, ..., Tsweep at the end'
+    assert body.index('tsweep hetero $s') > body.index('S1-same-s$s $EST_LATENT'), 'Tsweep after the whole job list'
+    stage0 = code[code.index('stage0_jobs(){'):code.index('stage0_complete(){')]
+    assert 'job B0-hetero-s$s $EST_BASE summary.json scripts/l1_train.py --arm B0 --pair hetero --seed $s $COMMON $SHARD' in stage0
+    assert 'job B4l-hetero-s$s $EST_B4L summary.json scripts/l1_train.py --arm B4 --pair hetero --model $LLAMA --seed $s $COMMON $FULL' in stage0
+    assert 'job B4q-hetero-s$s $EST_B4Q summary.json scripts/l1_train.py --arm B4 --pair hetero --model $QWEN --seed $s $COMMON $FULL' in stage0
+    assert stage0.index('B0-hetero-s$s') < stage0.index('B4l-hetero-s$s') < stage0.index('B4q-hetero-s$s') < stage0.index('merge_b4'), 'B0 s, B4l s per seed, then B4q, then the merge'
+    assert 'B4-hetero-s$s $EST_B4' not in stage0, 'the hetero B4 is never one job'
+    merge = code[code.index('merge_b4(){'):code.index('stage0_jobs(){')]
+    assert '[ -f $RUNS/B4q-hetero-s$s/summary.json ] && [ -f $RUNS/B4l-hetero-s$s/summary.json ] && [ ! -f $RUNS/B4-hetero-s$s/summary.json ]' in merge
+    ml = [l for l in merge.splitlines() if '--merge-b4' in l]
+    assert len(ml) == 1 and 'CUDA_VISIBLE_DEVICES= timeout -k 30 600 nice -n 10 $P -B scripts/l1_train.py --merge-b4 $RUNS/B4q-hetero-s$s $RUNS/B4l-hetero-s$s --out $RUNS/B4-hetero-s$s' in ml[0]
+    assert 'for r in B0-hetero B4-hetero; do [ -f $RUNS/$r-s$s/summary.json ]' in code, 'stage 0 is complete only with the merged B4'
+    assert 'job B4-same-s$s $EST_B4 summary.json scripts/l1_train.py --arm B4 --pair same --seed $s $COMMON $FULL' in code
+    # the T phases: Tsend (sender), T (receiver, --sender-from, the aggregator's dir), Tsweep (sweep256, both froms), T0 with --budgets 16,64
+    assert re.search(r'^tsend\(\)\{ job Tsend-\$1-s\$2 \$EST_TSEND summary_sender\.json scripts/l1_text\.py --arm T --phase sender --pair \$1 --seed \$2 \$COMMON \$TSEND; \}', s, re.M)
+    assert 'job T-$1-s$2 $EST_TEXT summary.json scripts/l1_text.py --arm T --phase receiver --pair $1 --seed $2 --sender-from $RUNS/Tsend-$1-s$2 $COMMON $TRECV' in code
+    assert '[ -f $RUNS/Tsend-$1-s$2/summary_sender.json ]; then job T-$1-s$2' in code
+    assert 'job Tsweep-$1-s$2 $EST_SWEEP summary_sweep256.json scripts/l1_text.py --arm T --phase sweep256 --pair $1 --seed $2 --sender-from $RUNS/Tsend-$1-s$2 --receiver-from $RUNS/T-$1-s$2 $COMMON $TSWEEP' in code
+    assert '[ -f $RUNS/Tsend-$1-s$2/summary_sender.json ] && [ -f $RUNS/T-$1-s$2/summary.json ]; then job Tsweep-$1-s$2' in code
+    assert 'job T0-$1-s$2 $EST_T0 summary.json scripts/l1_text.py --arm T0 --pair $1 --seed $2 --receiver-from $RUNS/T-$1-s$2 --budgets 16,64 $COMMON $TRECV' in code
+    # the done marker is an argument of job(); context caps and checkpointing are chain variables
+    assert 'local name=$1 est=$2 marker=$3; shift 3' in code and 'if [ -f $dir/$marker ]; then' in code
+    assert re.search(r'^CTX_SHARD=900\b', s, re.M) and re.search(r'^CTX_FULL=2048\b', s, re.M) and re.search(r'^NOCKPT_SHARD=""', s, re.M)
+    assert 'SHARD="--max-ctx-tokens $CTX_SHARD $NOCKPT_SHARD"' in code and 'FULL="--max-ctx-tokens $CTX_FULL"' in code
+    # review M2: the text prompts' instruction line / message are not charged to the documents' CTX_SHARD budget
+    assert 'TSEND="--max-ctx-tokens $((CTX_SHARD+16)) $NOCKPT_SHARD"' in code
+    assert 'TRECV="--max-ctx-tokens $((CTX_SHARD+72)) $NOCKPT_SHARD"' in code
+    assert 'TSWEEP="--max-ctx-tokens $((CTX_SHARD+264)) $NOCKPT_SHARD"' in code
+    assert re.search(r'^COMMON="--train \$DATA/train\.jsonl --val \$DATA/val\.jsonl --fresh \$DATA/fresh\.jsonl --hf-cache \$HF_HUB_CACHE --keep-preds"', code, re.M)
+    for l in code.splitlines():
+        if 'scripts/l1_train.py --arm B4' in l:
+            assert '$FULL' in l and '$SHARD' not in l and 'NOCKPT' not in l, l
+        elif 'scripts/l1_train.py --arm' in l:
+            assert '$SHARD' in l and '$FULL' not in l, l
+        elif 'scripts/l1_text.py --arm T --phase sender' in l:
+            assert '$TSEND' in l and '$SHARD' not in l and '$FULL' not in l, l
+        elif 'scripts/l1_text.py --arm T --phase sweep256' in l:
+            assert '$TSWEEP' in l and '$SHARD' not in l and '$FULL' not in l, l
+        elif 'scripts/l1_text.py --arm' in l:
+            assert '$TRECV' in l and '$SHARD' not in l and '$FULL' not in l, l
+    # review S4: the fit check reads the clock after the GPU-idle wait
+    assert code.index('GPU busy before start; waiting') < code.index('rem=$((DL-now))')
+    assert 'LEASE=""; EST_BASE=62; EST_B4L=55; EST_B4Q=100; EST_B4=100; EST_LATENT=115; EST_TSEND=90; EST_TEXT=85; EST_T0=15; EST_SWEEP=35' in code
+    assert all(f'--est-{k}) EST_{k.upper()}="$2"; shift 2;;' in code for k in ('base', 'b4l', 'b4q', 'b4', 'latent', 'tsend', 'text', 't0', 'sweep'))
     agg_lines = [l for l in code.splitlines() if '$P -B scripts/l1_aggregate.py' in l]
     assert agg_lines and all('--runs $RUNS' in l and '--out' not in l and 'CUDA_VISIBLE_DEVICES= ' in l and 'nice -n 10' in l and 'timeout -k 30' in l for l in agg_lines), agg_lines
     assert '"P0: PASS")' in code and '"P0: FAIL")' in code, 'the chain reads the P0: line printed by l1_aggregate.py --stage0'
-    assert 'elif [ "$LEASE" -eq 1 ]; then' in code and 'summary.json exists -> skipped' in code and 'estimate $est min > remaining' in code
+    assert 'elif [ "$LEASE" -eq 1 ]; then' in code and '$marker exists -> skipped (done)' in code and 'estimate $est min > remaining' in code
     for d in re.findall(r'^(?:RUNS|DATA|WORK|TMPDIR|LOG)=(\S+)', s, re.M):
         assert d.startswith('/mnt/datasets/') or d.startswith('$WORK') or d.startswith('runs/'), d
     assert 'bigboy' in s.lower()

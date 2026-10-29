@@ -13,7 +13,8 @@ Coordinates decouple, so every coordinate is an N x N linear system (N = number 
   Used at evaluation. The "C" check of the pre-registration asserts gbp_sync(rounds >= diameter, no drop,
   no wire) == fuse_direct.
 
-All functions take ``z`` and ``lam`` of shape (N, *rest); the solve runs in float32 and returns z.dtype.
+All functions take ``z`` and ``lam`` of shape (N, *rest); the solve runs in float32 (float64 when z is float64,
+used by the C check of the pre-registration: review M1) and returns z.dtype.
 """
 from __future__ import annotations
 
@@ -22,8 +23,12 @@ import torch
 WIRE_DTYPE = torch.float16
 
 
-def _edge_weights(edges, w, device):
-    w = torch.as_tensor(w, dtype=torch.float32, device=device)
+def _solve_dtype(z: torch.Tensor):
+    return torch.float64 if z.dtype == torch.float64 else torch.float32
+
+
+def _edge_weights(edges, w, device, dtype=torch.float32):
+    w = torch.as_tensor(w, dtype=dtype, device=device)
     if w.ndim == 0:
         w = w.expand(len(edges))
     if w.shape[0] != len(edges):
@@ -31,10 +36,10 @@ def _edge_weights(edges, w, device):
     return w
 
 
-def laplacian(n: int, edges, w, device=None) -> torch.Tensor:
+def laplacian(n: int, edges, w, device=None, dtype=torch.float32) -> torch.Tensor:
     """Weighted graph Laplacian (N, N) built from an incidence matrix so that gradients reach w."""
-    w = _edge_weights(edges, w, device)
-    inc = torch.zeros(len(edges), n, dtype=torch.float32, device=device)
+    w = _edge_weights(edges, w, device, dtype)
+    inc = torch.zeros(len(edges), n, dtype=dtype, device=device)
     for e, (i, j) in enumerate(edges):
         if i == j or not (0 <= i < n and 0 <= j < n):
             raise ValueError(f"bad edge {(i, j)} for n={n}")
@@ -48,9 +53,10 @@ def fuse_direct(z: torch.Tensor, lam: torch.Tensor, edges, w) -> torch.Tensor:
     if z.shape != lam.shape:
         raise ValueError(f"z {tuple(z.shape)} and lam {tuple(lam.shape)} differ")
     n = z.shape[0]
-    zf = z.reshape(n, -1).to(torch.float32)      # (N, M)
-    lf = lam.reshape(n, -1).to(torch.float32)
-    L = laplacian(n, edges, w, device=z.device)   # (N, N)
+    dt = _solve_dtype(z)
+    zf = z.reshape(n, -1).to(dt)                  # (N, M)
+    lf = lam.reshape(n, -1).to(dt)
+    L = laplacian(n, edges, w, device=z.device, dtype=dt)   # (N, N)
     A = torch.diag_embed(lf.T) + L                # (M, N, N)
     b = (lf * zf).T.unsqueeze(-1)                 # (M, N, 1)
     x = torch.linalg.solve(A, b).squeeze(-1).T    # (N, M)
@@ -82,10 +88,11 @@ def gbp_sync(z: torch.Tensor, lam: torch.Tensor, edges, w, rounds: int,
         raise ValueError(f"z {tuple(z.shape)} and lam {tuple(lam.shape)} differ")
     n = z.shape[0]
     dev = z.device
-    zf = z.reshape(n, -1).to(torch.float32)
-    lf = lam.reshape(n, -1).to(torch.float32)
+    dt = _solve_dtype(z)
+    zf = z.reshape(n, -1).to(dt)
+    lf = lam.reshape(n, -1).to(dt)
     m_cols = zf.shape[1]
-    we = _edge_weights(edges, w, dev)
+    we = _edge_weights(edges, w, dev, dt)
     wd = we.repeat_interleave(2)[:, None]        # (2E, 1)
     src, dst = directed_edges(edges, dev)
     e2 = src.shape[0]
@@ -93,27 +100,27 @@ def gbp_sync(z: torch.Tensor, lam: torch.Tensor, edges, w, rounds: int,
     eta = lf * zf                                # prior information vectors
     keep = None
     if drop is not None:
-        keep = (~torch.as_tensor(drop, device=dev).bool()).to(torch.float32)
+        keep = (~torch.as_tensor(drop, device=dev).bool()).to(dt)
         keep = keep.reshape(e2, -1) if keep.numel() == e2 * m_cols else keep.reshape(e2, -1)
-    p = torch.zeros(e2, m_cols, device=dev)
-    h = torch.zeros(e2, m_cols, device=dev)
+    p = torch.zeros(e2, m_cols, device=dev, dtype=dt)
+    h = torch.zeros(e2, m_cols, device=dev, dtype=dt)
     for _ in range(rounds):
-        p_in = torch.zeros(n, m_cols, device=dev).index_add_(0, dst, p)
-        h_in = torch.zeros(n, m_cols, device=dev).index_add_(0, dst, h)
+        p_in = torch.zeros(n, m_cols, device=dev, dtype=dt).index_add_(0, dst, p)
+        h_in = torch.zeros(n, m_cols, device=dev, dtype=dt).index_add_(0, dst, h)
         p_ex = lf[src] + p_in[src] - p[rev]      # node src's belief without the message from dst
         h_ex = eta[src] + h_in[src] - h[rev]
         p_new = wd * p_ex / (wd + p_ex)          # marginalise x_src out of the pairwise factor
         m_new = h_ex / p_ex
         if wire_dtype is not None:
-            p_new = p_new.to(wire_dtype).to(torch.float32)
-            m_new = m_new.to(wire_dtype).to(torch.float32)
+            p_new = p_new.to(wire_dtype).to(dt)
+            m_new = m_new.to(wire_dtype).to(dt)
         h_new = p_new * m_new
         if keep is not None:
             p_new = p_new * keep
             h_new = h_new * keep
         p, h = p_new, h_new
-    p_in = torch.zeros(n, m_cols, device=dev).index_add_(0, dst, p)
-    h_in = torch.zeros(n, m_cols, device=dev).index_add_(0, dst, h)
+    p_in = torch.zeros(n, m_cols, device=dev, dtype=dt).index_add_(0, dst, p)
+    h_in = torch.zeros(n, m_cols, device=dev, dtype=dt).index_add_(0, dst, h)
     prec = lf + p_in
     # (lam z + H) / (lam + P) written as z + (H - P z) / (lam + P): with nothing received the belief is
     # bit-for-bit the agent's own z (the absence property the design asserts), not (lam z) / lam.

@@ -316,12 +316,18 @@ def make_pieces(agent, ex, agent_idx, mode, max_ctx=None, target='answer', messa
     pre, suf = agent.ids(pre_t), agent.ids(suf_t)
     trunc = 0
     if max_ctx and nb + len(pre) + len(suf) > max_ctx:
-        ex = shrink_paragraphs(agent, ex, agent_idx, mode, nb + len(pre) + len(suf) - max_ctx)
-        pre_t, suf_t = prompt_parts(ex, agent_idx, mode, message)
-        pre, suf = agent.ids(pre_t), agent.ids(suf_t)
-        trunc = 1
-        if nb + len(pre) + len(suf) > max_ctx:
-            pre = pre[:max(1, max_ctx - nb - len(suf))]
+        over = nb + len(pre) + len(suf) - max_ctx
+        for attempt in range(4):                                           # shrink the paragraphs; retry with a margin when decode -> re-encode drifts
+            ex = shrink_paragraphs(agent, ex, agent_idx, mode, over)
+            pre_t, suf_t = prompt_parts(ex, agent_idx, mode, message)
+            pre, suf = agent.ids(pre_t), agent.ids(suf_t)
+            trunc = 1
+            over = nb + len(pre) + len(suf) - max_ctx
+            if over <= 0:
+                break
+            over += 4 * (attempt + 1)
+        if nb + len(pre) + len(suf) > max_ctx:                              # last resort (counted as code 2): the prefix tail; for the modes whose
+            pre = pre[:max(1, max_ctx - nb - len(suf))]                    # whole prompt is the prefix this can reach the question (val.truncation reports it)
             trunc = 2
     if target == 'answer':
         ans_t = DATA.answer_target(ex)
@@ -655,7 +661,8 @@ class Pair(nn.Module):
         arm = arm or self.arm
         B = z.shape[1]
         if arm in FUSION_ARMS:
-            x = FU.fuse_direct(z, lam, EDGES, self.w)
+            with torch.autocast(device_type=z.device.type, enabled=False):      # the solve (incl. the Laplacian's matmul) stays float32 under bf16 autocast
+                x = FU.fuse_direct(z.float(), lam.float(), EDGES, self.w)
             return [self.agent(i).reader(x[i], self.agent(i).dtype) for i in range(N_AGENTS)], None
         if arm == 'U':
             src, dst = FU.directed_edges(EDGES, z.device)
@@ -994,12 +1001,17 @@ def eval_latent(pair, examples, drop_p=0.0, eval_batch=16, seed=0, max_new_token
         softs, x, prec = pair.soft_from_eval(z, lam, arm, drop.to(dev), rounds=diam, wire_dtype=FU.WIRE_DTYPE)
         sync(dev); t_sender += time.perf_counter() - t0
         if c_check and c_assert is None and arm in FUSION_ARMS:
-            zf, lf, wf = z.float(), lam.float(), pair.w.detach().float()
-            xd = FU.fuse_direct(zf, lf, EDGES, wf)
-            xg, _ = FU.gbp_sync(zf, lf, EDGES, wf, rounds=diam, drop=None, wire_dtype=None)
+            # review M1: the two algorithms are compared in float64 (in fp32 the LU solve and the message arithmetic differ by
+            # ~1e-4 relative once w >~ 10 with lam at its lower clamp: rounding, not GBP); the production path's deviation
+            # (fp32 messages on the fp16 wire) from the direct solve is a separate readout.
+            zd, ld, wd = z.detach().double(), lam.detach().double(), pair.w.detach().double()
+            xd = FU.fuse_direct(zd, ld, EDGES, wd)
+            xg, _ = FU.gbp_sync(zd, ld, EDGES, wd, rounds=diam, drop=None, wire_dtype=None)
             diff, scale = float((xd - xg).abs().max()), float(xd.abs().max())
             c_assert = bool(diff <= C_ASSERT_TOL * (1.0 + scale))
-            c_detail = dict(max_abs_diff=diff, max_abs_x=scale, tol=C_ASSERT_TOL * (1.0 + scale), rounds=diam, w=float(wf), batch_examples=B)
+            wire_dev = float((x.detach().double() - xd).abs().max()) if x is not None else None
+            c_detail = dict(max_abs_diff=diff, max_abs_x=scale, tol=C_ASSERT_TOL * (1.0 + scale), rounds=diam, w=float(wd), batch_examples=B,
+                            dtype='float64', max_abs_diff_wire_vs_direct=wire_dev)
         if drop_p >= 1.0 and p1_detail is None:
             own = [pair.agent(i).reader(z[i], pair.agent(i).dtype) for i in range(N_AGENTS)]
             if arm in FUSION_ARMS:

@@ -131,6 +131,20 @@ def test_fp16_wire_is_close_to_exact_and_bytes_match_design():
     assert F.wire_bytes(32, 256) == 32 * 1024  # 32 KB per message: K x D_e means + K x D_e precisions, fp16
 
 
+def test_float64_round_trip_is_exact_at_large_w_and_clamped_lam():
+    # review M1: the C check runs in float64; in float32 the LU solve and the message arithmetic differ by ~1e-4 relative here
+    torch.manual_seed(3)
+    z = torch.randn(2, *SHAPE, dtype=torch.float64)
+    lam = torch.where(torch.rand(2, *SHAPE) < 0.5, torch.tensor(1e-3), torch.tensor(1e3)).to(torch.float64)
+    x = F.fuse_direct(z, lam, [(0, 1)], 100.0)
+    m, prec = F.gbp_sync(z, lam, [(0, 1)], 100.0, rounds=1)
+    assert x.dtype == torch.float64 and m.dtype == torch.float64 and prec.dtype == torch.float64
+    assert float((m - x).abs().max()) <= 1e-10 * (1.0 + float(x.abs().max()))
+    drop = torch.tensor([False, True])[:, None, None, None]
+    m2, _ = F.gbp_sync(z, lam, [(0, 1)], 100.0, rounds=1, drop=drop)
+    assert torch.equal(m2[0], z[0])
+
+
 def test_edge_residual_shape_and_value():
     x = torch.zeros(2, 3, 4, 5)
     x[1] = 1.0
