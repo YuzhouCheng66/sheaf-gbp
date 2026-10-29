@@ -4100,3 +4100,19 @@ QPOST4 正好落在用户的能量形式里：
 - **代码进度**：`l1_fusion.py`（直接解 / 同步 GaBP 真发消息 / 缺席 / fp16 线路 / 树直径 / 边残差 / 字节数）与 `test_l1_fusion.py` 12/12 通过。修了一处：缺席时的信念原来算成 (λz)/λ，与 z 不逐位相等，改写为 z + (H − P·z)/(λ + P) 后严格等于自身；GBP 与直接解的比较容差定为 rtol 1e-4 / atol 1e-5（λ 跨 1e-3…1e3 时 float32 的合理误差；流水线中的 C 断言用 1e-4·(1 + max|x|)）。数据/判决（`l1_data.py`、`l1_aggregate.py`）与模型/训练/文字臂/链（`l1_model.py`、`l1_train.py`、`l1_text.py`、`chain_day9_L1.sh`）由两个子代理实现中，之后：全部单测 → 我读关键代码 → 独立审查 → 部署 → GPU 冒烟测步时 → 发射。
 - **本地测试环境**：CPU venv（torch CPU、transformers 4.52.4、peft 0.19.1，与 uk-linux 的 jax-gpu 环境同版本），路径 `C:\Users\27118\AppData\Local\Temp\claude\venv-l1`；会话临时目录的长路径使 `python -m venv` 失败（WinError 267），故用短路径。
 - **今晚的纪律**：第 0 阶段先跑，P0 不过链自动停、不碰设计；每个租约的启动与结束、每臂预热后的实测步时都以 `date -u` 记录；两个种子都跑；结果原样写入 D8-84；仓库只提交代码与报告。
+
+### D8-83 附录 2. 批次 L1 发射记录与预注册偏离附录（写于发射后，2026-10-29 20:10 UTC）
+
+- **发射**：租约队列 `scripts/claude_v342/l1_leases.sh 1 6` 于 2026-10-29 20:08:01 UTC 在 uk-linux 启动；链 `chain_day9_L1.sh` 钉定版（sha256 前缀 8aee58b0，只在 uk-linux；仓库里保留 FILL_ 占位版）租约 1 于 20:09:05 UTC 开始，第一项 B0-hetero-s342101（估计 62 分钟，窗口 118 分钟）。用户算力批准原话见 D8-83 第一部分（"5090+bigboy，可换模型"，约 18:42 UTC），传入链的 approval 字段为 `2026-10-29T18:42Z user approval: 5090+bigboy, model switch allowed; 6 leases tonight`。bigboy 未用（两卡被占、`/home` 99 %、无带 torch 的环境）；Llama 3.2 访问于 18:50 UTC 获批，权重已缓存，不换模型。
+- **独立审查**：`claude_handoff/analysis_20261029/l1/code_review_l1.md`（19:55 UTC），结论 **LAUNCH OK AFTER FIXES**。已改：M1 C 断言在 fp32 下会因 w ≳ 10、λ 贴下界时的舍入假失败（审查实测 diff/tol 在 w = 20 时 2.13）→ 两种算法改在 float64 下比较（`l1_fusion` 支持 float64），并把 fp16 线路相对直接解的偏差另记为读数 `max_abs_diff_wire_vs_direct`；M2 文字臂提示比隐态提示长，同一 900 上限下文档被多截、偏向 P1 → 发送 +16、接收/T0 +72、256 扫描 +264 token 的配额，文档预算与隐态臂相同；S2 训练期融合在 bf16 autocast 内 → 关闭；S3 截断码 2 会砍到问题 → 先多次按比例收缩；S4 作业的时间检查移到 GPU 空闲等待之后；S8 链传 `--keep-preds`。S1 的偏离清单即本附录；S5 租约算术见下；S6（回退开关）因 Llama 获批不再需要；S7（summary 无配置钉子）与 S9（T0 消息可能跑满预算）为报告期注意事项。
+- **钉定**（sha256 前缀）：l1_model aa3a4eec、l1_train 5f8eee78、l1_text 643b9236、l1_fusion a0f56eb6、l1_data 41d0db81、l1_aggregate e9c3ba51；train.jsonl 4b6af5e2、val.jsonl b1e240bb、fresh.jsonl 985610d8。仓库提交 fa9c94c；本地 CPU 单测 67/67（含 float64 往返、三阶段文字臂、B4 分模型合并、软截止与 `--eval-only`）。
+- **GPU 冒烟**（真实模型，70 步，5090，`runs/l1_smoke/`，预热 50 步后计时）：S1@900 2.29 s/步、峰值 10.1 GB、C 断言通过（fp32 下最大差 9.5e-7）、缺席四档可算；B0@900 1.303 s/步；B4 Qwen/Llama @900 0.856/0.507、@1536 1.657/0.911、@2048 2.205/1.133 s/步；关闭梯度检查点在 1,280 上限下连 B0 都溢出（30.9 GiB）→ 检查点全程开启；T 发送方 1.39、接收方 1.31 s/步，64 token 消息 0.216 s/题。VAL 实测 token 长度：10 段全文均值 1,505（上限 900 截 97 %，2,048 截 6 %），5 段分片均值 764（900 截 22 %）。
+- **预注册偏离**（D8-82 正文不改，按其规则以附录记录；设计稿附录 A1 同步）：
+  1. 上下文上限（设计稿未定）：分片臂 900 token（22 % 的分片按段比例截短，所有分片臂一致），B4 2,048；文字臂配额如 M2。
+  2. 异构 B4 拆成 B4l（Llama）与 B4q（Qwen）两个任务后 CPU 合并（`l1_train.py --merge-b4`）为聚合器读取的 `B4-hetero-s<seed>`；同模型对 B4 仍为一个任务。
+  3. T 拆成三个任务：Tsend（发送方训练 + 64 token 消息生成）、T（接收方两阶段 + 评估，预算 {16, 64}）、Tsweep（256 预算扫描，排在最后）；T0 只报 {16, 64}。
+  4. 评估软截止：先存可训练权重，按 VAL p=0 → fresh → 读数的顺序评估；作业截止落在读数阶段时只丢读数（`readouts_incomplete`），可用 `--eval-only` 补算；落在训练或 VAL/fresh 中仍为 INCOMPLETE。
+  5. 缺席 p = 1 的断言实现为"融合态逐数等于 Reader_i(z_i)"（设计稿写的"等于 B0 的同一网络"字面不可实现：B0 是另一套 LoRA 且不插软 token）；缺席曲线与 B0 的比较只作读数。
+  6. 第 1 阶段顺序改为 S1 → Tsend/T → U → S1L1 → T0 → 同模型对 → Tsweep（预注册未定顺序）；R = 2 与 L 扫描不做。
+  7. 算力：实测步时是预注册估计的 2–3 倍；按 118 分钟作业窗口与"任务不跨租约"规则排程，异构判决共约 14 个租约（第 0 阶段 4 个）。今晚 6 个租约的预期：1 = B0 s1 + B4l s1，2 = B0 s2 + B4l s2，3 = B4q s1，4 = B4q s2 + 合并 + P0 判决，5–6 = S1 两种子。P0 不过则队列在第 4 个租约后自动停。
+- **数据细节**：过滤 838（train）+ 60（dev）个非 10 段题；TRAIN bridge 16,107 / comparison 3,893；答案段归属 own/other/none 在 VAL 为 372 / 390 / 238。
