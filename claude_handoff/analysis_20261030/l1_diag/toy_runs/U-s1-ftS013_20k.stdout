@@ -1,0 +1,20 @@
+2026-10-30T05:34:48Z l1_train start pid 1310357 host yuzhou arm U pair hetero seed 1 out /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021/toy_l1/runs/U-s1-ftS013_20k
+2026-10-30T05:34:48Z device cpu torch 2.11.0+cu128 data api l1_data (NOTE: seed not pre-registered)
+2026-10-30T05:34:48Z data: train 4000 val 300 fresh 300
+2026-10-30T05:34:48Z steps 20000 x batch 8 = 160000 examples (40.00 epochs)
+2026-10-30T05:34:50Z full-ft: every base-model parameter trainable (toy diagnostic)
+2026-10-30T05:34:50Z model: [{'name': 'tiny-a', 'n_layers': 2, 'read_layer': 1, 'd_model': 32, 'bos': 1, 'eos': 2, 'pad': 0, 'dtype': 'torch.float32', 'fixed_lam': True, 'comm': True, 'lora': True}, {'name': 'tiny-b', 'n_layers': 2, 'read_layer': 1, 'd_model': 48, 'bos': None, 'eos': 2, 'pad': 0, 'dtype': 'torch.float32', 'fixed_lam': True, 'comm': True, 'lora': True}]; trainable 116,208 / 116,208 (100.00 %); w None
+2026-10-30T05:34:50Z U/hetero/s1: 20000 steps, lr lora 0.001 (40,448 params) / adapter 0.001 (75,760 params), warm-up 20, clip 1.0
+2026-10-30T05:36:17Z U/hetero/s1 step 4000/20000 loss 1.5397 agents ['1.348', '1.177'] lr 9.05e-04 gnorm 1.00 0.022 s/step (post warm-up, 3950 steps)
+2026-10-30T05:37:47Z U/hetero/s1 step 8000/20000 loss 1.0794 agents ['0.800', '1.415'] lr 6.55e-04 gnorm 0.85 0.022 s/step (post warm-up, 7950 steps)
+2026-10-30T05:39:18Z U/hetero/s1 step 12000/20000 loss 1.0397 agents ['1.000', '1.362'] lr 3.46e-04 gnorm 1.02 0.022 s/step (post warm-up, 11950 steps)
+2026-10-30T05:40:48Z U/hetero/s1 step 16000/20000 loss 0.9080 agents ['0.592', '1.218'] lr 9.57e-05 gnorm 0.84 0.022 s/step (post warm-up, 15950 steps)
+2026-10-30T05:42:19Z U/hetero/s1 step 20000/20000 loss 0.8349 agents ['0.625', '1.182'] lr 0.00e+00 gnorm 1.05 0.022 s/step (post warm-up, 19950 steps)
+2026-10-30T05:42:19Z train done: 20000 steps in 449 s; loss first100 3.237303149700165 last100 0.8230345445871353; step time post warm-up 0.02242703637933326 s (19950 timed); truncations {0: 640000}
+2026-10-30T05:42:19Z trainable.pt saved before the evaluation
+2026-10-30T05:42:19Z VAL p=0.0: EM 54.50 F1 54.50 agents [56.666666666666664, 52.33333333333333] owner [('own', 100.0), ('other', 9.0), ('none', None), ('all', None)]
+2026-10-30T05:42:19Z fresh: EM 53.67 F1 53.67 agents [51.66666666666667, 55.666666666666664]
+2026-10-30T05:42:19Z VAL p=0.3: EM 54.00 F1 54.00 agents [55.666666666666664, 52.33333333333333] owner [('own', 100.0), ('other', 8.0), ('none', None), ('all', None)] dropped 187/600
+2026-10-30T05:42:19Z VAL p=0.6: EM 52.00 F1 52.00 agents [51.66666666666667, 52.33333333333333] owner [('own', 100.0), ('other', 4.0), ('none', None), ('all', None)] dropped 396/600
+2026-10-30T05:42:20Z VAL p=1.0: EM 50.83 F1 50.83 agents [49.333333333333336, 52.33333333333333] owner [('own', 100.0), ('other', 1.6666666666666667), ('none', None), ('all', None)] dropped 600/600
+2026-10-30T05:42:20Z l1_train done: U hetero s1 VAL EM 54.50 fresh EM 53.67 c_assert n/a readouts complete total 452 s
