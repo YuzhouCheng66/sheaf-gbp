@@ -1,0 +1,11 @@
+run /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021/runs/l1/S1-hetero-s342101 n 8 owners [0, 0, 1, 0, 0, 0, 0, 1]
+agent 0 Qwen/Qwen3-1.7B: fused          loss all 0.7589  own-owner 0.4164 (n=6)  other-owner 1.7861 (n=2)
+agent 0 Qwen/Qwen3-1.7B: own_only_p1    loss all 0.7610  own-owner 0.4150 (n=6)  other-owner 1.7990 (n=2)
+agent 0 Qwen/Qwen3-1.7B: zeros          loss all 1.1825  own-owner 0.4887 (n=6)  other-owner 3.2639 (n=2)
+agent 0 Qwen/Qwen3-1.7B: random_LN      loss all 0.7740  own-owner 0.3738 (n=6)  other-owner 1.9746 (n=2)
+agent 0 Qwen/Qwen3-1.7B: random_x0.03   loss all 0.8018  own-owner 0.3110 (n=6)  other-owner 2.2740 (n=2)
+agent 1 meta-llama/Llama-3.2-1B-Instruct: fused          loss all 1.6357  own-owner 0.8524 (n=2)  other-owner 1.8968 (n=6)
+agent 1 meta-llama/Llama-3.2-1B-Instruct: own_only_p1    loss all 1.6362  own-owner 0.8523 (n=2)  other-owner 1.8976 (n=6)
+agent 1 meta-llama/Llama-3.2-1B-Instruct: zeros          loss all 1.8154  own-owner 0.7745 (n=2)  other-owner 2.1624 (n=6)
+agent 1 meta-llama/Llama-3.2-1B-Instruct: random_LN      loss all 5.3275  own-owner 4.6608 (n=2)  other-owner 5.5497 (n=6)
+agent 1 meta-llama/Llama-3.2-1B-Instruct: random_x0.03   loss all 1.6658  own-owner 0.8148 (n=2)  other-owner 1.9494 (n=6)

@@ -1,0 +1,26 @@
+2026-10-30T05:12:39Z l1_train start pid 1308519 host yuzhou arm S1 pair hetero seed 1 out /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021/toy_l1/runs/S1-s1-ft20k
+2026-10-30T05:12:39Z device cpu torch 2.11.0+cu128 data api l1_data (NOTE: seed not pre-registered)
+2026-10-30T05:12:39Z data: train 4000 val 300 fresh 300
+2026-10-30T05:12:39Z steps 20000 x batch 8 = 160000 examples (40.00 epochs)
+2026-10-30T05:12:41Z full-ft: every base-model parameter trainable (toy diagnostic)
+2026-10-30T05:12:41Z model: [{'name': 'tiny-a', 'n_layers': 2, 'read_layer': 1, 'd_model': 32, 'bos': 1, 'eos': 2, 'pad': 0, 'dtype': 'torch.float32', 'fixed_lam': False, 'comm': True, 'lora': True}, {'name': 'tiny-b', 'n_layers': 2, 'read_layer': 1, 'd_model': 48, 'bos': None, 'eos': 2, 'pad': 0, 'dtype': 'torch.float32', 'fixed_lam': False, 'comm': True, 'lora': True}]; trainable 116,753 / 116,753 (100.00 %); w 1.0
+2026-10-30T05:12:41Z S1/hetero/s1: 20000 steps, lr lora 0.001 (40,448 params) / adapter 0.001 (76,305 params), warm-up 20, clip 1.0
+2026-10-30T05:13:28Z S1/hetero/s1 step 2000/20000 loss 1.8888 agents ['1.436', '1.860'] lr 9.76e-04 gnorm 1.25 w 1.0066 0.023 s/step (post warm-up, 1950 steps)
+2026-10-30T05:14:14Z S1/hetero/s1 step 4000/20000 loss 1.5399 agents ['1.026', '1.803'] lr 9.05e-04 gnorm 1.14 w 0.8684 0.023 s/step (post warm-up, 3950 steps)
+2026-10-30T05:15:04Z S1/hetero/s1 step 6000/20000 loss 1.2923 agents ['0.511', '1.545'] lr 7.95e-04 gnorm 1.58 w 0.8680 0.024 s/step (post warm-up, 5950 steps)
+2026-10-30T05:15:51Z S1/hetero/s1 step 8000/20000 loss 1.1259 agents ['0.740', '1.245'] lr 6.55e-04 gnorm 3.73 w 0.8738 0.024 s/step (post warm-up, 7950 steps)
+2026-10-30T05:16:38Z S1/hetero/s1 step 10000/20000 loss 0.9902 agents ['1.194', '0.775'] lr 5.01e-04 gnorm 5.71 w 0.8771 0.024 s/step (post warm-up, 9950 steps)
+2026-10-30T05:17:25Z S1/hetero/s1 step 12000/20000 loss 0.8924 agents ['0.464', '0.723'] lr 3.46e-04 gnorm 1.75 w 0.8809 0.024 s/step (post warm-up, 11950 steps)
+2026-10-30T05:18:10Z S1/hetero/s1 step 14000/20000 loss 0.8245 agents ['0.908', '0.249'] lr 2.06e-04 gnorm 3.28 w 0.8846 0.024 s/step (post warm-up, 13950 steps)
+2026-10-30T05:18:56Z S1/hetero/s1 step 16000/20000 loss 0.7491 agents ['0.709', '0.500'] lr 9.57e-05 gnorm 1.50 w 0.8866 0.023 s/step (post warm-up, 15950 steps)
+2026-10-30T05:19:42Z S1/hetero/s1 step 18000/20000 loss 0.7189 agents ['1.161', '0.467'] lr 2.45e-05 gnorm 1.27 w 0.8871 0.023 s/step (post warm-up, 17950 steps)
+2026-10-30T05:20:28Z S1/hetero/s1 step 20000/20000 loss 0.7083 agents ['0.690', '0.512'] lr 0.00e+00 gnorm 1.62 w 0.8872 0.023 s/step (post warm-up, 19950 steps)
+2026-10-30T05:20:28Z train done: 20000 steps in 467 s; loss first100 3.2410439348220823 last100 0.7144984501600266; step time post warm-up 0.023317375777086202 s (19950 timed); truncations {0: 640000}
+2026-10-30T05:20:28Z trainable.pt saved before the evaluation
+2026-10-30T05:20:28Z VAL p=0.0: EM 61.00 F1 61.00 agents [50.33333333333333, 71.66666666666667] owner [('own', 100.0), ('other', 22.0), ('none', None), ('all', None)]
+2026-10-30T05:20:28Z C assertion: True {'max_abs_diff': 8.881784197001252e-16, 'max_abs_x': 2.991324083444531, 'tol': 0.0003991324083444531, 'rounds': 1, 'w': 0.8872467279434204, 'batch_examples': 50, 'dtype': 'float64', 'max_abs_diff_wire_vs_direct': 0.0008704247011146471}
+2026-10-30T05:20:28Z fresh: EM 59.33 F1 59.33 agents [45.33333333333333, 73.33333333333333]
+2026-10-30T05:20:28Z VAL p=0.3: EM 58.67 F1 58.67 agents [50.33333333333333, 67.0] owner [('own', 100.0), ('other', 17.333333333333336), ('none', None), ('all', None)] dropped 187/600
+2026-10-30T05:20:28Z VAL p=0.6: EM 55.67 F1 55.67 agents [50.33333333333333, 61.0] owner [('own', 100.0), ('other', 11.333333333333332), ('none', None), ('all', None)] dropped 396/600
+2026-10-30T05:20:29Z VAL p=1.0: EM 51.50 F1 51.50 agents [49.333333333333336, 53.666666666666664] owner [('own', 99.0), ('other', 4.0), ('none', None), ('all', None)] dropped 600/600
+2026-10-30T05:20:29Z l1_train done: S1 hetero s1 VAL EM 61.00 fresh EM 59.33 c_assert True readouts complete total 470 s

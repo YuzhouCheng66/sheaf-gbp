@@ -1,0 +1,22 @@
+--- /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021/scripts/l1_train.py	2026-10-29 20:06:54.968596499 +0000
++++ toy_train.py	2026-10-30 05:05:42.295804839 +0000
+@@ -85,6 +85,7 @@
+     ap.add_argument('--debug-deadline-at', default=None, choices=('readouts',), help='tests only: deadline in the past right before the readouts')
+     ap.add_argument('--keep-preds', action='store_true', help='also write the per-example predictions (preds_val.json / preds_fresh.json)')
+     ap.add_argument('--allow-fallback-data', action='store_true', help='use l1_model._FallbackData outside --tiny (smoke only)')
++    ap.add_argument('--full-ft', action='store_true', help='toy diagnostic only: also train every base-model parameter')
+     return ap
+ 
+ 
+@@ -346,6 +347,11 @@
+             pair = M.build_pair(args.arm, args.pair, device, model=name, hf_cache=args.hf_cache, tiny=tiny, grad_ckpt=not args.no_grad_ckpt,
+                                 max_ctx=args.max_ctx_tokens, **agent_kw)
+             load_s += time.time() - t0
++            if getattr(args, 'full_ft', False):
++                for a_ in pair.agents:
++                    for p_ in a_.lm.parameters():
++                        p_.requires_grad_(True)
++                log('full-ft: every base-model parameter trainable (toy diagnostic)')
+             tag = f' [{name}]' if name else ''
+             r = train_pair(pair, train, args, device, log, deadline, label=f'{args.arm}/{args.pair}/s{args.seed}{tag}', tag=tag)
+             states[name or 'pair'] = r['state']

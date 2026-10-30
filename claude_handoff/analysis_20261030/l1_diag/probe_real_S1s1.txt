@@ -1,0 +1,8 @@
+
+run /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021/runs/l1/S1-hetero-s342101 arm S1 missing 0 w 0.9956870079040527
+agent 0 Qwen/Qwen3-1.7B: log lam quantiles 1/10/50/90/99 % = [-2.2, -0.75, 0.12, 1.11, 2.06]; frac at low clamp 0.000 at high clamp 0.000; z abs mean 0.756 max 3.889
+agent 1 meta-llama/Llama-3.2-1B-Instruct: log lam quantiles 1/10/50/90/99 % = [-1.94, -0.83, 0.1, 1.09, 2.39]; frac at low clamp 0.000 at high clamp 0.000; z abs mean 0.717 max 4.769
+agent 0: own-share a quantiles 10/50/90 % = [0.419, 0.693, 0.892] (1 = pure own z, 0 = pure other)
+agent 0: soft-token L2 norm mean 46.29; vocab embedding L2 norm mean 1.54 (ratio 30.1)
+agent 1: own-share a quantiles 10/50/90 % = [0.411, 0.678, 0.894] (1 = pure own z, 0 = pure other)
+agent 1: soft-token L2 norm mean 46.65; vocab embedding L2 norm mean 0.93 (ratio 50.2)

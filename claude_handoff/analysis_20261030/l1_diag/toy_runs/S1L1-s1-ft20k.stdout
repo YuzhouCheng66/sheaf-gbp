@@ -1,0 +1,26 @@
+2026-10-30T05:12:39Z l1_train start pid 1308522 host yuzhou arm S1L1 pair hetero seed 1 out /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021/toy_l1/runs/S1L1-s1-ft20k
+2026-10-30T05:12:39Z device cpu torch 2.11.0+cu128 data api l1_data (NOTE: seed not pre-registered)
+2026-10-30T05:12:39Z data: train 4000 val 300 fresh 300
+2026-10-30T05:12:39Z steps 20000 x batch 8 = 160000 examples (40.00 epochs)
+2026-10-30T05:12:41Z full-ft: every base-model parameter trainable (toy diagnostic)
+2026-10-30T05:12:41Z model: [{'name': 'tiny-a', 'n_layers': 2, 'read_layer': 1, 'd_model': 32, 'bos': 1, 'eos': 2, 'pad': 0, 'dtype': 'torch.float32', 'fixed_lam': True, 'comm': True, 'lora': True}, {'name': 'tiny-b', 'n_layers': 2, 'read_layer': 1, 'd_model': 48, 'bos': None, 'eos': 2, 'pad': 0, 'dtype': 'torch.float32', 'fixed_lam': True, 'comm': True, 'lora': True}]; trainable 116,209 / 116,209 (100.00 %); w 1.0
+2026-10-30T05:12:41Z S1L1/hetero/s1: 20000 steps, lr lora 0.001 (40,448 params) / adapter 0.001 (75,761 params), warm-up 20, clip 1.0
+2026-10-30T05:13:34Z S1L1/hetero/s1 step 2000/20000 loss 1.2175 agents ['0.742', '0.005'] lr 9.76e-04 gnorm 0.74 w 1.2055 0.027 s/step (post warm-up, 1950 steps)
+2026-10-30T05:14:34Z S1L1/hetero/s1 step 4000/20000 loss 0.4836 agents ['0.744', '0.001'] lr 9.05e-04 gnorm 0.50 w 1.3041 0.028 s/step (post warm-up, 3950 steps)
+2026-10-30T05:15:33Z S1L1/hetero/s1 step 6000/20000 loss 0.4669 agents ['0.452', '0.000'] lr 7.95e-04 gnorm 0.36 w 1.3010 0.029 s/step (post warm-up, 5950 steps)
+2026-10-30T05:16:32Z S1L1/hetero/s1 step 8000/20000 loss 0.4724 agents ['0.467', '0.000'] lr 6.55e-04 gnorm 0.39 w 1.3660 0.029 s/step (post warm-up, 7950 steps)
+2026-10-30T05:17:31Z S1L1/hetero/s1 step 10000/20000 loss 0.4650 agents ['1.139', '0.000'] lr 5.01e-04 gnorm 0.55 w 1.3639 0.029 s/step (post warm-up, 9950 steps)
+2026-10-30T05:18:29Z S1L1/hetero/s1 step 12000/20000 loss 0.4642 agents ['0.459', '0.000'] lr 3.46e-04 gnorm 0.34 w 1.3624 0.029 s/step (post warm-up, 11950 steps)
+2026-10-30T05:19:28Z S1L1/hetero/s1 step 14000/20000 loss 0.4639 agents ['0.923', '0.000'] lr 2.06e-04 gnorm 0.62 w 1.3594 0.029 s/step (post warm-up, 13950 steps)
+2026-10-30T05:20:26Z S1L1/hetero/s1 step 16000/20000 loss 0.4629 agents ['0.686', '0.000'] lr 9.57e-05 gnorm 0.41 w 1.3606 0.029 s/step (post warm-up, 15950 steps)
+2026-10-30T05:21:15Z S1L1/hetero/s1 step 18000/20000 loss 0.4623 agents ['1.172', '0.000'] lr 2.45e-05 gnorm 0.53 w 1.3602 0.029 s/step (post warm-up, 17950 steps)
+2026-10-30T05:21:57Z S1L1/hetero/s1 step 20000/20000 loss 0.4615 agents ['0.660', '0.000'] lr 0.00e+00 gnorm 0.58 w 1.3605 0.028 s/step (post warm-up, 19950 steps)
+2026-10-30T05:21:57Z train done: 20000 steps in 556 s; loss first100 3.2617502880096434 last100 0.4663619747012854; step time post warm-up 0.02778254227046353 s (19950 timed); truncations {0: 640000}
+2026-10-30T05:21:57Z trainable.pt saved before the evaluation
+2026-10-30T05:21:57Z VAL p=0.0: EM 75.50 F1 75.50 agents [51.0, 100.0] owner [('own', 100.0), ('other', 51.0), ('none', None), ('all', None)]
+2026-10-30T05:21:57Z C assertion: True {'max_abs_diff': 4.440892098500626e-16, 'max_abs_x': 2.4349079482714395, 'tol': 0.000343490794827144, 'rounds': 1, 'w': 1.3604568243026733, 'batch_examples': 50, 'dtype': 'float64', 'max_abs_diff_wire_vs_direct': 0.0006863101941845251}
+2026-10-30T05:21:57Z fresh: EM 73.00 F1 73.00 agents [46.0, 100.0]
+2026-10-30T05:21:57Z VAL p=0.3: EM 61.17 F1 61.17 agents [51.0, 71.33333333333334] owner [('own', 84.33333333333334), ('other', 38.0), ('none', None), ('all', None)] dropped 187/600
+2026-10-30T05:21:58Z VAL p=0.6: EM 43.67 F1 43.67 agents [51.0, 36.333333333333336] owner [('own', 66.33333333333333), ('other', 21.0), ('none', None), ('all', None)] dropped 396/600
+2026-10-30T05:21:58Z VAL p=1.0: EM 27.00 F1 27.00 agents [51.0, 3.0] owner [('own', 49.666666666666664), ('other', 4.333333333333334), ('none', None), ('all', None)] dropped 600/600
+2026-10-30T05:21:58Z l1_train done: S1L1 hetero s1 VAL EM 75.50 fresh EM 73.00 c_assert True readouts complete total 559 s
