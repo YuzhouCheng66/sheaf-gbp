@@ -1,0 +1,19 @@
+2026-10-30T05:32:10Z l1_train start pid 1310034 host yuzhou arm S1L1 pair hetero seed 2 out /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021/toy_l1/runs/S1L1-s2-ftS013
+2026-10-30T05:32:10Z device cpu torch 2.11.0+cu128 data api l1_data (NOTE: seed not pre-registered)
+2026-10-30T05:32:10Z data: train 4000 val 300 fresh 300
+2026-10-30T05:32:10Z steps 3000 x batch 8 = 24000 examples (6.00 epochs)
+2026-10-30T05:32:12Z full-ft: every base-model parameter trainable (toy diagnostic)
+2026-10-30T05:32:12Z model: [{'name': 'tiny-a', 'n_layers': 2, 'read_layer': 1, 'd_model': 32, 'bos': 1, 'eos': 2, 'pad': 0, 'dtype': 'torch.float32', 'fixed_lam': True, 'comm': True, 'lora': True}, {'name': 'tiny-b', 'n_layers': 2, 'read_layer': 1, 'd_model': 48, 'bos': None, 'eos': 2, 'pad': 0, 'dtype': 'torch.float32', 'fixed_lam': True, 'comm': True, 'lora': True}]; trainable 116,209 / 116,209 (100.00 %); w 1.0
+2026-10-30T05:32:12Z S1L1/hetero/s2: 3000 steps, lr lora 0.001 (40,448 params) / adapter 0.001 (75,761 params), warm-up 20, clip 1.0
+2026-10-30T05:32:35Z S1L1/hetero/s2 step 1000/3000 loss 2.0101 agents ['1.829', '1.748'] lr 7.56e-04 gnorm 0.99 w 1.0269 0.023 s/step (post warm-up, 950 steps)
+2026-10-30T05:32:58Z S1L1/hetero/s2 step 2000/3000 loss 1.6531 agents ['1.859', '1.197'] lr 2.53e-04 gnorm 1.05 w 1.0189 0.023 s/step (post warm-up, 1950 steps)
+2026-10-30T05:33:21Z S1L1/hetero/s2 step 3000/3000 loss 1.4619 agents ['1.858', '1.128'] lr 0.00e+00 gnorm 1.10 w 1.0186 0.023 s/step (post warm-up, 2950 steps)
+2026-10-30T05:33:21Z train done: 3000 steps in 70 s; loss first100 3.217249858379364 last100 1.4528592717647553; step time post warm-up 0.023161964230318317 s (2950 timed); truncations {0: 96000}
+2026-10-30T05:33:21Z trainable.pt saved before the evaluation
+2026-10-30T05:33:21Z VAL p=0.0: EM 27.33 F1 27.33 agents [2.3333333333333335, 52.33333333333333] owner [('own', 51.66666666666667), ('other', 3.0), ('none', None), ('all', None)]
+2026-10-30T05:33:21Z C assertion: True {'max_abs_diff': 6.661338147750939e-16, 'max_abs_x': 1.9707230403620073, 'tol': 0.0002970723040362008, 'rounds': 1, 'w': 1.0186384916305542, 'batch_examples': 50, 'dtype': 'float64', 'max_abs_diff_wire_vs_direct': 0.0004504364139286121}
+2026-10-30T05:33:22Z fresh: EM 29.00 F1 29.00 agents [3.0, 55.00000000000001]
+2026-10-30T05:33:22Z VAL p=0.3: EM 27.33 F1 27.33 agents [2.3333333333333335, 52.33333333333333] owner [('own', 51.66666666666667), ('other', 3.0), ('none', None), ('all', None)] dropped 195/600
+2026-10-30T05:33:22Z VAL p=0.6: EM 27.33 F1 27.33 agents [2.3333333333333335, 52.33333333333333] owner [('own', 51.66666666666667), ('other', 3.0), ('none', None), ('all', None)] dropped 341/600
+2026-10-30T05:33:22Z VAL p=1.0: EM 27.33 F1 27.33 agents [2.3333333333333335, 52.33333333333333] owner [('own', 51.66666666666667), ('other', 3.0), ('none', None), ('all', None)] dropped 600/600
+2026-10-30T05:33:22Z l1_train done: S1L1 hetero s2 VAL EM 27.33 fresh EM 29.00 c_assert True readouts complete total 72 s

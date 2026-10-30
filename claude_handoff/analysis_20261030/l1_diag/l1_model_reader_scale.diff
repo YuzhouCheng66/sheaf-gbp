@@ -1,0 +1,16 @@
+--- /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021/scripts/l1_model.py	2026-10-29 20:06:54.932596500 +0000
++++ l1_model.py	2026-10-30 05:30:49.588562126 +0000
+@@ -396,10 +396,13 @@
+         super().__init__()
+         self.proj = nn.Linear(d_e, d_model)
+         self.ln = nn.LayerNorm(d_model)
++        self.scale = float(__import__('os').environ.get('L1_TOY_READER_SCALE', '1.0'))   # toy diagnostic only (env var)
+ 
+     def forward(self, x, dtype=None):
+         with torch.autocast(device_type=x.device.type, enabled=False):
+             y = self.ln(self.proj(x.float()))
++            if self.scale != 1.0:
++                y = y * self.scale
+         return y.to(dtype) if dtype is not None else y
+ 
+ 
