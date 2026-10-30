@@ -40,7 +40,7 @@ DECODE_N = 256                                  # decodability readout: the firs
 DECODE_MAX_NEW = 64                             # ... generating at most this many tokens after AUX_PROMPT
 ARMS = ('S1b', 'Ub', 'S1L1b')
 BASE_ARM = {'S1b': 'S1', 'Ub': 'U', 'S1L1b': 'S1L1'}
-SCRIPTS = ('l1b_model.py', 'l1b_train.py', 'l1_model.py', 'l1_fusion.py', 'l1_data.py')
+SCRIPTS = ('l1b_model.py', 'l1b_train.py', 'l1_model.py', 'l1_train.py', 'l1_fusion.py', 'l1_data.py')     # l1b_train imports l1_train (read_data etc.)
 
 
 def embedding_scale(embed_weight):

@@ -56,6 +56,7 @@ L1B_MODEL_SHA=FILL_L1B_MODEL_SHA                                           # scr
 L1B_TRAIN_SHA=FILL_L1B_TRAIN_SHA                                           # scripts/l1b_train.py
 L1B_AGG_SHA=FILL_L1B_AGG_SHA                                               # scripts/l1b_aggregate.py
 MODEL_SHA=aa3a4eec71ea38b11b034282cd550c671c6358d037c2a7179c80ca4d438f5b86                                                   # scripts/l1_model.py (L1 pin)
+TRAIN_SHA=5f8eee7833fd53851650ff4aa2249269e3a7fbab76b8de92695c403f23b9f33a                                                   # scripts/l1_train.py (L1 pin; imported by l1b_train)
 FUSION_SHA=a0f56eb6de811a4247fa784f701c23ef43119626ff1e9e6821846d379fa6a474                                                 # scripts/l1_fusion.py (L1 pin)
 DATA_SHA=41d0db811e710579ddcdab76c8c622358984423da54a8e792716fa76c75263dd                                                     # scripts/l1_data.py (L1 pin)
 TRAINJ_SHA=4b6af5e2bdb78d23d57ba83592c71944f9dbbb6568db4e9bdfb2ffd1b7e0caa3                                                 # $DATA/train.jsonl (L1 pin)
@@ -67,13 +68,14 @@ L1B_FLAGS="--absence-ps 0.0,1.0 --beta 1.0 --aux-max-tokens 64 --decode-n 256 --
 mkdir -p runs/l1b
 log(){ echo "$(date -u +%FT%TZ) $*" | tee -a $LOG; }
 log "chain_day10_L1b started pid $$ host $(hostname) lease $LEASE sha256 $(sha256sum scripts/chain_day10_L1b.sh | cut -c1-16) prereg $PREREG approval $APPROVAL est l1b $EST_L1B min; cap $CTX_SHARD; flags $L1B_FLAGS"
-if grep -q -e "FILL_" <<<"$L1B_MODEL_SHA $L1B_TRAIN_SHA $L1B_AGG_SHA $MODEL_SHA $FUSION_SHA $DATA_SHA $TRAINJ_SHA $VALJ_SHA $FRESHJ_SHA"; then log "ABORT: unfilled FILL_ placeholders (coordinator)"; exit 2; fi
+if grep -q -e "FILL_" <<<"$L1B_MODEL_SHA $L1B_TRAIN_SHA $L1B_AGG_SHA $MODEL_SHA $TRAIN_SHA $FUSION_SHA $DATA_SHA $TRAINJ_SHA $VALJ_SHA $FRESHJ_SHA"; then log "ABORT: unfilled FILL_ placeholders (coordinator)"; exit 2; fi
 sha(){ sha256sum "$1" 2>/dev/null | cut -d' ' -f1; }
 check_shas(){
   [ "$(sha scripts/l1b_model.py)" = "$L1B_MODEL_SHA" ] || { log "ABORT: l1b_model.py sha changed ($(sha scripts/l1b_model.py))"; exit 2; }
   [ "$(sha scripts/l1b_train.py)" = "$L1B_TRAIN_SHA" ] || { log "ABORT: l1b_train.py sha changed ($(sha scripts/l1b_train.py))"; exit 2; }
   [ "$(sha scripts/l1b_aggregate.py)" = "$L1B_AGG_SHA" ] || { log "ABORT: l1b_aggregate.py sha changed ($(sha scripts/l1b_aggregate.py))"; exit 2; }
   [ "$(sha scripts/l1_model.py)" = "$MODEL_SHA" ] || { log "ABORT: l1_model.py sha changed ($(sha scripts/l1_model.py))"; exit 2; }
+  [ "$(sha scripts/l1_train.py)" = "$TRAIN_SHA" ] || { log "ABORT: l1_train.py sha changed ($(sha scripts/l1_train.py))"; exit 2; }
   [ "$(sha scripts/l1_fusion.py)" = "$FUSION_SHA" ] || { log "ABORT: l1_fusion.py sha changed ($(sha scripts/l1_fusion.py))"; exit 2; }
   [ "$(sha scripts/l1_data.py)" = "$DATA_SHA" ] || { log "ABORT: l1_data.py sha changed ($(sha scripts/l1_data.py))"; exit 2; }
   [ "$(sha $DATA/train.jsonl)" = "$TRAINJ_SHA" ] || { log "ABORT: $DATA/train.jsonl sha changed or missing"; exit 2; }
@@ -93,7 +95,7 @@ if [ "$FREE_MB" -lt 5000 ]; then log "ABORT: only ${FREE_MB} MB free on /mnt/dat
 SELF=$(CUDA_VISIBLE_DEVICES= timeout -k 30 300 $P -B -c "import sys; sys.path.insert(0, 'scripts'); import l1b_model, l1b_train, l1b_aggregate, l1_model, l1_fusion, l1_data, torch, transformers, peft; print('import self-check ok', torch.__version__, transformers.__version__, peft.__version__)" 2>&1 | tail -1)
 case "$SELF" in "import self-check ok"*) log "L1b $SELF";; *) log "ABORT: import self-check failed: $SELF"; exit 2;; esac
 # 5090 SOLO: no other chain (chain_day9_L1 included), no project trainer / diag, no compute process on the GPU (wait, never preempt)
-busy(){ pgrep -af "bash scripts/chain_" | grep -v "chain_day10_L1b" | grep -q . || pgrep -f "^$P scripts/train_" >/dev/null || pgrep -f "^$P scripts/diag_" >/dev/null || pgrep -f "^$P scripts/g4_" >/dev/null || pgrep -f "^$P scripts/l1_" >/dev/null || [ -n "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]; }
+busy(){ pgrep -af "bash scripts/chain_" | grep -v "chain_day10_L1b" | grep -q . || pgrep -f "^$P scripts/train_" >/dev/null || pgrep -f "^$P scripts/diag_" >/dev/null || pgrep -f "^$P scripts/g4_" >/dev/null || pgrep -f "scripts/l1_" >/dev/null || [ -n "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]; }   # "scripts/l1_" = the L1 queue, chain-launched L1 trainers (python -B scripts/l1_*.py)
 while busy; do sleep 120; done
 sleep 60; while busy; do sleep 120; done
 check_shas
@@ -104,7 +106,7 @@ cat > $RUNS/lease_$LEASE.json <<JSON
  "user_gpu_approval_utc": "$APPROVAL", "seeds": [342101, 342202], "gate_seed": $GATE_SEED, "estimates_min": {"l1b": $EST_L1B}, "ctx_shard": $CTX_SHARD, "flags": "$L1B_FLAGS",
  "models": {"hetero": ["Qwen/Qwen3-1.7B", "meta-llama/Llama-3.2-1B-Instruct"]}, "data": "$DATA", "l1_runs": "$L1RUNS",
  "data_sha256": {"train": "$TRAINJ_SHA", "val": "$VALJ_SHA", "fresh": "$FRESHJ_SHA"},
- "scripts_sha256": {"l1b_model.py": "$L1B_MODEL_SHA", "l1b_train.py": "$L1B_TRAIN_SHA", "l1b_aggregate.py": "$L1B_AGG_SHA", "l1_model.py": "$MODEL_SHA", "l1_fusion.py": "$FUSION_SHA", "l1_data.py": "$DATA_SHA"},
+ "scripts_sha256": {"l1b_model.py": "$L1B_MODEL_SHA", "l1b_train.py": "$L1B_TRAIN_SHA", "l1b_aggregate.py": "$L1B_AGG_SHA", "l1_model.py": "$MODEL_SHA", "l1_train.py": "$TRAIN_SHA", "l1_fusion.py": "$FUSION_SHA", "l1_data.py": "$DATA_SHA"},
  "chain_sha256": "$(sha scripts/chain_day10_L1b.sh)", "hf_hub_cache": "$HF_HUB_CACHE", "offline": true, "renewal": "none", "resume": "none"}
 JSON
 log "L1b lease $LEASE start $START (job deadline +7090, kill at +7150)"
@@ -137,7 +139,8 @@ aggregate(){                                                                    
   return $x
 }
 gate(){                                                                           # the G0 gate on the gate seed (D8-85 section 4 / 5); idempotent
-  [ -f $RUNS/L1B_G0_PASS ] || [ -f $RUNS/L1B_G0_FAIL ] && return 0
+  [ -f $RUNS/L1B_G0_FAIL ] && { log "L1b gate: L1B_G0_FAIL present -> nothing else is started"; STOP=1; return 1; }
+  [ -f $RUNS/L1B_G0_PASS ] && return 0
   [ -f $RUNS/S1b-hetero-s$GATE_SEED/summary.json ] || { log "L1b gate: S1b-hetero-s$GATE_SEED not done yet -> nothing else is started this lease"; STOP=1; return 1; }
   aggregate gate_lease$LEASE --gate $GATE_SEED
   local G; G=$(grep -a -E "^G0\(s$GATE_SEED\): " $RUNS/aggregate/gate_lease$LEASE.log | tail -1)

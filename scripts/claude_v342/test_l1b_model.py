@@ -202,14 +202,37 @@ def test_l1b_train_tiny_ub_and_soft_deadline_keeps_the_summary(data_dir):
 
 
 # ---------------------------------------------------------------- the aggregator (D8-85 section 5)
-def _summary(d, arm, seed, val, fresh, c_assert=True):
+def _summary(d, arm, seed, val, fresh, c_assert=True, complete=True, sha='abc'):
     p = os.path.join(d, f'{arm}-hetero-s{seed}')
     os.makedirs(p, exist_ok=True)
     s = dict(arm=arm, pair='hetero', seed=seed, val=dict(em=val, f1=val + 10, em_agent=[val, val], em_model={}), fresh=dict(em=fresh, f1=fresh + 10, em_agent=[fresh, fresh], em_model={}),
-             scripts_sha={'x.py': 'abc'})
+             scripts_sha={'x.py': sha}, complete=complete)
     if arm == 'S1b' and c_assert is not None:
         s['c_assert'] = c_assert
     json.dump(s, open(os.path.join(p, 'summary.json'), 'w', encoding='utf-8'))
+
+
+def test_aggregate_margins_are_rounded_and_partial_or_sha_mismatched_runs_are_incomplete(tmp_path):
+    l1, l1b = str(tmp_path / 'l1'), str(tmp_path / 'l1b')
+    os.makedirs(l1); os.makedirs(l1b)
+    s1, s2 = AG.SEEDS
+    _summary(l1, 'B0', s1, 42.3, 41.0); _summary(l1, 'B0', s2, 42.65, 41.5)
+    _summary(l1b, 'S1b', s1, 45.3, 44.0); _summary(l1b, 'S1b', s2, 45.65, 44.5)       # exactly +3.0 on both seeds (45.3 - 42.3 != 3.0 in floating point)
+    agg = AG.aggregate(l1, l1b)
+    assert agg['criteria']['G0']['margin'] == {str(s1): 3.0, str(s2): 3.0} and agg['criteria']['G0']['pass'] is True
+    assert agg['g0_lines'] == [f'G0(s{s1}): PASS', f'G0(s{s2}): PASS'] and agg['verdict'] == 'INCOMPLETE'      # T / Ub missing
+    _summary(l1, 'T', s1, 43.3, 42.0); _summary(l1, 'T', s2, 43.65, 42.5)                 # P1b exactly +2.0
+    _summary(l1b, 'Ub', s1, 44.3, 43.0); _summary(l1b, 'Ub', s2, 44.65, 43.5)             # P2b exactly +1.0
+    agg = AG.aggregate(l1, l1b)
+    assert agg['verdict'] == 'LEVER-pending-P3b' and agg['criteria']['P1b']['pass'] is True and agg['criteria']['P2b']['pass'] is True
+    assert agg['criteria']['degrade']['drop'] == {str(s1): 0.0, str(s2): 0.0}
+    shutil.rmtree(os.path.join(l1b, f'Ub-hetero-s{s2}')); _summary(l1b, 'Ub', s2, 44.65, 43.5, complete=False)
+    agg = AG.aggregate(l1, l1b)
+    assert agg['verdict'] == 'INCOMPLETE' and any('complete is not true' in r for r in agg['reasons'])
+    shutil.rmtree(os.path.join(l1b, f'Ub-hetero-s{s2}')); _summary(l1b, 'Ub', s2, 44.65, 43.5, sha='def')
+    agg = AG.aggregate(l1, l1b)
+    assert agg['verdict'] == 'INCOMPLETE' and any('scripts_sha of x.py differs' in r for r in agg['reasons'])
+    assert agg['g0_lines'] == [f'G0(s{s1}): PASS', f'G0(s{s2}): PASS']                  # the gate lines never depend on the other arms
 
 
 def test_aggregate_verdict_table(tmp_path):

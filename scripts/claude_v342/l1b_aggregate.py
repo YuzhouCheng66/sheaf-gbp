@@ -60,12 +60,26 @@ def read_run(root, arm, seed):
         elif s['c_assert'] is not True:
             out['problems'].append('c_assert false')
         out['c_assert'] = s.get('c_assert')
-    out['scripts_sha'] = s.get('scripts_sha')
+    if arm in L1B_ARMS and s.get('complete') is not True:                     # a partial run (steps < planned) never decides an L1b criterion
+        out['problems'].append('complete is not true')
+    out['scripts_sha'] = s.get('scripts_sha') if isinstance(s.get('scripts_sha'), dict) else None
     return out
 
 
+def sha_conflicts(runs):
+    """{script: {sha: [run names]}} for the L1b runs whose scripts_sha disagree (D8-85 section 5: sha 不符 -> INCOMPLETE)"""
+    seen = {}
+    for (arm, seed), r in runs.items():
+        if arm not in L1B_ARMS or not r['scripts_sha']:
+            continue
+        for k, v in r['scripts_sha'].items():
+            seen.setdefault(k, {}).setdefault(str(v), []).append(r['name'])
+    return {k: vv for k, vv in seen.items() if len(vv) > 1}
+
+
 def margin(a, b):
-    return None if a is None or b is None else a - b
+    """rounded to 6 decimals (as l1_aggregate.py): 45.3 - 42.3 = 2.9999999999999964 in floating point must count as 3.0"""
+    return None if a is None or b is None else round(a - b, 6)
 
 
 def load_all(l1, l1b):
@@ -89,7 +103,7 @@ def criteria(runs):
         out[key] = dict(arms=[a, b], threshold=thr, margin=m, pass_seed=ok, **{'pass': (None if any(v is None for v in ok.values()) else all(ok.values()))})
     d_val = {str(s): margin(_em(runs, 'S1b', s), _em(runs, 'T', s)) for s in SEEDS}
     d_fresh = {str(s): margin(_em(runs, 'S1b', s, 'fresh'), _em(runs, 'T', s, 'fresh')) for s in SEEDS}
-    drop = {k: (None if d_val[k] is None or d_fresh[k] is None else d_val[k] - d_fresh[k]) for k in d_val}
+    drop = {k: (None if d_val[k] is None or d_fresh[k] is None else round(d_val[k] - d_fresh[k], 6)) for k in d_val}
     trig = None if any(v is None for v in drop.values()) else any(v > DEGRADE_PT for v in drop.values())
     out['degrade'] = dict(val=d_val, fresh=d_fresh, drop=drop, max_drop_pt=DEGRADE_PT, triggered=trig)
     return out
@@ -102,6 +116,10 @@ def g0_line(crit, seed):
 
 def decide(runs, crit):
     reasons = [f'{r["name"]}: {p}' for r in runs.values() for p in r['problems']]
+    conflicts = sha_conflicts(runs)
+    reasons += [f'scripts_sha of {k} differs between L1b runs: ' + '; '.join(f'{sha[:12]} <- {sorted(v)}' for sha, v in sorted(vv.items())) for k, vv in sorted(conflicts.items())]
+    if conflicts:
+        return 'INCOMPLETE', reasons
     s1, s2 = SEEDS
     g0 = crit['G0']['pass_seed']
     if not runs[('S1b', s1)]['found']:

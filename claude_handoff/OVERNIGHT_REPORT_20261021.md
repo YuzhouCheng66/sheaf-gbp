@@ -4221,3 +4221,11 @@ G0(s1) .55；G0 两种子 | s1 过 .8；P2b | G0 .35（互补分片下单向交�
 
 ### 8. 算力与流程
 每项 ≈ 2.4 s/步 × 2,500 ≈ 100 分钟 + 评估 ≈ 8 分钟 ≈ 110 分钟（估 115 分钟，作业窗口 118 分钟；软截止只砍读数）；4 个租约（11–14），依 2026-10-30 10:26 UTC 的批准。流程：新文件 `l1b_model.py` / `l1b_train.py` / `l1b_aggregate.py` / `chain_day10_L1b.sh`（不动 L1 的钉定文件）→ 本地 CPU 单测 → 独立审查 → B 队列 QUEUE_DONE 之后 5090 冒烟（70 步，≈ 8 分钟）→ 发射队列 11–14（与 B 不并行）。
+
+### D8-85 附录 1（2026-10-30 11:12 UTC）：实现、独立审查与修正（正文不改）
+
+- **实现**（10:52–10:58 UTC，按正文 §3 / §5 写成；本地 CPU 单测 14 / 14）：`scripts/claude_v342/l1b_model.py`（ReaderB 尺度缓冲；AgentB.loss_aux 两段交叉熵；PairB.step / aux_ids / aux_summary；eval_decodability）、`l1b_train.py`、`l1b_aggregate.py`、`chain_day10_L1b.sh`、`l1b_leases.sh`、`test_l1b_model.py`。L1 的钉定文件一字未动（git diff 为空；sha 与链钉子一致）。单测要点：答案段交叉熵与 `l1_model.Agent.loss` 在 1e-5 内逐数相同（辅助段在答案之后，因果上不可见）；只用辅助损失反传，两边的适配器、读头、LoRA 与 w 都得到非零梯度；钉定的 `eval_latent` 在 PairB 上原样运行（C 断言通过、p = 1 回退到自身 z）；CLI 写出的 summary 通过 `l1_aggregate.validate_summary`；聚合器判决表全分支；恰好等于阈值的差值判 PASS。
+- **真实模型 CPU 冒烟**（uk-linux，nice 10，不碰 GPU，2 步 × batch 2，上限 900）：读头尺度 Qwen 0.0340 / Llama 0.0205（正文预估 0.034 / 0.021）；可训练参数 33.3 M（1.11 %）；第 1 步 ans 3.18 / aux 3.45（Qwen 答案 5.71、Llama 0.64）。评估段结果见后续记录。
+- **独立审查**（只读子代理，自行跑了单测）：**LAUNCH OK AFTER FIXES**。必改一处（MAJOR）：聚合器的差值没有 6 位舍入——45.3 − 42.3 在浮点下是 2.9999999999999964，恰好 +3.00 的 G0 会被误判 FAIL 并停掉队列（审查枚举 0.05 pt 粒度下的阈值对：1,500 对中 242 对误判）。已改：margin 与 degrade 的差值 round(·, 6)，加单测。小改：门槛函数先查 `L1B_G0_FAIL`（存在即 STOP）；链补钉 `l1_train.py`（l1b_train 导入它）并写入 lease json 与 summary 的 scripts_sha；busy 守卫用 `scripts/l1_` 匹配 L1 队列与链启动的 L1 训练器（原 `^$P scripts/l1_` 匹配不到 `python -B` 形式）；聚合器要求 L1b 运行 `complete = true`，并按 §5 把 L1b 运行间 scripts_sha 不一致记为 INCOMPLETE。审查确认的事项：评估路径与 L1 相同；时间预算约 105 分钟在硬截止之内，软截止只砍 p = 1 与可解码性读数；可解码性 F1 的金标是未截断的支撑句，64 token 上限会压低长句的召回（各臂一致，只影响读数）；无 `--eval-only`，判据评估段撞截止要整项重跑。
+- **sha256 前缀**（修正后，本地与 uk-linux 一致）：l1b_model bfebc685、l1b_train 2751768e、l1b_aggregate be3e0a49、chain_day10_L1b（仓库 FILL_ 版）ce60d995、l1b_leases 2e87db5a；钉定版链只在 uk-linux，sha 见发射记录。
+- **说明**：正文标题写"写于实现前"——草稿于 10:50 UTC 成文于临时文件，代码自 10:52 起按草稿实现，正文 10:55 UTC 追加入报告，字句未因实现而改。标题引用的"D8-84 10:31 UTC 条"是批准记录写入报告的时间；用户原话的时间是 ≈ 10:26 UTC。
