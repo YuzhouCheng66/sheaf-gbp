@@ -29,7 +29,8 @@ import torch  # noqa: E402
 import l1_model as M  # noqa: E402
 import l1b_model as MB  # noqa: E402
 
-CONDITIONS = ('none', 'gold', 'gold_p0.7', 'gold_noise', 'rand', 'text')
+CONDITIONS = ('none', 'gold', 'gold_p0.7', 'gold_noise', 'rand', 'text', 'ans', 'ans_text', 'ans_wrong')
+HINT_TEXT = "Hint from the other agent: the answer is {a}."   # 'ans_text': the gold answer in a sentence; 'ans': the bare answer tokens; 'ans_wrong': another example's answer
 
 
 def ac(dev):
@@ -106,6 +107,10 @@ def ceiling(args, log, tiny):
             ag = pair.agent(i)
             facts = M.DATA.text_sender_target(ex, 1 - i)
             toks = ag.ids(facts)[:args.k]
+            ans_toks = ag.ids(' ' + ex['answer'])[:args.k]
+            hint_toks = ag.ids(HINT_TEXT.format(a=ex['answer']))[:args.k]
+            wrong = exs[(n + 1) % len(exs)]['answer']
+            wrong_toks = ag.ids(HINT_TEXT.format(a=wrong))[:args.k]
             kk = max(1, len(toks))
             E = ag.embed.weight.detach().float()
             for c in conds:
@@ -121,6 +126,12 @@ def ceiling(args, log, tiny):
                         soft = 0.7 * E[toks] + 0.3 * stats[i]['mean']
                     elif c == 'gold_noise':
                         soft = E[toks] + 0.5 * stats[i]['rms'] * torch.randn(len(toks), E.shape[1], generator=g).to(E.device)
+                    elif c == 'ans':
+                        soft = E[ans_toks]
+                    elif c == 'ans_text':
+                        soft = E[hint_toks]
+                    elif c == 'ans_wrong':
+                        soft = E[wrong_toks]
                     elif c == 'rand':
                         ids = torch.randint(0, stats[i]['vocab'], (kk,), generator=g).to(E.device)
                         soft = E[ids]
