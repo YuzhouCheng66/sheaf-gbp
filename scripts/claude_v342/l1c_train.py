@@ -70,6 +70,17 @@ def readouts(pair, val, fresh, args, log, deadline):
     ps = [float(p) for p in args.absence_ps.split(',') if p.strip() and float(p) != 0.0]
     ekw = dict(eval_batch=args.eval_batch, max_new_tokens=args.max_new_tokens, keep_preds=False, log=log)
     try:
+        # order by diagnostic value per second: the decoded messages (no generation) and the comparable ceiling first (review MINOR 4)
+        for split, exs in (('val', val), ('fresh', fresh)):
+            where = f'message {split}'
+            r = MC.message_metrics(pair, exs, eval_batch=args.eval_batch, deadline=deadline, log=log)
+            out['message'][split] = r
+            log(f'{split} messages: token acc {r["token_acc"]:.3f} (message tokens {r["msg_token_acc"]}) F1 vs gold full {r["f1_full"]:.3f} / cut {r["f1_trunc"]:.3f} '
+                f'tokens {r["n_tokens_mean"]}; e.g. {r["examples"][0]["pred"][:120]!r}' if r['examples'] else f'{split} messages: no examples')
+        where = 'baseline gold32 val'
+        r = MC.eval_baseline(pair, val, 'gold32', deadline=deadline, **ekw)
+        out['baseline']['gold32']['val'] = r
+        log(f'VAL baseline gold32: EM {r["em"]:.2f} F1 {r["f1"]:.2f} owner {[(k, x["em"]) for k, x in r["em_by_owner"].items()]}')
         for p in ps:
             where = f'absence p={p}'
             r = M.eval_latent(pair, val, drop_p=p, seed=args.seed, c_check=False, deadline=deadline, **ekw)
@@ -80,21 +91,11 @@ def readouts(pair, val, fresh, args, log, deadline):
             r = MC.eval_hard(pair, exs, seed=args.seed, deadline=deadline, **ekw)
             out['hard'][split] = r
             log(f'{split} hard message: EM {r["em"]:.2f} F1 {r["f1"]:.2f} owner {[(k, x["em"]) for k, x in r["em_by_owner"].items()]}')
-        where = 'baseline gold32 val'
-        r = MC.eval_baseline(pair, val, 'gold32', deadline=deadline, **ekw)
-        out['baseline']['gold32']['val'] = r
-        log(f'VAL baseline gold32: EM {r["em"]:.2f} F1 {r["f1"]:.2f} owner {[(k, x["em"]) for k, x in r["em_by_owner"].items()]}')
         for kind in ('none', 'gold32'):
             where = f'baseline {kind} fresh'
             r = MC.eval_baseline(pair, fresh, kind, deadline=deadline, **ekw)
             out['baseline'][kind]['fresh'] = r
             log(f'fresh baseline {kind}: EM {r["em"]:.2f} F1 {r["f1"]:.2f} owner {[(k, x["em"]) for k, x in r["em_by_owner"].items()]}')
-        for split, exs in (('val', val), ('fresh', fresh)):
-            where = f'message {split}'
-            r = MC.message_metrics(pair, exs, eval_batch=args.eval_batch, deadline=deadline, log=log)
-            out['message'][split] = r
-            log(f'{split} messages: token acc {r["token_acc"]:.3f} (message tokens {r["msg_token_acc"]}) F1 vs gold full {r["f1_full"]:.3f} / cut {r["f1_trunc"]:.3f} '
-                f'tokens {r["n_tokens_mean"]}; e.g. {r["examples"][0]["pred"][:120]!r}' if r['examples'] else f'{split} messages: no examples')
         where = None
     except M.Deadline as e:
         log(f'readouts stopped at {where}: {e}')
@@ -136,6 +137,9 @@ def main(argv=None):
             receiver.update(b0_arm=s0.get('arm'), b0_seed=s0.get('seed'), b0_val_em=(s0.get('val') or {}).get('em'), b0_fresh_em=(s0.get('fresh') or {}).get('em'))
         if receiver.get('arm') not in (None, 'B0') or (receiver.get('seed') not in (None, args.seed)):
             raise SystemExit(f'--receiver-from is not the B0 checkpoint of seed {args.seed}: {receiver}')
+        for k in ('lora_r', 'lora_alpha'):
+            if receiver.get(k) is not None and receiver[k] != getattr(args, k):
+                raise SystemExit(f'--receiver-from {k} = {receiver[k]} differs from --{k.replace("_", "-")} {getattr(args, k)} (a silent LoRA scale mismatch)')
         log(f'receiver: {receiver}')
     ckp = os.path.join(args.out, 'trainable.pt')
     try:
@@ -146,6 +150,8 @@ def main(argv=None):
         load_s = time.time() - t0
         counts = M.count_params(pair)
         info = T1.agents_info(pair)
+        if receiver is not None and receiver.get('models') is not None and list(receiver['models']) != [a['name'] for a in info]:
+            raise SystemExit(f'--receiver-from models {receiver["models"]} differ from this pair {[a["name"] for a in info]}')
         fillers = {a.name: dict(id=a.filler, is_pad=a.filler_is_pad, vocab=a.reader.vocab) for a in pair.agents}
         log(f'model: {info}; trainable {counts["trainable"]:,} / {counts["total"]:,} ({100 * counts["trainable_frac"]:.3f} %); w {pair.w_value}; fillers {fillers}')
         tr = M.train_steps(pair, lambda b: pair.step(b, train=True), M.batch_stream(train, args.batch, args.seed), args.steps, 0.0, args.lr_adapter,

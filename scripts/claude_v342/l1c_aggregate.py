@@ -6,7 +6,8 @@ VAL EM (percentage points, mean over agents) decides; the baseline `none` is the
   P2c (sheaf vs one-way)    Cs - Cu >= +1.0 -> ADDS,  <= -1.0 -> HURTS,  between -> NEUTRAL  (seeds in different classes -> AMBIGUOUS)
   degrade: (Cu - none) on fresh lower than on VAL by more than 1.0 pt on either seed -> AMBIGUOUS note
   verdict: Cu s1 missing / invalid -> INCOMPLETE; G1(s1) fails -> CHANNEL-NO-2; Cu s2 missing -> INCOMPLETE; G1(s2) fails -> CHANNEL-NO-2;
-  else CHANNEL-YES / SHEAF-<ADDS|HURTS|NEUTRAL|AMBIGUOUS|pending> (pending while a Cs run is missing). Margins rounded to 6 decimals.
+  else CHANNEL-YES / SHEAF-<ADDS|HURTS|NEUTRAL|AMBIGUOUS|pending|INCOMPLETE> (pending while a Cs run is missing, INCOMPLETE when a Cs run exists
+  but is invalid: C assertion false, complete false, schema); a triggered degrade appends ' (degrade: AMBIGUOUS)'. Margins rounded to 6 decimals.
 Prints 'G1(s<seed>): PASS | FAIL | INCOMPLETE' per seed (--gate <seed>: only that seed) and 'VERDICT: ...'; writes <out>.json / .md. Exits 0.
 """
 from __future__ import annotations
@@ -181,13 +182,18 @@ def decide(runs, crit):
         if g1[str(s)] is False:
             return 'CHANNEL-NO-2', reasons + [f'G1 failed on seed {s}: Cu - none = {crit["G1"]["margin_em"][str(s)]:.2f} pt (>= {G1_EM_PT}?), '
                                               f'other bucket {crit["G1"]["margin_other"][str(s)]:.2f} pt (>= {G1_OTHER_PT}?)']
+    deg = ''
     if crit['degrade']['triggered']:
-        reasons.append('degrade: Cu - none drops by more than 1.0 pt from VAL to fresh (note; the channel verdict stands)')
+        reasons.append('degrade: Cu - none drops by more than 1.0 pt from VAL to fresh -> marked AMBIGUOUS (D8-86 section 5); the channel verdict stands')
+        deg = ' (degrade: AMBIGUOUS)'
     sub = crit['P2c']['verdict']
     if sub is None:
-        missing = [f'Cs-{PAIR}-s{s}' for s in SEEDS if not runs[('Cs', s)]['found'] or runs[('Cs', s)]['problems']]
-        return 'CHANNEL-YES / SHEAF-pending', reasons + [f'Cs not decidable yet: {missing}']
-    return f'CHANNEL-YES / SHEAF-{sub}', reasons + [f'P2c: Cs - Cu = {crit["P2c"]["margin"]} -> {crit["P2c"]["class_seed"]}']
+        missing = [f'Cs-{PAIR}-s{s}' for s in SEEDS if not runs[('Cs', s)]['found']]
+        invalid = [f'Cs-{PAIR}-s{s}' for s in SEEDS if runs[('Cs', s)]['found'] and runs[('Cs', s)]['problems']]
+        if invalid:
+            return 'CHANNEL-YES / SHEAF-INCOMPLETE' + deg, reasons + [f'Cs invalid (C assertion / schema / complete): {invalid}'] + ([f'Cs missing: {missing}'] if missing else [])
+        return 'CHANNEL-YES / SHEAF-pending' + deg, reasons + [f'Cs not run yet: {missing}']
+    return f'CHANNEL-YES / SHEAF-{sub}' + deg, reasons + [f'P2c: Cs - Cu = {crit["P2c"]["margin"]} -> {crit["P2c"]["class_seed"]}']
 
 
 def aggregate(l1, l1c, gate=None):

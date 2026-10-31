@@ -327,6 +327,10 @@ def build_pair(arm, pair, device, model=None, hf_cache=None, tiny=None, lora=Tru
         lora_keys = [k for k in receiver_state if 'lora_' in k]
         if not lora_keys:
             raise ValueError('receiver_state has no LoRA tensors (expected the B0 checkpoint state)')
+        own = [n for n, _ in pc.named_parameters() if 'lora_' in n]
+        missing = sorted(set(own) - set(lora_keys))
+        if missing:
+            raise ValueError(f'receiver_state covers {len(lora_keys)} of the {len(own)} LoRA tensors of this pair; e.g. missing {missing[:3]}')
         M.load_trainable_state(pc, {k: receiver_state[k] for k in lora_keys}, strict=True)
     for a in pc.agents:
         a.freeze_lora()
@@ -340,8 +344,10 @@ def load_receiver(path):
     """runs/l1/B0-hetero-s<seed>/trainable.pt -> (state dict, info dict(path, sha256, arm, seed, models))"""
     ck = torch.load(path, map_location='cpu', weights_only=False)
     state = ck['state'] if isinstance(ck, dict) and 'state' in ck else ck
+    cfg = (ck.get('config') or {}) if isinstance(ck, dict) else {}
     info = dict(path=os.path.abspath(path), sha256=M.file_sha256(path), arm=ck.get('arm') if isinstance(ck, dict) else None,
-                seed=ck.get('seed') if isinstance(ck, dict) else None, models=ck.get('models') if isinstance(ck, dict) else None, n_tensors=len(state))
+                seed=ck.get('seed') if isinstance(ck, dict) else None, models=ck.get('models') if isinstance(ck, dict) else None, n_tensors=len(state),
+                lora_r=cfg.get('lora_r'), lora_alpha=cfg.get('lora_alpha'), lora_dropout=cfg.get('lora_dropout'), pair=cfg.get('pair'))
     return state, info
 
 

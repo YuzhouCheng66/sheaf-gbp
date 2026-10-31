@@ -170,6 +170,9 @@ def test_build_pair_loads_and_freezes_the_receiver_state():
     assert all(not p.requires_grad for n, p in p1.named_parameters() if 'lora_' in n)
     with pytest.raises(ValueError):
         MC.build_pair('Cu', 'hetero', torch.device('cpu'), tiny=M.tiny_models(TL.EXAMPLES, 5), receiver_state={'w_raw': torch.zeros(())}, k=K, d_e=DE, n_heads=2)
+    partial = dict(list(state.items())[:3])                                   # a state that covers only part of the pair's LoRA -> refused
+    with pytest.raises(ValueError):
+        MC.build_pair('Cu', 'hetero', torch.device('cpu'), tiny=M.tiny_models(TL.EXAMPLES, 5), receiver_state=partial, k=K, d_e=DE, n_heads=2)
     with pytest.raises(ValueError):
         MC.build_pair('S1', 'hetero', torch.device('cpu'), tiny=M.tiny_models(TL.EXAMPLES, 5), k=K, d_e=DE, n_heads=2)
 
@@ -266,7 +269,7 @@ def test_aggregator_verdicts():
         assert a['verdict'] == 'INCOMPLETE' and a['g1_lines'][0].endswith('INCOMPLETE')
         # G1 fails on seed 1 (EM gain 2.9 < 3) -> CHANNEL-NO-2
         _summary(l1c, 'Cu', AG.SEEDS[0], 42.9, 42.0, other=30.0, none=40.0, none_other=18.0)
-        a = _agg(l1c and l1, l1c)
+        a = _agg(l1, l1c)
         assert a['verdict'] == 'CHANNEL-NO-2' and a['g1_lines'][0] == f'G1(s{AG.SEEDS[0]}): FAIL'
         # G1 passes on EM but not on the other bucket -> FAIL
         shutil.rmtree(os.path.join(l1c, f'Cu-hetero-s{AG.SEEDS[0]}'))
@@ -302,7 +305,7 @@ def test_aggregator_verdicts():
         shutil.rmtree(os.path.join(l1c, f'Cs-hetero-s{AG.SEEDS[0]}'))
         _summary(l1c, 'Cs', AG.SEEDS[0], 43.8, 43.0, c_assert=False)
         a = _agg(l1, l1c)
-        assert a['verdict'] == 'CHANNEL-YES / SHEAF-pending' and any('c_assert false' in r for r in a['reasons'])
+        assert a['verdict'] == 'CHANNEL-YES / SHEAF-INCOMPLETE' and any('c_assert false' in r for r in a['reasons'])
         shutil.rmtree(os.path.join(l1c, f'Cs-hetero-s{AG.SEEDS[0]}'))
         _summary(l1c, 'Cs', AG.SEEDS[0], 43.8, 43.0, sha='zzz')
         assert _agg(l1, l1c)['verdict'] == 'INCOMPLETE'
