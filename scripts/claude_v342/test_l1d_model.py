@@ -53,11 +53,14 @@ def test_latent_pieces_wrap_the_slots_into_the_hint_template_and_b0_pieces_are_p
         (pb, sb, ab) = pair.pieces(TL.EXAMPLES[:1], i, 'B0', target=None)[0]
         (pb0, sb0, ab0), _ = M.make_pieces(ag, TL.EXAMPLES[0], i, 'B0', None, None, None)
         assert pb == pb0 and sb == [] and ab == []
-    # the context cap leaves room for the template
+    # the documents cap is max_ctx; the template sits on top (none and Du read identical documents)
     pc = _pair('Du', max_ctx=40)
     ag = pc.agent(0)
     (pre, suf, _) = pc.pieces(TL.EXAMPLES[:1], 0, 'latent', target=None)[0]
-    assert len(pre) + len(suf) <= 40
+    (pre0, suf0, _), _ = M.make_pieces(ag, TL.EXAMPLES[0], 0, 'latent', 40, None, None)
+    assert pre == list(pre0) + ag.hint_pre and suf == ag.hint_post + list(suf0) and len(pre0) + len(suf0) <= 40
+    with pytest.raises(ValueError):
+        MD.PairD([pc.agent(0)], 'same', 'Du')
 
 
 def test_targets_are_the_gold_answer_cut_and_filler_padded():
@@ -86,6 +89,9 @@ def test_pass1_uses_the_lora_and_the_own_answer_and_caches_it():
             assert ex['id'] in pair.agent(i).answer_cache
     z1b, _ = pair.encode_both(batch)                                           # served from the cache: no new generation, same z
     assert all(pair.agent(i).n_generated == 2 for i in range(2)) and torch.allclose(z1, z1b)
+    pair.trunc.clear()
+    pair.encode_both(batch)
+    assert sum(pair.trunc.values()) == 0, 'the sender pieces must not count in the truncation readout'
     with torch.no_grad():
         for n, p in pair.named_parameters():
             if 'lora_B' in n:

@@ -98,7 +98,7 @@ if [ "$FREE_MB" -lt 5000 ]; then log "ABORT: only ${FREE_MB} MB free on /mnt/dat
 SELF=$(CUDA_VISIBLE_DEVICES= timeout -k 30 300 $P -B -c "import sys; sys.path.insert(0, 'scripts'); import l1d_model, l1d_train, l1d_aggregate, l1c_model, l1_model, l1_train, l1_fusion, l1_data, torch, transformers, peft; print('import self-check ok', torch.__version__, transformers.__version__, peft.__version__)" 2>&1 | tail -1)
 case "$SELF" in "import self-check ok"*) log "L1d $SELF";; *) log "ABORT: import self-check failed: $SELF"; exit 2;; esac
 # 5090 SOLO: no other chain, no project trainer / diag, no compute process on the GPU (wait, never preempt)
-busy(){ pgrep -af "bash scripts/chain_" | grep -v "chain_day12_L1d" | grep -q . || pgrep -f "^$P scripts/train_" >/dev/null || pgrep -f "scripts/diag_" >/dev/null || pgrep -f "^$P scripts/g4_" >/dev/null || pgrep -f "scripts/l1_" >/dev/null || pgrep -f "scripts/l1b_" >/dev/null || pgrep -f "scripts/l1c_" >/dev/null || [ -n "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]; }
+busy(){ pgrep -af "bash scripts/chain_" | grep -v "chain_day12_L1d" | grep -q . || pgrep -f "^$P scripts/train_" >/dev/null || pgrep -f "scripts/diag_" >/dev/null || pgrep -f "^$P scripts/g4_" >/dev/null || pgrep -f "scripts/l1_" >/dev/null || pgrep -f "scripts/l1b_" >/dev/null || pgrep -f "scripts/l1c_" >/dev/null || pgrep -f "scripts/l1d_train" >/dev/null || [ -n "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]; }   # never "scripts/l1d_" (matches the queue -> waits on itself); the chain's own l1d_train child is started after this wait
 while busy; do sleep 120; done
 sleep 60; while busy; do sleep 120; done
 check_shas

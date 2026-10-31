@@ -52,7 +52,7 @@ class DecoderD(MC.Decoder):
 # ================================================================ (a) (b) the agent
 class AgentD(MC.AgentC):
     """l1c_model.AgentC whose pass 1 is the B0 model (LoRA enabled, frozen) over its own prompt + its own greedy answer, and whose message
-    target is the gold answer. `answer_cache`: example id -> (answer text, receiver-tokenizer ids of ' ' + text)."""
+    target is the gold answer. `answer_cache`: example id -> (answer text, this agent's own tokenizer ids of ' ' + text, fed back into its pass 1)."""
 
     def __init__(self, model, tokenizer, name, **kw):
         super().__init__(model, tokenizer, name, **kw)
@@ -107,6 +107,8 @@ class PairD(MC.PairC):
     def __init__(self, agents, pair, arm, max_ctx=None):
         if arm not in ARMS:
             raise ValueError(f'arm {arm} not in {ARMS}')
+        if pair != 'hetero':
+            raise ValueError('PairD supports pair hetero only (one answer cache per agent object; D8-87 runs hetero)')
         M.Pair.__init__(self, agents, pair, BASE_ARM[arm], max_ctx=max_ctx)
         self.arm_c = arm
         self.hard = False
@@ -117,11 +119,9 @@ class PairD(MC.PairC):
         if mode != 'latent':
             return M.Pair.pieces(self, batch, i, mode, target, messages)
         ag = self.agent(i)
-        extra = len(ag.hint_pre) + len(ag.hint_post)
-        cap = (self.max_ctx - extra) if self.max_ctx else None
         out = []
-        for ex in batch:
-            (pre, suf, ans), tr = M.make_pieces(ag, ex, i, 'latent', cap, target, None)
+        for ex in batch:                                                       # the documents cap is max_ctx; the template (~12 tokens) sits on top (D8-87 section 2)
+            (pre, suf, ans), tr = M.make_pieces(ag, ex, i, 'latent', self.max_ctx, target, None)
             self.trunc[tr] += 1
             out.append((list(pre) + ag.hint_pre, ag.hint_post + list(suf), ans))
         return out
@@ -135,12 +135,15 @@ class PairD(MC.PairC):
     def encode_both(self, batch):
         """pass 1 of both agents on their B0 prompt + own answer -> z (2, B, K, D_e), lam (2, B, K, D_e) float32"""
         zs, ls = [], []
+        saved = dict(self.trunc)                                               # the sender's B0 pieces are not part of the receiver's truncation readout
         for i in range(M.N_AGENTS):
             pb0, answers = self.sender_pieces(batch, i)
             pcs = [(p, a_ids, []) for (p, _, _), (_, a_ids) in zip(pb0, answers)]
             z, lam = self.agent(i).encode(pcs)
             zs.append(z)
             ls.append(lam)
+        self.trunc.clear()
+        self.trunc.update(saved)
         return torch.stack(zs), torch.stack(ls)
 
 
