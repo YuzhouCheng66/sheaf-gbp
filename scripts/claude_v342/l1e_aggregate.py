@@ -1,4 +1,4 @@
-"""l1e_aggregate.py (Claude, 2026-10-31): the L1e verdict (pre-registration D8-88 = D8-88 section 5) from summary.json files.
+"""l1e_aggregate.py (Claude, 2026-10-31): the L1e verdict (pre-registration D8-88 = D8-87 section 5) from summary.json files.
 Reads Eu-hetero-s<seed> and Es-hetero-s<seed> from the L1e runs dir (--l1e); B0 / T from the L1 runs dir (--l1) are reference only.
 VAL EM of the HARD rendering (summary.val; percentage points, mean over agents) decides; the baseline `none` is the one computed IN THE SAME RUN
 by the frozen receiver on the plain B0 prompt (summary.baseline.none.val); fresh only for the degrade note.

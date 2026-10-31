@@ -27,7 +27,7 @@ cd /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021 || exit 1
 PREREG="$1"; APPROVAL="$2"
 [ "$PREREG" = "D8-88" ] && [ -n "$APPROVAL" ] || { echo "usage: chain_day13_L1e.sh D8-88 <user GPU approval UTC> --lease N [--est-l1e 55]"; exit 2; }
 shift 2
-LEASE=""; EST=60
+LEASE=""; EST=55
 while [ $# -gt 0 ]; do
   case "$1" in
     --lease) LEASE="$2"; shift 2;;
@@ -64,7 +64,7 @@ DATA_SHA=41d0db811e710579ddcdab76c8c622358984423da54a8e792716fa76c75263dd       
 TRAINJ_SHA=4b6af5e2bdb78d23d57ba83592c71944f9dbbb6568db4e9bdfb2ffd1b7e0caa3                                                 # $DATA/train.jsonl (L1 pin)
 VALJ_SHA=b1e240bbe70873e1f2ac7586171caf6d3620f269c0e02807033a5fded5f68ecf                                                     # $DATA/val.jsonl (L1 pin)
 FRESHJ_SHA=985610d8e092745c9edc37b7624ab7e502a9e94da9b0c7a280cd4f68d00acc60                                                 # $DATA/fresh.jsonl (L1 pin)
-# ---------------------------------------------------------------- the L1d knobs (D8-88; defaults of l1e_train.py, passed explicitly for the record)
+# ---------------------------------------------------------------- the L1e knobs (D8-88; defaults of l1e_train.py, passed explicitly for the record)
 CTX_SHARD=900
 L1E_FLAGS="--steps 2000 --k 8 --eval-batch 32 --absence-ps 0.0,1.0 --tau 1.0 --n-blocks 2"
 mkdir -p runs/l1e
@@ -92,7 +92,7 @@ check_shas
 for s in $SEEDS; do [ -f $L1RUNS/B0-hetero-s$s/summary.json ] || { log "ABORT: $L1RUNS/B0-hetero-s$s/summary.json missing"; exit 2; }; done
 mkdir $RUNS.lock 2>/dev/null || { log "ABORT: a chain_day13_L1e lease is already running (lock $RUNS.lock exists)"; exit 2; }
 trap 'rmdir $RUNS.lock 2>/dev/null' EXIT
-for d in $RUNS $L1RUNS $WORK/runs/l1b $WORK/runs/l1c $WORK/runs/l1e; do [ -e $d/lease_$LEASE.json ] && { log "ABORT: $d/lease_$LEASE.json exists (lease numbers continue L1 / L1b / L1c / L1d / L1e; use the next number)"; exit 2; }; done
+for d in $RUNS $L1RUNS $WORK/runs/l1b $WORK/runs/l1c $WORK/runs/l1d; do [ -e $d/lease_$LEASE.json ] && { log "ABORT: $d/lease_$LEASE.json exists (lease numbers continue L1 / L1b / L1c / L1d / L1e; use the next number)"; exit 2; }; done
 FREE_MB=$(df -Pm /mnt/datasets | awk 'NR==2{print $4}')
 if [ "$FREE_MB" -lt 5000 ]; then log "ABORT: only ${FREE_MB} MB free on /mnt/datasets (< 5,000)"; exit 2; fi
 [ -d $HF_HUB_CACHE/models--Qwen--Qwen3-1.7B ] && [ -d $HF_HUB_CACHE/models--meta-llama--Llama-3.2-1B-Instruct ] || { log "ABORT: the two models are not in $HF_HUB_CACHE (the chain never downloads)"; exit 2; }
@@ -153,7 +153,7 @@ gate(){                                                                         
   local G; G=$(grep -a -E "^G1e\(s$GATE_SEED\): " $RUNS/aggregate/gate_lease$LEASE.log | tail -1)
   case "$G" in
     "G1e(s$GATE_SEED): PASS") date -u +%FT%TZ > $RUNS/L1E_G1_PASS; log "L1e G1e passed on seed $GATE_SEED -> L1E_G1_PASS";;
-    "G1e(s$GATE_SEED): FAIL") date -u +%FT%TZ > $RUNS/L1E_G1_FAIL; log "L1e G1e FAILED on seed $GATE_SEED -> L1E_G1_FAIL; no other L1d job is started (D8-88: CHANNEL-NO-4)"; STOP=1; return 1;;
+    "G1e(s$GATE_SEED): FAIL") date -u +%FT%TZ > $RUNS/L1E_G1_FAIL; log "L1e G1e FAILED on seed $GATE_SEED -> L1E_G1_FAIL; no other L1e job is started (D8-88: CHANNEL-NO-4)"; STOP=1; return 1;;
     *) log "L1e gate did not decide ('$G'): nothing else is started this lease (the coordinator decides)"; STOP=1; return 1;;
   esac
 }
