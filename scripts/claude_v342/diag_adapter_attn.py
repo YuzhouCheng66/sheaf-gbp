@@ -62,13 +62,15 @@ def main(argv=None):
     ap.add_argument('--k', type=int, default=MD.K_HINT)
     ap.add_argument('--tail', type=int, default=6)
     ap.add_argument('--device', default='cuda')
+    ap.add_argument('--module', default='l1d_model', choices=('l1d_model', 'l1e_model'), help='which model side builds the pair (L1d: SenderAdapter2; L1e: SenderAdapter3)')
     ap.add_argument('--out', required=True)
     args = ap.parse_args(argv)
     os.makedirs(args.out, exist_ok=True)
     dev = torch.device(args.device)
     val = M.DATA.read_jsonl(args.val)[:args.n]
-    state, info = MD.load_receiver(os.path.join(args.receiver_from, 'trainable.pt'))
-    pair = MD.build_pair(args.arm, 'hetero', dev, hf_cache=args.hf_cache, receiver_state=state, max_ctx=900, k=args.k, lora_dropout=0.0)
+    MX = MD if args.module == 'l1d_model' else __import__('l1e_model')
+    state, info = MX.load_receiver(os.path.join(args.receiver_from, 'trainable.pt'))
+    pair = MX.build_pair(args.arm, 'hetero', dev, hf_cache=args.hf_cache, receiver_state=state, max_ctx=900, k=args.k, lora_dropout=0.0)
     variant = 'init'
     if args.ckpt:
         ck = torch.load(args.ckpt, map_location='cpu', weights_only=False)
