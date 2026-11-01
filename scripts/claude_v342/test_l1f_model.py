@@ -129,8 +129,10 @@ def test_aggregator_reads_hetero_l1_and_same2_l1f_runs():
         assert a['verdict'] == 'CHANNEL-NO-5-same' and a['g1_lines'][0] == f'G1f(s{AG.SEEDS[0]}): FAIL'
         assert a['runs'][f'B0-hetero-s{AG.SEEDS[0]}']['found'] and not a['runs'][f'B0-hetero-s{AG.SEEDS[0]}']['problems']
         shutil.rmtree(os.path.join(l1f, f'Fu-same2-s{AG.SEEDS[0]}'))
-        for s in AG.SEEDS:
-            _summary(l1f, 'Fu', 'same2', s, 46.0, 45.0, other=25.0, none=40.0, none_other=18.0)
+        _summary(l1f, 'Fu', 'same2', AG.SEEDS[0], 46.0, 45.0, other=25.0, none=40.0, none_other=18.0)
+        a = AG.aggregate(l1, l1f)
+        assert a['verdict'] == 'CHANNEL-YES-same-pending-s2' and a['g1_lines'][0].endswith('PASS')
+        _summary(l1f, 'Fu', 'same2', AG.SEEDS[1], 46.0, 45.0, other=25.0, none=40.0, none_other=18.0)
         a = AG.aggregate(l1, l1f)
         assert a['verdict'] == 'CHANNEL-YES-same / SHEAF-pending' and a['criteria']['reference'][f'B0_s{AG.SEEDS[0]}'] == 42.0
         r = subprocess.run([sys.executable, '-B', AGG_F, '--l1', l1, '--l1f', l1f, '--gate', str(AG.SEEDS[0]), '--out', os.path.join(d, 'gate')], capture_output=True, text=True)

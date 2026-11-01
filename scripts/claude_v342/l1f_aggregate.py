@@ -1,5 +1,5 @@
-"""l1f_aggregate.py (Claude, 2026-11-01): the L1f verdict (pre-registration D8-89 = D8-89 on the same-model pair same2) from summary.json files.
-Reads Fu-hetero-s<seed> and Fs-hetero-s<seed> from the L1f runs dir (--l1f); B0 / T from the L1 runs dir (--l1) are reference only.
+"""l1f_aggregate.py (Claude, 2026-11-01): the L1f verdict (pre-registration D8-89 = D8-88 on the same-model pair same2) from summary.json files.
+Reads Fu-same2-s<seed> and Fs-same2-s<seed> from the L1f runs dir (--l1f); B0 / T from the L1 runs dir (--l1) are reference only.
 VAL EM of the HARD rendering (summary.val; percentage points, mean over agents) decides; the baseline `none` is the one computed IN THE SAME RUN
 by the frozen receiver on the plain B0 prompt (summary.baseline.none.val); fresh only for the degrade note.
   G1f (channel, per seed)   Fu - none >= 3.0 pt  AND  other-bucket Fu - none >= 5.0 pt        (both seeds must pass)
@@ -176,6 +176,8 @@ def decide(runs, crit):
     for s in SEEDS:
         r = runs[('Fu', s)]
         if not r['found']:
+            if s == SEEDS[1] and g1[str(SEEDS[0])] is True:                   # D8-89 section 4: s1 passed, s2 not run (the lease held one job)
+                return 'CHANNEL-YES-same-pending-s2', reasons + [f'G1f(s{SEEDS[0]}) PASS; Fu-{PAIR}-s{s} not run']
             return 'INCOMPLETE', reasons + [f'missing Fu-{PAIR}-s{s}']
         if r['problems'] or g1[str(s)] is None:
             return 'INCOMPLETE', reasons + [f'G1f(s{s}) undecidable']

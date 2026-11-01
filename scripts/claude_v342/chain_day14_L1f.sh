@@ -11,7 +11,7 @@
 # several per lease when they fit (--est-l1f minutes each, default 60; RE-ESTIMATE from the 5090 smoke):
 #   Fu-same2-s342101 -> the G1f gate (CPU: l1f_aggregate.py --gate 342101 prints "G1f(s342101): PASS | FAIL | INCOMPLETE"; PASS -> runs/l1f/L1F_G1_PASS,
 #                        FAIL -> runs/l1f/L1F_G1_FAIL and nothing else is ever started by this chain, INCOMPLETE -> nothing else this lease)
-#   Fu-same2-s342202, Fs-same2-s342101, Fs-same2-s342202   (only with L1F_G1_PASS)
+#   Fu-same2-s342202   (only with L1F_G1_PASS; Fs is NOT run in this batch, D8-89 section 3c)
 #   Lease 18 = the remainder of the user's approval of 2026-10-31 ("做 L1d", at most 3 leases); A of "先A后B" (2026-11-01), D8-89.
 #   Every job gets --deadline-epoch (lease end - 60 s) and runs under timeout -k 30 (lease end). After the last job:
 #   l1f_aggregate.py --l1 runs/l1 --l1f runs/l1f (CPU, nice 10) -> runs/l1f/aggregate/lease<N>.*; the verdict is the last lease's.
@@ -27,7 +27,7 @@ cd /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021 || exit 1
 PREREG="$1"; APPROVAL="$2"
 [ "$PREREG" = "D8-89" ] && [ -n "$APPROVAL" ] || { echo "usage: chain_day14_L1f.sh D8-89 <user GPU approval UTC> --lease N [--est-l1f 55]"; exit 2; }
 shift 2
-LEASE=""; EST=55
+LEASE=""; EST=70
 while [ $# -gt 0 ]; do
   case "$1" in
     --lease) LEASE="$2"; shift 2;;
@@ -94,7 +94,7 @@ check_shas
 for s in $SEEDS; do [ -f $L1RUNS/B0-hetero-s$s/summary.json ] || { log "ABORT: $L1RUNS/B0-hetero-s$s/summary.json missing"; exit 2; }; done
 mkdir $RUNS.lock 2>/dev/null || { log "ABORT: a chain_day14_L1f lease is already running (lock $RUNS.lock exists)"; exit 2; }
 trap 'rmdir $RUNS.lock 2>/dev/null' EXIT
-for d in $RUNS $L1RUNS $WORK/runs/l1b $WORK/runs/l1c $WORK/runs/l1d $WORK/runs/l1f; do [ -e $d/lease_$LEASE.json ] && { log "ABORT: $d/lease_$LEASE.json exists (lease numbers continue L1 / L1b / L1c / L1d / L1e / L1f; use the next number)"; exit 2; }; done
+for d in $RUNS $L1RUNS $WORK/runs/l1b $WORK/runs/l1c $WORK/runs/l1d $WORK/runs/l1e; do [ -e $d/lease_$LEASE.json ] && { log "ABORT: $d/lease_$LEASE.json exists (lease numbers continue L1 / L1b / L1c / L1d / L1e / L1f; use the next number)"; exit 2; }; done
 FREE_MB=$(df -Pm /mnt/datasets | awk 'NR==2{print $4}')
 if [ "$FREE_MB" -lt 5000 ]; then log "ABORT: only ${FREE_MB} MB free on /mnt/datasets (< 5,000)"; exit 2; fi
 [ -d $HF_HUB_CACHE/models--Qwen--Qwen3-1.7B ] && [ -d $HF_HUB_CACHE/models--meta-llama--Llama-3.2-1B-Instruct ] || { log "ABORT: the two models are not in $HF_HUB_CACHE (the chain never downloads)"; exit 2; }
@@ -102,7 +102,7 @@ if [ "$FREE_MB" -lt 5000 ]; then log "ABORT: only ${FREE_MB} MB free on /mnt/dat
 SELF=$(CUDA_VISIBLE_DEVICES= timeout -k 30 300 $P -B -c "import sys; sys.path.insert(0, 'scripts'); import l1f_model, l1f_train, l1f_aggregate, l1e_model, l1d_model, l1c_model, l1_model, l1_train, l1_fusion, l1_data, torch, transformers, peft; print('import self-check ok', torch.__version__, transformers.__version__, peft.__version__)" 2>&1 | tail -1)
 case "$SELF" in "import self-check ok"*) log "L1f $SELF";; *) log "ABORT: import self-check failed: $SELF"; exit 2;; esac
 # 5090 SOLO: no other chain, no project trainer / diag, no compute process on the GPU (wait, never preempt)
-busy(){ pgrep -af "bash scripts/chain_" | grep -v "chain_day14_L1f" | grep -q . || pgrep -f "^$P scripts/train_" >/dev/null || pgrep -f "scripts/diag_" >/dev/null || pgrep -f "^$P scripts/g4_" >/dev/null || pgrep -f "scripts/l1_" >/dev/null || pgrep -f "scripts/l1b_" >/dev/null || pgrep -f "scripts/l1c_" >/dev/null || pgrep -f "scripts/l1d_" >/dev/null || pgrep -f "scripts/l1e_" >/dev/null || pgrep -f "scripts/l1f_train" >/dev/null || [ -n "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]; }   # never "scripts/l1f_" (matches the queue -> waits on itself); the chain's own l1d_train child is started after this wait
+busy(){ pgrep -af "bash scripts/chain_" | grep -v "chain_day14_L1f" | grep -q . || pgrep -f "^$P scripts/train_" >/dev/null || pgrep -f "scripts/diag_" >/dev/null || pgrep -f "^$P scripts/g4_" >/dev/null || pgrep -f "scripts/l1_" >/dev/null || pgrep -f "scripts/l1b_" >/dev/null || pgrep -f "scripts/l1c_" >/dev/null || pgrep -f "scripts/l1d_" >/dev/null || pgrep -f "scripts/l1e_" >/dev/null || pgrep -f "scripts/l1f_train" >/dev/null || [ -n "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]; }   # never "scripts/l1f_" (matches the queue -> waits on itself); the chain's own l1f_train child is started after this wait
 while busy; do sleep 120; done
 sleep 60; while busy; do sleep 120; done
 check_shas
@@ -166,7 +166,7 @@ else
   job Fu-same2-s$GATE_SEED $EST --arm Fu --pair same2 --seed $GATE_SEED --receiver-from $L1RUNS/B0-hetero-s$GATE_SEED $COMMON
   if gate; then
     for s in $SEEDS; do [ $s = $GATE_SEED ] || job Fu-same2-s$s $EST --arm Fu --pair same2 --seed $s --receiver-from $L1RUNS/B0-hetero-s$s $COMMON; done
-    for s in $SEEDS; do job Fs-same2-s$s $EST --arm Fs --pair same2 --seed $s --receiver-from $L1RUNS/B0-hetero-s$s $COMMON; done
+    : # Fs is not run in this batch (D8-89 section 3c): only Fu s1 -> gate -> Fu s2 are reachable
   fi
 fi
 END=$(date +%s)
