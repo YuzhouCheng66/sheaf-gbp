@@ -2,8 +2,9 @@
   (a) AgentL2 = AgentH with TWO LoRA adapters: 'default' = the frozen B0 (the sender role: own answers, pass 1, the `none` baseline) and 'recv'
       = a trainable copy initialised from B0 (the receiver role: pass 2 loss / answers), added by enable_recv(); use(name) switches them.
   (b) position modes of the aligned read: 'answer' (L1h: the sender's own answer tokens), 'span_oracle' (the gold supporting sentences of the
-      sender's own gold paragraph located in its prompt ids, first K tokens), 'span_attn' (a K-token window from ATTN_BACK tokens before the
-      argmax of the last prompt token's head-averaged attention at layer `sel_layer` over the documents region).
+      sender's own gold paragraph located in its prompt ids, first K tokens), 'span_attn' (the K-token window of the documents region with the
+      largest summed attention from the QUESTION tokens (heads and question positions averaged) at layer `sel_layer`; the first SINK_SKIP
+      positions of the region -- the attention sink -- are excluded; D8-92 addendum of 2026-11-01).
   (c) PairL2 (same2 or hetero): stage 1 = PairC.step (position CE; targets = the gold answer (answer mode) or the tokens at the sender's read
       positions (span modes, one tokenizer)); stage 2 = step_recv (the receiver's answer CE on the partner's HARD-rendered hint, message
       dropout as U, the sender frozen); baselines none / none_recv / gold_hint / own_hint / own_hint_oracle; select_quality (E0c).
@@ -34,7 +35,7 @@ MODES = ('answer', 'span_oracle', 'span_attn')
 K_SPAN = 32
 SPAN_PRE = "From the other agent's documents:"
 SPAN_POST = '\n'
-ATTN_BACK = 8                                   # the window starts this many tokens before the attention argmax
+SINK_SKIP = 2                                   # the first positions of the documents region are the attention sink (D8-87 appendix 2): never selected
 ATTN_SUB_BATCH = 4                              # output_attentions keeps every layer: small sub-batches
 BASELINES = ('none', 'none_recv', 'gold_hint', 'own_hint', 'own_hint_oracle')
 SCRIPTS = ('l2_model.py', 'l2_train.py', 'l1h_model.py', 'l1f_model.py', 'l1e_model.py', 'l1d_model.py', 'l1c_model.py', 'l1_model.py', 'l1_train.py', 'l1_fusion.py', 'l1_data.py')
@@ -158,10 +159,22 @@ class AgentL2(MH.AgentH):
         z, log_lam = self.adapter(h, A['mask'], positions)
         return z, log_lam.exp()
 
+    @staticmethod
+    def best_window(row, lo, hi, k):
+        """row: attention mass over the positions [lo, hi); -> the absolute start of the k-window with the largest summed mass (lo if the
+        region is shorter than k)"""
+        n = int(hi - lo)
+        if n <= k:
+            return int(lo)
+        c = torch.cumsum(torch.cat([row.new_zeros(1), row.float()]), 0)
+        sums = c[k:] - c[:-k]                                                  # sums[t] = mass of [lo + t, lo + t + k)
+        return int(lo) + int(sums.argmax())
+
     @torch.no_grad()
     def attn_positions(self, pieces, doc_lens, layer, k):
-        """pieces (pre, suf, []) right-padded; doc_lens[b] = document tokens after the BOS. The last real token's attention at `layer`
-        (heads averaged) over the documents region -> a window of k positions from ATTN_BACK before the argmax (-1 beyond the region)."""
+        """pieces (pre = [BOS] documents, suf = question, []) right-padded; doc_lens[b] = document tokens after the BOS. The attention of the
+        question tokens (heads and positions averaged; the last token alone when there is no suffix) at `layer` over the documents region, the
+        first SINK_SKIP positions zeroed -> the k-window with the largest summed attention (-1 beyond the region when it is shorter than k)."""
         self.use('default')
         nb = 1 if self.bos is not None else 0
         B = len(pieces)
@@ -174,12 +187,15 @@ class AgentL2(MH.AgentH):
             for bb in range(len(sub)):
                 b = lo_b + bb
                 last = A['start'][bb] + A['lens'][bb] - 1
+                qlo = A['start'][bb] + len(sub[bb][0])
+                if qlo > last:
+                    qlo = last
                 lo, hi = A['start'][bb] + nb, A['start'][bb] + nb + int(doc_lens[b])
-                row = att[bb, :, last, lo:hi].float().mean(0)
-                if row.numel() == 0:
+                if hi <= lo:
                     continue
-                am = int(row.argmax())
-                start = max(lo, min(lo + am - ATTN_BACK, hi - k))
+                row = att[bb, :, qlo:last + 1, lo:hi].float().mean(0).mean(0).clone()
+                row[:min(SINK_SKIP, row.numel())] = 0.0
+                start = self.best_window(row, lo, hi, k)
                 n = min(k, hi - start)
                 pos[b, :n] = start + torch.arange(n)
             self.n_attn_passes += len(sub)
@@ -214,6 +230,7 @@ class PairL2(MH.PairH):
         self._span_cache = {}
         self.span_seen = 0
         self.span_missing = 0
+        self.n_skipped = 0
 
     def set_mode(self, mode):
         if mode not in MODES:
@@ -247,9 +264,10 @@ class PairL2(MH.PairH):
             if len(out) >= k:
                 break
             full = ag.ids(' ' + s)
+            bare = ag.ids(s)
             hit, n = None, 0
-            for cand in (full, ag.ids(s)):
-                hit = _find(pre, cand)
+            for cand in (full, bare, full[:-1] if len(full) > 3 else [], bare[:-1] if len(bare) > 3 else []):   # a final '.' may merge with the newline
+                hit = _find(pre, cand) if cand else None
                 if hit is not None:
                     n = len(cand)
                     break
@@ -341,6 +359,25 @@ class PairL2(MH.PairH):
             ids.append(toks + [ag.filler] * (ag.k - len(toks)))
             lens.append(len(toks))
         return torch.tensor(ids, dtype=torch.long, device=self.device), lens
+
+    # ---------------------------------------------------------------- stage 1 (span_oracle: the examples without a located span are skipped, D8-92 section 3)
+    def step(self, batch, arm=None, train=True, drop=None):
+        if self.mode == 'span_oracle':
+            keep = []
+            for ex in batch:
+                ok = True
+                for i in range(M.N_AGENTS):
+                    pcs, _dl = self.doc_pieces([ex], i)
+                    _pos, found = self.oracle_positions([ex], i, pcs)
+                    ok = ok and found[0]
+                keep.append(ok)
+            if not all(keep) and any(keep):                                    # nothing located in a whole batch: trained as it is (empty slots / filler targets)
+                idx = [b for b, ok in enumerate(keep) if ok]
+                self.n_skipped += len(batch) - len(idx)
+                batch = [batch[b] for b in idx]
+                if drop is not None:
+                    drop = drop[:, idx]
+        return MC.PairC.step(self, batch, arm, train, drop)
 
     # ---------------------------------------------------------------- stage 2
     def step_recv(self, batch, train=True, drop=None):

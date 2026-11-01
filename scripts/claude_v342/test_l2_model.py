@@ -103,9 +103,22 @@ def test_span_oracle_positions_targets_and_stage1():
     ex_nosup = dict(EX[0], id='nosup', sup=[['zzz qqq'], ['zzz qqq']])
     pos2, found2 = p.oracle_positions([ex_nosup], 0, p.doc_pieces([ex_nosup], 0)[0])
     assert not found2[0] and int(pos2.max()) == -1 and p.span_missing == 1
+    loss2, _ = p.step([EX[0], ex_nosup], train=True, drop=torch.zeros(2, 2, dtype=torch.bool))     # stage 1 skips the example without a span
+    assert torch.isfinite(loss2) and p.n_skipped == 1
+    loss3, _ = p.step([ex_nosup], train=True)                                   # nothing located in the batch -> trained as it is, not counted
+    assert torch.isfinite(loss3) and p.n_skipped == 1
+    pre = p.doc_pieces(EX[:1], 0)[0][0][0]
+    sent = EX[0]['sup'][0][0]
+    full = ag.ids(' ' + sent)
+    h = L2._find(pre, full)
+    assert L2.PairL2.locate(ag, [sent], pre, 6) == list(range(h, h + min(6, len(full))))
+    assert L2.PairL2.locate(ag, [sent], pre[:h + len(full) - 1], 6) is not None                   # the final token cut away: full[:-1] matches
 
 
 def test_attn_positions_window_and_select_quality():
+    row = torch.tensor([0.0, 0.1, 0.0, 0.5, 0.4, 0.1, 0.0, 0.2])
+    assert L2.AgentL2.best_window(row, 10, 18, 3) == 13                        # [0.5, 0.4, 0.1] at absolute 13
+    assert L2.AgentL2.best_window(row, 10, 18, 2) == 13 and L2.AgentL2.best_window(row[:3], 10, 13, 5) == 10
     p = _pair('V1', mode='span_attn', recv=False, sel_layer=1)
     ag = p.agent(0)
     pcs, dl = p.doc_pieces(EX, 0)

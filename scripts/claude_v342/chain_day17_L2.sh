@@ -8,7 +8,7 @@
 #
 # ONE LAUNCH = ONE LEASE = ONE JOB (--lease N selects the job from the FIXED table of D8-92 section 4; a lease whose condition is not met starts
 # nothing and exits 0 so the queue moves on):
-#   20 R1-same2-s342101        21 V1-same2-s342101        22 Hs-same2-s342101 (runs/l1h)   23 Hu-d32-same2-s342101   24 Hu-L9-same2-s342101
+#   20 R1-same2-s342101 (stage 2 = 1,200 steps: 2.76 s/step in the smoke; the hetero R1 keeps 1,500)        21 V1-same2-s342101        22 Hs-same2-s342101 (runs/l1h)   23 Hu-d32-same2-s342101   24 Hu-L9-same2-s342101
 #   25 Hu-same2-s342202 (runs/l1h)   26 R1-same2-s342202 [GATE_R1-same2-s342101_PASS and Hu-same2-s342202 done]
 #   27 V1-same2-s342202 [GATE_V1-same2-s342101_PASS]   28 Hs-same2-s342202 (runs/l1h) [GATE_Hs-same2-s342101_ADDS]
 #   29 Hu-hetero-s342101   30 R1-hetero-s342101 [Hu-hetero-s342101 done]   31 Hu-hetero-s342202 [GATE_Hu-hetero-s342101_PASS]
@@ -26,9 +26,9 @@
 # Launch: one lease per launch, via scripts/l2_leases.sh, after the previous chain process has exited.
 cd /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021 || exit 1
 PREREG="$1"; APPROVAL="$2"
-[ "$PREREG" = "D8-92" ] && [ -n "$APPROVAL" ] || { echo "usage: chain_day17_L2.sh D8-92 <user GPU approval UTC> --lease N [--est-r1 90 --est-v1 80 --est-l1h 70 --est-hetero 75 --est-hetero-r1 95]"; exit 2; }
+[ "$PREREG" = "D8-92" ] && [ -n "$APPROVAL" ] || { echo "usage: chain_day17_L2.sh D8-92 <user GPU approval UTC> --lease N [--est-r1 90 --est-v1 95 --est-l1h 70 --est-hetero 75 --est-hetero-r1 95]"; exit 2; }
 shift 2
-LEASE=""; EST_R1=90; EST_V1=80; EST_L1H=70; EST_HET=75; EST_HET_R1=95
+LEASE=""; EST_R1=90; EST_V1=95; EST_L1H=70; EST_HET=75; EST_HET_R1=95
 while [ $# -gt 0 ]; do
   case "$1" in
     --lease) LEASE="$2"; shift 2;;
@@ -129,13 +129,13 @@ cond_marker(){ [ -f $RUNS/GATE_$1 ]; }                                          
 cond_done(){ [ -f $1/summary.json ]; }
 NAME=""; KIND=""; OUT=""; EST=0; ARGS=""; WHY=""
 case "$LEASE" in
-  20) NAME=R1-same2-s342101; KIND=l2; OUT=$RUNS/$NAME; EST=$EST_R1; ARGS="--arm R1 --pair same2 --seed 342101 --receiver-from $L1RUNS/B0-hetero-s342101 --init-from $L1HRUNS/Hu-same2-s342101 --stage2-steps 1500";;
+  20) NAME=R1-same2-s342101; KIND=l2; OUT=$RUNS/$NAME; EST=$EST_R1; ARGS="--arm R1 --pair same2 --seed 342101 --receiver-from $L1RUNS/B0-hetero-s342101 --init-from $L1HRUNS/Hu-same2-s342101 --stage2-steps 1200";;
   21) NAME=V1-same2-s342101; KIND=l2; OUT=$RUNS/$NAME; EST=$EST_V1; ARGS="--arm V1 --pair same2 --seed 342101 --receiver-from $L1RUNS/B0-hetero-s342101 --sel-layer $SEL_LAYER --stage1-steps 1000 --stage2-steps 1000";;
   22) NAME=Hs-same2-s342101; KIND=l1h; OUT=$L1HRUNS/$NAME; EST=$EST_L1H; ARGS="--arm Hs --pair same2 --seed 342101 --receiver-from $L1RUNS/B0-hetero-s342101";;
   23) NAME=Hu-d32-same2-s342101; KIND=l1h; OUT=$RUNS/$NAME; EST=$EST_L1H; ARGS="--arm Hu --pair same2 --seed 342101 --receiver-from $L1RUNS/B0-hetero-s342101 --d-e 32";;
   24) NAME=Hu-L9-same2-s342101; KIND=l1h; OUT=$RUNS/$NAME; EST=$EST_L1H; ARGS="--arm Hu --pair same2 --seed 342101 --receiver-from $L1RUNS/B0-hetero-s342101 --layer-frac 0.34";;
   25) NAME=Hu-same2-s342202; KIND=l1h; OUT=$L1HRUNS/$NAME; EST=$EST_L1H; ARGS="--arm Hu --pair same2 --seed 342202 --receiver-from $L1RUNS/B0-hetero-s342202";;
-  26) NAME=R1-same2-s342202; KIND=l2; OUT=$RUNS/$NAME; EST=$EST_R1; ARGS="--arm R1 --pair same2 --seed 342202 --receiver-from $L1RUNS/B0-hetero-s342202 --init-from $L1HRUNS/Hu-same2-s342202 --stage2-steps 1500"
+  26) NAME=R1-same2-s342202; KIND=l2; OUT=$RUNS/$NAME; EST=$EST_R1; ARGS="--arm R1 --pair same2 --seed 342202 --receiver-from $L1RUNS/B0-hetero-s342202 --init-from $L1HRUNS/Hu-same2-s342202 --stage2-steps 1200"
       cond_marker R1-same2-s342101_PASS && cond_done $L1HRUNS/Hu-same2-s342202 || WHY="needs GATE_R1-same2-s342101_PASS and runs/l1h/Hu-same2-s342202/summary.json";;
   27) NAME=V1-same2-s342202; KIND=l2; OUT=$RUNS/$NAME; EST=$EST_V1; ARGS="--arm V1 --pair same2 --seed 342202 --receiver-from $L1RUNS/B0-hetero-s342202 --sel-layer $SEL_LAYER --stage1-steps 1000 --stage2-steps 1000"
       cond_marker V1-same2-s342101_PASS || WHY="needs GATE_V1-same2-s342101_PASS";;
