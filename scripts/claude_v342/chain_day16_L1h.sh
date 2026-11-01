@@ -8,7 +8,7 @@
 # summary.json) and is never re-run into the same directory. A job whose deadline falls into its readouts still writes summary.json.
 #
 # ONE LAUNCH = ONE LEASE (--lease N; L1h uses lease 19 = the first of the two B leases, per the user's "做" on 2026-11-01). Jobs in a FIXED order, each skipped when its summary.json exists,
-# several per lease when they fit (--est-l1h minutes each, default 60; RE-ESTIMATE from the 5090 smoke):
+# several per lease when they fit (--est-l1h minutes each, default 70; RE-ESTIMATE from the 5090 smoke):
 #   Hu-same2-s342101 -> the G1h gate (CPU: l1h_aggregate.py --gate 342101 prints "G1h(s342101): PASS | FAIL | INCOMPLETE"; PASS -> runs/l1h/L1H_G1_PASS,
 #                        FAIL -> runs/l1h/L1H_G1_FAIL and nothing else is ever started by this chain, INCOMPLETE -> nothing else this lease)
 #   (no second seed this lease: D8-91 section 4, the second seed needs a lease of its own; Hs is NOT run: D8-89 section 3c, inherited by D8-91 section 2)
@@ -25,7 +25,7 @@
 # Launch: one lease per launch, via scripts/l1h_leases.sh, after the previous chain process has exited.
 cd /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021 || exit 1
 PREREG="$1"; APPROVAL="$2"
-[ "$PREREG" = "D8-91" ] && [ -n "$APPROVAL" ] || { echo "usage: chain_day16_L1h.sh D8-91 <user GPU approval UTC> --lease N [--est-l1h 55]"; exit 2; }
+[ "$PREREG" = "D8-91" ] && [ -n "$APPROVAL" ] || { echo "usage: chain_day16_L1h.sh D8-91 <user GPU approval UTC> --lease N [--est-l1h 70]"; exit 2; }
 shift 2
 LEASE=""; EST=70
 while [ $# -gt 0 ]; do

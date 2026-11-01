@@ -235,7 +235,7 @@ def to_markdown(agg):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('--l1', required=True, help='L1 runs dir (B0 / T: reference only)')
-    ap.add_argument('--l1h', required=True, help='L1h runs dir (Hu-hetero-s*, Hs-hetero-s*)')
+    ap.add_argument('--l1h', required=True, help='L1h runs dir (Hu-same2-s*, Hs-same2-s*)')
     ap.add_argument('--gate', type=int, default=None, help='print only G1h for this seed (no verdict)')
     ap.add_argument('--out', default=None, help='output prefix (default <l1h>/aggregate_l1h)')
     a = ap.parse_args(argv)

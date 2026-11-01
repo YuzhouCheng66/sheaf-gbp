@@ -1,10 +1,10 @@
 """l1h_train.py (Claude, 2026-11-01): batch L1h trainer for the arms Hu / Hs (pre-registration D8-91 = L1f with the aligned-read sender).
 Mirrors l1f_train.py with l1h_model.build_pair (AlignedSender) and the slot-accuracy readout: the receiver AND the sender's model are the frozen B0 checkpoint of the same seed
 (--receiver-from runs/l1/B0-hetero-s<seed>); the adapter + decoder are trained with the message CE against the gold answer (K = 8 slots).
-Criterion = the pinned eval_latent with the HARD rendering (argmax tokens inside the hint template) on VAL (C assertion for Fs) and fresh, plus
+Criterion = the pinned eval_latent with the HARD rendering (argmax tokens inside the hint template) on VAL (C assertion for Hs) and fresh, plus
 the VAL baseline `none` (the plain B0 prompt) computed before the readouts. Readouts under the soft deadline: hint metrics (VAL, fresh), the
-baseline gold_hint (VAL), the soft rendering (VAL), absence p = 1 (hard, VAL), the baseline none (fresh), lam by bucket (Fs, from the VAL records).
-Writes <out>/summary.json in the l1_aggregate schema plus the L1d / L1e / L1f blocks; trainable.pt before the evaluation; INCOMPLETE.json (exit 3) when the
+baseline gold_hint (VAL), the soft rendering (VAL), absence p = 1 (hard, VAL), the baseline none (fresh), lam by bucket (Hs, from the VAL records).
+Writes <out>/summary.json in the l1_aggregate schema plus the L1d / L1e / L1f / L1h blocks; trainable.pt before the evaluation; INCOMPLETE.json (exit 3) when the
 deadline falls into training or the criterion evaluation.
   python -B scripts/claude_v342/l1h_train.py --arm Hu --pair same2 --seed 342101 --receiver-from runs/l1/B0-hetero-s342101 --train T.jsonl --val V.jsonl --fresh F.jsonl --out DIR
 """
