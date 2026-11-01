@@ -108,6 +108,7 @@ def test_cli_pretrain_then_train_with_init():
         s = json.load(open(os.path.join(pre, 'summary.json')))
         assert s['batch_name' if 'batch_name' in s else 'batch'] == 'L1g' and s['stage'] == 'P' and s['complete'] is True and s['steps'] == 6
         assert len(s['heldout']) == 2 and all({'slot0_acc', 'msg_slot_acc', 'decoded_em', 'examples'} <= set(v) for v in s['heldout'].values())
+        assert s['heldout_source']['val_paragraphs_unseen_title'] <= s['heldout_source']['val_paragraphs']
         assert set(s['scripts_sha']) == set(MG.SCRIPTS)
         ck = torch.load(os.path.join(pre, 'trainable.pt'), map_location='cpu', weights_only=False)
         assert ck['stage'] == 'P' and all('lora_' not in n and 'lam_head' not in n for n in ck['state'])
@@ -163,7 +164,9 @@ def test_aggregator_verdicts():
             _summary(l1, 'T', s, 58.0, 56.0)
         _summary(l1g, 'Gu', AG.SEEDS[0], 42.9, 42.0, other=30.0, none=40.0, none_other=18.0)
         a = AG.aggregate(l1, l1g)
-        assert a['verdict'] == 'TRANSFER-NO' and a['g1_lines'][0] == f'G1g(s{AG.SEEDS[0]}): FAIL'
+        assert a['verdict'] == 'INCOMPLETE' and a['g1_lines'][0] == f'G1g(s{AG.SEEDS[0]}): FAIL'          # no usable stage P -> never TRANSFER-NO
+        a = AG.aggregate(l1, l1g, pretrain=_pretrain(l1g, 0.5, complete=False))
+        assert a['verdict'] == 'INCOMPLETE' and any('not usable' in x for x in a['reasons'])
         pre = _pretrain(l1g, 0.2)
         a = AG.aggregate(l1, l1g, pretrain=pre)
         assert a['verdict'] == 'DICT-NO' and a['pretrain']['slot0_min'] == 0.2
@@ -180,6 +183,6 @@ def test_aggregator_verdicts():
         r = subprocess.run([sys.executable, '-B', AGG_G, '--l1', l1, '--l1g', l1g, '--pretrain', pre, '--gate', str(AG.SEEDS[0]), '--out', os.path.join(d, 'gate')], capture_output=True, text=True)
         assert r.returncode == 0 and r.stdout.startswith(f'G1g(s{AG.SEEDS[0]}): PASS') and 'VERDICT' not in r.stdout
         a = AG.aggregate(l1, l1g, pretrain=os.path.join(d, 'nope.json'))
-        assert a['verdict'].startswith('CHANNEL-YES-hetero') and any('not usable' in x for x in a['reasons'])
+        assert a['verdict'].startswith('CHANNEL-YES-hetero') and any('not usable' in x for x in a['reasons'])   # a PASS stands without stage P
     finally:
         shutil.rmtree(d, ignore_errors=True)

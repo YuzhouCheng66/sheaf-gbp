@@ -12,7 +12,7 @@
 # several per lease when they fit (--est-l1g minutes each, default 60; RE-ESTIMATE from the 5090 smoke):
 #   Gu-hetero-s342101 -> the G1g gate (CPU: l1g_aggregate.py --gate 342101 prints "G1g(s342101): PASS | FAIL | INCOMPLETE"; PASS -> runs/l1g/L1G_G1_PASS,
 #                        FAIL -> runs/l1g/L1G_G1_FAIL and nothing else is ever started by this chain, INCOMPLETE -> nothing else this lease)
-#   Gu-hetero-s342202, Gs-hetero-s342101, Gs-hetero-s342202   (only with L1G_G1_PASS)
+#   (no second seed, no Gs in this batch: D8-90 section 5; the gate records G1g(s342101))
 #   Leases 19-20 under the user's approval of 2026-11-01 ("那就先A后B"; B = D8-90, 2 leases as proposed).
 #   Every job gets --deadline-epoch (lease end - 60 s) and runs under timeout -k 30 (lease end). After the last job:
 #   l1g_aggregate.py --l1 runs/l1 --l1g runs/l1g (CPU, nice 10) -> runs/l1g/aggregate/lease<N>.*; the verdict is the last lease's.
@@ -107,7 +107,7 @@ if [ "$FREE_MB" -lt 5000 ]; then log "ABORT: only ${FREE_MB} MB free on /mnt/dat
 SELF=$(CUDA_VISIBLE_DEVICES= timeout -k 30 300 $P -B -c "import sys; sys.path.insert(0, 'scripts'); import l1g_model, l1g_train, l1g_pretrain, l1g_aggregate, l1e_model, l1d_model, l1c_model, l1_model, l1_train, l1_fusion, l1_data, torch, transformers, peft; print('import self-check ok', torch.__version__, transformers.__version__, peft.__version__)" 2>&1 | tail -1)
 case "$SELF" in "import self-check ok"*) log "L1g $SELF";; *) log "ABORT: import self-check failed: $SELF"; exit 2;; esac
 # 5090 SOLO: no other chain, no project trainer / diag, no compute process on the GPU (wait, never preempt)
-busy(){ pgrep -af "bash scripts/chain_" | grep -v "chain_day15_L1g" | grep -q . || pgrep -f "^$P scripts/train_" >/dev/null || pgrep -f "scripts/diag_" >/dev/null || pgrep -f "^$P scripts/g4_" >/dev/null || pgrep -f "scripts/l1_" >/dev/null || pgrep -f "scripts/l1b_" >/dev/null || pgrep -f "scripts/l1c_" >/dev/null || pgrep -f "scripts/l1d_" >/dev/null || pgrep -f "scripts/l1e_" >/dev/null || pgrep -f "scripts/l1f_" >/dev/null || pgrep -f "scripts/l1g_train" >/dev/null || pgrep -f "scripts/l1g_pretrain" >/dev/null || [ -n "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]; }   # never "scripts/l1g_" (matches the queue -> waits on itself); the chain's own l1d_train child is started after this wait
+busy(){ pgrep -af "bash scripts/chain_" | grep -v "chain_day15_L1g" | grep -q . || pgrep -f "^$P scripts/train_" >/dev/null || pgrep -f "scripts/diag_" >/dev/null || pgrep -f "^$P scripts/g4_" >/dev/null || pgrep -f "scripts/l1_" >/dev/null || pgrep -f "scripts/l1b_" >/dev/null || pgrep -f "scripts/l1c_" >/dev/null || pgrep -f "scripts/l1d_" >/dev/null || pgrep -f "scripts/l1e_" >/dev/null || pgrep -f "scripts/l1f_" >/dev/null || pgrep -f "scripts/l1g_train" >/dev/null || pgrep -f "scripts/l1g_pretrain" >/dev/null || [ -n "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]; }   # never "scripts/l1g_" (matches the queue -> waits on itself); the chain's own l1g_train / l1g_pretrain child is started after this wait
 while busy; do sleep 120; done
 sleep 60; while busy; do sleep 120; done
 check_shas
@@ -147,7 +147,7 @@ job(){                                                                          
 aggregate(){                                                                      # $1 = tag, $2.. = extra flags (e.g. --gate 342101); CPU only
   local tag=$1; shift
   mkdir -p $RUNS/aggregate
-  CUDA_VISIBLE_DEVICES= timeout -k 30 1800 nice -n 10 $P -B scripts/l1g_aggregate.py --l1 $L1RUNS --l1g $RUNS --out $RUNS/aggregate/$tag "$@" > $RUNS/aggregate/$tag.log 2>&1
+  CUDA_VISIBLE_DEVICES= timeout -k 30 1800 nice -n 10 $P -B scripts/l1g_aggregate.py --l1 $L1RUNS --l1g $RUNS --pretrain $RUNS/pretrain-s$GATE_SEED/summary.json --out $RUNS/aggregate/$tag "$@" > $RUNS/aggregate/$tag.log 2>&1
   local x=$?
   log "L1g aggregate $tag (exit $x): $(grep -a -E '^(G1g|VERDICT)' $RUNS/aggregate/$tag.log | tr '\n' ' ')"
   return $x

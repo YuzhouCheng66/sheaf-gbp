@@ -206,7 +206,17 @@ def main(argv=None):
     counts = M.count_params(pair)
     info = T1.agents_info(pair)
     log(f'model: {info}; trainable {counts["trainable"]:,} ({100 * counts["trainable_frac"]:.3f} %)')
-    holdout = make_spans(val, args.holdout, args.seed + 7, args.title_prob, args.max_span_words)
+    train_titles = {str(t) for ex in train for t, _ in ex['all_paragraphs']}
+    n_val_paras = sum(len(ex['all_paragraphs']) for ex in val)
+    val_clean = [dict(ex, all_paragraphs=[p for p in ex['all_paragraphs'] if str(p[0]) not in train_titles]) for ex in val]
+    val_clean = [ex for ex in val_clean if ex['all_paragraphs']]
+    if args.tiny and not val_clean:                                           # the tiny fixture reuses TRAIN as VAL: no filtering possible there
+        val_clean = val
+    n_clean = sum(len(ex['all_paragraphs']) for ex in val_clean)
+    log(f'held-out source: {n_clean} of the {n_val_paras} VAL paragraphs whose title never occurs in TRAIN ({len(val_clean)} of {len(val)} examples keep a paragraph)')
+    if not val_clean:
+        raise SystemExit('no VAL paragraph is free of TRAIN titles: held-out spans impossible')
+    holdout = make_spans(val_clean, args.holdout, args.seed + 7, args.title_prob, args.max_span_words)
     log(f'held-out spans {len(holdout)} (title {sum(k == "title" for _, _, k in holdout)}), e.g. {holdout[:3]}')
     rng = random.Random(args.seed)
     opt, sched, _ = M.build_optimizer(pair, 0.0, args.lr_adapter, args.steps, args.warmup, args.weight_decay)
@@ -269,7 +279,7 @@ def main(argv=None):
     summary = dict(batch=MG.BATCH, prereg=MG.PREREG, stage='P', seed=args.seed, pair='hetero', models=list(dict.fromkeys(a['name'] for a in info)), agents=info,
                    complete=bool(steps_done == args.steps), steps=steps_done, steps_planned=args.steps, deadline_in_training=where, eval_incomplete=eval_where,
                    train=dict(**pre_summary, seconds=train_s, step_time_post_warmup_s=float(np.mean(post)) if post else None, steps_timed=len(post), history=hist),
-                   heldout=held, n_heldout=len(holdout), receiver=receiver, params=counts,
+                   heldout=held, n_heldout=len(holdout), heldout_source=dict(val_paragraphs=n_val_paras, val_paragraphs_unseen_title=n_clean), receiver=receiver, params=counts,
                    timings=dict(train_s=train_s, eval_s=time.time() - t_eval, total_s=time.time() - t_start),
                    config=dict(vars(args), device=str(device), torch=torch.__version__), scripts_sha=M.scripts_sha(MG.SCRIPTS), trainable_sha256=M.file_sha256(ckp),
                    utc_end=M.utc(), pid=os.getpid())

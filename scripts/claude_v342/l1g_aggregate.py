@@ -191,12 +191,14 @@ def read_pretrain(path):
 
 def decide(runs, crit, pretrain=None):
     reasons = [f'{r["name"]}: {p}' for (a, s), r in runs.items() if a in L1D_ARMS for p in r['problems']]
-    if pretrain is not None and pretrain['found'] and pretrain['slot0_min'] is not None:
+    p_ok = pretrain is not None and pretrain['found'] and not pretrain['problems'] and pretrain['slot0_min'] is not None
+    if p_ok:
         reasons.append(f'stage P held-out slot-0 accuracy by direction: {pretrain["by_direction"]} (min {pretrain["slot0_min"]:.3f}, DICT threshold {DICT_MIN_SLOT0})')
         if pretrain['slot0_min'] < DICT_MIN_SLOT0:
             return 'DICT-NO', reasons + ['the dictionary did not form in stage P (D8-90 section 5); stage F is a readout only']
-    elif pretrain is not None:
-        reasons.append(f'stage P summary not usable: {pretrain["problems"] or "missing"}')
+    else:
+        reasons.append('stage P summary not usable: ' + ('not given' if pretrain is None else ('; '.join(pretrain['problems']) if pretrain['found'] else 'missing'))
+                       + ' -> a G1g failure is INCOMPLETE, not TRANSFER-NO (D8-90 section 5: INCOMPLETE rules as before)')
     conflicts = sha_conflicts(runs)
     reasons += [f'scripts_sha of {k} differs between L1g runs: ' + '; '.join(f'{sha[:12]} <- {sorted(v)}' for sha, v in sorted(vv.items())) for k, vv in sorted(conflicts.items())]
     if conflicts:
@@ -211,8 +213,9 @@ def decide(runs, crit, pretrain=None):
         if r['problems'] or g1[str(s)] is None:
             return 'INCOMPLETE', reasons + [f'G1g(s{s}) undecidable']
         if g1[str(s)] is False:
-            return 'TRANSFER-NO', reasons + [f'G1g failed on seed {s}: Gu - none = {crit["G1g"]["margin_em"][str(s)]:.2f} pt (>= {G1_EM_PT}?), '
-                                             f'other bucket {crit["G1g"]["margin_other"][str(s)]:.2f} pt (>= {G1_OTHER_PT}?)']
+            why = [f'G1g failed on seed {s}: Gu - none = {crit["G1g"]["margin_em"][str(s)]:.2f} pt (>= {G1_EM_PT}?), '
+                   f'other bucket {crit["G1g"]["margin_other"][str(s)]:.2f} pt (>= {G1_OTHER_PT}?)']
+            return ('TRANSFER-NO' if p_ok else 'INCOMPLETE'), reasons + why
     deg = ''
     if crit['degrade']['triggered']:
         reasons.append('degrade: Gu - none drops by more than 1.0 pt from VAL to fresh -> marked AMBIGUOUS (D8-90 section 5); the channel verdict stands')
