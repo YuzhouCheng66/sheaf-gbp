@@ -84,17 +84,17 @@ def answer_logprob(ag, prompts, answers, adapter):
     out = []
     pcs = [(p, a, []) for p, a in zip(prompts, answers)]
     A = ag.assemble(pcs, None, 'right', embeds=False)
-    logits = ag.lm(input_ids=A['ids'], attention_mask=A['mask'], use_cache=False).logits.float()
-    lp = torch.log_softmax(logits, -1)
+    hs = ag.decoder(input_ids=A['ids'], attention_mask=A['mask'], use_cache=False).last_hidden_state   # (B, T, d): the vocabulary projection only at the answer positions
     for b, (p, a) in enumerate(zip(prompts, answers)):
         if not a:
             out.append(0.0)
             continue
         start = A['start'][b] + len(p)
-        probs = []
-        for k, t in enumerate(a):
-            probs.append(float(lp[b, start + k - 1, int(t)].exp()))
-        out.append(float(np.mean(probs)))
+        pos = torch.tensor([start + k - 1 for k in range(len(a))], dtype=torch.long, device=hs.device)
+        lg = ag.lm_head(hs[b, pos]).float()                                    # (len(a), V)
+        lp = torch.log_softmax(lg, -1)
+        tok = torch.tensor([int(t) for t in a], dtype=torch.long, device=hs.device)
+        out.append(float(lp[torch.arange(len(a), device=hs.device), tok].exp().mean()))
     return out
 
 
