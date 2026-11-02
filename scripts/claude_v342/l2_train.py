@@ -29,10 +29,11 @@ import l1_model as M  # noqa: E402
 import l1_train as T1  # noqa: E402
 import l1c_model as MC  # noqa: E402
 import l2_model as L2  # noqa: E402
+from l1d_model import lam_by_bucket as MD_lam_by_bucket  # noqa: E402
 
 SEEDS = T1.SEEDS
-STAGE1_STEPS = {'R1': 0, 'V1': 1000, 'Hu': 2000}        # D8-92 section 3
-STAGE2_STEPS = {'R1': 1500, 'V1': 1000, 'Hu': 0}
+STAGE1_STEPS = {'R1': 0, 'V1': 1000, 'Hu': 2000, 'V1s': 1000}        # D8-92 section 3 (+ appendix 3: V1s)
+STAGE2_STEPS = {'R1': 1500, 'V1': 1000, 'Hu': 0, 'V1s': 1000}
 
 
 def build_parser():
@@ -173,7 +174,7 @@ def _state(pair):
     """the checkpoint state: the recv LoRA (when enabled) + the sender adapter + decoder of every agent"""
     st = {}
     for n, p in pair.named_parameters():
-        if ('.adapter.' in n or '.reader.' in n) or ('lora_' in n and '.recv.' in n):
+        if ('.adapter.' in n or '.reader.' in n) or ('lora_' in n and '.recv.' in n) or n == 'w_raw':
             st[n] = p.detach().cpu()
     return st
 
@@ -187,9 +188,9 @@ def main(argv=None):
         raise SystemExit('--receiver-from (the B0 run dir of this seed) is required outside --tiny')
     if args.arm == 'R1' and not args.init_from:
         raise SystemExit('--init-from (the frozen sender / decoder run dir) is required for R1')
-    if args.arm == 'V1' and args.pair != 'same2':
-        raise SystemExit('V1 (evidence spans) runs on pair same2 only')
-    if args.arm == 'V1' and args.sel_layer is None:
+    if args.arm in L2.SPAN_ARMS and args.pair != 'same2':
+        raise SystemExit('V1 / V1s (evidence spans) run on pair same2 only')
+    if args.arm in L2.SPAN_ARMS and args.sel_layer is None:
         if not args.tiny:
             raise SystemExit('--sel-layer (E0c) is required for V1')
         args.sel_layer = 1
@@ -199,10 +200,10 @@ def main(argv=None):
         raise SystemExit('R1 has no stage 1 (the sender is frozen)')
     if args.arm == 'Hu' and s2:
         raise SystemExit('Hu has no stage 2')
-    mode = 'span_oracle' if args.arm == 'V1' else 'answer'
-    recv = args.arm in ('R1', 'V1')
+    mode = 'span_oracle' if args.arm in L2.SPAN_ARMS else 'answer'
+    recv = args.arm in L2.RECV_ARMS
     if args.k is None:
-        args.k = L2.K_SPAN if args.arm == 'V1' else L2.K_HINT
+        args.k = L2.K_SPAN if args.arm in L2.SPAN_ARMS else L2.K_HINT
     t_start = time.time()
     os.makedirs(args.out, exist_ok=True)
     sp = os.path.join(args.out, 'summary.json')
@@ -267,10 +268,10 @@ def main(argv=None):
             pair.use('default')
             L2.freeze_sender(pair, frozen=False)
             counts = M.count_params(pair)
-            log(f'stage 1: trainable {counts["trainable"]:,} (sender adapter + decoder)')
+            log(f'stage 1: trainable {counts["trainable"]:,} (sender adapter + decoder' + (' + lam head + w' if pair.w is not None else '') + ')')
             tr = M.train_steps(pair, lambda b: pair.step(b, train=True), M.batch_stream(train, args.batch, args.seed), s1, 0.0, args.lr_adapter,
                                args.warmup, args.clip, device, log, args.log_every, deadline, label=f'{args.arm}/{args.pair}/s{args.seed} stage1',
-                               weight_decay=args.weight_decay, extra_log=lambda i: f'msg acc {i["msg_acc"]:.3f}')
+                               weight_decay=args.weight_decay, extra_log=lambda i: f'msg acc {i["msg_acc"]:.3f}' + (f' w {pair.w_value:.4f}' if pair.w is not None else ''))
             tr['message'] = pair.msg_summary()
             tr['span'] = dict(seen=pair.span_seen, missing=pair.span_missing)
             tr['answers_generated'] = {a.name: a.n_generated for a in pair.agents}
@@ -304,10 +305,18 @@ def main(argv=None):
         # ---------------------------------------------------------------- the criterion and the readouts
         t_eval = time.time()
         ekw = dict(eval_batch=args.eval_batch, max_new_tokens=args.max_new_tokens, deadline=deadline, keep_preds=True, log=log)
-        crit_mode = 'span_attn' if args.arm == 'V1' else 'answer'
+        crit_mode = 'span_attn' if args.arm in L2.SPAN_ARMS else 'answer'
         pair.set_mode(crit_mode)
-        v = L2.eval_render(pair, val, hard=True, drop_p=0.0, c_check=False, seed=args.seed, **ekw)
+        fusion = pair.arm in M.FUSION_ARMS
+        v = L2.eval_render(pair, val, hard=True, drop_p=0.0, c_check=fusion, seed=args.seed, **ekw)
         log(f'VAL p=0.0 (hard, criterion, {crit_mode}, {"recv" if recv else "default"}): EM {v["em"]:.2f} F1 {v["f1"]:.2f} agents {v["em_agent"]} owner {_owner(v)}')
+        c_assert = None
+        if fusion:
+            c_assert = bool(v['c_assert'])
+            log(f'C assertion: {c_assert} {v["c_assert_detail"]}')
+        lam_bucket = MD_lam_by_bucket(v['records']) if fusion else None
+        if lam_bucket:
+            log(f'lam by bucket (VAL): {lam_bucket}')
         f = L2.eval_render(pair, fresh, hard=True, drop_p=0.0, c_check=False, seed=args.seed, **ekw)
         log(f'fresh (hard): EM {f["em"]:.2f} F1 {f["f1"]:.2f} agents {f["em_agent"]}')
         n0 = L2.eval_baseline(pair, val, 'none', **ekw)
@@ -334,7 +343,7 @@ def main(argv=None):
     summary = dict(arm=args.arm, base_arm=pair.arm, pair=args.pair, seed=args.seed, model=None, models=models, batch_name=L2.BATCH, prereg=L2.PREREG, val=v, fresh=f,
                    val_oracle=ro['val_oracle'], absence=absence, soft=ro['soft'], baseline=ro['baseline'], hint=ro['hint'], slot_acc=ro['slot_acc'], complete=bool(done),
                    steps=sum(st['steps_done'] for st in stages.values()), steps_planned=s1 + s2, stages=stages, readouts_incomplete=where, agents=info,
-                   params=M.count_params(pair), receiver=receiver, init_from=init_meta,
+                   params=M.count_params(pair), receiver=receiver, init_from=init_meta, lam_by_bucket=lam_bucket,
                    span=dict(seen=pair.span_seen, missing=pair.span_missing, attn_passes=[a.n_attn_passes for a in pair.agents], sel_layer=args.sel_layer),
                    channel=dict(tau=args.tau, n_blocks=args.n_blocks, k=args.k, d_e=args.d_e, filler=fillers, msg_tokens=args.k, rendering='hard', mode=mode, criterion_mode=crit_mode,
                                 hint_pre=template[0], hint_post=template[1], recv=recv, stage1_steps=s1, stage2_steps=s2,
@@ -342,17 +351,21 @@ def main(argv=None):
                                 sender_pass1=('B0 prompt + own greedy answer, LoRA enabled' if mode == 'answer' else 'B0 prompt (documents + question), LoRA enabled'),
                                 adapter='AlignedSender (slot k = LN(W h[position k]), no attention)',
                                 receiver_training=('recv LoRA initialised from B0, trained on the hard-rendered hints' if recv else 'none (frozen B0 checkpoint)'),
+                                fusion=('sheaf-GBP consensus (S1: lam head + w learned in stage 1)' if fusion else 'one-way projection (U)'),
                                 pair_note=('same2: two independent Qwen3-1.7B instances, the hetero B0 Qwen LoRA on both' if args.pair == 'same2' else 'hetero: Qwen3-1.7B + Llama-3.2-1B-Instruct, the hetero B0 LoRA')),
                    timings=dict(load_s=load_s, train_s=sum(st['seconds'] for st in stages.values()), eval_s=eval_s, total_s=time.time() - t_start,
                                 timing_warmup_steps=M.TIMING_WARMUP_STEPS),
                    config=dict(vars(args), log_lam_bounds=[M.LOG_LAM_MIN, M.LOG_LAM_MAX], lora_targets=list(M.LORA_TARGETS), u_drop_p=M.U_DROP_P, edges=M.EDGES,
                                wire_dtype=str(FU.WIRE_DTYPE), device=str(device), torch=torch.__version__, data_api='fallback' if M.DATA_IS_FALLBACK else 'l1_data'),
                    scripts_sha=M.scripts_sha(L2.SCRIPTS), trainable_sha256=M.file_sha256(ckp), utc_end=M.utc(), pid=os.getpid())
+    if fusion:
+        summary['c_assert'] = c_assert
+        summary['w'] = v.get('w')
     if device.type == 'cuda':
         summary['timings']['peak_gpu_gb'] = torch.cuda.max_memory_allocated(device) / 2 ** 30
         summary['config']['gpu'] = torch.cuda.get_device_name(device)
     M.jdump(summary, sp)
-    log(f'l2_train done: {args.arm} {args.pair} s{args.seed} VAL EM {v["em"]:.2f} (none {n0["em"]:.2f}) fresh EM {f["em"]:.2f} '
+    log(f'l2_train done: {args.arm} {args.pair} s{args.seed} VAL EM {v["em"]:.2f} (none {n0["em"]:.2f}) fresh EM {f["em"]:.2f} c_assert {summary.get("c_assert", "n/a")} '
         f'readouts {"complete" if not where else "INCOMPLETE (" + where + ")"} total {time.time() - t_start:.0f} s')
     return 0
 

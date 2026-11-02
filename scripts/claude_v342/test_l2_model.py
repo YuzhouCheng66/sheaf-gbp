@@ -297,3 +297,70 @@ def test_gate_verdicts_and_markers():
         assert json.load(open(os.path.join(out, 'R1-same2-s342101.json')))['verdict'] == 'FAIL'
     finally:
         shutil.rmtree(d, ignore_errors=True)
+
+
+def test_v1s_sheaf_consensus_arm():
+    p = _pair('V1s', mode='span_oracle', recv=True)
+    assert p.arm == 'S1' and p.arm_c == 'V1s' and p.w is not None and all(a.adapter.lam_head is not None and not a.adapter.fixed_lam for a in p.agents)
+    L2.freeze_sender(p, frozen=False)
+    p.use('default')
+    p.train()
+    loss, info = p.step(EX[:2], train=True)
+    assert torch.isfinite(loss)
+    loss.backward()
+    names = dict(p.named_parameters())
+    assert names['w_raw'].grad is not None and any(q.grad is not None and float(q.grad.abs().sum()) > 0 for n, q in names.items() if '.adapter.lam_head.' in n)
+    assert all(names[n].grad is None for n in names if 'lora_' in n)
+    for q in names.values():
+        q.grad = None
+    L2.freeze_sender(p, frozen=True)
+    assert not names['w_raw'].requires_grad and all(not q.requires_grad for n, q in names.items() if '.adapter.' in n or '.reader.' in n)
+    p.use('recv')
+    with torch.no_grad():
+        for n, q in names.items():
+            if '.recv.' in n and 'lora_B' in n:
+                q.add_(0.05 * torch.randn_like(q))
+    loss2, _ = p.step_recv(EX[:2], train=True)
+    assert torch.isfinite(loss2)
+    loss2.backward()
+    for n, q in names.items():
+        if 'lora_' in n and '.recv.' in n:
+            assert q.grad is not None, n
+        else:
+            assert q.grad is None, n
+    p.set_mode('span_attn')
+    for a in p.agents:
+        a.sel_layer = 1
+    v = L2.eval_render(p, EX, hard=True, drop_p=0.0, c_check=True, eval_batch=2, seed=1)
+    assert v['c_assert'] is True and v['w'] is not None
+    with pytest.raises(SystemExit):
+        import l2_train as T2
+        T2.main(['--arm', 'V1s', '--pair', 'hetero', '--seed', '5', '--train', 'x', '--val', 'x', '--fresh', 'x', '--out', 'x', '--tiny'])
+
+
+def test_cli_tiny_v1s_and_gate():
+    d = tempfile.mkdtemp()
+    try:
+        _fixture(d)
+        out = os.path.join(d, 'V1s')
+        r = _cli(d, 'V1s', out, ['--k', '6', '--stage1-steps', '4', '--stage2-steps', '4', '--sel-layer', '1'])
+        assert r.returncode == 0, r.stdout[-2000:] + r.stderr[-3000:]
+        s = json.load(open(os.path.join(out, 'summary.json')))
+        assert s['arm'] == 'V1s' and s['base_arm'] == 'S1' and s['c_assert'] is True and s['w'] is not None and s['lam_by_bucket'] and s['channel']['recv']
+        ck = torch.load(os.path.join(out, 'trainable.pt'), map_location='cpu', weights_only=False)
+        assert 'w_raw' in ck['state'] and any('.adapter.lam_head.' in n for n in ck['state']) and any('.recv.' in n for n in ck['state'])
+        import l1_aggregate as A1
+        assert not A1.validate_summary(s, 'V1s', 'same2', 5)
+        import l2_gate as G
+        runs, l1h = os.path.join(d, 'l2'), os.path.join(d, 'l1h')
+        os.makedirs(runs); os.makedirs(l1h)
+        _summary_l2(runs, 'V1s-same2-s342101', 'V1s', 'same2', 342101, 53.0, 42.0, 40.0, 15.0, extra=dict(c_assert=True, w=1.2))
+        assert G.judge('V1s-same2-s342101', runs, l1h)['verdict'] == 'INCOMPLETE'                      # no V1 reference
+        _summary_l2(runs, 'V1-same2-s342101', 'V1', 'same2', 342101, 51.8, 42.0, 39.0, 15.0)
+        assert G.judge('V1s-same2-s342101', runs, l1h)['verdict'] == 'SHEAF-ADDS'
+        _summary_l2(runs, 'V1s-same2-s342101', 'V1s', 'same2', 342101, 51.0, 42.0, 40.0, 15.0, extra=dict(c_assert=True, w=1.2))
+        assert G.judge('V1s-same2-s342101', runs, l1h)['verdict'] == 'SHEAF-NEUTRAL'
+        _summary_l2(runs, 'V1s-same2-s342101', 'V1s', 'same2', 342101, 50.0, 42.0, 40.0, 15.0, extra=dict(c_assert=False, w=1.2))
+        assert G.judge('V1s-same2-s342101', runs, l1h)['verdict'] == 'INCOMPLETE'
+    finally:
+        shutil.rmtree(d, ignore_errors=True)

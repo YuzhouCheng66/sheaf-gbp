@@ -12,7 +12,8 @@
 #   25 Hu-same2-s342202 (runs/l1h)   26 R1-same2-s342202 [GATE_R1-same2-s342101_PASS and Hu-same2-s342202 done]
 #   27 V1-same2-s342202 [GATE_V1-same2-s342101_PASS]   28 Hs-same2-s342202 (runs/l1h) [GATE_Hs-same2-s342101_ADDS]
 #   29 Hu-hetero-s342101   30 R1-hetero-s342101 [Hu-hetero-s342101 done]   31 Hu-hetero-s342202 [GATE_Hu-hetero-s342101_PASS]
-#   32 R1-hetero-s342202 [GATE_R1-hetero-s342101_PASS and Hu-hetero-s342202 done]   33+ nothing (reserved for the coordinator)
+#   32 R1-hetero-s342202 [GATE_R1-hetero-s342101_PASS and Hu-hetero-s342202 done]
+#   appendix 3 (2026-11-02): 33 Hu-hetero-s342202   34 R1-hetero-s342202 [33 done]   35 V1s-same2-s342101 (sheaf consensus on the V1 channel)   36 V1s-same2-s342202 [35 done]   37+ nothing
 #   GPU approval: the user's "一次性实验顺序拉起 … 至少 40 小时" (2026-11-01 ≈14:55 / 15:05 UTC), passed as $2 into every lease_<N>.json.
 #   Every job gets --deadline-epoch (lease end - 60 s) and runs under timeout -k 30 (lease end); a job that does not fit its estimate is not started.
 # Writes only under /mnt/datasets (runs/l2/..., runs/l1h/<same2 L1h runs>, runs/l2/chain_day17.log). Data, HF cache, runs/l1 and the L1h Hu s1
@@ -148,7 +149,13 @@ case "$LEASE" in
       cond_marker Hu-hetero-s342101_PASS || WHY="needs GATE_Hu-hetero-s342101_PASS";;
   32) NAME=R1-hetero-s342202; KIND=l2; OUT=$RUNS/$NAME; EST=$EST_HET_R1; ARGS="--arm R1 --pair hetero --seed 342202 --receiver-from $L1RUNS/B0-hetero-s342202 --init-from $RUNS/Hu-hetero-s342202 --stage2-steps 1500"
       cond_marker R1-hetero-s342101_PASS && cond_done $RUNS/Hu-hetero-s342202 || WHY="needs GATE_R1-hetero-s342101_PASS and runs/l2/Hu-hetero-s342202/summary.json";;
-  *) WHY="no job is assigned to lease $LEASE (D8-92 section 4: 33+ reserved for the coordinator)";;
+  33) NAME=Hu-hetero-s342202; KIND=l2; OUT=$RUNS/$NAME; EST=$EST_HET; ARGS="--arm Hu --pair hetero --seed 342202 --receiver-from $L1RUNS/B0-hetero-s342202 --stage1-steps 2000";;
+  34) NAME=R1-hetero-s342202; KIND=l2; OUT=$RUNS/$NAME; EST=$EST_HET_R1; ARGS="--arm R1 --pair hetero --seed 342202 --receiver-from $L1RUNS/B0-hetero-s342202 --init-from $RUNS/Hu-hetero-s342202 --stage2-steps 1500"
+      cond_done $RUNS/Hu-hetero-s342202 || WHY="needs runs/l2/Hu-hetero-s342202/summary.json (appendix 3)";;
+  35) NAME=V1s-same2-s342101; KIND=l2; OUT=$RUNS/$NAME; EST=$EST_V1; ARGS="--arm V1s --pair same2 --seed 342101 --receiver-from $L1RUNS/B0-hetero-s342101 --sel-layer $SEL_LAYER --stage1-steps 1000 --stage2-steps 1000";;
+  36) NAME=V1s-same2-s342202; KIND=l2; OUT=$RUNS/$NAME; EST=$EST_V1; ARGS="--arm V1s --pair same2 --seed 342202 --receiver-from $L1RUNS/B0-hetero-s342202 --sel-layer $SEL_LAYER --stage1-steps 1000 --stage2-steps 1000"
+      cond_done $RUNS/V1s-same2-s342101 || WHY="needs runs/l2/V1s-same2-s342101/summary.json (appendix 3)";;
+  *) WHY="no job is assigned to lease $LEASE (D8-92 appendix 3: 37+ reserved for the coordinator)";;
 esac
 if [ -n "$WHY" ]; then
   log "L2 lease $LEASE: nothing started ($WHY)"

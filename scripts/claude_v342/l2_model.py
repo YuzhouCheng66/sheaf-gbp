@@ -28,8 +28,10 @@ import l1h_model as MH  # noqa: E402
 
 BATCH = 'L2'
 PREREG = 'D8-92'
-ARMS = ('R1', 'V1', 'Hu')
-BASE_ARM = {'R1': 'U', 'V1': 'U', 'Hu': 'U'}
+ARMS = ('R1', 'V1', 'Hu', 'V1s')
+BASE_ARM = {'R1': 'U', 'V1': 'U', 'Hu': 'U', 'V1s': 'S1'}        # V1s (appendix 3): V1 with the sheaf-GBP consensus (lam head + w learned)
+SPAN_ARMS = ('V1', 'V1s')
+RECV_ARMS = ('R1', 'V1', 'V1s')
 PAIRS = ('same2', 'hetero')
 MODES = ('answer', 'span_oracle', 'span_attn')
 K_SPAN = 32
@@ -421,7 +423,7 @@ def build_pair(arm, pair, device, model=None, hf_cache=None, tiny=None, lora=Tru
     if pair not in PAIRS:
         raise ValueError(f'pair {pair} not in {PAIRS}')
     base = BASE_ARM[arm]
-    fixed_lam = True
+    fixed_lam = base in ('U', 'S1L1')
     agent_kw = dict(agent_kw)
     agent_kw.setdefault('lora_dropout', 0.0)
     if mode == 'answer':
@@ -482,9 +484,13 @@ def build_pair(arm, pair, device, model=None, hf_cache=None, tiny=None, lora=Tru
 
 
 def freeze_sender(pair, frozen=True):
-    """the sender adapter + decoder of every agent: requires_grad = not frozen (stage 2 trains the receiver only)"""
+    """the sender adapter + decoder of every agent (and the fusion weight w of a consensus arm): requires_grad = not frozen (stage 2 trains
+    the receiver only)"""
     for a in pair.agents:
         for p in list(a.adapter.parameters()) + list(a.reader.parameters()):
+            p.requires_grad_(not frozen)
+    for n, p in pair.named_parameters():
+        if n == 'w_raw':
             p.requires_grad_(not frozen)
 
 
