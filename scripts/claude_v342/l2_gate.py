@@ -23,7 +23,7 @@ import l1_model as M  # noqa: E402
 
 G1_EM_PT, G1_OTHER_PT, P2_PT, NONINF_PT = 3.0, 5.0, 1.0, 1.0
 L9_SLOT0, L9_SLOT12 = 0.95, 0.80
-JOB_RE = re.compile(r'^(R1|V1s|V1|Hs|Hu|Hu-d32|Hu-L9)-(same2|hetero)-s(\d+)$')
+JOB_RE = re.compile(r'^(R1|V1s|V2|V1|Hs|Hu|Hu-d32|Hu-L9)-(same2|hetero)-s(\d+)$')
 
 
 def _r(x):
@@ -56,7 +56,7 @@ def judge(job, runs, l1h):
     if not m:
         raise ValueError(f'unknown job name {job}')
     kind, pair, seed = m.group(1), m.group(2), int(m.group(3))
-    arm = {'R1': 'R1', 'V1': 'V1', 'V1s': 'V1s', 'Hs': 'Hs', 'Hu': 'Hu', 'Hu-d32': 'Hu', 'Hu-L9': 'Hu'}[kind]
+    arm = {'R1': 'R1', 'V1': 'V1', 'V1s': 'V1s', 'V2': 'V2', 'Hs': 'Hs', 'Hu': 'Hu', 'Hu-d32': 'Hu', 'Hu-L9': 'Hu'}[kind]
     where = l1h if kind in ('Hs', 'Hu') and pair == 'same2' else runs
     s, problems = read_summary(os.path.join(where, job, 'summary.json'), arm, pair, seed)
     out = dict(job=job, kind=kind, pair=pair, seed=seed, dir=os.path.join(where, job), problems=problems, criterion=None, verdict='INCOMPLETE', detail={})
@@ -76,6 +76,21 @@ def judge(job, runs, l1h):
         out.update(criterion=f'V1s - V1 >= +{P2_PT} ADDS / <= -{P2_PT} HURTS / else NEUTRAL', verdict=v,
                    detail=dict(v1s=_val(s), v1=_val(v1), margin=d, c_assert=s.get('c_assert'), w=s.get('w'), none=none.get('em'),
                                margin_em_vs_none=(_r(_val(s) - none['em']) if none else None), val_oracle=(s.get('val_oracle') or {}).get('em'), v1_oracle=(v1.get('val_oracle') or {}).get('em')))
+        return out
+    if kind == 'V2':                                                        # D8-93: G-V2 (G1 thresholds) then P-V2 vs the V1 run of the same seed (>= +2 -> SELECT-YES)
+        none = (s.get('baseline') or {}).get('none', {}).get('val')
+        if not none:
+            out['problems'].append('baseline none missing')
+            return out
+        em = _r(_val(s) - none['em'])
+        other = _r(_other(s['val']) - _other(none)) if _other(s['val']) is not None and _other(none) is not None else None
+        g_ok = em is not None and other is not None and em >= G1_EM_PT and other >= G1_OTHER_PT
+        v1, vp = read_summary(os.path.join(runs, f'V1-same2-s{seed}', 'summary.json'), 'V1', 'same2', seed)
+        d = _r(_val(s) - _val(v1)) if v1 is not None and not vp else None
+        verdict = 'FAIL' if not g_ok else ('PASS' if d is None else ('SELECT-YES' if d >= 2.0 else 'SELECT-NO'))
+        out.update(criterion='G-V2 (EM - none >= 3.0 and other >= 5.0) then V2 - V1 >= +2.0 -> SELECT-YES', verdict=verdict,
+                   detail=dict(em=_val(s), none=none['em'], margin_em=em, margin_other=other, v1=(_val(v1) if v1 is not None and not vp else None), margin_vs_v1=d,
+                               val_oracle=(s.get('val_oracle') or {}).get('em'), sel_overlap50=((s.get('sel_quality') or {}).get('overlap50')), fresh=s['fresh']['em']))
         return out
     if kind in ('R1', 'V1', 'Hu'):
         none = (s.get('baseline') or {}).get('none', {}).get('val')

@@ -16,6 +16,7 @@ import sys
 
 import numpy as np
 import torch
+import torch.nn as nn
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 if HERE not in sys.path:
@@ -28,12 +29,14 @@ import l1h_model as MH  # noqa: E402
 
 BATCH = 'L2'
 PREREG = 'D8-92'
-ARMS = ('R1', 'V1', 'Hu', 'V1s')
-BASE_ARM = {'R1': 'U', 'V1': 'U', 'Hu': 'U', 'V1s': 'S1'}        # V1s (appendix 3): V1 with the sheaf-GBP consensus (lam head + w learned)
-SPAN_ARMS = ('V1', 'V1s')
-RECV_ARMS = ('R1', 'V1', 'V1s')
+ARMS = ('R1', 'V1', 'Hu', 'V1s', 'V2')
+BASE_ARM = {'R1': 'U', 'V1': 'U', 'Hu': 'U', 'V1s': 'S1', 'V2': 'U'}   # V1s (appendix 3): V1 with the sheaf-GBP consensus; V2 (D8-93): V1 + a trained span selector
+SPAN_ARMS = ('V1', 'V1s', 'V2')
+RECV_ARMS = ('R1', 'V1', 'V1s', 'V2')
+SELECTOR_ARMS = ('V2',)
+SEL_LOSS_WEIGHT = 1.0                           # D8-93 section 3: BCE of the selector added to the stage-1 copy CE
 PAIRS = ('same2', 'hetero')
-MODES = ('answer', 'span_oracle', 'span_attn')
+MODES = ('answer', 'span_oracle', 'span_attn', 'span_sel')
 K_SPAN = 32
 SPAN_PRE = "From the other agent's documents:"
 SPAN_POST = '\n'
@@ -70,6 +73,7 @@ class AgentL2(MH.AgentH):
         self._lora_recv = []
         self.sel_layer = None
         self.n_attn_passes = 0
+        self.selector = None                                                   # V2: Linear(d_model, 1) on the layer-L hidden states (enable_selector)
 
     # ---------------------------------------------------------------- adapters
     def enable_recv(self):
@@ -96,6 +100,32 @@ class AgentL2(MH.AgentH):
         self.gen_adapter = 'recv'
         self.use('default')
         return n_copied
+
+    def enable_selector(self):
+        if self.selector is None:
+            self.selector = nn.Linear(self.d_model, 1).to(self.device)
+            nn.init.zeros_(self.selector.weight)
+            nn.init.zeros_(self.selector.bias)
+        return self.selector
+
+    @torch.no_grad()
+    def sel_positions(self, pieces, doc_lens, k):
+        """V2: the k-window of the documents region with the largest summed selector probability (the layer-L hidden states of pass 1)"""
+        if self.selector is None:
+            raise ValueError(f'{self.name}: selector not enabled')
+        h, A = self.hidden(pieces)
+        sc = torch.sigmoid(self.selector(h.float()).squeeze(-1))              # (B, T)
+        nb = 1 if self.bos is not None else 0
+        B = len(pieces)
+        pos = torch.full((B, k), -1, dtype=torch.long)
+        for b in range(B):
+            lo, hi = A['start'][b] + nb, A['start'][b] + nb + int(doc_lens[b])
+            if hi <= lo:
+                continue
+            start = self.best_window(sc[b, lo:hi], lo, hi, k)
+            n = min(k, hi - start)
+            pos[b, :n] = start + torch.arange(n)
+        return pos
 
     def use(self, name):
         """activate the adapter `name`; 'default' (B0) is never trainable, 'recv' is trainable only while active"""
@@ -233,6 +263,8 @@ class PairL2(MH.PairH):
         self.span_seen = 0
         self.span_missing = 0
         self.n_skipped = 0
+        self._last = {}                                                        # agent idx -> (h, A, pieces, doc_lens) of the last span-mode pass 1 (the selector loss)
+        self.sel_hist = []
 
     def set_mode(self, mode):
         if mode not in MODES:
@@ -325,12 +357,37 @@ class PairL2(MH.PairH):
                     self._span_cache[(i, 'attn', int(ag.sel_layer), batch[b]['id'])] = got[q].clone()
         return pos, [True] * len(batch)
 
+    def sel_positions(self, batch, i, pieces, doc_lens):
+        ag = self.agent(i)
+        K = self.span_k
+        pos = torch.full((len(batch), K), -1, dtype=torch.long)
+        need = []
+        for b, ex in enumerate(batch):
+            key = (i, 'sel', ex.get('id'))
+            if ex.get('id') is not None and key in self._span_cache:
+                pos[b] = self._span_cache[key]
+            else:
+                need.append(b)
+        if need:
+            got = ag.sel_positions([pieces[b] for b in need], [doc_lens[b] for b in need], K)
+            for q, b in enumerate(need):
+                pos[b] = got[q]
+                if batch[b].get('id') is not None:
+                    self._span_cache[(i, 'sel', batch[b]['id'])] = got[q].clone()
+        return pos, [True] * len(batch)
+
+    def clear_sel_cache(self):
+        for k in [k for k in self._span_cache if k[1] == 'sel']:
+            del self._span_cache[k]
+
     def span_positions(self, batch, i, pieces, doc_lens, mode=None):
         mode = mode or self.mode
         if mode == 'span_oracle':
             return self.oracle_positions(batch, i, pieces)
         if mode == 'span_attn':
             return self.attn_positions(batch, i, pieces, doc_lens)
+        if mode == 'span_sel':
+            return self.sel_positions(batch, i, pieces, doc_lens)
         raise ValueError(mode)
 
     def encode_both(self, batch):
@@ -340,9 +397,13 @@ class PairL2(MH.PairH):
         for i in range(M.N_AGENTS):
             pcs, dl = self.doc_pieces(batch, i)
             pos, _ = self.span_positions(batch, i, pcs, dl)
-            z, lam = self.agent(i).encode(pcs, pos)
+            ag = self.agent(i)
+            h, A = ag.hidden(pcs)
+            if ag.selector is not None:
+                self._last[i] = (h, A, pcs, dl)
+            z, log_lam = ag.adapter(h, A['mask'], pos)
             zs.append(z)
-            ls.append(lam)
+            ls.append(log_lam.exp())
         return torch.stack(zs), torch.stack(ls)
 
     def targets(self, batch, i):
@@ -379,7 +440,44 @@ class PairL2(MH.PairH):
                 batch = [batch[b] for b in idx]
                 if drop is not None:
                     drop = drop[:, idx]
-        return MC.PairC.step(self, batch, arm, train, drop)
+        loss, info = MC.PairC.step(self, batch, arm, train, drop)
+        if self.mode == 'span_oracle' and any(a.selector is not None for a in self.agents):
+            loss = loss + SEL_LOSS_WEIGHT * self.selector_loss(batch, info)
+        return loss, info
+
+    def selector_loss(self, batch, info=None):
+        """V2 stage 1: BCE of each agent's selector on the documents region of the pass-1 hidden states just computed (encode_both), labels =
+        the oracle span tokens (positives re-weighted to the negatives' count); mean over the agents"""
+        losses = []
+        for i in range(M.N_AGENTS):
+            ag = self.agent(i)
+            if ag.selector is None or i not in self._last:
+                continue
+            h, A, pcs, dl = self._last[i]
+            opos, found = self.oracle_positions(batch, i, pcs)
+            nb = 1 if ag.bos is not None else 0
+            logits, labels = [], []
+            for b in range(len(batch)):
+                if not found[b]:
+                    continue
+                lo, hi = A['start'][b] + nb, A['start'][b] + nb + int(dl[b])
+                lab = torch.zeros(hi - lo, device=h.device)
+                lab[[int(p) - lo for p in opos[b].tolist() if p >= 0]] = 1.0
+                logits.append(ag.selector(h[b, lo:hi].float()).squeeze(-1))
+                labels.append(lab)
+            if not logits:
+                continue
+            lg, lb = torch.cat(logits), torch.cat(labels)
+            n_pos = float(lb.sum())
+            pw = torch.tensor(max(1.0, (lb.numel() - n_pos) / max(1.0, n_pos)), device=h.device)
+            losses.append(nn.functional.binary_cross_entropy_with_logits(lg, lb, pos_weight=pw))
+        if not losses:
+            return torch.zeros((), device=self.device)
+        loss = torch.stack(losses).mean()
+        self.sel_hist.append(float(loss.detach()))
+        if info is not None:
+            info['sel_loss'] = float(loss.detach())
+        return loss
 
     # ---------------------------------------------------------------- stage 2
     def step_recv(self, batch, train=True, drop=None):
@@ -405,7 +503,7 @@ class PairL2(MH.PairH):
 def load_init(path):
     """the sender / decoder tensors of an L1h or L2 checkpoint (trainable.pt): {name: tensor} of the adapter.* / reader.* entries"""
     ck = torch.load(path, map_location='cpu', weights_only=False)
-    st = {k: v for k, v in ck['state'].items() if '.adapter.' in k or '.reader.' in k}
+    st = {k: v for k, v in ck['state'].items() if '.adapter.' in k or '.reader.' in k or '.selector.' in k}
     if not st:
         raise ValueError(f'{path}: no adapter / reader tensors in the checkpoint state')
     meta = {k: ck.get(k) for k in ('arm', 'base_arm', 'pair', 'seed', 'models', 'receiver')}
@@ -415,7 +513,7 @@ def load_init(path):
 
 
 def build_pair(arm, pair, device, model=None, hf_cache=None, tiny=None, lora=True, grad_ckpt=False, max_ctx=None, receiver_state=None, tau=MC.TAU,
-               n_blocks=MC.N_BLOCKS, mode='answer', span_k=K_SPAN, init_state=None, recv=False, sel_layer=None, **agent_kw):
+               n_blocks=MC.N_BLOCKS, mode='answer', span_k=K_SPAN, init_state=None, recv=False, sel_layer=None, use_selector=None, **agent_kw):
     """same2: two independent instances of MODELS_SAME2[0] with the hetero B0's agent-0 LoRA remapped to both; hetero: the two models with
     the hetero B0 LoRA as saved. init_state: the frozen sender / decoder tensors (load_init); recv: add the trainable receiver adapter."""
     if arm not in ARMS:
@@ -460,20 +558,32 @@ def build_pair(arm, pair, device, model=None, hf_cache=None, tiny=None, lora=Tru
         a.freeze_lora()
     if init_state is not None:
         own = dict(pl.named_parameters())
-        missing = [k for k in init_state if k not in own]
+        init_state = {k: v for k, v in init_state.items() if '.selector.' not in k} if not use_selector and use_selector is not None else init_state
+        core = {k: v for k, v in init_state.items() if '.selector.' not in k}
+        missing = [k for k in core if k not in own]
         if missing:
             raise ValueError(f'init_state has {len(missing)} tensors not in this pair, e.g. {missing[:3]}')
-        bad = [k for k, v in init_state.items() if tuple(v.shape) != tuple(own[k].shape)]
+        bad = [k for k, v in core.items() if tuple(v.shape) != tuple(own[k].shape)]
         if bad:
             raise ValueError(f'init_state shape mismatch, e.g. {bad[:3]}')
-        need = [k for k in own if ('.adapter.' in k or '.reader.' in k) and k not in init_state]
+        need = [k for k in own if ('.adapter.' in k or '.reader.' in k) and k not in core]
         if need:
             raise ValueError(f'init_state misses {len(need)} sender / decoder tensors, e.g. {need[:3]}')
-        M.load_trainable_state(pl, init_state, strict=True)
+        M.load_trainable_state(pl, core, strict=True)
     if mode != 'answer':
         for a in pl.agents:
             a.hint_pre = [int(t) for t in a.ids(SPAN_PRE)]
             a.hint_post = [int(t) for t in a.ids(SPAN_POST)]
+    if use_selector is None:
+        use_selector = arm in SELECTOR_ARMS
+    if use_selector:
+        for a in pl.agents:
+            a.enable_selector()
+        if init_state is not None:
+            own = dict(pl.named_parameters())
+            sel = {k: v for k, v in init_state.items() if '.selector.' in k}
+            if sel:
+                M.load_trainable_state(pl, sel, strict=True)
     for a in pl.agents:
         a.sel_layer = sel_layer
     if recv:
@@ -487,8 +597,10 @@ def freeze_sender(pair, frozen=True):
     """the sender adapter + decoder of every agent (and the fusion weight w of a consensus arm): requires_grad = not frozen (stage 2 trains
     the receiver only)"""
     for a in pair.agents:
-        for p in list(a.adapter.parameters()) + list(a.reader.parameters()):
-            p.requires_grad_(not frozen)
+        mods = [a.adapter, a.reader] + ([a.selector] if a.selector is not None else [])
+        for m in mods:
+            for p in m.parameters():
+                p.requires_grad_(not frozen)
     for n, p in pair.named_parameters():
         if n == 'w_raw':
             p.requires_grad_(not frozen)
@@ -553,6 +665,27 @@ def eval_baseline(pair, examples, kind, eval_batch=16, max_new_tokens=M.ANSWER_M
     if keep_preds:
         out['records'] = recs
     return out
+
+
+@torch.no_grad()
+def sel_quality(pair, examples, eval_batch=16, deadline=None):
+    """V2 readout: the fraction of (example, agent) pairs whose selector window covers >= 50 % of the oracle span tokens"""
+    pair.eval()
+    hit = n = 0
+    for batch in M.chunks(examples, eval_batch):
+        M.check_deadline(deadline, 'sel_quality')
+        for i in range(M.N_AGENTS):
+            pcs, dl = pair.doc_pieces(batch, i)
+            opos, found = pair.oracle_positions(batch, i, pcs)
+            spos, _ = pair.sel_positions(batch, i, pcs, dl)
+            for b in range(len(batch)):
+                if not found[b]:
+                    continue
+                o = {int(p) for p in opos[b].tolist() if p >= 0}
+                a = {int(p) for p in spos[b].tolist() if p >= 0}
+                n += 1
+                hit += int(len(o & a) >= 0.5 * len(o))
+    return dict(overlap50=hit / max(1, n), n=n)
 
 
 @torch.no_grad()

@@ -32,8 +32,8 @@ import l2_model as L2  # noqa: E402
 from l1d_model import lam_by_bucket as MD_lam_by_bucket  # noqa: E402
 
 SEEDS = T1.SEEDS
-STAGE1_STEPS = {'R1': 0, 'V1': 1000, 'Hu': 2000, 'V1s': 1000}        # D8-92 section 3 (+ appendix 3: V1s)
-STAGE2_STEPS = {'R1': 1500, 'V1': 1000, 'Hu': 0, 'V1s': 1000}
+STAGE1_STEPS = {'R1': 0, 'V1': 1000, 'Hu': 2000, 'V1s': 1000, 'V2': 1000}        # D8-92 section 3 (+ appendix 3: V1s; D8-93: V2)
+STAGE2_STEPS = {'R1': 1500, 'V1': 1000, 'Hu': 0, 'V1s': 1000, 'V2': 1000}
 
 
 def build_parser():
@@ -120,17 +120,23 @@ def slot_accuracy(pair, examples, eval_batch=16, deadline=None):
 
 def readouts(pair, val, fresh, args, log, deadline):
     """soft-deadline readouts -> (dict, where it stopped or None)"""
-    out, where = dict(hint={}, baseline={'none': {}, 'none_recv': {}, 'gold_hint': {}}, soft={}, absence={}, slot_acc=None, val_oracle=None), None
+    out, where = dict(hint={}, baseline={'none': {}, 'none_recv': {}, 'gold_hint': {}}, soft={}, absence={}, slot_acc=None, val_oracle=None, sel_quality=None), None
     ekw = dict(eval_batch=args.eval_batch, max_new_tokens=args.max_new_tokens, keep_preds=False, log=log)
     recv = pair.agent(0).recv
     try:
-        if pair.mode == 'span_attn':
+        if pair.mode in ('span_attn', 'span_sel'):
+            crit = pair.mode
             where = 'oracle-span criterion block (ceiling)'
             pair.set_mode('span_oracle')
             r = L2.eval_render(pair, val, hard=True, drop_p=0.0, c_check=False, seed=args.seed, deadline=deadline, **ekw)
-            pair.set_mode('span_attn')
+            pair.set_mode(crit)
             out['val_oracle'] = r
             log(f'VAL oracle spans (hard, ceiling): EM {r["em"]:.2f} F1 {r["f1"]:.2f} owner {_owner(r)}')
+        if pair.mode == 'span_sel':
+            where = 'selector quality val'
+            r = L2.sel_quality(pair, val, eval_batch=args.eval_batch, deadline=deadline)
+            out['sel_quality'] = r
+            log(f'VAL selector quality: overlap50 {r["overlap50"]:.3f} over {r["n"]} pairs')
         where = 'slot accuracy val'
         r = slot_accuracy(pair, val, eval_batch=args.eval_batch, deadline=deadline)
         out['slot_acc'] = r
@@ -174,7 +180,7 @@ def _state(pair):
     """the checkpoint state: the recv LoRA (when enabled) + the sender adapter + decoder of every agent"""
     st = {}
     for n, p in pair.named_parameters():
-        if ('.adapter.' in n or '.reader.' in n) or ('lora_' in n and '.recv.' in n) or n == 'w_raw':
+        if ('.adapter.' in n or '.reader.' in n or '.selector.' in n) or ('lora_' in n and '.recv.' in n) or n == 'w_raw':
             st[n] = p.detach().cpu()
     return st
 
@@ -190,9 +196,9 @@ def main(argv=None):
         raise SystemExit('--init-from (the frozen sender / decoder run dir) is required for R1')
     if args.arm in L2.SPAN_ARMS and args.pair != 'same2':
         raise SystemExit('V1 / V1s (evidence spans) run on pair same2 only')
-    if args.arm in L2.SPAN_ARMS and args.sel_layer is None:
+    if args.arm in L2.SPAN_ARMS and args.arm not in L2.SELECTOR_ARMS and args.sel_layer is None:
         if not args.tiny:
-            raise SystemExit('--sel-layer (E0c) is required for V1')
+            raise SystemExit('--sel-layer (E0c) is required for V1 / V1s')
         args.sel_layer = 1
     s1 = STAGE1_STEPS[args.arm] if args.stage1_steps is None else args.stage1_steps
     s2 = STAGE2_STEPS[args.arm] if args.stage2_steps is None else args.stage2_steps
@@ -271,11 +277,13 @@ def main(argv=None):
             log(f'stage 1: trainable {counts["trainable"]:,} (sender adapter + decoder' + (' + lam head + w' if pair.w is not None else '') + ')')
             tr = M.train_steps(pair, lambda b: pair.step(b, train=True), M.batch_stream(train, args.batch, args.seed), s1, 0.0, args.lr_adapter,
                                args.warmup, args.clip, device, log, args.log_every, deadline, label=f'{args.arm}/{args.pair}/s{args.seed} stage1',
-                               weight_decay=args.weight_decay, extra_log=lambda i: f'msg acc {i["msg_acc"]:.3f}' + (f' w {pair.w_value:.4f}' if pair.w is not None else ''))
+                               weight_decay=args.weight_decay, extra_log=lambda i: f'msg acc {i["msg_acc"]:.3f}' + (f' w {pair.w_value:.4f}' if pair.w is not None else '') + (f' sel {i["sel_loss"]:.3f}' if 'sel_loss' in i else ''))
             tr['message'] = pair.msg_summary()
-            tr['span'] = dict(seen=pair.span_seen, missing=pair.span_missing)
+            tr['span'] = dict(seen=pair.span_seen, missing=pair.span_missing, skipped=pair.n_skipped)
             tr['answers_generated'] = {a.name: a.n_generated for a in pair.agents}
             tr['params'] = counts
+            tr['selector_loss_first100'] = float(np.mean(pair.sel_hist[:100])) if pair.sel_hist else None
+            tr['selector_loss_last100'] = float(np.mean(pair.sel_hist[-100:])) if pair.sel_hist else None
             stages['stage1'] = tr
             log(f'stage 1 done: {tr["steps_done"]} steps in {tr["seconds"]:.0f} s; loss first100 {tr["loss_first100"]} last100 {tr["loss_last100"]}; '
                 f'msg acc first/last {tr["message"].get("msg_acc_first")}/{tr["message"].get("msg_acc_last")}; spans seen {pair.span_seen} missing {pair.span_missing}')
@@ -305,7 +313,7 @@ def main(argv=None):
         # ---------------------------------------------------------------- the criterion and the readouts
         t_eval = time.time()
         ekw = dict(eval_batch=args.eval_batch, max_new_tokens=args.max_new_tokens, deadline=deadline, keep_preds=True, log=log)
-        crit_mode = 'span_attn' if args.arm in L2.SPAN_ARMS else 'answer'
+        crit_mode = ('span_sel' if args.arm in L2.SELECTOR_ARMS else 'span_attn') if args.arm in L2.SPAN_ARMS else 'answer'
         pair.set_mode(crit_mode)
         fusion = pair.arm in M.FUSION_ARMS
         v = L2.eval_render(pair, val, hard=True, drop_p=0.0, c_check=fusion, seed=args.seed, **ekw)
@@ -341,7 +349,7 @@ def main(argv=None):
     models = list(dict.fromkeys(a['name'] for a in info))
     done = all(stages[k]['steps_done'] == n for k, n in (('stage1', s1), ('stage2', s2)) if n)
     summary = dict(arm=args.arm, base_arm=pair.arm, pair=args.pair, seed=args.seed, model=None, models=models, batch_name=L2.BATCH, prereg=L2.PREREG, val=v, fresh=f,
-                   val_oracle=ro['val_oracle'], absence=absence, soft=ro['soft'], baseline=ro['baseline'], hint=ro['hint'], slot_acc=ro['slot_acc'], complete=bool(done),
+                   val_oracle=ro['val_oracle'], sel_quality=ro['sel_quality'], absence=absence, soft=ro['soft'], baseline=ro['baseline'], hint=ro['hint'], slot_acc=ro['slot_acc'], complete=bool(done),
                    steps=sum(st['steps_done'] for st in stages.values()), steps_planned=s1 + s2, stages=stages, readouts_incomplete=where, agents=info,
                    params=M.count_params(pair), receiver=receiver, init_from=init_meta, lam_by_bucket=lam_bucket,
                    span=dict(seen=pair.span_seen, missing=pair.span_missing, attn_passes=[a.n_attn_passes for a in pair.agents], sel_layer=args.sel_layer),

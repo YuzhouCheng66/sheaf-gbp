@@ -364,3 +364,73 @@ def test_cli_tiny_v1s_and_gate():
         assert G.judge('V1s-same2-s342101', runs, l1h)['verdict'] == 'INCOMPLETE'
     finally:
         shutil.rmtree(d, ignore_errors=True)
+
+
+def test_v2_selector_positions_loss_and_cli():
+    p = _pair('V2', mode='span_oracle', recv=True)
+    assert all(a.selector is not None for a in p.agents) and p.agent(0).k == 6
+    L2.freeze_sender(p, frozen=False)
+    p.use('default')
+    p.train()
+    loss, info = p.step(EX[:2], train=True, drop=torch.zeros(2, 2, dtype=torch.bool))
+    assert torch.isfinite(loss) and 'sel_loss' in info and p.sel_hist
+    loss.backward()
+    names = dict(p.named_parameters())
+    assert all(names[n].grad is not None and float(names[n].grad.abs().sum()) > 0 for n in names if '.selector.weight' in n)
+    assert all(names[n].grad is None for n in names if 'lora_' in n)
+    for q in names.values():
+        q.grad = None
+    L2.freeze_sender(p, frozen=True)
+    assert all(not q.requires_grad for n, q in names.items() if '.selector.' in n)
+    p.set_mode('span_sel')
+    pcs, dl = p.doc_pieces(EX, 0)
+    pos, _ = p.sel_positions(EX, 0, pcs, dl)
+    nb = 1 if p.agent(0).bos is not None else 0
+    for b in range(len(EX)):
+        got = [int(q) for q in pos[b].tolist() if q >= 0]
+        assert len(got) == min(6, dl[b]) and got == list(range(got[0], got[0] + len(got))) and nb <= got[0] and got[-1] < nb + dl[b]
+    q = L2.sel_quality(p, EX, eval_batch=2)
+    assert q['n'] == 2 * len(EX) and 0.0 <= q['overlap50'] <= 1.0
+    # a selector that scores the oracle tokens highest selects the oracle window
+    ag = p.agent(0)
+    h, A = ag.hidden(pcs)
+    opos, _ = p.oracle_positions(EX, 0, pcs)
+    with torch.no_grad():
+        feat = torch.zeros(ag.d_model)
+        for b in range(len(EX)):
+            for q_ in opos[b].tolist():
+                if q_ >= 0:
+                    feat += h[b, int(q_)].float()
+        ag.selector.weight.copy_(feat[None] * 0.0)
+        ag.selector.bias.zero_()
+    p.clear_sel_cache()
+    z, _ = p.encode_both(EX[:2])
+    assert z.shape == (2, 2, 6, DE)
+    p2 = _pair('V2', mode='span_oracle', recv=True, init_state={n: q.detach().clone() for n, q in p.named_parameters() if '.adapter.' in n or '.reader.' in n or '.selector.' in n})
+    assert torch.equal(p2.agent(0).selector.weight.detach(), p.agent(0).selector.weight.detach())
+    d = tempfile.mkdtemp()
+    try:
+        _fixture(d)
+        out = os.path.join(d, 'V2')
+        r = _cli(d, 'V2', out, ['--k', '6', '--stage1-steps', '4', '--stage2-steps', '4'])
+        assert r.returncode == 0, r.stdout[-2000:] + r.stderr[-3000:]
+        s = json.load(open(os.path.join(out, 'summary.json')))
+        assert s['arm'] == 'V2' and s['channel']['criterion_mode'] == 'span_sel' and s['val_oracle'] is not None and s['sel_quality'] is not None
+        assert s['stages']['stage1']['selector_loss_last100'] is not None and s['slot_acc']['mode'] == 'span_sel'
+        ck = torch.load(os.path.join(out, 'trainable.pt'), map_location='cpu', weights_only=False)
+        assert any('.selector.' in n for n in ck['state']) and any('.recv.' in n for n in ck['state'])
+        import l1_aggregate as A1
+        assert not A1.validate_summary(s, 'V2', 'same2', 5)
+        import l2_gate as G
+        runs, l1h = os.path.join(d, 'l2'), os.path.join(d, 'l1h')
+        os.makedirs(runs); os.makedirs(l1h)
+        _summary_l2(runs, 'V2-same2-s342101', 'V2', 'same2', 342101, 55.0, 42.0, 44.0, 15.0, extra=dict(val_oracle=dict(em=56.0), sel_quality=dict(overlap50=0.85, n=10)))
+        assert G.judge('V2-same2-s342101', runs, l1h)['verdict'] == 'PASS'                             # no V1 reference -> PASS only
+        _summary_l2(runs, 'V1-same2-s342101', 'V1', 'same2', 342101, 51.8, 42.0, 39.0, 15.0)
+        assert G.judge('V2-same2-s342101', runs, l1h)['verdict'] == 'SELECT-YES'
+        _summary_l2(runs, 'V2-same2-s342101', 'V2', 'same2', 342101, 52.5, 42.0, 44.0, 15.0)
+        assert G.judge('V2-same2-s342101', runs, l1h)['verdict'] == 'SELECT-NO'
+        _summary_l2(runs, 'V2-same2-s342101', 'V2', 'same2', 342101, 44.0, 42.0, 17.0, 15.0)
+        assert G.judge('V2-same2-s342101', runs, l1h)['verdict'] == 'FAIL'
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
