@@ -151,7 +151,7 @@ def main(argv=None):
             L3.trainable_sets(pl3, 4)
             counts = M.count_params(pl3)
             log(f'stage 4 ({args.arm}): trainable {counts["trainable"]:,} (recv LoRA)')
-            tr = M.train_steps(pl3, lambda b: pl3.step4(b, train=True, arm=args.arm), M.batch_stream(train, args.batch, args.seed + 1), args.stage4_steps, args.lr_lora, 0.0,
+            tr = M.train_steps(pl3, lambda b: pl3.step4(b, train=True, arm=args.arm), M.batch_stream(train, args.batch, args.seed), args.stage4_steps, args.lr_lora, 0.0,   # the SAME stream as stage 3: every training example is in the S2a cache
                                args.warmup, args.clip, device, log, args.log_every, deadline, label=f'{args.arm}/s{args.seed} stage4', weight_decay=args.weight_decay)
             tr['params'] = counts
             tr['round1_generated'] = pl3.n_round1

@@ -149,7 +149,8 @@ class PairL3(nn.Module):
         if need:
             sub = [batch[b] for b in need]
             pair = self.pair
-            pair.eval()
+            was_training = self.training
+            self.eval()                                                        # generation and the teacher-forced pass never run in train mode
             z, lam = pair.encode_both(sub)
             xs, _, _ = pair.messages_eval(z, lam)
             evs = [pair.agent(i).reader.logits(xs[i]).argmax(-1).cpu().tolist() for i in range(M.N_AGENTS)]
@@ -165,6 +166,8 @@ class PairL3(nn.Module):
                 for b in range(len(sub)):
                     recs[b][str(i)] = dict(ev=[int(t) for t in evs[i][b]], ans=texts[b], ans_ids=ans_ids[b], p=float(probs[b]))
             self.n_round1 += len(sub)
+            if was_training:
+                self.train()
             for b, ex in zip(need, sub):
                 if ex.get('id') is not None:
                     self.cache[ex['id']] = recs[need.index(b)]
