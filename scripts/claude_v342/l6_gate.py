@@ -2,7 +2,7 @@
   python -B scripts/claude_v342/l6_gate.py --job VER-same2-s342101 --runs runs/l6 --l5 runs/l5 --l4 runs/l4 --out runs/l6/gates
 Prints 'GATE <job>: <verdict>' and writes <out>/<job>.json plus the marker <runs>/GATE_<job>_<verdict>.
   GEN-same2-s<seed>:  summary.json complete -> GEN-DONE
-  VER-same2-s<seed>:  H_ver  ver_sum - select_p >= +2 -> VERIFIER-ADDS, <= -2 -> VERIFIER-HURTS, else VERIFIER-NEUTRAL
+  VER-same2-s<seed> / VERX-same2-s<seed> (doc-swapped negatives):  H_ver  ver_sum - select_p >= +2 -> VERIFIER-ADDS, <= -2 -> VERIFIER-HURTS, else VERIFIER-NEUTRAL
                       H_text ver_sum - T2(same seed, <l4>/T2-same2-s<seed>) >= +2 -> BELIEF-BEATS-TEXT-R2, <= -2 -> TEXT-BEATS-BELIEF, else TIE (pendingT2 when missing);
                              ver_sum >= 61.7 -> BEATS-ALL-DOCS, >= 60.2 (one-round text 58.2 + 2) -> BEATS-TEXT, else BELOW-TEXT
                       H_sum  ver_sum - max_i ver_self_i >= +2 -> SUM-ADDS else SUM-NEUTRAL
@@ -21,7 +21,7 @@ import l1_model as M  # noqa: E402
 
 SEL_PT, TEXT_PT, SUM_PT = 2.0, 2.0, 2.0
 T_TEXT, B4_ALL = 58.2, 61.7
-JOB_RE = re.compile(r'^(VER|GEN)-(same2)-s(\d+)$')
+JOB_RE = re.compile(r'^(VER|VERX|GEN)-(same2)-s(\d+)$')
 
 
 def _r(x):

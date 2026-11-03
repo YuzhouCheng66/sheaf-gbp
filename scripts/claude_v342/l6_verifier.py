@@ -8,7 +8,9 @@ prompt + the candidate. Consensus = the sheaf-GBP sum on the discrete belief: S(
                 (round-1 prompt_i, c, EM(c, gold)) over the union of every training example (one epoch, soft time stop), saved to trainable.pt;
                 then the evaluation on val / fresh with the candidates and unions of the L5 B1t records of the same seed (--l5-from:
                 preds_val.json / preds_fresh.json of D8-95: the same union, the same ceiling), the evidence tokens recomputed by the same
-                attention selection.
+                attention selection.  --swap-frac f (arm VERX): per agent and step, a fraction f of extra DOC-SWAPPED groups -- the documents and
+                the received evidence of another training row with this row's question and candidates, every label 0 -- so that 'yes' needs
+                document support, not recall (the V1 pair memorised its training examples: D8-96 appendix 1).
   python -B scripts/claude_v342/l6_verifier.py --mode gen --pair same2 --seed 342101 --receiver-from runs/l1/B0-hetero-s342101 \
       --v-from runs/l2/V1-same2-s342101 --train hotpot/splits_l1/train.jsonl --limit-train 4000 --val ... --fresh ... --out runs/l6/GEN-same2-s342101
   python -B scripts/claude_v342/l6_verifier.py --mode train --pair same2 --seed 342101 --receiver-from ... --v-from ... --cands-from runs/l6/GEN-same2-s342101/cands_train.json \
@@ -76,6 +78,22 @@ def argmax_first(vals):
         if best is None or float(v) > best:
             best, bi = float(v), i
     return bi
+
+
+def exclude_seen(examples, spec):
+    """spec 'SEED:N,SEED:N' -> the examples NOT among the first N of M.epoch_order(len(examples), SEED) for any pair (the examples a training
+    of N example-passes with that data seed never saw), in file order; -> (kept examples, meta)"""
+    if not spec:
+        return list(examples), dict(spec=None, n_total=len(examples), n_seen=0, n_kept=len(examples))
+    seen = set()
+    pairs = []
+    for part in spec.split(','):
+        sd, n = part.split(':')
+        sd, n = int(sd), int(n)
+        pairs.append((sd, n))
+        seen.update(M.epoch_order(len(examples), sd)[:n])
+    kept = [ex for j, ex in enumerate(examples) if j not in seen]
+    return kept, dict(spec=spec, pairs=pairs, n_total=len(examples), n_seen=len(seen), n_kept=len(kept))
 
 
 def rel_of(owner, i):
@@ -248,10 +266,14 @@ def yes_no_ids(ag):
     return int(y[0]), int(n_[0])
 
 
-def round1_prompts(pair, batch, i, evs):
-    """-> the round-1 prompt id lists of agent i: [BOS] documents | SPAN template with the partner's evidence tokens | question"""
+def round1_prompts(pair, batch, i, evs, docs_from=None):
+    """-> the round-1 prompt id lists of agent i: [BOS] documents | SPAN template with the partner's evidence tokens | question.
+    docs_from (examples, same length): the documents (and evs) come from these examples instead, the question stays (doc-swapped negatives)"""
     ag = pair.agent(i)
     pcs, _dl = pair.doc_pieces(batch, i)
+    if docs_from is not None:
+        other, _ = pair.doc_pieces(docs_from, i)
+        pcs = [(o[0], p_[1], []) for o, p_ in zip(other, pcs)]
     return [list(p_) + ag.hint_pre + list(evs[b]) + ag.hint_post + list(s) for b, (p_, s, _) in enumerate(pcs)]
 
 
@@ -338,7 +360,9 @@ def train_verifier(pair, rows, by_id, cue, yns, args, device, log, deadline=None
     log(f'train: {planned} steps x {args.batch} examples (n {n}), lr {args.lr_lora} ({counts["lora"]:,} verify params), warm-up {args.warmup}, clip {args.clip}, soft stop {soft_stop}')
     use_ac = device.type == 'cuda'
     losses, hist, times = [], [], []
-    acc_pos, acc_neg, n_seq = [], [], 0
+    acc_pos, acc_neg, n_seq, n_swap = [], [], 0, 0
+    swap_frac = float(getattr(args, 'swap_frac', 0.0) or 0.0)
+    rng = np.random.RandomState(args.seed + 7)
     t_start = time.time()
     done = 0
     stopped = None
@@ -365,11 +389,23 @@ def train_verifier(pair, rows, by_id, cue, yns, args, device, log, deadline=None
                         lab.append(em(c, r['gold']))
                 sc = verify_logits(ag, pcs, yns[i], train=True)
                 y = torch.tensor(lab, dtype=torch.float32, device=sc.device)
-                li = Fn.binary_cross_entropy_with_logits(sc, y)
-                loss_agents.append(li)
+                li = Fn.binary_cross_entropy_with_logits(sc, y, reduction='sum')
+                n_i = len(lab)
                 with torch.no_grad():
                     pr = torch.sigmoid(sc.detach())
                     acc_pos.extend(pr[y == 1].tolist()); acc_neg.extend(pr[y == 0].tolist()); n_seq += len(lab)
+                swap = [b for b in range(len(batch_rows)) if swap_frac > 0 and rng.rand() < swap_frac]
+                if swap:                                                       # doc-swapped negatives: another row's documents + evidence, this question, label 0
+                    src = [rows[int(rng.randint(n))] for _ in swap]
+                    src = [r2 if r2['id'] != batch_rows[b]['id'] else rows[(order[0] + 1) % n] for r2, b in zip(src, swap)]
+                    sp = round1_prompts(pair, [batch[b] for b in swap], i, [r2['ev'][i] for r2 in src], docs_from=[by_id[r2['id']] for r2 in src])
+                    pcs2 = [verify_pieces(ag, sp[q], c, cue) for q, b in enumerate(swap) for c in batch_rows[b]['union']]
+                    sc2 = verify_logits(ag, pcs2, yns[i], train=True)
+                    li = li + Fn.binary_cross_entropy_with_logits(sc2, torch.zeros_like(sc2), reduction='sum')
+                    n_i += len(pcs2); n_seq += len(pcs2); n_swap += len(pcs2)
+                    with torch.no_grad():
+                        acc_neg.extend(torch.sigmoid(sc2.detach()).tolist())
+                loss_agents.append(li / max(1, n_i))
             loss = sum(loss_agents) / len(loss_agents)
         if not torch.isfinite(loss):
             raise RuntimeError(f'train: non-finite loss at step {s}')
@@ -390,7 +426,7 @@ def train_verifier(pair, rows, by_id, cue, yns, args, device, log, deadline=None
     pair.eval()
     use_verify(pair, train=False)
     return dict(steps_done=done, steps_planned=planned, examples=n, batch=args.batch, seconds=time.time() - t_start, step_time_s=float(np.mean(times)) if times else None,
-                sequences=n_seq, loss_first100=float(np.mean(losses[:100])) if losses else None, loss_last100=float(np.mean(losses[-100:])) if losses else None, history=hist,
+                sequences=n_seq, swapped_sequences=n_swap, swap_frac=swap_frac, loss_first100=float(np.mean(losses[:100])) if losses else None, loss_last100=float(np.mean(losses[-100:])) if losses else None, history=hist,
                 stopped=stopped, param_counts=counts)
 
 
@@ -475,6 +511,7 @@ def build_parser():
     ap.add_argument('--weight-decay', type=float, default=0.0)
     ap.add_argument('--log-every', type=int, default=25)
     ap.add_argument('--train-stop-epoch', type=float, default=0.0, help='train: soft stop of the training (epoch seconds); the evaluation follows')
+    ap.add_argument('--swap-frac', type=float, default=0.0, help='train: fraction of extra doc-swapped negative groups per agent and example (arm VERX when > 0)')
     ap.add_argument('--no-grad-ckpt', action='store_true')
     ap.add_argument('--layer-frac', type=float, default=M.LAYER_FRAC)
     ap.add_argument('--d-e', type=int, default=M.D_E); ap.add_argument('--n-heads', type=int, default=M.N_HEADS)
@@ -482,6 +519,7 @@ def build_parser():
     ap.add_argument('--lora-dropout', type=float, default=0.0)
     ap.add_argument('--max-ctx-tokens', type=int, default=900)
     ap.add_argument('--limit-eval', type=int, default=0); ap.add_argument('--limit-train', type=int, default=0)
+    ap.add_argument('--exclude-seen', default=None, help="gen: 'SEED:N,...' drops the train examples among the first N of the epoch order of SEED (seen by a training with that data seed)")
     ap.add_argument('--tiny', action='store_true')
     ap.add_argument('--hf-cache', default=None)
     ap.add_argument('--deadline-epoch', type=float, default=0.0)
@@ -511,7 +549,16 @@ def main(argv=None):
     M.seed_all(args.seed)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     deadline = args.deadline_epoch or None
-    train, val, fresh = T1.read_data(args, log, need_train=(args.mode == 'gen'))
+    seen_meta = None
+    if args.mode == 'gen':
+        full = argparse.Namespace(**dict(vars(args), limit_train=0))
+        train, val, fresh = T1.read_data(full, log, need_train=True)
+        train, seen_meta = exclude_seen(train, args.exclude_seen)
+        if args.limit_train:
+            train = train[:args.limit_train]
+        log(f'gen rows: {len(train)} train examples after exclude-seen {seen_meta} and limit {args.limit_train}')
+    else:
+        train, val, fresh = T1.read_data(args, log, need_train=False)
     tiny = M.tiny_models(train + val + fresh + [YN_EXAMPLE], args.seed) if args.tiny else None
     agent_kw = {k: getattr(args, k) for k in T1.AGENT_KEYS if k != 'k'}
     receiver_state, receiver = None, None
@@ -556,9 +603,9 @@ def main(argv=None):
             rows, stats = gen_rows(pair, train, args.k_beams, args.max_new_tokens, args.gen_batch, deadline=deadline, log=log)
             gen_s = time.time() - t1
             M.jdump(dict(seed=args.seed, pair=args.pair, n=len(rows), k_beams=args.k_beams, max_new=args.max_new_tokens, sel_layer=sel_layer, k_ev=pair.span_k, v=v_meta, split='train',
-                         limit_train=args.limit_train, rows=rows), os.path.join(args.out, 'cands_train.json'))
+                         limit_train=args.limit_train, exclude_seen=seen_meta, rows=rows), os.path.join(args.out, 'cands_train.json'))
             log(f'gen: {stats}')
-            summary = dict(mode='gen', arm='GEN', pair=args.pair, seed=args.seed, batch_name=BATCH, prereg=PREREG, complete=True, n_rows=len(rows), gen=stats, agents=info, receiver=receiver,
+            summary = dict(mode='gen', arm='GEN', pair=args.pair, seed=args.seed, batch_name=BATCH, prereg=PREREG, complete=True, n_rows=len(rows), gen=stats, exclude_seen=seen_meta, agents=info, receiver=receiver,
                            v=dict(v_meta, run=args.v_from, val_em=(v_summary.get('val') or {}).get('em'), sel_layer=sel_layer), timings=dict(load_s=load_s, gen_s=gen_s, total_s=time.time() - t_start),
                            config=dict(vars(args), device=str(device), torch=torch.__version__), scripts_sha=M.scripts_sha(SCRIPTS), utc_end=M.utc(), pid=os.getpid())
         else:
@@ -583,7 +630,7 @@ def main(argv=None):
             tr = train_verifier(pair, rows, by_id, cues[0], yns, args, device, log, deadline=deadline, soft_stop=(args.train_stop_epoch or None))
             log(f'train done: {tr["steps_done"]}/{tr["steps_planned"]} steps in {tr["seconds"]:.0f} s ({tr["sequences"]} sequences); loss first100 {tr["loss_first100"]} last100 {tr["loss_last100"]}; {tr["stopped"]}')
             state = verify_state(pair)
-            torch.save(dict(arm='VER', pair=args.pair, seed=args.seed, models=[a['name'] for a in info], state=state, agents=info, receiver=receiver, v=v_meta, cands=cands_meta,
+            torch.save(dict(arm=('VERX' if args.swap_frac > 0 else 'VER'), pair=args.pair, seed=args.seed, models=[a['name'] for a in info], state=state, agents=info, receiver=receiver, v=v_meta, cands=cands_meta,
                             train=dict(tr, history=None), config=vars(args)), os.path.join(args.out, 'trainable.pt'))
             log(f'trainable.pt saved before the evaluation ({len(state)} tensors)')
             t_eval = time.time()
@@ -598,7 +645,7 @@ def main(argv=None):
                 M.jdump(v_rec, os.path.join(args.out, 'preds_val.json'))
                 M.jdump(f_rec, os.path.join(args.out, 'preds_fresh.json'))
             l5v = (l5_summary.get('val') or {}) if l5_summary else {}
-            summary = dict(mode='train', arm='VER', pair=args.pair, seed=args.seed, batch_name=BATCH, prereg=PREREG, val=v, fresh=f, complete=True,
+            summary = dict(mode='train', arm=('VERX' if args.swap_frac > 0 else 'VER'), pair=args.pair, seed=args.seed, batch_name=BATCH, prereg=PREREG, val=v, fresh=f, complete=True,
                            train_complete=bool(tr['steps_done'] == tr['steps_planned']), steps=tr['steps_done'], steps_planned=tr['steps_planned'], train=tr, agents=info, receiver=receiver,
                            params=dict(verify_tensors=len(state), verify_params=int(sum(t.numel() for t in state.values()))),
                            v=dict(v_meta, run=args.v_from, val_em=(v_summary.get('val') or {}).get('em'), sel_layer=sel_layer), cands=cands_meta,
@@ -607,7 +654,7 @@ def main(argv=None):
                            channel=dict(cue=VERIFY_CUE, yes=YES, no=NO, yes_no_ids=yns, adapter='verify', init='recv', mode=pair.mode, k_ev=pair.span_k, span_pre=L2.SPAN_PRE, span_post=L2.SPAN_POST,
                                         round1='frozen V1 recv adapters: the partner\'s attention-selected span as clean tokens; the beam-4 candidates of the L5 B1t records',
                                         round2='candidate union; per agent the trained verification log-odds s_i(c) under its own round-1 prompt; consensus = sum_i s_i(c), argmax',
-                                        training=f'BCE on EM(c, gold) over the union candidates of train rows (one verify LoRA per agent)'),
+                                        training=f'BCE on EM(c, gold) over the union candidates of train rows (one verify LoRA per agent); doc-swapped negatives frac {args.swap_frac}'),
                            timings=dict(load_s=load_s, evidence_s=ev_s, train_s=tr['seconds'], eval_s=eval_s, total_s=time.time() - t_start),
                            config=dict(vars(args), lora_targets=list(M.LORA_TARGETS), device=str(device), torch=torch.__version__), scripts_sha=M.scripts_sha(SCRIPTS), utc_end=M.utc(), pid=os.getpid())
     except M.Deadline as e:
@@ -620,7 +667,7 @@ def main(argv=None):
     if args.mode == 'gen':
         log(f'l6_verifier done: GEN s{args.seed} {len(rows)} rows; union any {summary["gen"]["union_any_correct"]} either top-1 {summary["gen"]["either_top1"]} total {time.time() - t_start:.0f} s')
     else:
-        log(f'l6_verifier done: VER s{args.seed} VAL ver_sum {v["em"]:.2f} (select_p {v["em_variants"]["select_p"]:.2f}; poe_k4 {v["em_variants"]["poe_k4"]:.2f}; self {v["em_variants"]["ver_self0"]:.2f}/{v["em_variants"]["ver_self1"]:.2f}; '
+        log(f'l6_verifier done: {summary["arm"]} s{args.seed} VAL ver_sum {v["em"]:.2f} (select_p {v["em_variants"]["select_p"]:.2f}; poe_k4 {v["em_variants"]["poe_k4"]:.2f}; self {v["em_variants"]["ver_self0"]:.2f}/{v["em_variants"]["ver_self1"]:.2f}; '
             f'union {v["union"]["any_correct"]:.2f}) fresh ver_sum {f["em"]:.2f}; steps {tr["steps_done"]}/{tr["steps_planned"]}; total {time.time() - t_start:.0f} s')
     return 0
 

@@ -28,6 +28,9 @@ run(){                                                                          
   return $x
 }
 run GEN-s342101-48 --mode gen --pair same2 --seed 342101 --receiver-from runs/l1/B0-hetero-s342101 --v-from runs/l2/V1-same2-s342101 --limit-train 48
+run GEN-s342101-48u --mode gen --pair same2 --seed 342101 --receiver-from runs/l1/B0-hetero-s342101 --v-from runs/l2/V1-same2-s342101 --limit-train 48 --exclude-seen 342101:8000,342102:8000
 run VER-s342101-48 --mode train --pair same2 --seed 342101 --receiver-from runs/l1/B0-hetero-s342101 --v-from runs/l2/V1-same2-s342101 --cands-from $L/GEN-s342101-48/cands_train.json \
     --l5-from runs/l5/B1t-same2-s342101 --batch 2 --steps 24 --lr-lora 1e-4 --warmup 4 --log-every 4 --limit-eval 48
+run VERX-s342101-48 --mode train --pair same2 --seed 342101 --receiver-from runs/l1/B0-hetero-s342101 --v-from runs/l2/V1-same2-s342101 --cands-from $L/GEN-s342101-48u/cands_train.json \
+    --l5-from runs/l5/B1t-same2-s342101 --batch 2 --steps 24 --lr-lora 1e-4 --warmup 4 --log-every 4 --limit-eval 48 --swap-frac 0.5
 log "L6 prelaunch done"

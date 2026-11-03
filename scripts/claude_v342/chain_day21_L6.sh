@@ -10,8 +10,9 @@
 # nothing and exits 0 so the queue moves on):
 #   57 GEN-same2-s342101 [runs/l2/V1-same2-s342101 done]   58 GEN-same2-s342202 [V1 s2 done]
 #   59 VER-same2-s342101 [GEN s1 + runs/l5/B1t-same2-s342101 preds]   60 VER-same2-s342202 [GEN s2 + L5 B1t s2 preds]
-#   61+ nothing (reserved for the coordinator)
-#   GPU approval: the user's "批准，做" (2026-11-03, D8-96 leases 57-60), passed as $2 into every lease_<N>.json.
+#   61 VERX-same2-s342101 [same as 59; --swap-frac 0.5]                62 VERX-same2-s342202 [same as 60; --swap-frac 0.5]
+#   63+ nothing (reserved for the coordinator)
+#   GPU approval: the user's "批准，做" (2026-11-03, D8-96 leases 57-62), passed as $2 into every lease_<N>.json.
 # Writes only under /mnt/datasets (runs/l6/..., runs/l6/chain_day21.log). Data, HF cache, runs/l1, runs/l2, runs/l4, runs/l5 are read, never written.
 #
 # The coordinator fills every FILL_ (after the tests and the smokes; the chain refuses FILL_):
@@ -22,7 +23,7 @@ cd /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021 || exit 1
 PREREG="$1"; APPROVAL="$2"
 [ "$PREREG" = "D8-96" ] && [ -n "$APPROVAL" ] || { echo "usage: chain_day21_L6.sh D8-96 <user GPU approval UTC> --lease N [--est-gen 40 --est-ver 100]"; exit 2; }
 shift 2
-LEASE=""; EST_GEN=40; EST_VER=100
+LEASE=""; EST_GEN=40; EST_VER=110
 while [ $# -gt 0 ]; do
   case "$1" in
     --lease) LEASE="$2"; shift 2;;
@@ -67,8 +68,14 @@ VALJ_SHA=b1e240bbe70873e1f2ac7586171caf6d3620f269c0e02807033a5fded5f68ecf       
 FRESHJ_SHA=985610d8e092745c9edc37b7624ab7e502a9e94da9b0c7a280cd4f68d00acc60                                                 # $DATA/fresh.jsonl (L1 pin)
 # ---------------------------------------------------------------- the knobs (D8-96 sections 2 and 4)
 CTX_SHARD=900
-N_TRAIN=4000                                                              # train[:4000] (GEN); the VER jobs train one epoch over these rows
-TRAIN_STOP_S=4500                                                         # the soft stop of the verifier training: lease start + 75 min
+N_TRAIN=4000                                                              # 4000 train examples (GEN); the VER jobs train one epoch over these rows
+# D8-96 appendix 1: the V1 pair memorised its training examples (train[:48] top-1 93.75 vs VAL 51.8), so the GEN rows are taken from the train
+# examples NEVER used by the V1 stages of the seed (stage 1: the first 8,000 of the epoch order of the seed; stage 2 / recv: of seed + 1),
+# in file order, the first N_TRAIN of them (B0 saw every train example once; that is recorded, not avoidable)
+EXCL_342101="342101:8000,342102:8000"
+EXCL_342202="342202:8000,342203:8000"
+TRAIN_STOP_S=5100                                                         # the soft stop of the verifier training: lease start + 85 min (appendix 1: VERX has 1.5x sequences)
+SWAP_FRAC=0.5                                                             # VERX: doc-swapped negative groups per agent and example
 L6_FLAGS="--k-beams 4 --gen-batch 8 --score-batch 32 --batch 2 --lr-lora 1e-4 --warmup 100"
 mkdir -p runs/l6
 log(){ echo "$(date -u +%FT%TZ) $*" | tee -a $LOG; }
@@ -117,15 +124,19 @@ cond_done(){ [ -f $1/summary.json ]; }
 l5_ok(){ [ -f $L5RUNS/B1t-same2-s$1/summary.json ] && [ -f $L5RUNS/B1t-same2-s$1/preds_val.json ] && [ -f $L5RUNS/B1t-same2-s$1/preds_fresh.json ]; }
 NAME=""; OUT=""; EST=0; ARGS=""; WHY=""; KIND=""
 case "$LEASE" in
-  57) NAME=GEN-same2-s342101; KIND=gen; OUT=$RUNS/$NAME; EST=$EST_GEN; ARGS="--mode gen --pair same2 --seed 342101 --receiver-from $L1RUNS/B0-hetero-s342101 --v-from $L2RUNS/V1-same2-s342101 --limit-train $N_TRAIN"
+  57) NAME=GEN-same2-s342101; KIND=gen; OUT=$RUNS/$NAME; EST=$EST_GEN; ARGS="--mode gen --pair same2 --seed 342101 --receiver-from $L1RUNS/B0-hetero-s342101 --v-from $L2RUNS/V1-same2-s342101 --limit-train $N_TRAIN --exclude-seen $EXCL_342101"
       cond_done $L2RUNS/V1-same2-s342101 || WHY="needs runs/l2/V1-same2-s342101/summary.json";;
-  58) NAME=GEN-same2-s342202; KIND=gen; OUT=$RUNS/$NAME; EST=$EST_GEN; ARGS="--mode gen --pair same2 --seed 342202 --receiver-from $L1RUNS/B0-hetero-s342202 --v-from $L2RUNS/V1-same2-s342202 --limit-train $N_TRAIN"
+  58) NAME=GEN-same2-s342202; KIND=gen; OUT=$RUNS/$NAME; EST=$EST_GEN; ARGS="--mode gen --pair same2 --seed 342202 --receiver-from $L1RUNS/B0-hetero-s342202 --v-from $L2RUNS/V1-same2-s342202 --limit-train $N_TRAIN --exclude-seen $EXCL_342202"
       cond_done $L2RUNS/V1-same2-s342202 || WHY="needs runs/l2/V1-same2-s342202/summary.json";;
   59) NAME=VER-same2-s342101; KIND=ver; OUT=$RUNS/$NAME; EST=$EST_VER; ARGS="--mode train --pair same2 --seed 342101 --receiver-from $L1RUNS/B0-hetero-s342101 --v-from $L2RUNS/V1-same2-s342101 --cands-from $RUNS/GEN-same2-s342101/cands_train.json --l5-from $L5RUNS/B1t-same2-s342101"
       cond_done $RUNS/GEN-same2-s342101 && [ -f $RUNS/GEN-same2-s342101/cands_train.json ] && l5_ok 342101 || WHY="needs runs/l6/GEN-same2-s342101 (summary + cands_train.json) and runs/l5/B1t-same2-s342101 (summary + preds)";;
   60) NAME=VER-same2-s342202; KIND=ver; OUT=$RUNS/$NAME; EST=$EST_VER; ARGS="--mode train --pair same2 --seed 342202 --receiver-from $L1RUNS/B0-hetero-s342202 --v-from $L2RUNS/V1-same2-s342202 --cands-from $RUNS/GEN-same2-s342202/cands_train.json --l5-from $L5RUNS/B1t-same2-s342202"
       cond_done $RUNS/GEN-same2-s342202 && [ -f $RUNS/GEN-same2-s342202/cands_train.json ] && l5_ok 342202 || WHY="needs runs/l6/GEN-same2-s342202 (summary + cands_train.json) and runs/l5/B1t-same2-s342202 (summary + preds)";;
-  *) WHY="no job is assigned to lease $LEASE (D8-96 section 4: 61+ reserved)";;
+  61) NAME=VERX-same2-s342101; KIND=ver; OUT=$RUNS/$NAME; EST=$EST_VER; ARGS="--mode train --pair same2 --seed 342101 --receiver-from $L1RUNS/B0-hetero-s342101 --v-from $L2RUNS/V1-same2-s342101 --cands-from $RUNS/GEN-same2-s342101/cands_train.json --l5-from $L5RUNS/B1t-same2-s342101 --swap-frac $SWAP_FRAC"
+      cond_done $RUNS/GEN-same2-s342101 && [ -f $RUNS/GEN-same2-s342101/cands_train.json ] && l5_ok 342101 || WHY="needs runs/l6/GEN-same2-s342101 (summary + cands_train.json) and runs/l5/B1t-same2-s342101 (summary + preds)";;
+  62) NAME=VERX-same2-s342202; KIND=ver; OUT=$RUNS/$NAME; EST=$EST_VER; ARGS="--mode train --pair same2 --seed 342202 --receiver-from $L1RUNS/B0-hetero-s342202 --v-from $L2RUNS/V1-same2-s342202 --cands-from $RUNS/GEN-same2-s342202/cands_train.json --l5-from $L5RUNS/B1t-same2-s342202 --swap-frac $SWAP_FRAC"
+      cond_done $RUNS/GEN-same2-s342202 && [ -f $RUNS/GEN-same2-s342202/cands_train.json ] && l5_ok 342202 || WHY="needs runs/l6/GEN-same2-s342202 (summary + cands_train.json) and runs/l5/B1t-same2-s342202 (summary + preds)";;
+  *) WHY="no job is assigned to lease $LEASE (D8-96 section 4 + appendix 1: 63+ reserved)";;
 esac
 if [ -n "$WHY" ]; then
   log "L6 lease $LEASE: nothing started ($WHY)"
@@ -142,8 +153,8 @@ START=$(date +%s); DT=$((START+7150)); DL=$((DT-60))
 EXTRA=""; [ "$KIND" = ver ] && EXTRA="--train-stop-epoch $((START+TRAIN_STOP_S))"
 cat > $RUNS/lease_$LEASE.json <<JSON
 {"lease": $LEASE, "lease_start_epoch": $START, "total_deadline_epoch": $DT, "job_deadline_epoch": $DL, "inclusive_seconds": 7200, "batch": "L6", "prereg": "$PREREG",
- "user_gpu_approval_utc": "$APPROVAL", "job": "$NAME", "kind": "$KIND", "out": "$OUT", "estimate_min": $EST, "ctx_shard": $CTX_SHARD, "n_train": $N_TRAIN, "train_stop_s": $TRAIN_STOP_S,
- "flags": "$L6_FLAGS", "args": "$ARGS $EXTRA", "data": "$DATA", "l1_runs": "$L1RUNS", "l2_runs": "$L2RUNS", "l4_runs": "$L4RUNS", "l5_runs": "$L5RUNS",
+ "user_gpu_approval_utc": "$APPROVAL", "job": "$NAME", "kind": "$KIND", "out": "$OUT", "estimate_min": $EST, "ctx_shard": $CTX_SHARD, "n_train": $N_TRAIN, "train_stop_s": $TRAIN_STOP_S, "swap_frac": $SWAP_FRAC,
+ "exclude_seen": {"342101": "$EXCL_342101", "342202": "$EXCL_342202"}, "flags": "$L6_FLAGS", "args": "$ARGS $EXTRA", "data": "$DATA", "l1_runs": "$L1RUNS", "l2_runs": "$L2RUNS", "l4_runs": "$L4RUNS", "l5_runs": "$L5RUNS",
  "receiver_sha256": {"342101": "$B0_CKPT_SHA_342101", "342202": "$B0_CKPT_SHA_342202"},
  "data_sha256": {"train": "$TRAINJ_SHA", "val": "$VALJ_SHA", "fresh": "$FRESHJ_SHA"},
  "scripts_sha256": {"l6_verifier.py": "$L6_VERIFIER_SHA", "l6_gate.py": "$L6_GATE_SHA", "l5_belief.py": "$L5_BELIEF_SHA", "l2_model.py": "$L2_MODEL_SHA", "l1h_model.py": "$L1H_MODEL_SHA", "l1f_model.py": "$L1F_MODEL_SHA", "l1e_model.py": "$L1E_MODEL_SHA", "l1d_model.py": "$L1D_MODEL_SHA", "l1c_model.py": "$L1C_MODEL_SHA", "l1_model.py": "$MODEL_SHA", "l1_train.py": "$TRAIN_SHA", "l1_fusion.py": "$FUSION_SHA", "l1_data.py": "$DATA_SHA"},

@@ -32,6 +32,10 @@ def test_pure():
     assert L6.argmax_first([1.0, 3.0, 3.0]) == 1 and L6.argmax_first([]) is None
     assert L6.rel_of('agent0', 0) == 'own' and L6.rel_of('agent0', 1) == 'other' and L6.rel_of('none', 0) == 'none'
     assert L6.sigmoid(0.0) == 0.5 and L6.sigmoid(-1000.0) > 0.0
+    kept, meta = L6.exclude_seen(EX, '5:1')
+    assert len(kept) == 2 and meta['n_seen'] == 1 and meta['n_kept'] == 2 and kept == [ex for ex in EX if ex is not EX[M.epoch_order(3, 5)[0]]]
+    kept2, meta2 = L6.exclude_seen(EX, '5:1,6:1')
+    assert meta2['n_seen'] in (1, 2) and len(kept2) == 3 - meta2['n_seen'] and L6.exclude_seen(EX, None)[0] == EX
     ex = dict(answer='Paris', answer_owner=0)
     cands = [['Paris', 'Rome'], ['Lyon', 'Paris']]
     C = L5.union(cands)                                                        # Paris, Rome, Lyon
@@ -83,10 +87,17 @@ def test_tiny_train_eval():
     recv_before = {k: v.clone() for k, v in params.items() if 'lora_' in k and '.recv.' in k}
     verify_before = {k: v.clone() for k, v in L6.verify_state(pair).items()}
     assert all(torch.equal(recv_before[k], verify_before[k.replace('.recv.', '.verify.')]) for k in recv_before)   # init = recv
-    args = argparse.Namespace(steps=2, batch=2, seed=5, lr_lora=1e-2, lr_adapter=1e-3, warmup=1, weight_decay=0.0, clip=1.0, log_every=1)
+    args = argparse.Namespace(steps=2, batch=2, seed=5, lr_lora=1e-2, lr_adapter=1e-3, warmup=1, weight_decay=0.0, clip=1.0, log_every=1, swap_frac=0.0)
     msgs = []
     tr = L6.train_verifier(pair, rows, by_id, cues[0], yns, args, torch.device('cpu'), msgs.append)
     assert tr['steps_done'] == 2 and tr['steps_planned'] == 2 and tr['sequences'] > 0 and tr['param_counts']['adapter'] == 0 and tr['stopped'] is None and len(tr['history']) == 2
+    assert tr['swapped_sequences'] == 0
+    trx = L6.train_verifier(pair, rows, by_id, cues[0], yns, argparse.Namespace(**dict(vars(args), swap_frac=1.0)), torch.device('cpu'), msgs.append)
+    assert trx['swapped_sequences'] > 0 and trx['sequences'] == tr['sequences'] + trx['swapped_sequences'] and trx['swap_frac'] == 1.0
+    p0 = L6.round1_prompts(pair, EX[:1], 0, [rows[0]['ev'][0]])[0]
+    p1 = L6.round1_prompts(pair, EX[:1], 0, [rows[1]['ev'][0]], docs_from=EX[1:2])[0]
+    q = pair.doc_pieces(EX[:1], 0)[0][0][1]
+    assert p0 != p1 and p0[-len(q):] == q and p1[-len(q):] == q
     after = L6.verify_state(pair)
     assert any(not torch.equal(verify_before[k], after[k]) for k in after)
     assert all(torch.equal(recv_before[k], params[k]) for k in recv_before)   # recv untouched
@@ -129,12 +140,13 @@ def test_cli_gen_train_gate():
         data = [a for n in ('train', 'val', 'fresh') for a in ('--' + n, os.path.join(d, n + '.jsonl'))]
         common = data + ['--pair', 'same2', '--seed', '5', '--v-from', v1, '--tiny', '--d-e', str(DE), '--n-heads', '2', '--k-beams', '2', '--max-new-tokens', '4', '--gen-batch', '2', '--score-batch', '8']
         gen = os.path.join(d, 'GEN-same2-s5')
-        r = subprocess.run([sys.executable, '-B', VERIFIER, '--mode', 'gen', '--out', gen, '--limit-train', '2'] + common, capture_output=True, text=True, env=env)
+        r = subprocess.run([sys.executable, '-B', VERIFIER, '--mode', 'gen', '--out', gen, '--limit-train', '2', '--exclude-seen', '5:1'] + common, capture_output=True, text=True, env=env)
         assert r.returncode == 0, r.stdout[-1500:] + r.stderr[-3000:]
         sg = json.load(open(os.path.join(gen, 'summary.json')))
-        assert sg['arm'] == 'GEN' and sg['complete'] and sg['n_rows'] == 2 and sg['prereg'] == 'D8-96'
+        assert sg['arm'] == 'GEN' and sg['complete'] and sg['n_rows'] == 2 and sg['prereg'] == 'D8-96' and sg['exclude_seen']['n_seen'] == 1 and sg['exclude_seen']['n_kept'] == 2
         cj = json.load(open(os.path.join(gen, 'cands_train.json')))
-        assert cj['seed'] == 5 and len(cj['rows']) == 2 and all(len(r_['ev']) == 2 for r_ in cj['rows'])
+        assert cj['seed'] == 5 and len(cj['rows']) == 2 and all(len(r_['ev']) == 2 for r_ in cj['rows']) and cj['exclude_seen']['spec'] == '5:1'
+        assert {r_['id'] for r_ in cj['rows']} == {ex['id'] for ex in L6.exclude_seen(EX, '5:1')[0]}
         # L5-style records (the candidates of the GEN rows stand in for the D8-95 B1t records)
         l5 = os.path.join(d, 'B1t-same2-s5')
         os.makedirs(l5)
@@ -183,5 +195,10 @@ def test_cli_gen_train_gate():
         assert G.judge('VER-same2-s6', d, d, d)['verdict'] == 'VERIFIER-NEUTRAL+TIE+BELOW-TEXT+SUM-NEUTRAL'
         M.jdump(summ(60.5, s0=59.0), os.path.join(syn, 'summary.json'))
         assert G.judge('VER-same2-s6', d, d, d)['verdict'] == 'VERIFIER-ADDS+BELIEF-BEATS-TEXT-R2+BEATS-TEXT+SUM-NEUTRAL'
+        synx = os.path.join(d, 'VERX-same2-s6')
+        os.makedirs(synx)
+        M.jdump(dict(summ(60.5, s0=59.0), arm='VERX'), os.path.join(synx, 'summary.json'))
+        assert G.judge('VERX-same2-s6', d, d, d)['verdict'] == 'VERIFIER-ADDS+BELIEF-BEATS-TEXT-R2+BEATS-TEXT+SUM-NEUTRAL'
+        assert G.judge('VER-same2-s5', d, d, d)['verdict'] == 'INCOMPLETE'   # the L5 cross-check mismatch written above still stands
     finally:
         shutil.rmtree(d, ignore_errors=True)
