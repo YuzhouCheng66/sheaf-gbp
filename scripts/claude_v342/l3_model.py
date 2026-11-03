@@ -32,8 +32,11 @@ import l2_model as L2  # noqa: E402
 
 BATCH = 'L3'
 PREREG = 'D8-93'
-ARMS = ('S2a', 'S2b', 'T2')
+ARMS = ('S2a', 'S2b', 'T2', 'S3a', 'S3b')
+CONSENSUS = ('code', 'logprob')             # code: D8-93 (fuse_direct on the 256-d codes); logprob: D8-94 (precision-weighted sum of the slot log-probabilities)
+ARM_CONSENSUS = {'S2a': 'code', 'S2b': 'code', 'T2': 'code', 'S3a': 'logprob', 'S3b': 'logprob'}
 K_ANS = 8
+LAM_FEATS = 3                                 # [mean token probability of the round-1 answer, mean max slot probability, mean slot entropy / log V]
 HINT2_PRE = 'Consensus answer of both agents:'
 HINT2_POST = '.\n'
 T2_PRE = "Other agent's answer:"
@@ -101,8 +104,11 @@ def answer_logprob(ag, prompts, answers, adapter):
 class PairL3(nn.Module):
     """the two-round protocol around a frozen PairL2 (V2) with its recv adapters"""
 
-    def __init__(self, pair, k_ans=K_ANS):
+    def __init__(self, pair, k_ans=K_ANS, consensus='code'):
         super().__init__()
+        if consensus not in CONSENSUS:
+            raise ValueError(consensus)
+        self.consensus_mode = consensus
         self.pair = pair
         if pair.mode != 'span_sel':
             raise ValueError('PairL3 needs the V2 pair in span_sel mode')
@@ -113,6 +119,9 @@ class PairL3(nn.Module):
         self.ans_senders = nn.ModuleList([MH.AlignedSender(a.d_model, self.k_ans, d_e, fixed_lam=False).to(a.device) for a in pair.agents])
         self.dec2 = nn.ModuleList([MD.DecoderD(d_e, a.embed.weight).to(a.device) for a in pair.agents])
         self.w2_raw = nn.Parameter(torch.tensor(softplus_inv(1.0), dtype=torch.float32, device=pair.device))
+        self.lam_head = nn.Sequential(nn.Linear(LAM_FEATS, 16), nn.Tanh(), nn.Linear(16, 1)).to(pair.device)   # logprob: the calibrated precision (shared by the agents)
+        nn.init.zeros_(self.lam_head[2].weight)
+        nn.init.zeros_(self.lam_head[2].bias)
         self.cache = {}                                                        # example id -> {str(i): dict(ev, ans, ans_ids, p)}
         self.n_round1 = 0
         self.hint2_pre = [[int(t) for t in a.ids(HINT2_PRE)] for a in pair.agents]
@@ -229,8 +238,60 @@ class PairL3(nn.Module):
         """hard tokens of the consensus per agent -> list of (B, K) long"""
         return [self.dec2[i].logits(x2[i]).argmax(-1) for i in range(M.N_AGENTS)]
 
+    # ---------------------------------------------------------------- the log-probability consensus (D8-94)
+    def lam_feats(self, batch, recs, i, logp):
+        """(B, LAM_FEATS): the round-1 answer's mean token probability, the mean max probability and the mean normalised entropy of the slot
+        distributions (over the slots that carry the answer)"""
+        B = len(batch)
+        p = torch.tensor([float(recs[b][str(i)]['p']) for b in range(B)], device=logp.device)
+        pr = logp.exp()
+        mx = pr.max(-1).values                                                 # (B, K)
+        ent = -(pr * logp).sum(-1) / float(np.log(logp.shape[-1]))             # (B, K) in [0, 1]
+        lens = torch.tensor([max(1, min(self.k_ans, len(recs[b][str(i)]['ans_ids']))) for b in range(B)], device=logp.device)
+        msk = (torch.arange(self.k_ans, device=logp.device)[None] < lens[:, None]).float()
+        return torch.stack([p, (mx * msk).sum(1) / lens, (ent * msk).sum(1) / lens], 1)
+
+    def fused(self, batch, recs=None):
+        """-> (fused log-probabilities (B, K, V) shared by both receivers (one vocabulary), lam (2, B), u (2, B) the pre-softplus precision
+        logits, per-agent log-probabilities list): lam_i = softplus(u_i); fused = (lam_i l_i + lam_j l_j) / (lam_i + lam_j) = the two-agent
+        GBP consensus on the natural parameters"""
+        recs = recs if recs is not None else self.round1(batch)
+        z2, _lam2 = self.beliefs(batch, recs)
+        logps, us = [], []
+        for i in range(M.N_AGENTS):
+            with torch.autocast(device_type=z2.device.type, enabled=False):
+                lp = torch.log_softmax(self.dec2[i].logits(z2[i].float()), -1)
+            logps.append(lp)
+            us.append(self.lam_head(self.lam_feats(batch, recs, i, lp.detach())).squeeze(-1))
+        u = torch.stack(us)                                                    # (2, B)
+        lam = Fn.softplus(u) + 1e-3
+        w = lam / lam.sum(0, keepdim=True)
+        fused = sum(w[i][:, None, None] * logps[i] for i in range(M.N_AGENTS))
+        return fused, lam, u, logps
+
+    def step3_logprob(self, batch, train=True):
+        recs = self.round1(batch)
+        fused, lam, u, logps = self.fused(batch, recs)
+        tg = [self.gold_ids(ex, 0) for ex in batch]
+        tgt = torch.tensor([t for t, _ in tg], dtype=torch.long, device=fused.device)
+        ce = Fn.cross_entropy(fused.reshape(-1, fused.shape[-1]), tgt.reshape(-1))
+        correct = torch.tensor([[float(M.DATA.exact_match(recs[b][str(i)]['ans'], ex['answer'])) for b, ex in enumerate(batch)] for i in range(M.N_AGENTS)], device=fused.device)
+        cal = Fn.binary_cross_entropy_with_logits(u, correct)
+        loss = ce + cal
+        pred = fused.detach().argmax(-1)
+        msk = torch.zeros_like(tgt, dtype=torch.bool)
+        for b, (_, n) in enumerate(tg):
+            msk[b, :n] = True
+        acc = float((pred == tgt)[msk].float().mean()) if bool(msk.any()) else float('nan')
+        info = dict(loss_agent=[float(ce.detach()), float(cal.detach())], msg_acc=acc, w2=float(lam.mean()))
+        if train:
+            self.hist.append((float(loss.detach()), acc))
+        return loss, info
+
     # ---------------------------------------------------------------- stage 3: the consensus CE
     def step3(self, batch, train=True):
+        if self.consensus_mode == 'logprob':
+            return self.step3_logprob(batch, train)
         recs = self.round1(batch)
         z2, lam2 = self.beliefs(batch, recs)
         x2 = self.consensus(z2, lam2)
@@ -255,6 +316,10 @@ class PairL3(nn.Module):
     # ---------------------------------------------------------------- stage 4 / eval prompts
     @torch.no_grad()
     def soft2(self, batch, recs=None):
+        if self.consensus_mode == 'logprob':
+            fused, lam, _u, _lp = self.fused(batch, recs)
+            ids = fused.argmax(-1)
+            return [self.dec2[i].tokens(ids, self.agent(i).dtype) for i in range(M.N_AGENTS)], [ids, ids], lam
         z2, lam2 = self.beliefs(batch, recs)
         x2 = self.consensus(z2, lam2)
         ids = self.consensus_ids(x2)
@@ -336,7 +401,7 @@ class PairL3(nn.Module):
                             cut = q
                         cons = ag.tok.decode(pid[:cut], skip_special_tokens=True).strip()
                         cons_rows.append(dict(agent=i, em=M.DATA.exact_match(cons, ex['answer']), text=cons))
-                        lam_rows.append(dict(agent=i, lam=float(lam2[i, b].mean()), em=em_i))
+                        lam_rows.append(dict(agent=i, lam=float(lam2[i, b].mean()), em=em_i, p=r['p'], picked=int(cons.strip() != '' and M.DATA.exact_match(cons, r['ans']))))
             if log and (bi + 1) % 20 == 0:
                 log(f'eval_round2 {arm}: {len(recs_all)} records')
         out = M.summarise(recs_all)
@@ -350,7 +415,9 @@ class PairL3(nn.Module):
             out['consensus'] = dict(em_agent=[100.0 * float(np.mean([r['em'] for r in cons_rows if r['agent'] == i])) for i in range(M.N_AGENTS)],
                                     examples=[r['text'] for r in cons_rows[:12]],
                                     lam_auroc_vs_round1_correct=auroc([r['lam'] for r in lam_rows], [r['em'] for r in lam_rows]),
-                                    lam_mean=float(np.mean([r['lam'] for r in lam_rows])), w2=self.w2_value)
+                                    lam_mean=float(np.mean([r['lam'] for r in lam_rows])), w2=self.w2_value, mode=self.consensus_mode,
+                                    picked_own_answer=100.0 * float(np.mean([r['picked'] for r in lam_rows])),
+                                    pick_correct=100.0 * float(np.mean([r['em'] for r in cons_rows])))
         if keep_preds:
             out['records'] = recs_all
         return out
@@ -362,7 +429,7 @@ def trainable_sets(pl3, stage):
         p.requires_grad_(False)
     L2.freeze_sender(pl3.pair, frozen=True)
     if stage == 3:
-        for m in list(pl3.ans_senders) + list(pl3.dec2):
+        for m in list(pl3.ans_senders) + list(pl3.dec2) + [pl3.lam_head]:
             for p in m.parameters():
                 p.requires_grad_(True)
         pl3.w2_raw.requires_grad_(True)
@@ -377,20 +444,20 @@ def l3_state(pl3):
     """the checkpoint: the V2 state (sender adapter, selector, reader, recv LoRA) + the stage-3 modules + w2"""
     st = {}
     for n, p in pl3.named_parameters():
-        if n.startswith('ans_senders.') or n.startswith('dec2.') or n == 'w2_raw' or '.adapter.' in n or '.reader.' in n or '.selector.' in n or ('lora_' in n and '.recv.' in n):
+        if n.startswith('ans_senders.') or n.startswith('dec2.') or n.startswith('lam_head.') or n == 'w2_raw' or '.adapter.' in n or '.reader.' in n or '.selector.' in n or ('lora_' in n and '.recv.' in n):
             st[n] = p.detach().cpu()
     return st
 
 
-def build_l3(v2_ckpt, device, hf_cache=None, tiny=None, max_ctx=None, receiver_state=None, l3_state_dict=None, **agent_kw):
+def build_l3(v2_ckpt, device, hf_cache=None, tiny=None, max_ctx=None, receiver_state=None, l3_state_dict=None, consensus='code', **agent_kw):
     """the frozen V2 pair (span_sel, recv adapters loaded) + the L3 modules (optionally loaded from an S2a checkpoint)"""
     ck = torch.load(v2_ckpt, map_location='cpu', weights_only=False)
-    if ck.get('arm') != 'V2' or not ck.get('recv'):
-        raise ValueError(f'{v2_ckpt}: not a V2 checkpoint with recv adapters (arm {ck.get("arm")}, recv {ck.get("recv")})')
+    if ck.get('arm') not in ('V2', 'V3') or not ck.get('recv'):
+        raise ValueError(f'{v2_ckpt}: not a V2 / V3 checkpoint with recv adapters (arm {ck.get("arm")}, recv {ck.get("recv")})')
     init = {k: v for k, v in ck['state'].items() if '.adapter.' in k or '.reader.' in k or '.selector.' in k}
     kw = dict(agent_kw)
     kw.setdefault('k', int(ck['config'].get('k', L2.K_SPAN)))
-    pair = L2.build_pair('V2', 'same2', device, hf_cache=hf_cache, tiny=tiny, grad_ckpt=True, max_ctx=max_ctx, receiver_state=receiver_state, mode='span_oracle',
+    pair = L2.build_pair(ck['arm'], 'same2', device, hf_cache=hf_cache, tiny=tiny, grad_ckpt=True, max_ctx=max_ctx, receiver_state=receiver_state, mode='span_oracle',
                          span_k=kw['k'], init_state=init, recv=True, **kw)
     recv = {k: v for k, v in ck['state'].items() if 'lora_' in k and '.recv.' in k}
     if not recv:
@@ -401,10 +468,10 @@ def build_l3(v2_ckpt, device, hf_cache=None, tiny=None, max_ctx=None, receiver_s
         raise ValueError(f'the V2 checkpoint covers {len(recv)} of the {len(own)} recv tensors; e.g. missing {missing[:3]}')
     M.load_trainable_state(pair, {k: recv[k] for k in own}, strict=True)
     pair.set_mode('span_sel')
-    pl3 = PairL3(pair)
+    pl3 = PairL3(pair, consensus=consensus)
     if l3_state_dict is not None:
-        sub = {k: v for k, v in l3_state_dict.items() if k.startswith('ans_senders.') or k.startswith('dec2.') or k == 'w2_raw'}
-        own3 = [n for n, _ in pl3.named_parameters() if n.startswith('ans_senders.') or n.startswith('dec2.') or n == 'w2_raw']
+        sub = {k: v for k, v in l3_state_dict.items() if k.startswith('ans_senders.') or k.startswith('dec2.') or k.startswith('lam_head.') or k == 'w2_raw'}
+        own3 = [n for n, _ in pl3.named_parameters() if n.startswith('ans_senders.') or n.startswith('dec2.') or n.startswith('lam_head.') or n == 'w2_raw']
         missing = sorted(set(own3) - set(sub))
         if missing:
             raise ValueError(f'the L3 state misses {len(missing)} tensors, e.g. {missing[:3]}')

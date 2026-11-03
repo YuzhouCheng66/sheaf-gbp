@@ -434,3 +434,41 @@ def test_v2_selector_positions_loss_and_cli():
         assert G.judge('V2-same2-s342101', runs, l1h)['verdict'] == 'FAIL'
     finally:
         shutil.rmtree(d, ignore_errors=True)
+
+
+def test_v3_selector_has_a_layernorm_input():
+    p = _pair('V3', mode='span_oracle', recv=True)
+    ag = p.agent(0)
+    assert isinstance(ag.selector, torch.nn.Sequential) and isinstance(ag.selector[0], torch.nn.LayerNorm)
+    L2.freeze_sender(p, frozen=False)
+    p.use('default')
+    p.train()
+    loss, info = p.step(EX[:2], train=True, drop=torch.zeros(2, 2, dtype=torch.bool))
+    loss.backward()
+    names = dict(p.named_parameters())
+    assert any(names[n].grad is not None and float(names[n].grad.abs().sum()) > 0 for n in names if '.selector.1.weight' in n)
+    assert any('.selector.0.weight' in n for n in names)
+    p.set_mode('span_sel')
+    pcs, dl = p.doc_pieces(EX, 0)
+    pos, _ = p.sel_positions(EX, 0, pcs, dl)
+    assert pos.shape == (len(EX), 6)
+    q = _pair('V2', mode='span_oracle', recv=True)
+    assert isinstance(q.agent(0).selector, torch.nn.Linear)
+    d = tempfile.mkdtemp()
+    try:
+        _fixture(d)
+        out = os.path.join(d, 'V3')
+        r = _cli(d, 'V3', out, ['--k', '6', '--stage1-steps', '4', '--stage2-steps', '4'])
+        assert r.returncode == 0, r.stdout[-2000:] + r.stderr[-3000:]
+        s = json.load(open(os.path.join(out, 'summary.json')))
+        assert s['arm'] == 'V3' and s['channel']['criterion_mode'] == 'span_sel' and s['sel_quality'] is not None
+        ck = torch.load(os.path.join(out, 'trainable.pt'), map_location='cpu', weights_only=False)
+        assert any('.selector.0.' in n for n in ck['state']) and any('.selector.1.' in n for n in ck['state'])
+        import l2_gate as G
+        runs, l1h = os.path.join(d, 'l2'), os.path.join(d, 'l1h')
+        os.makedirs(runs); os.makedirs(l1h)
+        _summary_l2(runs, 'V1-same2-s342101', 'V1', 'same2', 342101, 51.8, 42.0, 39.0, 15.0)
+        _summary_l2(runs, 'V3-same2-s342101', 'V3', 'same2', 342101, 55.0, 42.0, 44.0, 15.0, extra=dict(val_oracle=dict(em=56.0), sel_quality=dict(overlap50=0.8, n=10)))
+        assert G.judge('V3-same2-s342101', runs, l1h)['verdict'] == 'SELECT-YES'
+    finally:
+        shutil.rmtree(d, ignore_errors=True)

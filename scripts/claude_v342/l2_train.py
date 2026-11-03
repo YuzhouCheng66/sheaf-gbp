@@ -32,8 +32,8 @@ import l2_model as L2  # noqa: E402
 from l1d_model import lam_by_bucket as MD_lam_by_bucket  # noqa: E402
 
 SEEDS = T1.SEEDS
-STAGE1_STEPS = {'R1': 0, 'V1': 1000, 'Hu': 2000, 'V1s': 1000, 'V2': 1000}        # D8-92 section 3 (+ appendix 3: V1s; D8-93: V2)
-STAGE2_STEPS = {'R1': 1500, 'V1': 1000, 'Hu': 0, 'V1s': 1000, 'V2': 1000}
+STAGE1_STEPS = {'R1': 0, 'V1': 1000, 'Hu': 2000, 'V1s': 1000, 'V2': 1000, 'V3': 1000}        # D8-92 section 3 (+ appendix 3: V1s; D8-93: V2; D8-94: V3)
+STAGE2_STEPS = {'R1': 1500, 'V1': 1000, 'Hu': 0, 'V1s': 1000, 'V2': 1000, 'V3': 1000}
 
 
 def build_parser():

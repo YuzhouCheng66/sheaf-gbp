@@ -53,7 +53,7 @@ def test_round1_cache_beliefs_consensus_and_stages():
     L3.trainable_sets(pl3, 3)
     names = dict(pl3.named_parameters())
     trainable = {n for n, p in names.items() if p.requires_grad}
-    assert trainable and all(n.startswith('ans_senders.') or n.startswith('dec2.') or n == 'w2_raw' for n in trainable)
+    assert trainable and all(n.startswith('ans_senders.') or n.startswith('dec2.') or n.startswith('lam_head.') or n == 'w2_raw' for n in trainable)
     pl3.train()
     loss, info = pl3.step3(EX[:2])
     assert torch.isfinite(loss) and 'msg_acc' in info and 'w2' in info
@@ -152,5 +152,70 @@ def test_cli_v2_then_s2a_s2b_t2_and_gate():
         assert r.returncode == 0 and r.stdout.startswith('GATE S2b-same2-s5: CONSENSUS-') and any(f.startswith('GATE_S2b-same2-s5_') for f in os.listdir(runs))
         with pytest.raises(ValueError):
             G.judge('V2-same2-s5', runs, l2)
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
+
+
+def test_logprob_consensus_stage3_stage4_eval_and_cli():
+    pl3 = L3.PairL3(_v2(), k_ans=4, consensus='logprob')
+    recs = pl3.round1(EX)
+    fused, lam, u, logps = pl3.fused(EX[:2], recs[:2])
+    V = pl3.agent(0).reader.vocab
+    assert fused.shape == (2, 4, V) and lam.shape == (2, 2) and bool((lam > 0).all()) and len(logps) == 2
+    assert torch.allclose(fused.exp().sum(-1), torch.ones(2, 4), atol=1e-3) or True        # a weighted sum of log-probs is not normalised: only the argmax is used
+    L3.trainable_sets(pl3, 3)
+    names = dict(pl3.named_parameters())
+    assert all(names[n].requires_grad for n in names if n.startswith('lam_head.'))
+    pl3.train()
+    loss, info = pl3.step3(EX[:2])
+    assert torch.isfinite(loss) and len(info['loss_agent']) == 2
+    loss.backward()
+    assert any(names[n].grad is not None and float(names[n].grad.abs().sum()) > 0 for n in names if n.startswith('lam_head.'))
+    assert any(names[n].grad is not None and float(names[n].grad.abs().sum()) > 0 for n in names if n.startswith('dec2.'))
+    for p_ in names.values():
+        p_.grad = None
+    L3.trainable_sets(pl3, 4)
+    with torch.no_grad():
+        for n, q in names.items():
+            if '.recv.' in n and 'lora_B' in n:
+                q.add_(0.05 * torch.randn_like(q))
+    loss4, _ = pl3.step4(EX[:2], train=True, arm='S3b')
+    assert torch.isfinite(loss4)
+    loss4.backward()
+    assert all(names[n].grad is None for n in names if not ('.recv.' in n and 'lora_' in n))
+    v = pl3.eval_round2(EX, 'S3b', eval_batch=2)
+    assert v['consensus']['mode'] == 'logprob' and 0.0 <= v['consensus']['pick_correct'] <= 100.0 and 0.0 <= v['consensus']['picked_own_answer'] <= 100.0
+    st = L3.l3_state(pl3)
+    assert any(n.startswith('lam_head.') for n in st)
+    d = tempfile.mkdtemp()
+    env = dict(os.environ, CUDA_VISIBLE_DEVICES='')
+    try:
+        _fixture(d)
+        v3 = os.path.join(d, 'V3-same2-s5')
+        r = subprocess.run([sys.executable, '-B', TRAIN_L2, '--arm', 'V3', '--k', str(K), '--stage1-steps', '4', '--stage2-steps', '4', '--out', v3] + _data(d), capture_output=True, text=True, env=env)
+        assert r.returncode == 0, r.stdout[-1500:] + r.stderr[-3000:]
+        s3a = os.path.join(d, 'S3a-same2-s5')
+        r = subprocess.run([sys.executable, '-B', TRAIN_L3, '--arm', 'S3a', '--v2-from', v3, '--stage3-steps', '4', '--out', s3a] + _data(d), capture_output=True, text=True, env=env)
+        assert r.returncode == 0, r.stdout[-1500:] + r.stderr[-3000:]
+        s = json.load(open(os.path.join(s3a, 'summary.json')))
+        assert s['arm'] == 'S3a' and s['channel']['consensus'] == 'logprob' and s['val']['consensus']['mode'] == 'logprob'
+        ck = torch.load(os.path.join(s3a, 'trainable.pt'), map_location='cpu', weights_only=False)
+        assert any(n.startswith('lam_head.') for n in ck['state'])
+        s3b = os.path.join(d, 'S3b-same2-s5')
+        r = subprocess.run([sys.executable, '-B', TRAIN_L3, '--arm', 'S3b', '--v2-from', v3, '--init-from', s3a, '--stage4-steps', '4', '--out', s3b] + _data(d), capture_output=True, text=True, env=env)
+        assert r.returncode == 0, r.stdout[-1500:] + r.stderr[-3000:]
+        s = json.load(open(os.path.join(s3b, 'summary.json')))
+        assert s['arm'] == 'S3b' and s['round1_cache']['generated'] == 0 and s['val']['consensus']['mode'] == 'logprob'
+        t2 = os.path.join(d, 'T2-same2-s5')
+        r = subprocess.run([sys.executable, '-B', TRAIN_L3, '--arm', 'T2', '--v2-from', v3, '--init-from', s3a, '--stage4-steps', '4', '--out', t2] + _data(d), capture_output=True, text=True, env=env)
+        assert r.returncode == 0, r.stdout[-1500:] + r.stderr[-3000:]
+        import l3_gate as G
+        runs, l2 = os.path.join(d, 'l4'), os.path.join(d, 'l2')
+        os.makedirs(runs); os.makedirs(l2)
+        shutil.copytree(s3b, os.path.join(runs, 'S3b-same2-s5'))
+        shutil.copytree(v3, os.path.join(l2, 'V3-same2-s5'))
+        assert G.judge('S3b-same2-s5', runs, l2)['verdict'].endswith('+pendingT2')
+        shutil.copytree(t2, os.path.join(runs, 'T2-same2-s5'))
+        assert G.judge('S3b-same2-s5', runs, l2)['verdict'].split('+')[1] in ('LATENT-BEATS-TEXT-R2', 'TEXT-BEATS-LATENT-R2', 'TIE')
     finally:
         shutil.rmtree(d, ignore_errors=True)

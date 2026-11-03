@@ -20,7 +20,7 @@ import l1_aggregate as A1  # noqa: E402
 import l1_model as M  # noqa: E402
 
 CONS_PT, TEXT_PT = 3.0, 2.0
-JOB_RE = re.compile(r'^(S2a|S2b|T2)-(same2)-s(\d+)$')
+JOB_RE = re.compile(r'^(S2a|S2b|S3a|S3b|T2)-(same2)-s(\d+)$')
 
 
 def _r(x):
@@ -54,12 +54,13 @@ def judge(job, runs, l2):
     base = dict(em=s['val']['em'], fresh=s['fresh']['em'], none=((s.get('baseline') or {}).get('none', {}).get('val') or {}).get('em'), v2=(s.get('v2') or {}).get('val_em'),
                 round1_em_agent=r1.get('em_agent'), either=r1.get('either_correct'), both=r1.get('both_correct'), p_auroc=r1.get('p_auroc'),
                 consensus_em_agent=cons.get('em_agent'), lam_auroc=cons.get('lam_auroc_vs_round1_correct'), w2=cons.get('w2'))
-    if kind in ('S2a', 'T2'):
+    if kind in ('S2a', 'S3a', 'T2'):
         out.update(criterion='readouts only', verdict='DONE', detail=base)
         return out
-    v2, vp = read_summary(os.path.join(l2, f'V2-same2-s{seed}', 'summary.json'), 'V2', 'same2', seed)
+    varm = 'V3' if kind == 'S3b' else 'V2'
+    v2, vp = read_summary(os.path.join(l2, f'{varm}-same2-s{seed}', 'summary.json'), varm, 'same2', seed)
     if v2 is None or vp:
-        out['problems'].append(f'reference V2-same2-s{seed} unusable: {vp}')
+        out['problems'].append(f'reference {varm}-same2-s{seed} unusable: {vp}')
         return out
     d_v2 = _r(s['val']['em'] - v2['val']['em'])
     c = 'CONSENSUS-ADDS' if d_v2 >= CONS_PT else 'CONSENSUS-HURTS' if d_v2 <= -CONS_PT else 'CONSENSUS-NEUTRAL'
@@ -69,7 +70,7 @@ def judge(job, runs, l2):
     else:
         d_t2 = _r(s['val']['em'] - t2['val']['em'])
         t = 'LATENT-BEATS-TEXT-R2' if d_t2 >= TEXT_PT else 'TEXT-BEATS-LATENT-R2' if d_t2 <= -TEXT_PT else 'TIE'
-    out.update(criterion=f'S2 - V2 >= +{CONS_PT} ADDS / <= -{CONS_PT} HURTS; S2 - T2 >= +{TEXT_PT} LATENT-BEATS-TEXT-R2 / <= -{TEXT_PT} TEXT-BEATS-LATENT-R2 / else TIE',
+    out.update(criterion=f'S - {varm} >= +{CONS_PT} ADDS / <= -{CONS_PT} HURTS; S - T2 >= +{TEXT_PT} LATENT-BEATS-TEXT-R2 / <= -{TEXT_PT} TEXT-BEATS-LATENT-R2 / else TIE',
                verdict=f'{c}+{t}', detail=dict(base, v2_em=v2['val']['em'], margin_vs_v2=d_v2, t2_em=(t2['val']['em'] if t2 is not None and not tp else None), margin_vs_t2=d_t2))
     return out
 

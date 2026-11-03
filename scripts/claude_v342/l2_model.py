@@ -29,11 +29,12 @@ import l1h_model as MH  # noqa: E402
 
 BATCH = 'L2'
 PREREG = 'D8-92'
-ARMS = ('R1', 'V1', 'Hu', 'V1s', 'V2')
-BASE_ARM = {'R1': 'U', 'V1': 'U', 'Hu': 'U', 'V1s': 'S1', 'V2': 'U'}   # V1s (appendix 3): V1 with the sheaf-GBP consensus; V2 (D8-93): V1 + a trained span selector
-SPAN_ARMS = ('V1', 'V1s', 'V2')
-RECV_ARMS = ('R1', 'V1', 'V1s', 'V2')
-SELECTOR_ARMS = ('V2',)
+ARMS = ('R1', 'V1', 'Hu', 'V1s', 'V2', 'V3')
+BASE_ARM = {'R1': 'U', 'V1': 'U', 'Hu': 'U', 'V1s': 'S1', 'V2': 'U', 'V3': 'U'}   # V1s (appendix 3): V1 + sheaf consensus; V2 (D8-93): V1 + a trained span selector; V3 (D8-94): the selector with a LayerNorm input
+SPAN_ARMS = ('V1', 'V1s', 'V2', 'V3')
+RECV_ARMS = ('R1', 'V1', 'V1s', 'V2', 'V3')
+SELECTOR_ARMS = ('V2', 'V3')
+LN_SELECTOR_ARMS = ('V3',)
 SEL_LOSS_WEIGHT = 1.0                           # D8-93 section 3: BCE of the selector added to the stage-1 copy CE
 PAIRS = ('same2', 'hetero')
 MODES = ('answer', 'span_oracle', 'span_attn', 'span_sel')
@@ -101,11 +102,14 @@ class AgentL2(MH.AgentH):
         self.use('default')
         return n_copied
 
-    def enable_selector(self):
+    def enable_selector(self, ln=False):
+        """V2: Linear(d_model, 1) on the raw layer-L hidden states; V3 (D8-94): LayerNorm(d_model) -> Linear (the raw states carry the attention-sink
+        dimensions of D8-87 appendix 2, which made the V2 head ill-conditioned: overlap 0.36)"""
         if self.selector is None:
-            self.selector = nn.Linear(self.d_model, 1).to(self.device)
-            nn.init.zeros_(self.selector.weight)
-            nn.init.zeros_(self.selector.bias)
+            lin = nn.Linear(self.d_model, 1)
+            nn.init.zeros_(lin.weight)
+            nn.init.zeros_(lin.bias)
+            self.selector = (nn.Sequential(nn.LayerNorm(self.d_model), lin) if ln else lin).to(self.device)
         return self.selector
 
     @torch.no_grad()
@@ -578,7 +582,7 @@ def build_pair(arm, pair, device, model=None, hf_cache=None, tiny=None, lora=Tru
         use_selector = arm in SELECTOR_ARMS
     if use_selector:
         for a in pl.agents:
-            a.enable_selector()
+            a.enable_selector(ln=(arm in LN_SELECTOR_ARMS))
         if init_state is not None:
             own = dict(pl.named_parameters())
             sel = {k: v for k, v in init_state.items() if '.selector.' in k}

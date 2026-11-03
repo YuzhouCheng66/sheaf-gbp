@@ -77,8 +77,9 @@ def main(argv=None):
             raise SystemExit(f'--{k.replace("_", "-")} is required')
     if not args.tiny and not args.receiver_from:
         raise SystemExit('--receiver-from is required outside --tiny')
-    if args.arm in ('S2b', 'T2') and not args.init_from:
-        raise SystemExit('--init-from (the S2a run dir) is required for S2b / T2')
+    if args.arm in ('S2b', 'T2', 'S3b') and not args.init_from:
+        raise SystemExit('--init-from (the S2a / S3a run dir) is required for S2b / S3b / T2')
+    consensus = L3.ARM_CONSENSUS[args.arm]
     t_start = time.time()
     os.makedirs(args.out, exist_ok=True)
     sp = os.path.join(args.out, 'summary.json')
@@ -107,8 +108,10 @@ def main(argv=None):
     l3_sd, init_meta = None, None
     if args.init_from:
         ck3 = torch.load(os.path.join(args.init_from, 'trainable.pt'), map_location='cpu', weights_only=False)
-        if ck3.get('arm') != 'S2a' or int(ck3.get('seed', -1)) != args.seed:
-            raise SystemExit(f'--init-from is not the S2a checkpoint of seed {args.seed} (arm {ck3.get("arm")}, seed {ck3.get("seed")})')
+        if ck3.get('arm') not in ('S2a', 'S3a') or int(ck3.get('seed', -1)) != args.seed:
+            raise SystemExit(f'--init-from is not the S2a / S3a checkpoint of seed {args.seed} (arm {ck3.get("arm")}, seed {ck3.get("seed")})')
+        if args.arm == 'S3b' and ck3.get('arm') != 'S3a':
+            raise SystemExit('S3b needs an S3a checkpoint')
         l3_sd = ck3['state']
         init_meta = dict(arm=ck3.get('arm'), seed=ck3.get('seed'), sha256=M.file_sha256(os.path.join(args.init_from, 'trainable.pt')), v2=ck3.get('v2'))
         log(f'init (S2a): {init_meta}')
@@ -117,7 +120,7 @@ def main(argv=None):
     try:
         M.seed_all(args.seed)
         t0 = time.time()
-        pl3, v2_meta = L3.build_l3(v2_ckpt, device, hf_cache=args.hf_cache, tiny=tiny, max_ctx=args.max_ctx_tokens, receiver_state=receiver_state, l3_state_dict=l3_sd, **agent_kw)
+        pl3, v2_meta = L3.build_l3(v2_ckpt, device, hf_cache=args.hf_cache, tiny=tiny, max_ctx=args.max_ctx_tokens, receiver_state=receiver_state, l3_state_dict=l3_sd, consensus=consensus, **agent_kw)
         load_s = time.time() - t0
         info = T1.agents_info(pl3.pair)
         log(f'model: {info}; v2 {v2_meta}; V2 VAL EM {v2_summary.get("val", {}).get("em")} (none {((v2_summary.get("baseline") or {}).get("none", {}).get("val") or {}).get("em")})')
@@ -125,16 +128,16 @@ def main(argv=None):
         if cache_path and os.path.isfile(cache_path):
             n_loaded = pl3.load_cache(cache_path)
             log(f'round-1 cache loaded: {n_loaded} examples from {cache_path}')
-        elif args.arm != 'S2a':
+        elif args.arm not in ('S2a', 'S3a'):
             raise SystemExit(f'round-1 cache missing: {cache_path}')
         stages = {}
-        if args.arm == 'S2a':
+        if args.arm in ('S2a', 'S3a'):
             L3.trainable_sets(pl3, 3)
             counts = M.count_params(pl3)
-            log(f'stage 3: trainable {counts["trainable"]:,} (answer senders + lam heads + w2 + Decoder2)')
+            log(f'stage 3 ({consensus}): trainable {counts["trainable"]:,} (answer senders + lam heads + w2 + Decoder2 + the calibration head)')
             tr = M.train_steps(pl3, lambda b: pl3.step3(b, train=True), M.batch_stream(train, args.batch, args.seed), args.stage3_steps, 0.0, args.lr_adapter,
                                args.warmup, args.clip, device, log, args.log_every, deadline, label=f'{args.arm}/s{args.seed} stage3', weight_decay=args.weight_decay,
-                               extra_log=lambda i: f'cons acc {i["msg_acc"]:.3f} w2 {i["w2"]:.3f}')
+                               extra_log=lambda i: f'cons acc {i["msg_acc"]:.3f} ' + ('lam ' if consensus == 'logprob' else 'w2 ') + f'{i["w2"]:.3f}')
             tr['params'] = counts
             tr['round1_generated'] = pl3.n_round1
             stages['stage3'] = tr
@@ -167,7 +170,7 @@ def main(argv=None):
         ekw = dict(eval_batch=args.eval_batch, max_new_tokens=args.max_new_tokens, deadline=deadline, keep_preds=True, log=log)
         arm_eval = 'T2' if args.arm == 'T2' else 'S2b'
         v = pl3.eval_round2(val, arm_eval, **ekw)
-        log(f'VAL round-2 ({arm_eval}, recv{"" if args.arm != "S2a" else " of V2, untrained on round 2"}): EM {v["em"]:.2f} F1 {v["f1"]:.2f} agents {v["em_agent"]} owner {_owner(v)}; '
+        log(f'VAL round-2 ({arm_eval}, recv{"" if args.arm not in ("S2a", "S3a") else " of V2 / V3, untrained on round 2"}): EM {v["em"]:.2f} F1 {v["f1"]:.2f} agents {v["em_agent"]} owner {_owner(v)}; '
             f'round-1 EM {v["round1"]["em_agent"]} either {v["round1"]["either_correct"]:.2f} both {v["round1"]["both_correct"]:.2f} p-AUROC {v["round1"]["p_auroc"]}'
             + (f'; consensus decoded EM {v["consensus"]["em_agent"]} lam-AUROC {v["consensus"]["lam_auroc_vs_round1_correct"]} w2 {v["consensus"]["w2"]:.3f} e.g. {v["consensus"]["examples"][:4]}' if 'consensus' in v else ''))
         f = pl3.eval_round2(fresh, arm_eval, **ekw)
@@ -186,14 +189,14 @@ def main(argv=None):
         T1.incomplete(args.out, str(e), log)
         return 3
     models = list(dict.fromkeys(a['name'] for a in info))
-    planned = args.stage3_steps if args.arm == 'S2a' else args.stage4_steps
+    planned = args.stage3_steps if args.arm in ('S2a', 'S3a') else args.stage4_steps
     summary = dict(arm=args.arm, pair=args.pair, seed=args.seed, model=None, models=models, batch_name=L3.BATCH, prereg=L3.PREREG, val=v, fresh=f,
                    baseline=dict(none=dict(val=n0)), complete=bool(all(st['steps_done'] == planned for st in stages.values())), steps=sum(st['steps_done'] for st in stages.values()),
                    steps_planned=planned, stages=stages, agents=info, params=M.count_params(pl3), receiver=receiver, v2=dict(v2_meta, run=args.v2_from, val_em=(v2_summary.get('val') or {}).get('em'),
                    none_em=((v2_summary.get('baseline') or {}).get('none', {}).get('val') or {}).get('em')), init_from=init_meta, round1_cache=dict(path=cache_path, loaded=n_loaded, total=len(pl3.cache), generated=pl3.n_round1),
-                   channel=dict(k_ans=pl3.k_ans, d_e=pl3.pair.agent(0).d_e, k_ev=pl3.pair.span_k, hint2_pre=L3.HINT2_PRE, hint2_post=L3.HINT2_POST, t2_pre=L3.T2_PRE, rendering='hard',
+                   channel=dict(consensus=consensus, k_ans=pl3.k_ans, d_e=pl3.pair.agent(0).d_e, k_ev=pl3.pair.span_k, hint2_pre=L3.HINT2_PRE, hint2_post=L3.HINT2_POST, t2_pre=L3.T2_PRE, rendering='hard',
                                 round1='frozen V2: span_sel evidence both ways, greedy answers with the V2 recv adapters',
-                                round2=('consensus of the aligned-read answer beliefs (lam heads, w2) decoded into 8 hard tokens' if args.arm != 'T2' else "the partner's round-1 answer as text with its mean token probability"),
+                                round2=('precision-weighted consensus of the slot log-probabilities (calibrated lam head), argmax -> 8 hard tokens' if consensus == 'logprob' and args.arm != 'T2' else 'consensus of the aligned-read answer beliefs (lam heads, w2) decoded into 8 hard tokens' if args.arm != 'T2' else "the partner's round-1 answer as text with its mean token probability"),
                                 w2=pl3.w2_value),
                    timings=dict(load_s=load_s, train_s=sum(st['seconds'] for st in stages.values()), eval_s=eval_s, total_s=time.time() - t_start),
                    config=dict(vars(args), lora_targets=list(M.LORA_TARGETS), edges=M.EDGES, wire_dtype=str(FU.WIRE_DTYPE), device=str(device), torch=torch.__version__),
