@@ -4789,3 +4789,9 @@ V3 overlap50 0.7–0.8，V3 ≈ 54–56（.6）；第一轮各方 ≈ 52–55，
 
 ### 6. 算力与流程
 8 个租约 ≈ 9.5 小时。文件：l2_model（V3）、l3_model / l3_train（S3a / S3b：consensus 模式 logprob、λ 头）、l3_gate（S3、runs/l4）、chain_day19_L4.sh、l4_leases.sh、单测；冒烟后钉定、一次性发射，不监控。独立审查：若账户额度恢复则做，否则如 D8-93 自查并记录。
+
+### D8-94 附录 1（2026-11-03 02:50 UTC）：实现、单测、冒烟与发射（正文不改；不监控，结果待用户叫分析时再读）
+- **实现**（提交 3b7b493）：V3 = `selector = LayerNorm → Linear`（`enable_selector(ln=True)`）；S3 = `l3_model.PairL3(consensus='logprob')`：每方 Decoder2 的槽对数概率、校准头 λ = softplus(MLP[p, 平均最大概率, 平均熵])、共识 = 精度加权的对数概率和、argmax → 8 token；第三阶段损失 = 共识 CE + 校准 BCE；读数 pick_correct / picked_own_answer / λ-AUROC；`l3_gate` 的 S3 规则（参照 V3）；`chain_day19_L4.sh`（45–52）、`l4_leases.sh`；单测 L2 11 项 + L3 3 项通过（本地与 uk-linux）。
+- **独立审查**：账户额度仍不可用，未做；协调者自查：logprob 共识的训练（step3_logprob）与评估（soft2 → fused.argmax）同一代码路径；λ 头在第三阶段可训练、第四阶段冻结并入检查点；T2 与 S3b 共用 S3a 的第一轮缓存（同一样本流）。
+- **冒烟**（uk-linux，runs/l4_smoke/）：V3 70 + 70 步通（峰值 12.4 GB；70 步时选句 0.25，待正式 1,000 步）；S3a 30 步通（峰值 12.8 GB，λ 均值 0.70，p-AUROC 0.77）；S3b 30 步通（14.8 GB）；T2 通（14.7 GB）。
+- **发射**：钉定链 8418cdac；队列 `l4_leases.sh 45 52 "<批准>" --est-v2 75 --est-s2a 95 --est-s2b 80 --est-t2 75` 于 02:48:13 UTC 启动；租约 45（V3-same2-s342101）02:49:17 UTC 开始；顺序 45 V3 s1 → 46 V3 s2 → 47 S3a s1 → 48 S3b s1 → 49 T2 s1 → 50 S3a s2 → 51 S3b s2 → 52 T2 s2，预计 ≈ 9.5 小时（3 日 12:30 UTC 前后）。输出 runs/l2/V3-*、runs/l4/*、runs/l4/gates/、runs/l2/gates/V3-*。
