@@ -22,9 +22,9 @@
 # Launch: one lease per launch, via scripts/l7_leases.sh, after the previous chain process has exited.
 cd /mnt/datasets/yuzhou-sheaf-gbp-research/claude-diag-20261021 || exit 1
 PREREG="$1"; APPROVAL="$2"
-[ "$PREREG" = "D8-97" ] && [ -n "$APPROVAL" ] || { echo "usage: chain_day22_L7.sh D8-97 <user GPU approval UTC> --lease N [--est-tsend 100 --est-trecv 90 --est-recv 90 --est-gen 90 --est-ver 80]"; exit 2; }
+[ "$PREREG" = "D8-97" ] && [ -n "$APPROVAL" ] || { echo "usage: chain_day22_L7.sh D8-97 <user GPU approval UTC> --lease N [--est-tsend 100 --est-trecv 90 --est-recv 90 --est-gen 95 --est-ver 100]"; exit 2; }
 shift 2
-LEASE=""; EST_TSEND=100; EST_TRECV=90; EST_RECV=90; EST_GEN=90; EST_VER=80
+LEASE=""; EST_TSEND=100; EST_TRECV=90; EST_RECV=90; EST_GEN=95; EST_VER=100
 while [ $# -gt 0 ]; do
   case "$1" in
     --lease) LEASE="$2"; shift 2;;
@@ -75,8 +75,8 @@ STAGE2_STEPS=625
 BATCH_N2=8;  BATCH_N4=4                                                   # examples per step: equal agent-examples per step (16) at both N
 SUB_N2=5000; SUB_N4=2500                                                  # stage-2 subset rows: 10,000 agent-examples at both N
 VER_BATCH=16                                                              # verifier: rows per step (2 sequences each); --steps 0 = one pass over the 20,000 rows
-STOP_TSEND=3700; STOP_TRECV=4800; STOP_RECV=5100; STOP_VER=3600           # soft stops of the training loops (seconds after the lease start); the rest of the job follows
-L7_FLAGS="--k-ev $K_EV --budget $BUDGET --sel-layer $SEL_LAYER --eval-batch 16 --gen-batch 8 --score-batch 32 --warmup 100 --lr-lora 2e-4 --lr-recv 1e-4 --lr-verify 1e-4 --stage2-steps $STAGE2_STEPS"
+STOP_TSEND=3700; STOP_TRECV=4800; STOP_RECV=5100; STOP_VER=4500           # soft stops of the training loops (seconds after the lease start); the rest of the job follows
+L7_FLAGS="--k-ev $K_EV --budget $BUDGET --sel-layer $SEL_LAYER --eval-batch 16 --gen-batch 16 --score-batch 32 --warmup 100 --lr-lora 2e-4 --lr-recv 1e-4 --lr-verify 1e-4 --stage2-steps $STAGE2_STEPS"
 mkdir -p runs/l7
 log(){ echo "$(date -u +%FT%TZ) $*" | tee -a $LOG; }
 log "chain_day22_L7 started pid $$ host $(hostname) lease $LEASE sha256 $(sha256sum scripts/chain_day22_L7.sh | cut -c1-16) prereg $PREREG approval $APPROVAL est tsend $EST_TSEND trecv $EST_TRECV recv $EST_RECV gen $EST_GEN ver $EST_VER min; ctx $CTX steps $STEPS"

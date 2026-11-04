@@ -5100,3 +5100,36 @@ GEN（训练行）：每种子 4,000 行（排除 V1 两阶段所见后余 7,209
 - 不训练隐向量发送端，不做 N ≥ 3 的 sheaf-GBP 迭代（单一共享变量下一轮求和即精确，无需迭代）。
 - 不用 VAL 拟合任何东西（温度 a 在训练行上拟合）。
 - 不动 TEST。不在公共仓库提交数据、候选、检查点。
+
+### D8-97 附录 1（2026-11-04 02:35 UTC）：实现、单测、新切分、冒烟、估时校正与发射（正文不改）
+
+**实现**（commit 7d2a901；未经独立审查，审查 agent 不可用）
+- `l7_data.py`：从 hotpot_train_v1.1.json 可用的 89,609 例中排除 splits_l1 的全部 22,000 个 id，按种子 342101 抽 20,000 例为 train7；`reshard_row` 把 10 段分到 N 个分片（大小 10 // N，余数随机分配），两段金标落在两个不同的随机分片，8 段干扰打乱后按分片顺序分发，分片内打乱；`sup[i]` 为分片 i 内金标段的支撑句（无金标为 []，文字发送目标即为 " (none)"），`gold_shards`、`answer_owner`（恰有一个金标分片含答案串时为该分片，否则 None）。文件：train7_N2 / train7_N4 / val_N4 / fresh_N4 + splits7_meta.json；N=2 的 VAL / fresh 复用 splits_l1 原文件。
+- `l7_nagents.py`：一份 Qwen3-1.7B + 角色 LoRA（`default` = 该种子的 B0 冻结适配器，从 B0-hetero 的 agent-0 张量载入，392 个张量；`tsend` / `trecv` 为新 LoRA，按 L1 的 T 配方；`recv` 从 B0 初始化，按 V1 阶段 2；`verify` 从 recv 初始化），agent 只是分片索引，所有前向按 agent 批处理。五个作业 tsend / trecv / recv / gen / ver；评估读数：ver_sum、各方自验、ver_select（max）、ver_prior（Σ s_i − (N−1) s_0）、ver_prior_half、ver_informed（神谕：只有持金标者投票）、ver_owner、select_p、vote（文字侧的多数票）、各方 top-1、either、informed_either、并集任一、按归属、know 子集（持金标者至少一方对且至少一方错）、验证器 informed / ignorant / all 的 AUROC、|s| 中位、p_yes，先验 s_0 的 AUROC，无证据臂 B'（各方只看自己分片的 B0 答案 + 同一 verify LoRA 在自分片提示下求和）、字节分解（窗口 id、候选串、分数 int8 / f32；message_bytes 与 wire_bytes = ×(N−1)）、每例时间分解（窗口、生成、验证；先验、p、B' 臂单列不计入）。
+- `l7_gate.py`：按 §1 的标签；VER 的判决需要同 N 同种子的 TRECV；N≠2 时若同种子的 N=2 VER 与 TRECV 存在则给 H_trend，否则 pendingN2；N>2 给 IGNORANT-FLAT / NOT-FLAT。
+- 链 `chain_day22_L7.sh`（租约 63–82，N=4 两种子先、N=2 后；每租约一作业；锁 runs/l7.lock；守卫 pgrep "scripts/l7_nagents"）、队列 `l7_leases.sh`、冒烟 `l7_prelaunch.sh`、单测 `test_l7_nagents.py`（分片规则、纯函数、tiny 模型 N=3 五作业 + 闸门端到端）。本地 3/3 通过（108 s），uk-linux 3/3（20 s）。
+
+**实现层面的决定（预注册未写明，这里记录）**
+1. **各训练按 agent-例数等预算归一**，而不是按步数：tsend / trecv 阶段 1 / recv 都是 2,500 步 × batch × N = 40,000 agent-例（N=2 batch 8，N=4 batch 4），阶段 2 都是 625 步 = 10,000 agent-例（N=2 子集 5,000 行，N=4 子集 2,500 行）；验证器两个 N 都是 20,000 行 × 2 序列 = 40,000 序列（每步 16 行）。否则 N=4 的每步算力是 N=2 的两倍，装不进租约，也不等算。
+2. recv 用 V1 的学习率 1e-4、文字 LoRA 用 L1 的 2e-4、验证器用 D8-96 的 1e-4；各臂沿用各自的先例，两个 N 之间逐项相同。
+3. 文字接收提示的消息行为 "Agent j says: ..."（N 条通用），不再是 L1 的 "Partner says:"；窗口提示为 "From agent j's documents:"。两个 N 用同一模板。
+4. 预注册 §2 的"温度 a·Σ s_i"对 argmax 无影响（全局缩放不改变次序），只有与先验项联用才有意义，故改报两种固定先验权重：ver_prior（全额 (N−1)·s_0）与 ver_prior_half。
+5. 候选生成的 batch 从 8 调到 16（两个 N 相同），因为冒烟测得 N=4 的 GEN 每例 0.30 s，2 万行需 101 分钟，贴近租约上限。
+
+**新切分统计**（uk-linux，14 s）：可用 89,609，排除 22,000 id 后抽 20,000；N=4 的 VAL：answer_owner 0/1/2/3/none = 174/157/206/225/238，金标分片对六种组合各 150–185，分片均 2.5 段；fresh 同量级。
+
+**冒烟**（runs/l7_smoke/，02:20–02:25 UTC，N=4 种子 1，48 行训练、24 例评估，各 12 步 / 6 步）：
+
+| 作业 | 每步 | 每例 / 其他 | 峰值 |
+|---|---|---|---|
+| TSEND-N4 | 1.16 s（batch 4 × 4 方） | 消息 0.555 s/例（4 条）；64 token、160 字符/条 | 6.1 GB |
+| TRECV-N4 | 1.22 s | 作答 0.187 s/例（4 方） | 6.3 GB |
+| RECV-N4 / N2 | 1.59 s（batch 4） / 1.78 s（batch 8） | 窗口 0.078 / 0.071 s，生成 0.17 / 0.10 s | 5.8 / 6.3 GB |
+| GEN-N4 / N2 | — | 0.303 / 0.185 s/例（batch 8） | 5.7 / 6.2 GB |
+| VER-N4 / N2 | 2.86 / 3.37 s（16 行 = 32 序列） | 评估：窗口 + 生成 + 验证 0.445 / 0.270 s/例；先验 0.005；p 0.11 / 0.07；B' 臂 0.43 / 0.22 | 8.7 / 9.9 GB |
+
+读数在 12 步下无意义，只核对了管线：B0 载入（392 张量，sha 70be0cc0…）；N=4 各方答案互不相同、持金标方可辨；窗口 id 每方 32 个；字节 N=4 信念消息 309 B（线上 ×3 = 928 B）、文字 640 B（4 条 × 160 字符，线上 1,917 B）。
+
+**估时（校正后写入链的 EST 与软截止）**：TSEND N4 ≈ 48 + 42 = 90 min，N2 ≈ 55 + 33 = 88；TRECV ≈ 51 + 13 + 6 = 70；RECV N4 ≈ 66 + 4，N2 ≈ 74 + 3；GEN N4 ≈ 75（batch 16）、N2 ≈ 50；VER N4 ≈ 60 + 33 = 93，N2 ≈ 70 + 19 = 89。软截止：tsend 62 min、trecv 80 min、recv 85 min、ver 75 min（训练提前停则 train_complete=false 记入，评估照跑）。GEN 超时则写出已完成的行并标 complete=false，VER 租约按条件跳过，由协调者决定。
+
+**发射**：钉定链 69ec2a48205e1a2e（l7_nagents 95fc5543…、l7_gate d658f7bb…、l7_data 571a9268…、train7_N2 7e3f0922…、train7_N4 45e662ab…、val_N4 9d336626…、fresh_N4 ff39ba0e…、B0 两种子、L1 四个 pin）；队列 `l7_leases.sh 63 82` 于 02:31:10 UTC 启动，租约 63 TSEND-N4-s342101 于 02:32:14 UTC 开始（8.1 GB）。顺序 63–67 N4 s1、68–72 N4 s2、73–77 N2 s1、78–82 N2 s2，每租约 ≤ 2 h，预计总计 28–32 h，约 11 月 5 日 08:00–12:00 UTC 跑完。后台每 15 分钟静默查一次；结果只在用户要求时分析。
